@@ -36,7 +36,18 @@ impl Orchestrator {
     pub fn call_endpoint(&self, system_id: &str, endpoint: StandardEndpoint, payload: &[u8], out_buf: &mut [u8]) -> usize {
         let sys_list = self.systems.read().unwrap();
         if let Some(sys) = sys_list.iter().find(|s| s.id == system_id) {
-            sys.call(endpoint, payload, out_buf)
+            let result = sys.call(endpoint, payload, out_buf);
+            // Start/Stop çağrıldığında durumu otomatik güncelle
+            match endpoint {
+                StandardEndpoint::Start => {
+                    sys.context.is_running.store(true, core::sync::atomic::Ordering::Relaxed);
+                }
+                StandardEndpoint::Stop => {
+                    sys.context.is_running.store(false, core::sync::atomic::Ordering::Relaxed);
+                }
+                _ => {}
+            }
+            result
         } else {
             0
         }
