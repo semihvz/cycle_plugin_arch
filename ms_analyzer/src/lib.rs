@@ -22,10 +22,13 @@ pub struct PluginOps {
     pub call_endpoint: unsafe extern "C" fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -> usize,
 }
 
+use std::collections::HashMap;
+
 struct PluginState {
     is_running: Arc<AtomicBool>,
     data: Arc<Mutex<Vec<u8>>>,
     outbox: Arc<Mutex<Vec<serde_json::Value>>>,
+    stream_configs: Arc<Mutex<HashMap<String, (String, String)>>>,
 }
 
 #[no_mangle]
@@ -34,6 +37,7 @@ pub unsafe extern "C" fn init_plugin(state_out: *mut *mut c_void) -> unsafe exte
         is_running: Arc::new(AtomicBool::new(false)),
         data: Arc::new(Mutex::new(b"ms_analyzer hazir. Veri akisi bekleniyor...".to_vec())),
         outbox: Arc::new(Mutex::new(Vec::new())),
+        stream_configs: Arc::new(Mutex::new(HashMap::new())),
     });
 
     unsafe {
@@ -59,6 +63,40 @@ unsafe extern "C" fn handle_endpoint(
                 return 0;
             }
             state.is_running.store(true, Ordering::Relaxed);
+            
+            if payload_len > 0 {
+                let slice = std::slice::from_raw_parts(payload, payload_len);
+                if let Ok(config) = serde_json::from_slice::<serde_json::Value>(slice) {
+                    if let Some(inputs) = config.get("plugin_inputs").and_then(|i| i.as_array()) {
+                        let mut q = state.outbox.lock().unwrap();
+                        for input in inputs {
+                            if let (Some(source), Some(params), Some(stream_id)) = (
+                                input.get("source").and_then(|s| s.as_str()),
+                                input.get("params").and_then(|p| p.as_object()),
+                                input.get("stream_id").and_then(|s| s.as_str())
+                            ) {
+                                let mut req = serde_json::Map::new();
+                                req.insert("to".to_string(), serde_json::json!(source));
+                                req.insert("stream_id".to_string(), serde_json::json!(stream_id));
+                                for (k, v) in params {
+                                    req.insert(k.clone(), v.clone());
+                                }
+                                
+                                if let (Some(sym), Some(inv)) = (
+                                    req.get("symbol").and_then(|v| v.as_str()),
+                                    req.get("interval").and_then(|v| v.as_str())
+                                ) {
+                                    let mut configs = state.stream_configs.lock().unwrap();
+                                    configs.insert(stream_id.to_string(), (sym.to_string(), inv.to_string()));
+                                }
+                                
+                                q.push(serde_json::Value::Object(req));
+                            }
+                        }
+                    }
+                }
+            }
+            
             0
         }
         1 => { // Stop
@@ -83,6 +121,18 @@ unsafe extern "C" fn handle_endpoint(
                 // FlowEngine prepends a 32-byte header with the local input name (e.g., "ohlcv")
                 let header = &slice[0..32];
                 let data_slice = &slice[32..];
+                
+                let stream_id = std::str::from_utf8(header)
+                    .unwrap_or("")
+                    .trim_matches(char::from(0))
+                    .to_string();
+                    
+                let (symbol, interval) = {
+                    let configs = state.stream_configs.lock().unwrap();
+                    configs.get(&stream_id)
+                        .cloned()
+                        .unwrap_or_else(|| ("Bilinmiyor".to_string(), "Bilinmiyor".to_string()))
+                };
                 
                 // Read the JSON array of klines
                 if let Ok(data_array) = serde_json::from_slice::<serde_json::Value>(data_slice) {
@@ -120,9 +170,17 @@ unsafe extern "C" fn handle_endpoint(
                             
                             let report = narrative::generate_report(core_klines, amp_klines, acute_klines);
                             
+                            let mut report_json = serde_json::to_value(&report).unwrap_or_default();
+                            if let Some(obj) = report_json.as_object_mut() {
+                                obj.insert("symbol".to_string(), serde_json::json!(symbol));
+                                obj.insert("interval".to_string(), serde_json::json!(interval));
+                                obj.insert("analyzed_bars".to_string(), serde_json::json!(len));
+                                obj.insert("stream_id".to_string(), serde_json::json!(stream_id));
+                            }
+                            
                             // Write directly to RAM/screen buffer
                             let mut guard = state.data.lock().unwrap();
-                            *guard = serde_json::to_vec_pretty(&report).unwrap_or_default();
+                            *guard = serde_json::to_vec_pretty(&report_json).unwrap_or_default();
                         }
                     }
                 }

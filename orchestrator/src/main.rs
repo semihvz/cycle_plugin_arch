@@ -159,18 +159,18 @@ async fn main() -> anyhow::Result<()> {
     let mut app = App::new(orchestrator.clone());
     
     // --- FLOW ENGINE & CONFIG INITIALIZATION ---
-    let config_path = if std::path::Path::new("flow_config.toml").exists() {
-        "flow_config.toml"
-    } else if std::path::Path::new("../flow_config.toml").exists() {
-        "../flow_config.toml"
+    let config_path = if std::path::Path::new("flow_config.json").exists() {
+        "flow_config.json"
+    } else if std::path::Path::new("../flow_config.json").exists() {
+        "../flow_config.json"
     } else {
-        "flow_config.toml" // Default fallback
+        "flow_config.json" // Default fallback
     };
     
     let flow_config = match flow_engine::FlowConfig::load(config_path) {
         Ok(c) => Some(c),
         Err(e) => {
-            app.log(&format!("UYARI: flow_config.toml okunamadı: {}", e));
+            app.log(&format!("UYARI: flow_config.json okunamadı: {}", e));
             None
         }
     };
@@ -224,13 +224,8 @@ async fn main() -> anyhow::Result<()> {
     for (id, _, _) in app.orchestrator.list_systems() {
         let mut payload_bytes = Vec::new();
         if let Some(ref config) = flow_config {
-            if let Some(plugin_conf) = config.plugin.iter().find(|p| p.name == id) {
-                if let Some(ref params) = plugin_conf.params {
-                    // Convert toml::Value to JSON bytes
-                    if let Ok(json_val) = serde_json::to_value(params) {
-                        payload_bytes = serde_json::to_vec(&json_val).unwrap_or_default();
-                    }
-                }
+            if let Some(plugin_conf) = config.iter().find(|p| p.plugin_name == id) {
+                payload_bytes = serde_json::to_vec(&plugin_conf).unwrap_or_default();
             }
         }
         app.orchestrator.call_endpoint(&id, StandardEndpoint::Start, &payload_bytes, &mut startup_buf);

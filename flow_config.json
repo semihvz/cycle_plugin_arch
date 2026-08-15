@@ -1,0 +1,75 @@
+[
+  {
+    "plugin_name": "plugin_ohlcv_fetcher",
+    "plugin_inputs": [],
+    "plugin_params": {},
+    "plugin_outputs": ["btc_15m", "eth_5m"]
+  },
+  {
+    "plugin_name": "plugin_all_markprices",
+    "plugin_inputs": [],
+    "plugin_params": {},
+    "plugin_outputs": ["stream_markprice"]
+  },
+  {
+    "plugin_name": "plugin_all_aggtrades",
+    "plugin_inputs": [],
+    "plugin_params": {},
+    "plugin_outputs": ["stream_trades"]
+  },
+  {
+    "plugin_name": "plugin_all_depths",
+    "plugin_inputs": [],
+    "plugin_params": {},
+    "plugin_outputs": ["stream_depth"]
+  },
+  {
+    "plugin_name": "plugin_all_bestprices",
+    "plugin_inputs": [],
+    "plugin_params": {},
+    "plugin_outputs": ["stream_bestprice"]
+  },
+  {
+    "plugin_name": "plugin_ms_analyzer",
+    "plugin_inputs": [
+      {
+        "source": "plugin_ohlcv_fetcher",
+        "stream_id": "btc_15m",
+        "params": {
+          "symbol": "BTCUSDT",
+          "interval": "15m",
+          "limit": 1500,
+          "mode": "sub",
+          "sub_interval_secs": 10
+        }
+      },
+      {
+        "source": "plugin_ohlcv_fetcher",
+        "stream_id": "eth_5m",
+        "params": {
+          "symbol": "ETHUSDT",
+          "interval": "5m",
+          "limit": 1000,
+          "mode": "sub",
+          "sub_interval_secs": 5
+        }
+      }
+    ],
+    "plugin_params": {
+      "analysis_mode": "deep"
+    },
+    "plugin_outputs": ["ms_signals_btc", "ms_signals_eth"]
+  },
+  {
+    "plugin_name": "plugin_breakout",
+    "plugin_inputs": [
+      {
+        "source": "plugin_ms_analyzer",
+        "stream_id": "ms_signals_btc",
+        "params": {}
+      }
+    ],
+    "plugin_params": {},
+    "plugin_outputs": []
+  }
+]

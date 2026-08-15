@@ -1,37 +1,34 @@
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
 use std::fs;
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct FlowConfig {
-    pub plugin: Vec<PluginConfig>,
+    #[serde(flatten)]
+    pub plugins: Vec<PluginConfig>,
+}
+
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct PluginInput {
+    pub source: String,
+    pub stream_id: String,
+    pub params: serde_json::Value,
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct PluginConfig {
-    pub name: String,
-    #[serde(rename = "type")]
-    pub plugin_type: PluginType,
+    pub plugin_name: String,
     #[serde(default)]
-    pub inputs: HashMap<String, String>, // Local name -> Global stream name
+    pub plugin_inputs: Vec<PluginInput>,
     #[serde(default)]
-    pub outputs: Vec<String>,            // Global stream names
+    pub plugin_params: serde_json::Value,
     #[serde(default)]
-    pub params: Option<toml::Value>,     // Plugin specific parameters
-}
-
-#[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
-#[serde(rename_all = "lowercase")]
-pub enum PluginType {
-    Producer,
-    Processor,
-    Consumer,
+    pub plugin_outputs: Vec<String>,
 }
 
 impl FlowConfig {
-    pub fn load(path: &str) -> anyhow::Result<Self> {
+    pub fn load(path: &str) -> anyhow::Result<Vec<PluginConfig>> {
         let content = fs::read_to_string(path)?;
-        let config: FlowConfig = toml::from_str(&content)?;
+        let config: Vec<PluginConfig> = serde_json::from_str(&content)?;
         Ok(config)
     }
 }
