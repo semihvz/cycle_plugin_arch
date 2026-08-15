@@ -2,7 +2,7 @@ mod tui;
 
 use orchestrator::orchestrator::Orchestrator;
 use orchestrator::endpoint::StandardEndpoint;
-use orchestrator::system::{System, SystemContext, EndpointHandler};
+use orchestrator::system::{SystemInstance, RawEndpointFn};
 use crossterm::{
     event::{self, Event, KeyCode, MouseEventKind, MouseButton, EnableMouseCapture, DisableMouseCapture},
     terminal::{disable_raw_mode, enable_raw_mode, Clear, ClearType},
@@ -10,8 +10,8 @@ use crossterm::{
 };
 use ratatui::{backend::CrosstermBackend, Terminal};
 use std::io;
-use std::collections::HashMap;
 use std::sync::Arc;
+use std::ffi::c_void;
 
 #[derive(PartialEq)]
 pub enum ViewMode {
@@ -48,21 +48,7 @@ impl App {
             monitored_data: None,
             running: true,
             mode: ViewMode::Main,
-            available_plugins: vec![
-                "plugin_binance".to_string(),
-                "plugin_depth".to_string(),
-                "plugin_liquidation".to_string(),
-                "plugin_aggtrade".to_string(),
-                "plugin_storage".to_string(),
-                "plugin_timescaledb".to_string(),
-                "plugin_validator".to_string(),
-                "plugin_tps".to_string(),
-                "plugin_ohlcv_fetcher".to_string(),
-                "plugin_ohlcv_requester".to_string(),
-                "plugin_alarm".to_string(),
-                "plugin_msmp".to_string(),
-                "plugin_msmp_requester".to_string()
-            ],
+            available_plugins: Vec::new(),
             plugin_selected: 0,
             active_tab: 0,
             systems_panel_width: 30,
@@ -81,15 +67,81 @@ impl App {
     }
 }
 
+/// Eklenti yükleme yardımcı fonksiyonu (C-ABI: init_plugin)
+unsafe fn load_plugin_cabi(app: &mut App, plugin_name: &str) {
+    let ext = if cfg!(target_os = "windows") { "dll" } 
+              else if cfg!(target_os = "macos") { "dylib" } 
+              else { "so" };
+    let prefix = if cfg!(target_os = "windows") { "" } else { "lib" };
+    let mut lib_path_buf = std::env::current_exe().unwrap_or_else(|_| std::path::PathBuf::from("."));
+    lib_path_buf.pop();
+    lib_path_buf.push(format!("{}{}.{}", prefix, plugin_name, ext));
+    let lib_path = lib_path_buf.to_string_lossy().to_string();
+    
+    match libloading::Library::new(&lib_path) {
+        Ok(lib) => {
+            // Yeni HFT C-ABI: init_plugin(state_out) -> RawEndpointFn
+            type PluginInit = unsafe extern "C" fn(state_out: *mut *mut c_void) -> RawEndpointFn;
+            match lib.get::<PluginInit>(b"init_plugin") {
+                Ok(init_fn) => {
+                    let mut state_ptr: *mut c_void = std::ptr::null_mut();
+                    let endpoint_fn = init_fn(&mut state_ptr);
+                    let sys = SystemInstance::new(
+                        plugin_name.to_string(), 
+                        plugin_name.to_string(), 
+                        state_ptr, 
+                        endpoint_fn,
+                    );
+                    app.orchestrator.register_system(sys);
+                    Box::leak(Box::new(lib)); // Kütüphaneyi bellekte tut
+                    app.log(&format!("{} eklentisi basariyla yuklendi (HFT/C-ABI).", plugin_name));
+                }
+                Err(_) => app.log(&format!("{} eklentisinde init_plugin fonksiyonu bulunamadi.", plugin_name)),
+            }
+        }
+        Err(e) => app.log(&format!("{} eklentisi yuklenemedi (derlediginizden emin olun): {}", plugin_name, e)),
+    }
+}
 
+/// Eklenti tarama yardımcı fonksiyonu
+fn scan_plugins() -> Vec<String> {
+    let mut plugins = Vec::new();
+    let mut lib_dir = std::env::current_exe().unwrap_or_else(|_| std::path::PathBuf::from("."));
+    lib_dir.pop();
+    let prefix = if cfg!(target_os = "windows") { "" } else { "lib" };
+    if let Ok(entries) = std::fs::read_dir(&lib_dir) {
+        for entry in entries.flatten() {
+            let name = entry.file_name().to_string_lossy().into_owned();
+            if name.starts_with(&format!("{}plugin_", prefix)) && (name.ends_with(".so") || name.ends_with(".dll") || name.ends_with(".dylib")) {
+                let ext_len = if name.ends_with(".so") { 3 } else if name.ends_with(".dll") { 4 } else { 6 };
+                let plugin_name = &name[prefix.len()..name.len()-ext_len];
+                plugins.push(plugin_name.to_string());
+            }
+        }
+    }
+    plugins.sort();
+    plugins.dedup();
+    plugins
+}
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
+    // ═══════════════════════════════════════════════════════
+    // HFT: CPU Çekirdek Sabitleme (Core Pinning)
+    // Ana thread → Çekirdek 0, Router thread → Çekirdek 1
+    // ═══════════════════════════════════════════════════════
+    if let Some(core_ids) = core_affinity::get_core_ids() {
+        if let Some(core) = core_ids.first() {
+            core_affinity::set_for_current(*core);
+        }
+        let pinned_core = core_ids.first().map(|c| c.id).unwrap_or(0);
+        eprintln!("[HFT] Ana thread CPU çekirdeğine sabitlendi: Core {}", pinned_core);
+    }
+
     let orchestrator = Arc::new(Orchestrator::new());
     let mut app = App::new(orchestrator.clone());
     
-    app.log("Sistem başlatıldı. Orkestratör devrede.");
-    
+    app.log("Sistem başlatıldı. Orkestratör devrede. [HFT Modu: CPU Pinning AÇIK]");
     app.log("Lütfen 'l' tuşuna basarak eklentileri (plugin) yükleyin.");
     
     enable_raw_mode()?;
@@ -98,6 +150,9 @@ async fn main() -> anyhow::Result<()> {
     stdout.execute(Clear(ClearType::All))?;
     let backend = CrosstermBackend::new(stdout);
     let mut terminal = Terminal::new(backend)?;
+    
+    // Pre-allocated HFT buffer (sıcak yolda yeni allokasyonu önler)
+    let mut hft_buf = vec![0u8; 1024 * 1024]; // 1MB
     
     while app.running {
         terminal.draw(|f| tui::draw_ui(f, &mut app))?;
@@ -114,19 +169,19 @@ async fn main() -> anyhow::Result<()> {
                         
                         KeyCode::Char('s') => {
                             if let Some((id, _, _)) = systems.get(app.selected) {
-                                match app.orchestrator.call_endpoint(id, StandardEndpoint::Start) {
-                                    Ok(_) => app.log(&format!("{} başlatıldı", id)),
-                                    Err(e) => app.log(&format!("Hata ({}): {}", id, e)),
+                                let written = app.orchestrator.call_endpoint(id, StandardEndpoint::Start, &[], &mut hft_buf);
+                                if written > 0 {
+                                    app.log(&format!("{} başlatıldı", id));
+                                } else {
+                                    app.log(&format!("{} başlatıldı (yanıt yok)", id));
                                 }
                             }
                         }
                         
                         KeyCode::Char('x') => {
                             if let Some((id, _, _)) = systems.get(app.selected) {
-                                match app.orchestrator.call_endpoint(id, StandardEndpoint::Stop) {
-                                    Ok(_) => app.log(&format!("{} durduruldu", id)),
-                                    Err(e) => app.log(&format!("Hata ({}): {}", id, e)),
-                                }
+                                app.orchestrator.call_endpoint(id, StandardEndpoint::Stop, &[], &mut hft_buf);
+                                app.log(&format!("{} durduruldu", id));
                             }
                         }
                         
@@ -147,30 +202,14 @@ async fn main() -> anyhow::Result<()> {
                                 if let Ok(_) = app.orchestrator.unregister_system(id) {
                                     app.log(&format!("{} sistemden silindi", id));
                                     app.selected = app.selected.saturating_sub(1);
-                                    app.monitored_data = None; // Reset if deleted
+                                    app.monitored_data = None;
                                 }
                             }
                         }
                         
                         KeyCode::Char('l') => {
                             app.mode = ViewMode::PluginSelection;
-                            let mut plugins = Vec::new();
-                            let mut lib_dir = std::env::current_exe().unwrap_or_else(|_| std::path::PathBuf::from("."));
-                            lib_dir.pop();
-                            let prefix = if cfg!(target_os = "windows") { "" } else { "lib" };
-                            if let Ok(entries) = std::fs::read_dir(&lib_dir) {
-                                for entry in entries.flatten() {
-                                    let name = entry.file_name().to_string_lossy().into_owned();
-                                    if name.starts_with(&format!("{}plugin_", prefix)) && (name.ends_with(".so") || name.ends_with(".dll") || name.ends_with(".dylib")) {
-                                        let ext_len = if name.ends_with(".so") { 3 } else if name.ends_with(".dll") { 4 } else { 6 };
-                                        let plugin_name = &name[prefix.len()..name.len()-ext_len];
-                                        plugins.push(plugin_name.to_string());
-                                    }
-                                }
-                            }
-                            plugins.sort();
-                            plugins.dedup();
-                            app.available_plugins = plugins;
+                            app.available_plugins = scan_plugins();
                             app.plugin_selected = 0;
                         }
                         
@@ -188,31 +227,8 @@ async fn main() -> anyhow::Result<()> {
                             app.plugin_selected = app.plugin_selected.saturating_sub(1);
                         }
                         KeyCode::Enter => {
-                            if let Some(plugin_name) = app.available_plugins.get(app.plugin_selected) {
-                                unsafe {
-                                    let ext = if cfg!(target_os = "windows") { "dll" } 
-                                              else if cfg!(target_os = "macos") { "dylib" } 
-                                              else { "so" };
-                                    let prefix = if cfg!(target_os = "windows") { "" } else { "lib" };
-                                    let lib_path = format!("../{}/target/debug/{}{}.{}", plugin_name, prefix, plugin_name, ext);
-                                    
-                                    match libloading::Library::new(&lib_path) {
-                                        Ok(lib) => {
-                                            let func: Result<libloading::Symbol<unsafe extern "C" fn() -> *mut Box<dyn System>>, _> = lib.get(b"create_plugin");
-                                            match func {
-                                                Ok(create_plugin) => {
-                                                    let ptr = create_plugin();
-                                                    let sys = *Box::from_raw(ptr);
-                                                    app.orchestrator.register_system(sys);
-                                                    Box::leak(Box::new(lib));
-                                                    app.log(&format!("{} eklentisi basariyla yuklendi.", plugin_name));
-                                                }
-                                                Err(_) => app.log(&format!("{} eklentisinde create_plugin fonksiyonu bulunamadi.", plugin_name)),
-                                            }
-                                        }
-                                        Err(e) => app.log(&format!("{} eklentisi yuklenemedi (derlediginizden emin olun): {}", plugin_name, e)),
-                                    }
-                                }
+                            if let Some(plugin_name) = app.available_plugins.get(app.plugin_selected).cloned() {
+                                unsafe { load_plugin_cabi(&mut app, &plugin_name); }
                             }
                             app.mode = ViewMode::Main;
                         }
@@ -230,23 +246,7 @@ async fn main() -> anyhow::Result<()> {
                         if row >= size.height.saturating_sub(3) {
                             if col >= 3 && col <= 3 + 24 {
                                 app.mode = ViewMode::PluginSelection;
-                                let mut plugins = Vec::new();
-                                let mut lib_dir = std::env::current_exe().unwrap_or_else(|_| std::path::PathBuf::from("."));
-                                lib_dir.pop();
-                                let prefix = if cfg!(target_os = "windows") { "" } else { "lib" };
-                                if let Ok(entries) = std::fs::read_dir(&lib_dir) {
-                                    for entry in entries.flatten() {
-                                        let name = entry.file_name().to_string_lossy().into_owned();
-                                        if name.starts_with(&format!("{}plugin_", prefix)) && (name.ends_with(".so") || name.ends_with(".dll") || name.ends_with(".dylib")) {
-                                            let ext_len = if name.ends_with(".so") { 3 } else if name.ends_with(".dll") { 4 } else { 6 };
-                                            let plugin_name = &name[prefix.len()..name.len()-ext_len];
-                                            plugins.push(plugin_name.to_string());
-                                        }
-                                    }
-                                }
-                                plugins.sort();
-                                plugins.dedup();
-                                app.available_plugins = plugins;
+                                app.available_plugins = scan_plugins();
                                 app.plugin_selected = 0;
                             }
                         } else if row < 3 {
@@ -266,9 +266,9 @@ async fn main() -> anyhow::Result<()> {
                                 if col >= col3_start {
                                     let rel_col = col - col3_start;
                                     if rel_col < 13 {
-                                        let _ = app.orchestrator.call_endpoint(sys_id, StandardEndpoint::Start);
+                                        app.orchestrator.call_endpoint(sys_id, StandardEndpoint::Start, &[], &mut hft_buf);
                                     } else if rel_col >= 14 && rel_col < 27 {
-                                        let _ = app.orchestrator.call_endpoint(sys_id, StandardEndpoint::Stop);
+                                        app.orchestrator.call_endpoint(sys_id, StandardEndpoint::Stop, &[], &mut hft_buf);
                                     } else if rel_col >= 28 && rel_col < 39 {
                                         if let Ok(data) = app.orchestrator.monitor_data(sys_id) {
                                             app.monitored_data = Some(data);
@@ -293,26 +293,7 @@ async fn main() -> anyhow::Result<()> {
                             if idx < app.available_plugins.len() {
                                 app.plugin_selected = idx;
                                 if let Some(plugin_name) = app.available_plugins.get(app.plugin_selected).cloned() {
-                                    unsafe {
-                                        let ext = if cfg!(target_os = "windows") { "dll" } 
-                                                  else if cfg!(target_os = "macos") { "dylib" } 
-                                                  else { "so" };
-                                        let prefix = if cfg!(target_os = "windows") { "" } else { "lib" };
-                                        let mut lib_path_buf = std::env::current_exe().unwrap_or_else(|_| std::path::PathBuf::from("."));
-                                        lib_path_buf.pop();
-                                        lib_path_buf.push(format!("{}{}.{}", prefix, plugin_name, ext));
-                                        let lib_path = lib_path_buf.to_string_lossy().to_string();
-                                        
-                                        if let Ok(lib) = libloading::Library::new(&lib_path) {
-                                            if let Ok(create_plugin) = lib.get::<libloading::Symbol<unsafe extern "C" fn() -> *mut Box<dyn System>>>(b"create_plugin") {
-                                                let ptr = create_plugin();
-                                                let sys = *Box::from_raw(ptr);
-                                                app.orchestrator.register_system(sys);
-                                                Box::leak(Box::new(lib));
-                                                app.log(&format!("{} yuklendi.", plugin_name));
-                                            }
-                                        }
-                                    }
+                                    unsafe { load_plugin_cabi(&mut app, &plugin_name); }
                                 }
                                 app.mode = ViewMode::Main;
                             }
@@ -327,22 +308,21 @@ async fn main() -> anyhow::Result<()> {
             if app.monitored_data.is_some() {
                 let systems = app.orchestrator.list_systems();
                 if let Some((id, _, _)) = systems.get(app.selected) {
-                    if let Ok(data) = app.orchestrator.call_endpoint(id, StandardEndpoint::DataMonitor) {
+                    if let Ok(data) = app.orchestrator.monitor_data(id) {
                         app.monitored_data = Some(data);
                     }
                 }
             }
             
-            // Message Bus Routing (Inbox/Outbox)
+            // Message Bus Routing (Inbox/Outbox) — Zero-copy HFT
             let mut all_messages = Vec::new();
             for (id, _, _) in app.orchestrator.list_systems() {
-                if let Ok(outbox_data) = app.orchestrator.call_endpoint(&id, StandardEndpoint::Outbox) {
-                    if !outbox_data.is_empty() {
-                        if let Ok(json_array) = serde_json::from_slice::<serde_json::Value>(&outbox_data) {
-                            if let Some(arr) = json_array.as_array() {
-                                for msg in arr {
-                                    all_messages.push(msg.clone());
-                                }
+                let written = app.orchestrator.call_endpoint(&id, StandardEndpoint::Outbox, &[], &mut hft_buf);
+                if written > 0 {
+                    if let Ok(json_array) = serde_json::from_slice::<serde_json::Value>(&hft_buf[..written]) {
+                        if let Some(arr) = json_array.as_array() {
+                            for msg in arr {
+                                all_messages.push(msg.clone());
                             }
                         }
                     }
@@ -352,7 +332,7 @@ async fn main() -> anyhow::Result<()> {
             for msg in all_messages {
                 if let Some(target) = msg.get("to").and_then(|v| v.as_str()) {
                     let msg_bytes = serde_json::to_vec(&msg).unwrap_or_default();
-                    let _ = app.orchestrator.call_endpoint_with_data(target, StandardEndpoint::Inbox, Some(msg_bytes));
+                    app.orchestrator.call_endpoint(target, StandardEndpoint::Inbox, &msg_bytes, &mut hft_buf);
                 }
             }
             
@@ -361,9 +341,12 @@ async fn main() -> anyhow::Result<()> {
             let has_tps = app.orchestrator.get_system("tps_01").is_some();
             
             if has_validator || has_tps {
-                let agg = app.orchestrator.call_endpoint("aggtrade_01", StandardEndpoint::RawData).unwrap_or_default();
-                let depth = app.orchestrator.call_endpoint("depth_01", StandardEndpoint::RawData).unwrap_or_default();
-                let liq = app.orchestrator.call_endpoint("liq_01", StandardEndpoint::RawData).unwrap_or_default();
+                let w1 = app.orchestrator.call_endpoint("aggtrade_01", StandardEndpoint::RawData, &[], &mut hft_buf);
+                let agg = hft_buf[..w1].to_vec();
+                let w2 = app.orchestrator.call_endpoint("depth_01", StandardEndpoint::RawData, &[], &mut hft_buf);
+                let depth = hft_buf[..w2].to_vec();
+                let w3 = app.orchestrator.call_endpoint("liq_01", StandardEndpoint::RawData, &[], &mut hft_buf);
+                let liq = hft_buf[..w3].to_vec();
                 
                 if !agg.is_empty() {
                     let depth_str = if depth.is_empty() { "{}".into() } else { String::from_utf8_lossy(&depth) };
@@ -376,10 +359,10 @@ async fn main() -> anyhow::Result<()> {
                     );
                     
                     if has_validator && !depth.is_empty() {
-                        let _ = app.orchestrator.call_endpoint_with_data("validator_01", StandardEndpoint::DataValid, Some(combined.clone().into_bytes()));
+                        app.orchestrator.call_endpoint("validator_01", StandardEndpoint::DataValid, combined.as_bytes(), &mut hft_buf);
                     }
                     if has_tps {
-                        let _ = app.orchestrator.call_endpoint_with_data("tps_01", StandardEndpoint::DataValid, Some(combined.into_bytes()));
+                        app.orchestrator.call_endpoint("tps_01", StandardEndpoint::DataValid, combined.as_bytes(), &mut hft_buf);
                     }
                 }
             }
@@ -391,4 +374,3 @@ async fn main() -> anyhow::Result<()> {
     disable_raw_mode()?;
     Ok(())
 }
-

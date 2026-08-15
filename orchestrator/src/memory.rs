@@ -1,30 +1,32 @@
+use crossbeam::queue::ArrayQueue;
 use std::sync::Arc;
-use std::sync::RwLock;
 
+/// HFT-Uyumlu (Lock-free) Ring Buffer
+/// Mesaj kuyrukları için kullanılır.
 #[derive(Clone)]
-pub struct MemoryRegion {
-    pub data: Arc<RwLock<Vec<u8>>>,
+pub struct LockFreeBuffer {
+    pub queue: Arc<ArrayQueue<Vec<u8>>>,
 }
 
-impl MemoryRegion {
-    pub fn new() -> Self {
+impl LockFreeBuffer {
+    pub fn new(capacity: usize) -> Self {
         Self {
-            data: Arc::new(RwLock::new(Vec::new())),
+            queue: Arc::new(ArrayQueue::new(capacity)),
         }
     }
 
-    pub fn write(&self, bytes: Vec<u8>) {
-        let mut guard = self.data.write().unwrap();
-        *guard = bytes;
+    #[inline(always)]
+    pub fn push(&self, data: Vec<u8>) -> Result<(), Vec<u8>> {
+        self.queue.push(data)
     }
 
-    pub fn read(&self) -> Vec<u8> {
-        let guard = self.data.read().unwrap();
-        guard.clone()
+    #[inline(always)]
+    pub fn pop(&self) -> Option<Vec<u8>> {
+        self.queue.pop()
     }
 
+    #[inline(always)]
     pub fn is_empty(&self) -> bool {
-        let guard = self.data.read().unwrap();
-        guard.is_empty()
+        self.queue.is_empty()
     }
 }

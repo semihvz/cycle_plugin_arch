@@ -1,70 +1,66 @@
 use crate::endpoint::StandardEndpoint;
-use crate::system::{System, SystemBox};
-use anyhow::Result;
-use dashmap::DashMap;
+use crate::system::SystemInstance;
 use std::sync::Arc;
 use std::sync::RwLock;
 
 pub struct Orchestrator {
-    systems: Arc<DashMap<String, SystemBox>>,
+    // We use RwLock around a Vec for fast read iteration.
+    systems: Arc<RwLock<Vec<Arc<SystemInstance>>>>,
 }
 
 impl Orchestrator {
     pub fn new() -> Self {
         Self {
-            systems: Arc::new(DashMap::new()),
+            systems: Arc::new(RwLock::new(Vec::new())),
         }
     }
 
-    // Sistem ekle (runtime'da)
-    pub fn register_system(&self, system: Box<dyn System>) {
-        let id = system.id().to_string();
-        self.register_system_with_id(id, system);
+    pub fn register_system(&self, system: SystemInstance) {
+        let mut sys_list = self.systems.write().unwrap();
+        sys_list.retain(|s| s.id != system.id);
+        sys_list.push(Arc::new(system));
     }
 
-    pub fn register_system_with_id(&self, instance_id: String, mut system: Box<dyn System>) {
-        system.set_instance_id(&instance_id);
-        self.systems.insert(instance_id, Arc::new(RwLock::new(system)));
-    }
-
-    // Sistem çıkar
-    pub fn unregister_system(&self, id: &str) -> Result<()> {
-        self.systems.remove(id)
-            .ok_or_else(|| anyhow::anyhow!("Sistem bulunamadı: {}", id))?;
+    pub fn unregister_system(&self, id: &str) -> anyhow::Result<()> {
+        let mut sys_list = self.systems.write().unwrap();
+        let initial_len = sys_list.len();
+        sys_list.retain(|s| s.id != id);
+        if sys_list.len() == initial_len {
+            anyhow::bail!("Sistem bulunamadı: {}", id);
+        }
         Ok(())
     }
 
-    // Endpoint çağrısı (RAM'den, gecikmesiz)
-    pub fn call_endpoint(&self, system_id: &str, endpoint: StandardEndpoint) -> Result<Vec<u8>> {
-        self.call_endpoint_with_data(system_id, endpoint, None)
+    // Gecikmesiz, zero-copy çağrı
+    #[inline(always)]
+    pub fn call_endpoint(&self, system_id: &str, endpoint: StandardEndpoint, payload: &[u8], out_buf: &mut [u8]) -> usize {
+        let sys_list = self.systems.read().unwrap();
+        if let Some(sys) = sys_list.iter().find(|s| s.id == system_id) {
+            sys.call(endpoint, payload, out_buf)
+        } else {
+            0
+        }
     }
 
-    pub fn call_endpoint_with_data(&self, system_id: &str, endpoint: StandardEndpoint, payload: Option<Vec<u8>>) -> Result<Vec<u8>> {
-        let sys = self.systems.get(system_id)
-            .ok_or_else(|| anyhow::anyhow!("Sistem bulunamadı"))?;
-        
-        let guard = sys.read().unwrap();
-        guard.call(endpoint, payload)
-    }
-
-    // Tüm sistemleri listele
     pub fn list_systems(&self) -> Vec<(String, String, bool)> {
+        let sys_list = self.systems.read().unwrap();
         let mut result = Vec::new();
-        for entry in self.systems.iter() {
-            let sys = entry.value().read().unwrap();
-            let ctx = sys.context();
-            let running = *ctx.is_running.read().unwrap();
-            result.push((entry.key().clone(), ctx.name.clone(), running));
+        for sys in sys_list.iter() {
+            let running = sys.context.is_running.load(core::sync::atomic::Ordering::Relaxed);
+            result.push((sys.id.clone(), sys.name.clone(), running));
         }
         result
     }
 
-    // Veri izleme (binary RAM'den okuma)
-    pub fn monitor_data(&self, system_id: &str) -> Result<Vec<u8>> {
-        self.call_endpoint(system_id, StandardEndpoint::DataMonitor)
+    pub fn monitor_data(&self, system_id: &str) -> anyhow::Result<Vec<u8>> {
+        let mut buf = vec![0u8; 1024 * 1024]; // 1MB buffer for UI monitoring
+        let written = self.call_endpoint(system_id, StandardEndpoint::DataMonitor, &[], &mut buf);
+        buf.truncate(written);
+        Ok(buf)
     }
 
-    pub fn get_system(&self, id: &str) -> Option<SystemBox> {
-        self.systems.get(id).map(|e| e.clone())
+    pub fn get_system(&self, id: &str) -> Option<Arc<SystemInstance>> {
+        let sys_list = self.systems.read().unwrap();
+        sys_list.iter().find(|s| s.id == id).cloned()
     }
 }

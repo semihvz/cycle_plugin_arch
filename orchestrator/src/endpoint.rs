@@ -1,15 +1,16 @@
 use std::fmt;
 
+#[repr(u32)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum StandardEndpoint {
-    Start,
-    Stop,
-    IsWorking,
-    DataValid,
-    DataMonitor,
-    RawData,
-    Inbox,
-    Outbox,
+    Start = 0,
+    Stop = 1,
+    IsWorking = 2,
+    DataValid = 3,
+    DataMonitor = 4,
+    RawData = 5,
+    Inbox = 6,
+    Outbox = 7,
 }
 
 impl fmt::Display for StandardEndpoint {

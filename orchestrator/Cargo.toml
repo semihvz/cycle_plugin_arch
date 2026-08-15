@@ -20,3 +20,5 @@ axum = "0.8.9"
 tower-http = { version = "0.7.0", features = ["fs"] }
 serde = { version = "1.0.229", features = ["derive"] }
 uuid = { version = "1.24.1", features = ["v4"] }
+core_affinity = "0.8.3"
+crossbeam = "0.8.4"
