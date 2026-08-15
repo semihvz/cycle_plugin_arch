@@ -4,7 +4,7 @@ use cycle_finance_breakout_system::orchestrator::Orchestrator;
 use cycle_finance_breakout_system::endpoint::StandardEndpoint;
 use cycle_finance_breakout_system::system::{SystemInstance, RawEndpointFn};
 use crossterm::{
-    event::{self, Event, KeyCode, MouseEventKind, MouseButton},
+    event::{self, Event, KeyCode, MouseEventKind, MouseButton, EnableMouseCapture, DisableMouseCapture},
     terminal::{disable_raw_mode, enable_raw_mode, Clear, ClearType},
     ExecutableCommand,
 };
@@ -236,6 +236,7 @@ async fn main() -> anyhow::Result<()> {
     
     enable_raw_mode()?;
     let mut stdout = io::stdout();
+    stdout.execute(EnableMouseCapture)?;
     stdout.execute(Clear(ClearType::All))?;
     let backend = CrosstermBackend::new(stdout);
     let mut terminal = Terminal::new(backend)?;
@@ -525,6 +526,7 @@ async fn main() -> anyhow::Result<()> {
     }
     
     let mut stdout = io::stdout();
+    stdout.execute(DisableMouseCapture)?;
     stdout.execute(crossterm::cursor::Show)?;
     disable_raw_mode()?;
     Ok(())
