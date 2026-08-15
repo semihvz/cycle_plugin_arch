@@ -19,6 +19,7 @@ pub enum ViewMode {
     PluginSelection,
     ConfirmDelete(String),
     ContextMenu(String, u16, u16),
+    InputForm,
 }
 
 pub struct App {
@@ -35,6 +36,10 @@ pub struct App {
     pub is_dragging_split: bool,
     pub monitor_scroll: u16,
     pub sys: sysinfo::System,
+    pub input_symbol: String,
+    pub input_interval: String,
+    pub input_limit: String,
+    pub input_active_field: u8,
 }
 
 impl App {
@@ -55,6 +60,10 @@ impl App {
             is_dragging_split: false,
             monitor_scroll: 0,
             sys,
+            input_symbol: String::new(),
+            input_interval: String::new(),
+            input_limit: String::new(),
+            input_active_field: 0,
         }
     }
 
@@ -226,6 +235,18 @@ async fn main() -> anyhow::Result<()> {
                             app.plugin_selected = 0;
                         }
                         
+                        KeyCode::Char('i') => {
+                            if let Some((id, _, _)) = systems.get(app.selected) {
+                                if id == "manuel_request_01" || id == "plugin_manuel_request_01" || id.contains("manuel_request") {
+                                    app.mode = ViewMode::InputForm;
+                                    app.input_symbol = "BTCUSDT".to_string();
+                                    app.input_interval = "1m".to_string();
+                                    app.input_limit = "5".to_string();
+                                    app.input_active_field = 0;
+                                }
+                            }
+                        }
+                        
                         _ => {}
                     }
                 } else if app.mode == ViewMode::PluginSelection {
@@ -244,6 +265,53 @@ async fn main() -> anyhow::Result<()> {
                                 unsafe { load_plugin_cabi(&mut app, &plugin_name); }
                             }
                             app.mode = ViewMode::Main;
+                        }
+                        _ => {}
+                    }
+                } else if app.mode == ViewMode::InputForm {
+                    match key.code {
+                        KeyCode::Esc => app.mode = ViewMode::Main,
+                        KeyCode::Tab | KeyCode::Down => {
+                            app.input_active_field = (app.input_active_field + 1) % 3;
+                        }
+                        KeyCode::Up => {
+                            app.input_active_field = if app.input_active_field == 0 { 2 } else { app.input_active_field - 1 };
+                        }
+                        KeyCode::Enter => {
+                            if app.input_active_field == 2 {
+                                // Submit form
+                                let systems = app.orchestrator.list_systems();
+                                if let Some((id, _, _)) = systems.get(app.selected) {
+                                    let req = serde_json::json!({
+                                        "action": "manual_trigger",
+                                        "symbol": app.input_symbol.trim(),
+                                        "interval": app.input_interval.trim(),
+                                        "limit": app.input_limit.trim().parse::<i64>().unwrap_or(5)
+                                    });
+                                    let bytes = serde_json::to_vec(&req).unwrap_or_default();
+                                    app.orchestrator.call_endpoint(id, StandardEndpoint::Inbox, &bytes, &mut hft_buf);
+                                    app.log(&format!("Manuel istek {} eklentisine gönderildi", id));
+                                }
+                                app.mode = ViewMode::Main;
+                            } else {
+                                app.input_active_field += 1;
+                            }
+                        }
+                        KeyCode::Backspace => {
+                            match app.input_active_field {
+                                0 => { app.input_symbol.pop(); }
+                                1 => { app.input_interval.pop(); }
+                                2 => { app.input_limit.pop(); }
+                                _ => {}
+                            }
+                        }
+                        KeyCode::Char(c) => {
+                            match app.input_active_field {
+                                0 => app.input_symbol.push(c),
+                                1 => app.input_interval.push(c),
+                                2 => app.input_limit.push(c),
+                                _ => {}
+                            }
                         }
                         _ => {}
                     }

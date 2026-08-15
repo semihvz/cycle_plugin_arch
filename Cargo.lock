@@ -1214,14 +1214,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "plugin_deneme_request"
-version = "0.1.0"
-dependencies = [
- "serde_json",
- "tokio",
-]
-
-[[package]]
 name = "plugin_ethusdt_aggtrade"
 version = "0.1.0"
 dependencies = [
@@ -1267,6 +1259,14 @@ dependencies = [
  "serde_json",
  "tokio",
  "tokio-tungstenite",
+]
+
+[[package]]
+name = "plugin_manuel_request"
+version = "0.1.0"
+dependencies = [
+ "serde_json",
+ "tokio",
 ]
 
 [[package]]

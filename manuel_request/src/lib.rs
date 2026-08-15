@@ -43,23 +43,8 @@ unsafe extern "C" fn handle_endpoint(
     match endpoint_id {
         0 => { // Start
             state.is_running.store(true, Ordering::Relaxed);
-            
-            // İstek oluştur
-            let request_msg = serde_json::json!({
-                "to": "plugin_ohlcv_fetcher",
-                "from": "plugin_deneme_request",
-                "action": "fetch",
-                "symbol": "BTCUSDT",
-                "interval": "5m",
-                "limit": 3
-            });
-            
-            let mut q = state.outbox.lock().unwrap();
-            q.push(request_msg);
-            
             let mut guard = state.data.lock().unwrap();
-            *guard = b"Istek ohlcv_fetcher'a outbox uzerinden gonderildi. Yanit bekleniyor...".to_vec();
-            
+            *guard = b"Manuel request eklentisi baslatildi. TUI uzerinden 'i' tusuna basarak form doldurun.".to_vec();
             0
         }
         1 => { // Stop
@@ -82,7 +67,28 @@ unsafe extern "C" fn handle_endpoint(
             if payload_len > 0 {
                 let slice = std::slice::from_raw_parts(payload, payload_len);
                 if let Ok(msg) = serde_json::from_slice::<serde_json::Value>(slice) {
-                    if msg["action"].as_str() == Some("fetch_response") {
+                    if msg["action"].as_str() == Some("manual_trigger") {
+                        // TUI formundan geldi, ohlcv_fetcher'a yonlendir
+                        let symbol = msg["symbol"].as_str().unwrap_or("BTCUSDT");
+                        let interval = msg["interval"].as_str().unwrap_or("1m");
+                        let limit = msg["limit"].as_i64().unwrap_or(5);
+                        
+                        let request_msg = serde_json::json!({
+                            "to": "plugin_ohlcv_fetcher",
+                            "from": "plugin_manuel_request",
+                            "action": "fetch",
+                            "symbol": symbol,
+                            "interval": interval,
+                            "limit": limit
+                        });
+                        
+                        let mut q = state.outbox.lock().unwrap();
+                        q.push(request_msg);
+                        
+                        let mut guard = state.data.lock().unwrap();
+                        *guard = format!("Istek ohlcv_fetcher'a iletildi ({} {} {} bar). Yanit bekleniyor...", symbol, interval, limit).into_bytes();
+                    } else if msg["action"].as_str() == Some("fetch_response") {
+                        // OHLCV verisi geldi
                         let mut guard = state.data.lock().unwrap();
                         let bytes = serde_json::to_vec_pretty(&msg).unwrap_or_default();
                         *guard = bytes;

@@ -14,6 +14,6 @@ members = [
     "btcusdt_markprice",
     "ethusdt_markprice",
     "ohlcv_fetcher",
-    "deneme_request",
+    "manuel_request",
 ]
 resolver = "2"

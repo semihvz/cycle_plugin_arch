@@ -366,6 +366,55 @@ pub fn draw_ui(f: &mut Frame, app: &mut App) {
         f.render_widget(p, modal_area);
     }
     
+    if app.mode == ViewMode::InputForm {
+        let modal_area = centered_rect(40, 40, size);
+        f.render_widget(Clear, modal_area);
+        
+        let mut form_lines = Vec::new();
+        form_lines.push(Line::from(Span::styled("Lütfen istek parametrelerini girin:", Style::default().fg(Color::Yellow))));
+        form_lines.push(Line::from(""));
+        
+        // Symbol field
+        let sym_style = if app.input_active_field == 0 { Style::default().fg(Color::White).bg(Color::Rgb(60,60,60)) } else { Style::default().fg(Color::DarkGray) };
+        form_lines.push(Line::from(vec![
+            Span::raw(" Sembol: "),
+            Span::styled(format!(" {:<20} ", app.input_symbol), sym_style),
+            if app.input_active_field == 0 { Span::styled(" <", Style::default().fg(Color::Yellow)) } else { Span::raw("") }
+        ]));
+        form_lines.push(Line::from(""));
+        
+        // Interval field
+        let int_style = if app.input_active_field == 1 { Style::default().fg(Color::White).bg(Color::Rgb(60,60,60)) } else { Style::default().fg(Color::DarkGray) };
+        form_lines.push(Line::from(vec![
+            Span::raw(" Aralık: "),
+            Span::styled(format!(" {:<20} ", app.input_interval), int_style),
+            if app.input_active_field == 1 { Span::styled(" <", Style::default().fg(Color::Yellow)) } else { Span::raw("") }
+        ]));
+        form_lines.push(Line::from(""));
+        
+        // Limit field
+        let lim_style = if app.input_active_field == 2 { Style::default().fg(Color::White).bg(Color::Rgb(60,60,60)) } else { Style::default().fg(Color::DarkGray) };
+        form_lines.push(Line::from(vec![
+            Span::raw(" Bar   : "),
+            Span::styled(format!(" {:<20} ", app.input_limit), lim_style),
+            if app.input_active_field == 2 { Span::styled(" <", Style::default().fg(Color::Yellow)) } else { Span::raw("") }
+        ]));
+        
+        form_lines.push(Line::from(""));
+        form_lines.push(Line::from(Span::styled(" [ENTER] İleri/Gönder  |  [TAB] Değiştir  |  [ESC] Çıkış ", Style::default().fg(Color::DarkGray))));
+        
+        let p = Paragraph::new(form_lines)
+            .block(Block::default()
+                .title(Span::styled(" 📝 Manuel İstek Formu ", Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD)))
+                .borders(Borders::ALL)
+                .border_type(BorderType::Rounded)
+                .border_style(Style::default().fg(Color::Cyan))
+                .padding(Padding::new(2, 2, 1, 1)))
+            .alignment(Alignment::Left);
+            
+        f.render_widget(p, modal_area);
+    }
+    
     // Sağ Tık İçerik Menüsü (Context Menu)
     if let ViewMode::ContextMenu(ref id, cx, cy) = app.mode {
         // Small popup at cx, cy
