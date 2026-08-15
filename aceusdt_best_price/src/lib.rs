@@ -125,6 +125,65 @@ async fn stream_book_ticker(
 
     let url = "wss://fstream.binance.com/ws/aceusdt@bookTicker";
 
+    let (db_tx, mut db_rx) = tokio::sync::mpsc::unbounded_channel::<serde_json::Value>();
+    let db_latency_us = Arc::new(std::sync::atomic::AtomicI64::new(0));
+    let db_lat_clone = db_latency_us.clone();
+
+    // SQLite DB Yazıcı Thread (Ayrı Arka Plan Süreci)
+    std::thread::spawn(move || {
+        if let Ok(conn) = rusqlite::Connection::open("market_data.db") {
+            let _ = conn.execute(
+                "CREATE TABLE IF NOT EXISTS aceusdt_bookticker (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    symbol TEXT,
+                    best_bid REAL,
+                    best_bid_qty REAL,
+                    best_ask REAL,
+                    best_ask_qty REAL,
+                    spread REAL,
+                    timestamp INTEGER,
+                    event_time INTEGER,
+                    local_recv_time_ms INTEGER
+                )",
+                [],
+            );
+
+            if let Ok(mut stmt) = conn.prepare(
+                "INSERT INTO aceusdt_bookticker (symbol, best_bid, best_bid_qty, best_ask, best_ask_qty, spread, timestamp, event_time, local_recv_time_ms)
+                 VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)"
+            ) {
+                while let Some(record) = db_rx.blocking_recv() {
+                    let start = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_micros() as i64;
+
+                    let symbol = record["symbol"].as_str().unwrap_or("");
+                    let best_bid: f64 = record["best_bid"].as_str().unwrap_or("0").parse().unwrap_or(0.0);
+                    let best_bid_qty: f64 = record["best_bid_qty"].as_str().unwrap_or("0").parse().unwrap_or(0.0);
+                    let best_ask: f64 = record["best_ask"].as_str().unwrap_or("0").parse().unwrap_or(0.0);
+                    let best_ask_qty: f64 = record["best_ask_qty"].as_str().unwrap_or("0").parse().unwrap_or(0.0);
+                    let spread: f64 = record["spread"].as_str().unwrap_or("0").parse().unwrap_or(0.0);
+                    let timestamp = record["timestamp"].as_i64().unwrap_or(0);
+                    let event_time = record["event_time"].as_i64().unwrap_or(0);
+                    let local_recv_time_ms = record["local_recv_time_ms"].as_i64().unwrap_or(0);
+
+                    let _ = stmt.execute(rusqlite::params![
+                        symbol,
+                        best_bid,
+                        best_bid_qty,
+                        best_ask,
+                        best_ask_qty,
+                        spread,
+                        timestamp,
+                        event_time,
+                        local_recv_time_ms
+                    ]);
+
+                    let end = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_micros() as i64;
+                    db_lat_clone.store(end - start, Ordering::Relaxed);
+                }
+            }
+        }
+    });
+
     // Bağlantı koptuğunda otomatik yeniden bağlanma döngüsü
     while is_running.load(Ordering::Relaxed) {
         {
@@ -161,6 +220,7 @@ async fn stream_book_ticker(
 
                                         let write_time = SystemTime::now().duration_since(UNIX_EPOCH).unwrap();
                                         let processing_latency_us = write_time.as_micros().saturating_sub(recv_time.as_micros()) as i64;
+                                        let current_db_lat = db_latency_us.load(Ordering::Relaxed);
 
                                         // RAM'e JSON binary olarak yaz
                                         let output = serde_json::json!({
@@ -175,8 +235,11 @@ async fn stream_book_ticker(
                                             "local_recv_time_ms": recv_ms,
                                             "local_write_time_ms": write_time.as_millis() as i64,
                                             "exchange_latency_ms": exchange_latency_ms,
-                                            "processing_latency_us": processing_latency_us
+                                            "processing_latency_us": processing_latency_us,
+                                            "db_write_latency_us": current_db_lat
                                         });
+
+                                        let _ = db_tx.send(output.clone());
 
                                         let bytes = serde_json::to_vec(&output).unwrap_or_default();
                                         let mut guard = data.lock().unwrap();

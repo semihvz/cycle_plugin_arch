@@ -184,12 +184,14 @@ pub fn draw_ui(f: &mut Frame, app: &mut App) {
                         
                         let exchange_lat = obj.get("exchange_latency_ms").and_then(|v| v.as_i64()).unwrap_or(0);
                         let proc_lat = obj.get("processing_latency_us").and_then(|v| v.as_i64()).unwrap_or(0);
+                        let db_lat = obj.get("db_write_latency_us").and_then(|v| v.as_i64()).unwrap_or(0);
                         let write_time = obj.get("local_write_time_ms").and_then(|v| v.as_i64()).unwrap_or(current_time);
                         let screen_delay = current_time.saturating_sub(write_time);
                         let e2e_delay = exchange_lat + (proc_lat / 1000) + screen_delay;
 
                         lines.push(Line::from(format!("  - Borsa (Exchange) Gecikmesi : {} ms", exchange_lat)));
                         lines.push(Line::from(format!("  - Plugin İşleme Gecikmesi    : {} µs (mikrosaniye)", proc_lat)));
+                        lines.push(Line::from(format!("  - SQLite DB Yazma Gecikmesi  : {} µs", db_lat)));
                         lines.push(Line::from(format!("  - RAM -> Ekran Gecikmesi     : {} ms", screen_delay)));
                         lines.push(Line::from(Span::styled(format!("  - Toplam Uçtan Uca Gecikme   : {} ms", e2e_delay), Style::default().fg(Color::Yellow))));
                         
