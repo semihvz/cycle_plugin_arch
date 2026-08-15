@@ -6,6 +6,7 @@ use std::time::{SystemTime, UNIX_EPOCH};
 pub struct FlowEngine {
     pub plugins: Vec<PluginConfig>,
     pub router: Arc<MemoryRouter>,
+    pub last_pushed: std::sync::Mutex<std::collections::HashMap<(String, String), u64>>,
 }
 
 impl FlowEngine {
@@ -24,6 +25,7 @@ impl FlowEngine {
         Self {
             plugins,
             router,
+            last_pushed: std::sync::Mutex::new(std::collections::HashMap::new()),
         }
     }
 
@@ -52,8 +54,6 @@ impl FlowEngine {
     {
         let mut temp_buf = vec![0u8; 1024 * 1024];
         for plugin in &self.plugins {
-            // Outbox (7) processing is handled by Orchestrator's main loop for point-to-point RPC
-
             // Pull data from producers
             if !plugin.plugin_outputs.is_empty() {
                 let bytes_read = caller(&plugin.plugin_name, 5, &[], &mut temp_buf); // 5 = RawData
@@ -66,11 +66,13 @@ impl FlowEngine {
                                 for (stream_id, data) in obj {
                                     if let Some(stream) = self.router.get_stream(stream_id) {
                                         let mut guard = stream.data.write().unwrap();
-                                        guard.clear();
                                         if let Ok(data_bytes) = serde_json::to_vec(data) {
-                                            guard.extend_from_slice(&data_bytes);
-                                            let now = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_millis() as u64;
-                                            stream.last_updated.store(now, std::sync::atomic::Ordering::Relaxed);
+                                            if guard.as_slice() != data_bytes.as_slice() {
+                                                guard.clear();
+                                                guard.extend_from_slice(&data_bytes);
+                                                let now = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_millis() as u64;
+                                                stream.last_updated.store(now, std::sync::atomic::Ordering::Relaxed);
+                                            }
                                         }
                                     }
                                 }
@@ -82,10 +84,13 @@ impl FlowEngine {
                         let stream_id = &plugin.plugin_outputs[0];
                         if let Some(stream) = self.router.get_stream(stream_id) {
                             let mut guard = stream.data.write().unwrap();
-                            guard.clear();
-                            guard.extend_from_slice(&temp_buf[..bytes_read]);
-                            let now = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_millis() as u64;
-                            stream.last_updated.store(now, std::sync::atomic::Ordering::Relaxed);
+                            let data_bytes = &temp_buf[..bytes_read];
+                            if guard.as_slice() != data_bytes {
+                                guard.clear();
+                                guard.extend_from_slice(data_bytes);
+                                let now = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_millis() as u64;
+                                stream.last_updated.store(now, std::sync::atomic::Ordering::Relaxed);
+                            }
                         }
                     }
                 }
@@ -94,16 +99,32 @@ impl FlowEngine {
             // Push data to consumers
             for input in &plugin.plugin_inputs {
                 if let Some(stream) = self.router.get_stream(&input.stream_id) {
-                    let guard = stream.data.read().unwrap();
-                    if !guard.is_empty() {
-                        let mut combined = Vec::with_capacity(32 + guard.len());
-                        let mut name_bytes = [0u8; 32];
-                        let name_len = input.stream_id.len().min(32);
-                        name_bytes[..name_len].copy_from_slice(&input.stream_id.as_bytes()[..name_len]);
-                        combined.extend_from_slice(&name_bytes);
-                        combined.extend_from_slice(&guard);
+                    let stream_last_updated = stream.last_updated.load(std::sync::atomic::Ordering::Relaxed);
+                    
+                    let mut should_push = false;
+                    {
+                        let mut pushed = self.last_pushed.lock().unwrap();
+                        let key = (plugin.plugin_name.clone(), input.stream_id.clone());
+                        let last_pushed_time = pushed.get(&key).copied().unwrap_or(0);
                         
-                        let _ = caller(&plugin.plugin_name, 6, &combined, &mut temp_buf);
+                        if stream_last_updated > last_pushed_time {
+                            should_push = true;
+                            pushed.insert(key, stream_last_updated);
+                        }
+                    }
+                    
+                    if should_push {
+                        let guard = stream.data.read().unwrap();
+                        if !guard.is_empty() {
+                            let mut combined = Vec::with_capacity(32 + guard.len());
+                            let mut name_bytes = [0u8; 32];
+                            let name_len = input.stream_id.len().min(32);
+                            name_bytes[..name_len].copy_from_slice(&input.stream_id.as_bytes()[..name_len]);
+                            combined.extend_from_slice(&name_bytes);
+                            combined.extend_from_slice(&guard);
+                            
+                            let _ = caller(&plugin.plugin_name, 6, &combined, &mut temp_buf);
+                        }
                     }
                 }
             }
