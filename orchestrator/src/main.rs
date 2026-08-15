@@ -20,9 +20,10 @@ pub enum ViewMode {
     ConfirmDelete(String),
     ContextMenu(String, u16, u16),
     InputForm,
+    ConfigEditor,
 }
 
-pub struct App {
+pub struct App<'a> {
     pub orchestrator: Arc<Orchestrator>,
     pub selected: usize,
     pub logs: Vec<String>,
@@ -40,9 +41,10 @@ pub struct App {
     pub input_interval: String,
     pub input_limit: String,
     pub input_active_field: u8,
+    pub textarea: Option<tui_textarea::TextArea<'a>>,
 }
 
-impl App {
+impl<'a> App<'a> {
     pub fn new(orchestrator: Arc<Orchestrator>) -> Self {
         let mut sys = sysinfo::System::new_all();
         sys.refresh_all();
@@ -64,6 +66,7 @@ impl App {
             input_interval: String::new(),
             input_limit: String::new(),
             input_active_field: 0,
+            textarea: None,
         }
     }
 
@@ -77,7 +80,7 @@ impl App {
 }
 
 /// Eklenti yükleme yardımcı fonksiyonu (C-ABI: init_plugin)
-unsafe fn load_plugin_cabi(app: &mut App, plugin_name: &str) {
+unsafe fn load_plugin_cabi(app: &mut App<'_>, plugin_name: &str) {
     let ext = if cfg!(target_os = "windows") { "dll" } 
               else if cfg!(target_os = "macos") { "dylib" } 
               else { "so" };
@@ -346,6 +349,26 @@ async fn main() -> anyhow::Result<()> {
                             app.plugin_selected = 0;
                         }
                         
+                        KeyCode::Char('e') | KeyCode::Char('c') => {
+                            if app.active_tab == 2 {
+                                // Ayarlar sekmesinde 'e' basıldıysa editörü aç
+                                if let Ok(content) = std::fs::read_to_string(config_path) {
+                                    let mut textarea = tui_textarea::TextArea::default();
+                                    for line in content.lines() {
+                                        textarea.insert_newline();
+                                        textarea.insert_str(line);
+                                    }
+                                    // Remove the first empty newline that is created by the above logic
+                                    textarea.move_cursor(tui_textarea::CursorMove::Top);
+                                    textarea.delete_line_by_end();
+                                    app.textarea = Some(textarea);
+                                    app.mode = ViewMode::ConfigEditor;
+                                } else {
+                                    app.log("HATA: flow_config.json okunamadı.");
+                                }
+                            }
+                        }
+                        
                         KeyCode::Char('i') => {
                             if let Some((id, _, _)) = systems.get(app.selected) {
                                 if id == "manuel_request_01" || id == "plugin_manuel_request_01" || id.contains("manuel_request") || id.contains("manuel_oi") {
@@ -359,6 +382,41 @@ async fn main() -> anyhow::Result<()> {
                         }
                         
                         _ => {}
+                    }
+                } else if app.mode == ViewMode::ConfigEditor {
+                    // Config Editor mode
+                    let mut should_exit = false;
+                    let mut should_save = false;
+                    
+                    match key.code {
+                        KeyCode::Esc => {
+                            should_exit = true;
+                        }
+                        KeyCode::Char('s') if key.modifiers.contains(event::KeyModifiers::CONTROL) => {
+                            should_save = true;
+                            should_exit = true;
+                        }
+                        _ => {
+                            if let Some(ref mut ta) = app.textarea {
+                                ta.input(key);
+                            }
+                        }
+                    }
+                    
+                    if should_save {
+                        if let Some(ref ta) = app.textarea {
+                            let lines = ta.lines().join("\n");
+                            if std::fs::write(config_path, lines).is_ok() {
+                                app.log("flow_config.json başarıyla kaydedildi. Hot-reload tetiklenecek.");
+                            } else {
+                                app.log("HATA: flow_config.json kaydedilemedi.");
+                            }
+                        }
+                    }
+                    
+                    if should_exit {
+                        app.textarea = None;
+                        app.mode = ViewMode::Main;
                     }
                 } else if app.mode == ViewMode::PluginSelection {
                     match key.code {

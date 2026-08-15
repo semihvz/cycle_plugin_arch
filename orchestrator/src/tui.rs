@@ -7,7 +7,7 @@ use ratatui::{
 };
 use crate::{App, ViewMode};
 
-pub fn draw_ui(f: &mut Frame, app: &mut App) {
+pub fn draw_ui(f: &mut Frame, app: &mut App<'_>) {
     let size = f.size();
 
     let main_layout = Layout::default()
@@ -291,10 +291,55 @@ pub fn draw_ui(f: &mut Frame, app: &mut App) {
         f.render_widget(log_list, main_layout[2]);
     } else {
         // AYARLAR
-        let text = Paragraph::new(Line::from(Span::styled("Ayarlar menüsü (Gelecek Özellik)", Style::default().fg(Color::DarkGray))))
+        let text = vec![
+            Line::from("Ayarlar Menüsü"),
+            Line::from(""),
+            Line::from(vec![
+                Span::raw(" [E] "),
+                Span::styled("flow_config.json Düzenle (Config Editor)", Style::default().fg(Color::Cyan)),
+            ]),
+            Line::from(""),
+            Line::from(Span::styled("Sistem çalışırken ayarları değiştirdiğinizde Hot-Reload ile motor anında güncellenir.", Style::default().fg(Color::DarkGray))),
+        ];
+        let p = Paragraph::new(text)
             .block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).title(" ⚙ Ayarlar "))
             .alignment(Alignment::Center);
-        f.render_widget(text, main_layout[2]);
+        f.render_widget(p, main_layout[2]);
+    }
+
+    // Config Editor Popup
+    if app.mode == ViewMode::ConfigEditor {
+        if let Some(ref mut ta) = app.textarea {
+            let popup_area = centered_rect(80, 80, size);
+            f.render_widget(Clear, popup_area);
+            
+            ta.set_block(
+                Block::default()
+                    .borders(Borders::ALL)
+                    .border_type(BorderType::Thick)
+                    .border_style(Style::default().fg(Color::Cyan))
+                    .title(" 📝 Config Editor (flow_config.json) ")
+            );
+            ta.set_style(Style::default().fg(Color::White).bg(Color::Reset));
+            ta.set_cursor_line_style(Style::default().add_modifier(Modifier::UNDERLINED));
+            
+            f.render_widget(ta.widget(), popup_area);
+            
+            // Editor Help
+            let help_area = Rect {
+                x: popup_area.x,
+                y: popup_area.y + popup_area.height,
+                width: popup_area.width,
+                height: 1,
+            };
+            let help_text = Paragraph::new(Line::from(vec![
+                Span::styled(" [Ctrl+S] Kaydet ve Uygula ", Style::default().fg(Color::Black).bg(Color::Green).add_modifier(Modifier::BOLD)),
+                Span::raw("   "),
+                Span::styled(" [ESC] İptal ", Style::default().fg(Color::White).bg(Color::Red).add_modifier(Modifier::BOLD)),
+            ])).alignment(Alignment::Center);
+            
+            f.render_widget(help_text, help_area);
+        }
     }
 
     // Footer Layout
