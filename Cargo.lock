@@ -986,6 +986,18 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f6b464fbc74e149a392436b17d523f769e057cb6877f6a5c4618bc6f11800548"
 
 [[package]]
+name = "plugin_aceusdt_aggtrade"
+version = "0.1.0"
+dependencies = [
+ "futures-util",
+ "rusqlite",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tokio-tungstenite",
+]
+
+[[package]]
 name = "plugin_aceusdt_best_price"
 version = "0.1.0"
 dependencies = [
@@ -998,7 +1010,31 @@ dependencies = [
 ]
 
 [[package]]
+name = "plugin_btcusdt_aggtrade"
+version = "0.1.0"
+dependencies = [
+ "futures-util",
+ "rusqlite",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tokio-tungstenite",
+]
+
+[[package]]
 name = "plugin_btcusdt_best_price"
+version = "0.1.0"
+dependencies = [
+ "futures-util",
+ "rusqlite",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tokio-tungstenite",
+]
+
+[[package]]
+name = "plugin_ethusdt_aggtrade"
 version = "0.1.0"
 dependencies = [
  "futures-util",

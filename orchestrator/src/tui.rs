@@ -164,19 +164,32 @@ pub fn draw_ui(f: &mut Frame, app: &mut App) {
                         lines.push(Line::from(Span::styled(format!("🚀 {} Canlı Veri", symbol), Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD))));
                         lines.push(Line::from(""));
                         
-                        let bid = obj.get("best_bid").and_then(|v| v.as_str()).unwrap_or("");
-                        let bid_qty = obj.get("best_bid_qty").and_then(|v| v.as_str()).unwrap_or("");
-                        let ask = obj.get("best_ask").and_then(|v| v.as_str()).unwrap_or("");
-                        let ask_qty = obj.get("best_ask_qty").and_then(|v| v.as_str()).unwrap_or("");
-                        let spread = obj.get("spread").and_then(|v| v.as_str()).unwrap_or("");
-                        
-                        lines.push(Line::from(vec![
-                            Span::raw("Alış : "), Span::styled(format!("{} (Miktar: {})", bid, bid_qty), Style::default().fg(Color::Green)),
-                        ]));
-                        lines.push(Line::from(vec![
-                            Span::raw("Satış: "), Span::styled(format!("{} (Miktar: {})", ask, ask_qty), Style::default().fg(Color::Red)),
-                        ]));
-                        lines.push(Line::from(vec![Span::raw("Fark : "), Span::styled(spread.to_string(), Style::default().fg(Color::Cyan))]));
+                        if obj.contains_key("best_bid") {
+                            let bid = obj.get("best_bid").and_then(|v| v.as_str()).unwrap_or("");
+                            let bid_qty = obj.get("best_bid_qty").and_then(|v| v.as_str()).unwrap_or("");
+                            let ask = obj.get("best_ask").and_then(|v| v.as_str()).unwrap_or("");
+                            let ask_qty = obj.get("best_ask_qty").and_then(|v| v.as_str()).unwrap_or("");
+                            let spread = obj.get("spread").and_then(|v| v.as_str()).unwrap_or("");
+                            
+                            lines.push(Line::from(vec![
+                                Span::raw("Alış : "), Span::styled(format!("{} (Miktar: {})", bid, bid_qty), Style::default().fg(Color::Green)),
+                            ]));
+                            lines.push(Line::from(vec![
+                                Span::raw("Satış: "), Span::styled(format!("{} (Miktar: {})", ask, ask_qty), Style::default().fg(Color::Red)),
+                            ]));
+                            lines.push(Line::from(vec![Span::raw("Fark : "), Span::styled(spread.to_string(), Style::default().fg(Color::Cyan))]));
+                        } else if obj.contains_key("price") {
+                            let price = obj.get("price").and_then(|v| v.as_str()).unwrap_or("");
+                            let quantity = obj.get("quantity").and_then(|v| v.as_str()).unwrap_or("");
+                            let is_buyer_maker = obj.get("is_buyer_maker").and_then(|v| v.as_bool()).unwrap_or(false);
+                            
+                            let color = if is_buyer_maker { Color::Red } else { Color::Green };
+                            let side = if is_buyer_maker { "SATIM" } else { "ALIM " };
+                            
+                            lines.push(Line::from(vec![
+                                Span::raw("İşlem : "), Span::styled(format!("{} @ {} (Miktar: {})", side, price, quantity), Style::default().fg(color)),
+                            ]));
+                        }
                         lines.push(Line::from(""));
                         
                         // Metrikler
