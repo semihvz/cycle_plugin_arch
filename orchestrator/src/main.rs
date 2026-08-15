@@ -4,7 +4,7 @@ use orchestrator::orchestrator::Orchestrator;
 use orchestrator::endpoint::StandardEndpoint;
 use orchestrator::system::{System, SystemContext, EndpointHandler};
 use crossterm::{
-    event::{self, Event, KeyCode},
+    event::{self, Event, KeyCode, MouseEventKind, MouseButton, EnableMouseCapture, DisableMouseCapture},
     terminal::{disable_raw_mode, enable_raw_mode, Clear, ClearType},
     ExecutableCommand,
 };
@@ -94,6 +94,7 @@ async fn main() -> anyhow::Result<()> {
     
     enable_raw_mode()?;
     let mut stdout = io::stdout();
+    stdout.execute(EnableMouseCapture)?;
     stdout.execute(Clear(ClearType::All))?;
     let backend = CrosstermBackend::new(stdout);
     let mut terminal = Terminal::new(backend)?;
@@ -153,22 +154,23 @@ async fn main() -> anyhow::Result<()> {
                         
                         KeyCode::Char('l') => {
                             app.mode = ViewMode::PluginSelection;
-                            app.available_plugins = vec![
-                                "plugin_example".to_string(),
-                                "plugin_ai".to_string(),
-                                "plugin_network".to_string(),
-                                "plugin_storage".to_string(),
-                                "plugin_crypto".to_string(),
-                                "plugin_ui_bridge".to_string(),
-                                "plugin_binance".to_string(),
-                                "plugin_aggtrade".to_string(),
-                                "plugin_depth".to_string(),
-                                "plugin_liquidation".to_string(),
-                                "plugin_validator".to_string(),
-                                "plugin_tps".to_string(),
-                                "plugin_ohlcv_fetcher".to_string(),
-                                "plugin_ohlcv_requester".to_string()
-                            ];
+                            let mut plugins = Vec::new();
+                            let mut lib_dir = std::env::current_exe().unwrap_or_else(|_| std::path::PathBuf::from("."));
+                            lib_dir.pop();
+                            let prefix = if cfg!(target_os = "windows") { "" } else { "lib" };
+                            if let Ok(entries) = std::fs::read_dir(&lib_dir) {
+                                for entry in entries.flatten() {
+                                    let name = entry.file_name().to_string_lossy().into_owned();
+                                    if name.starts_with(&format!("{}plugin_", prefix)) && (name.ends_with(".so") || name.ends_with(".dll") || name.ends_with(".dylib")) {
+                                        let ext_len = if name.ends_with(".so") { 3 } else if name.ends_with(".dll") { 4 } else { 6 };
+                                        let plugin_name = &name[prefix.len()..name.len()-ext_len];
+                                        plugins.push(plugin_name.to_string());
+                                    }
+                                }
+                            }
+                            plugins.sort();
+                            plugins.dedup();
+                            app.available_plugins = plugins;
                             app.plugin_selected = 0;
                         }
                         
@@ -215,6 +217,108 @@ async fn main() -> anyhow::Result<()> {
                             app.mode = ViewMode::Main;
                         }
                         _ => {}
+                    }
+                }
+            } else if let Event::Mouse(mouse_event) = event::read()? {
+                if mouse_event.kind == MouseEventKind::Down(MouseButton::Left) {
+                    let row = mouse_event.row;
+                    let col = mouse_event.column;
+                    
+                    if app.mode == ViewMode::Main {
+                        // Footer: "Yeni Eklenti Yükle" button
+                        let size = terminal.size()?;
+                        if row >= size.height.saturating_sub(3) {
+                            if col >= 3 && col <= 3 + 24 {
+                                app.mode = ViewMode::PluginSelection;
+                                let mut plugins = Vec::new();
+                                let mut lib_dir = std::env::current_exe().unwrap_or_else(|_| std::path::PathBuf::from("."));
+                                lib_dir.pop();
+                                let prefix = if cfg!(target_os = "windows") { "" } else { "lib" };
+                                if let Ok(entries) = std::fs::read_dir(&lib_dir) {
+                                    for entry in entries.flatten() {
+                                        let name = entry.file_name().to_string_lossy().into_owned();
+                                        if name.starts_with(&format!("{}plugin_", prefix)) && (name.ends_with(".so") || name.ends_with(".dll") || name.ends_with(".dylib")) {
+                                            let ext_len = if name.ends_with(".so") { 3 } else if name.ends_with(".dll") { 4 } else { 6 };
+                                            let plugin_name = &name[prefix.len()..name.len()-ext_len];
+                                            plugins.push(plugin_name.to_string());
+                                        }
+                                    }
+                                }
+                                plugins.sort();
+                                plugins.dedup();
+                                app.available_plugins = plugins;
+                                app.plugin_selected = 0;
+                            }
+                        } else if row < 3 {
+                            if col < 15 { app.active_tab = 0; }
+                            else if col < 35 { app.active_tab = 1; }
+                            else { app.active_tab = 2; }
+                        } else if app.active_tab == 0 && row >= 8 && row < size.height.saturating_sub(11) {
+                            let systems = app.orchestrator.list_systems();
+                            let index = (row - 8) as usize;
+                            if index < systems.len() {
+                                app.selected = index;
+                                let sys_id = &systems[index].0;
+                                
+                                let table_width = (size.width as f32 * (app.systems_panel_width as f32 / 100.0)) as u16;
+                                let col3_start = (table_width as f32 * 0.5) as u16;
+                                
+                                if col >= col3_start {
+                                    let rel_col = col - col3_start;
+                                    if rel_col < 13 {
+                                        let _ = app.orchestrator.call_endpoint(sys_id, StandardEndpoint::Start);
+                                    } else if rel_col >= 14 && rel_col < 27 {
+                                        let _ = app.orchestrator.call_endpoint(sys_id, StandardEndpoint::Stop);
+                                    } else if rel_col >= 28 && rel_col < 39 {
+                                        if let Ok(data) = app.orchestrator.monitor_data(sys_id) {
+                                            app.monitored_data = Some(data);
+                                        }
+                                    } else if rel_col >= 40 && rel_col < 50 {
+                                        let _ = app.orchestrator.unregister_system(sys_id);
+                                        app.selected = app.selected.saturating_sub(1);
+                                        app.monitored_data = None;
+                                    }
+                                }
+                            }
+                        }
+                    } else if app.mode == ViewMode::PluginSelection {
+                        let size = terminal.size()?;
+                        let popup_w = (size.width as f32 * 0.4) as u16;
+                        let popup_h = (size.height as f32 * 0.6) as u16;
+                        let popup_x = (size.width.saturating_sub(popup_w)) / 2;
+                        let popup_y = (size.height.saturating_sub(popup_h)) / 2;
+                        
+                        if row >= popup_y + 2 && row < popup_y + popup_h - 1 && col >= popup_x && col < popup_x + popup_w {
+                            let idx = (row - (popup_y + 2)) as usize;
+                            if idx < app.available_plugins.len() {
+                                app.plugin_selected = idx;
+                                if let Some(plugin_name) = app.available_plugins.get(app.plugin_selected).cloned() {
+                                    unsafe {
+                                        let ext = if cfg!(target_os = "windows") { "dll" } 
+                                                  else if cfg!(target_os = "macos") { "dylib" } 
+                                                  else { "so" };
+                                        let prefix = if cfg!(target_os = "windows") { "" } else { "lib" };
+                                        let mut lib_path_buf = std::env::current_exe().unwrap_or_else(|_| std::path::PathBuf::from("."));
+                                        lib_path_buf.pop();
+                                        lib_path_buf.push(format!("{}{}.{}", prefix, plugin_name, ext));
+                                        let lib_path = lib_path_buf.to_string_lossy().to_string();
+                                        
+                                        if let Ok(lib) = libloading::Library::new(&lib_path) {
+                                            if let Ok(create_plugin) = lib.get::<libloading::Symbol<unsafe extern "C" fn() -> *mut Box<dyn System>>>(b"create_plugin") {
+                                                let ptr = create_plugin();
+                                                let sys = *Box::from_raw(ptr);
+                                                app.orchestrator.register_system(sys);
+                                                Box::leak(Box::new(lib));
+                                                app.log(&format!("{} yuklendi.", plugin_name));
+                                            }
+                                        }
+                                    }
+                                }
+                                app.mode = ViewMode::Main;
+                            }
+                        } else {
+                            app.mode = ViewMode::Main;
+                        }
                     }
                 }
             }
@@ -282,6 +386,8 @@ async fn main() -> anyhow::Result<()> {
         }
     }
     
+    let mut stdout = io::stdout();
+    stdout.execute(DisableMouseCapture)?;
     disable_raw_mode()?;
     Ok(())
 }
