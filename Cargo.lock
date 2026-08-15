@@ -1010,6 +1010,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "plugin_aceusdt_depth"
+version = "0.1.0"
+dependencies = [
+ "futures-util",
+ "rusqlite",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tokio-tungstenite",
+]
+
+[[package]]
 name = "plugin_btcusdt_aggtrade"
 version = "0.1.0"
 dependencies = [
@@ -1034,6 +1046,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "plugin_btcusdt_depth"
+version = "0.1.0"
+dependencies = [
+ "futures-util",
+ "rusqlite",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tokio-tungstenite",
+]
+
+[[package]]
 name = "plugin_ethusdt_aggtrade"
 version = "0.1.0"
 dependencies = [
@@ -1047,6 +1071,18 @@ dependencies = [
 
 [[package]]
 name = "plugin_ethusdt_best_price"
+version = "0.1.0"
+dependencies = [
+ "futures-util",
+ "rusqlite",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tokio-tungstenite",
+]
+
+[[package]]
+name = "plugin_ethusdt_depth"
 version = "0.1.0"
 dependencies = [
  "futures-util",
