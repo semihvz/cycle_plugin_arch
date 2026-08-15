@@ -13,5 +13,7 @@ members = [
     "aceusdt_markprice",
     "btcusdt_markprice",
     "ethusdt_markprice",
+    "ohlcv_fetcher",
+    "deneme_request",
 ]
 resolver = "2"

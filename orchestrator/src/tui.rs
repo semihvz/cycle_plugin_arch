@@ -203,6 +203,33 @@ pub fn draw_ui(f: &mut Frame, app: &mut App) {
                             lines.push(Line::from(vec![
                                 Span::raw("Fonlama Oranı: "), Span::styled(funding_rate.to_string(), Style::default().fg(Color::LightMagenta)),
                             ]));
+                        } else if obj.contains_key("type") && obj.get("type").and_then(|v| v.as_str()) == Some("ohlcv") {
+                            let symbol = obj.get("symbol").and_then(|v| v.as_str()).unwrap_or("");
+                            let interval = obj.get("interval").and_then(|v| v.as_str()).unwrap_or("");
+                            
+                            lines.push(Line::from(vec![
+                                Span::raw("Veri Tipi: "), Span::styled("OHLCV Mumları", Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)),
+                            ]));
+                            lines.push(Line::from(vec![
+                                Span::raw("Parametre: "), Span::styled(format!("{} - {}", symbol, interval), Style::default().fg(Color::Cyan)),
+                            ]));
+                            
+                            if let Some(arr) = obj.get("data").and_then(|v| v.as_array()) {
+                                lines.push(Line::from(format!("{} adet mum çekildi.", arr.len())));
+                                for (i, kline) in arr.iter().enumerate().take(5) {
+                                    if let Some(k) = kline.as_array() {
+                                        let open = k[1].as_str().unwrap_or("");
+                                        let high = k[2].as_str().unwrap_or("");
+                                        let low = k[3].as_str().unwrap_or("");
+                                        let close = k[4].as_str().unwrap_or("");
+                                        let volume = k[5].as_str().unwrap_or("");
+                                        lines.push(Line::from(format!("[{}] O:{} | H:{} | L:{} | C:{} | V:{}", i, open, high, low, close, volume)));
+                                    }
+                                }
+                                if arr.len() > 5 {
+                                    lines.push(Line::from("..."));
+                                }
+                            }
                         }
                         lines.push(Line::from(""));
                         
