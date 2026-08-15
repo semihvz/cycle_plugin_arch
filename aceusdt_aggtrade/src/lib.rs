@@ -123,7 +123,7 @@ async fn stream_book_ticker(
     use tokio_tungstenite::connect_async;
     use tokio_tungstenite::tungstenite::Message;
 
-    let url = "wss://fstream.binance.com/ws/aceusdt@aggTrade";
+    let url = "wss://fstream.binance.com/ws/aceusdt@trade";
 
     let (db_tx, mut db_rx) = tokio::sync::mpsc::unbounded_channel::<serde_json::Value>();
     let db_latency_us = Arc::new(std::sync::atomic::AtomicI64::new(0));
