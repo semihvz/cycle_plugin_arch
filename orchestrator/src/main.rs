@@ -1,10 +1,10 @@
 mod tui;
 
-use orchestrator::orchestrator::Orchestrator;
-use orchestrator::endpoint::StandardEndpoint;
-use orchestrator::system::{SystemInstance, RawEndpointFn};
+use cycle_finance_breakout_system::orchestrator::Orchestrator;
+use cycle_finance_breakout_system::endpoint::StandardEndpoint;
+use cycle_finance_breakout_system::system::{SystemInstance, RawEndpointFn};
 use crossterm::{
-    event::{self, Event, KeyCode, MouseEventKind, MouseButton, EnableMouseCapture, DisableMouseCapture},
+    event::{self, Event, KeyCode, MouseEventKind, MouseButton},
     terminal::{disable_raw_mode, enable_raw_mode, Clear, ClearType},
     ExecutableCommand,
 };
@@ -82,8 +82,8 @@ unsafe fn load_plugin_cabi(app: &mut App, plugin_name: &str) {
               else if cfg!(target_os = "macos") { "dylib" } 
               else { "so" };
     let prefix = if cfg!(target_os = "windows") { "" } else { "lib" };
-    let mut lib_path_buf = std::env::current_exe().unwrap_or_else(|_| std::path::PathBuf::from("."));
-    lib_path_buf.pop();
+    
+    let mut lib_path_buf = get_plugin_dir();
     lib_path_buf.push(format!("{}{}.{}", prefix, plugin_name, ext));
     let lib_path = lib_path_buf.to_string_lossy().to_string();
     
@@ -112,11 +112,19 @@ unsafe fn load_plugin_cabi(app: &mut App, plugin_name: &str) {
     }
 }
 
+fn get_plugin_dir() -> std::path::PathBuf {
+    let mut dir = std::env::current_exe().unwrap_or_else(|_| std::path::PathBuf::from("."));
+    dir.pop(); // exe_name
+    if dir.ends_with("deps") {
+        dir.pop(); // go up to debug/release
+    }
+    dir
+}
+
 /// Eklenti tarama yardımcı fonksiyonu
 fn scan_plugins() -> Vec<String> {
     let mut plugins = Vec::new();
-    let mut lib_dir = std::env::current_exe().unwrap_or_else(|_| std::path::PathBuf::from("."));
-    lib_dir.pop();
+    let lib_dir = get_plugin_dir();
     let prefix = if cfg!(target_os = "windows") { "" } else { "lib" };
     if let Ok(entries) = std::fs::read_dir(&lib_dir) {
         for entry in entries.flatten() {
@@ -168,7 +176,6 @@ async fn main() -> anyhow::Result<()> {
     
     enable_raw_mode()?;
     let mut stdout = io::stdout();
-    stdout.execute(EnableMouseCapture)?;
     stdout.execute(Clear(ClearType::All))?;
     let backend = CrosstermBackend::new(stdout);
     let mut terminal = Terminal::new(backend)?;
@@ -198,6 +205,13 @@ async fn main() -> anyhow::Result<()> {
                                     app.log(&format!("{} başlatıldı (yanıt yok)", id));
                                 }
                             }
+                        }
+
+                        KeyCode::PageDown => {
+                            app.monitor_scroll = app.monitor_scroll.saturating_add(5);
+                        }
+                        KeyCode::PageUp => {
+                            app.monitor_scroll = app.monitor_scroll.saturating_sub(5);
                         }
                         
                         KeyCode::Char('x') => {
@@ -237,11 +251,11 @@ async fn main() -> anyhow::Result<()> {
                         
                         KeyCode::Char('i') => {
                             if let Some((id, _, _)) = systems.get(app.selected) {
-                                if id == "manuel_request_01" || id == "plugin_manuel_request_01" || id.contains("manuel_request") {
+                                if id == "manuel_request_01" || id == "plugin_manuel_request_01" || id.contains("manuel_request") || id.contains("manuel_oi") {
                                     app.mode = ViewMode::InputForm;
                                     app.input_symbol = "BTCUSDT".to_string();
-                                    app.input_interval = "1m".to_string();
-                                    app.input_limit = "5".to_string();
+                                    app.input_interval = if id.contains("manuel_oi") { "5m".to_string() } else { "1m".to_string() };
+                                    app.input_limit = if id.contains("manuel_oi") { "30".to_string() } else { "5".to_string() };
                                     app.input_active_field = 0;
                                 }
                             }
@@ -451,7 +465,7 @@ async fn main() -> anyhow::Result<()> {
     }
     
     let mut stdout = io::stdout();
-    stdout.execute(DisableMouseCapture)?;
+    stdout.execute(crossterm::cursor::Show)?;
     disable_raw_mode()?;
     Ok(())
 }

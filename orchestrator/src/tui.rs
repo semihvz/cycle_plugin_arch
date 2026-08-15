@@ -22,12 +22,12 @@ pub fn draw_ui(f: &mut Frame, app: &mut App) {
         .split(size);
 
     // 0. TABS
-    let titles = vec![" 🖥 Dashboard ", " 📜 Detaylı Loglar ", " ⚙ Ayarlar "].into_iter().map(Line::from).collect();
+    let titles = vec![" DASHBOARD ", " SYSTEM LOGS ", " SETTINGS "].into_iter().map(Line::from).collect();
     let tabs = Tabs::new(titles)
-        .block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).title(" Navigasyon "))
+        .block(Block::default().borders(Borders::ALL).border_type(BorderType::Plain).title(" NAVIGATION "))
         .select(app.active_tab)
         .style(Style::default().fg(Color::DarkGray))
-        .highlight_style(Style::default().fg(Color::LightYellow).add_modifier(Modifier::BOLD))
+        .highlight_style(Style::default().fg(Color::White).add_modifier(Modifier::BOLD))
         .divider(" | ");
     f.render_widget(tabs, main_layout[0]);
 
@@ -41,16 +41,16 @@ pub fn draw_ui(f: &mut Frame, app: &mut App) {
 
     let header_text = vec![
         Line::from(vec![
-            Span::styled(" 🚀 CYCLE-ORC | Orkestratör Paneli | ", Style::default().fg(Color::LightYellow).add_modifier(Modifier::BOLD)),
-            Span::styled("CPU: ", Style::default().fg(Color::DarkGray)),
-            Span::styled(format!("{:.1}% ", cpu_usage), Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD)),
+            Span::styled(" ENTERPRISE ORCHESTRATION CONSOLE ", Style::default().fg(Color::White).add_modifier(Modifier::BOLD)),
+            Span::styled(" | CPU: ", Style::default().fg(Color::DarkGray)),
+            Span::styled(format!("{:.1}% ", cpu_usage), Style::default().fg(Color::White)),
             Span::styled("| RAM: ", Style::default().fg(Color::DarkGray)),
-            Span::styled(format!("{} MB ", used_mem), Style::default().fg(Color::Magenta).add_modifier(Modifier::BOLD)),
+            Span::styled(format!("{} MB ", used_mem), Style::default().fg(Color::White)),
         ])
     ];
 
     let header = Paragraph::new(header_text)
-        .block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).border_style(Style::default().fg(Color::DarkGray)))
+        .block(Block::default().borders(Borders::ALL).border_type(BorderType::Plain).border_style(Style::default().fg(Color::DarkGray)))
         .alignment(Alignment::Center);
     f.render_widget(header, main_layout[1]);
 
@@ -86,13 +86,13 @@ pub fn draw_ui(f: &mut Frame, app: &mut App) {
             let id_color = if *running { Color::White } else { Color::DarkGray };
             
             let actions = Line::from(vec![
-                Span::styled(" [▶ Başlat] ", Style::default().fg(Color::White).bg(Color::Rgb(40, 120, 60))),
+                Span::styled(" [ START ] ", Style::default().fg(Color::White).bg(Color::DarkGray)),
                 Span::styled(" ", Style::default()),
-                Span::styled(" [■ Durdur] ", Style::default().fg(Color::White).bg(Color::Rgb(150, 40, 40))),
+                Span::styled(" [ STOP ] ", Style::default().fg(Color::White).bg(Color::Rgb(60, 60, 60))),
                 Span::styled(" ", Style::default()),
-                Span::styled(" [👁 İzle] ", Style::default().fg(Color::White).bg(Color::Rgb(40, 60, 150))),
+                Span::styled(" [ VIEW ] ", Style::default().fg(Color::White).bg(Color::DarkGray)),
                 Span::styled(" ", Style::default()),
-                Span::styled(" [✖ Sil] ", Style::default().fg(Color::White).bg(Color::Rgb(120, 40, 120))),
+                Span::styled(" [ DEL ] ", Style::default().fg(Color::White).bg(Color::Rgb(60, 60, 60))),
             ]);
             
             Row::new(vec![
@@ -104,14 +104,14 @@ pub fn draw_ui(f: &mut Frame, app: &mut App) {
         }).collect();
 
         let table = Table::new(rows)
-            .header(Row::new(vec![" EKLENTİ ID", " DURUM", " İŞLEMLER"])
-                .style(Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD))
+            .header(Row::new(vec![" MODULE ID", " STATUS", " ACTIONS"])
+                .style(Style::default().fg(Color::White).add_modifier(Modifier::BOLD))
                 .bottom_margin(1))
             .block(Block::default()
-                .title(Span::styled(" 🧩 Sistemler ", Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD)))
+                .title(Span::styled(" SYSTEM MODULES ", Style::default().fg(Color::White).add_modifier(Modifier::BOLD)))
                 .borders(Borders::ALL)
-                .border_type(BorderType::Rounded)
-                .border_style(Style::default().fg(if app.is_dragging_split { Color::Yellow } else { Color::DarkGray }))
+                .border_type(BorderType::Plain)
+                .border_style(Style::default().fg(if app.is_dragging_split { Color::White } else { Color::DarkGray }))
                 .padding(Padding::horizontal(1)))
             .widths(&[Constraint::Percentage(35), Constraint::Percentage(15), Constraint::Percentage(50)])
             .column_spacing(1);
@@ -142,9 +142,9 @@ pub fn draw_ui(f: &mut Frame, app: &mut App) {
         let inspector = Paragraph::new(hex_content)
             .scroll((app.monitor_scroll, 0))
             .block(Block::default()
-                .title(Span::styled(" 🔍 Canlı Veri (Hex) ", Style::default().fg(Color::LightBlue).add_modifier(Modifier::BOLD)))
+                .title(Span::styled(" RAW DATA (HEX) ", Style::default().fg(Color::White).add_modifier(Modifier::BOLD)))
                 .borders(Borders::ALL)
-                .border_type(BorderType::Rounded)
+                .border_type(BorderType::Plain)
                 .border_style(Style::default().fg(Color::DarkGray))
                 .padding(Padding::horizontal(1)));
         f.render_widget(inspector, monitor_layout[0]);
@@ -232,24 +232,6 @@ pub fn draw_ui(f: &mut Frame, app: &mut App) {
                             }
                         }
                         lines.push(Line::from(""));
-                        
-                        // Metrikler
-                        lines.push(Line::from(Span::styled("⚡ HFT Gecikme Metrikleri", Style::default().fg(Color::LightMagenta).add_modifier(Modifier::BOLD))));
-                        
-                        let exchange_lat = obj.get("exchange_latency_ms").and_then(|v| v.as_i64()).unwrap_or(0);
-                        let proc_lat = obj.get("processing_latency_us").and_then(|v| v.as_i64()).unwrap_or(0);
-                        let db_lat = obj.get("db_write_latency_us").and_then(|v| v.as_i64()).unwrap_or(0);
-                        let write_time = obj.get("local_write_time_ms").and_then(|v| v.as_i64()).unwrap_or(current_time);
-                        let screen_delay = current_time.saturating_sub(write_time);
-                        let e2e_delay = exchange_lat + (proc_lat / 1000) + screen_delay;
-
-                        lines.push(Line::from(format!("  - Borsa (Exchange) Gecikmesi : {} ms", exchange_lat)));
-                        lines.push(Line::from(format!("  - Plugin İşleme Gecikmesi    : {} µs (mikrosaniye)", proc_lat)));
-                        lines.push(Line::from(format!("  - SQLite DB Yazma Gecikmesi  : {} µs", db_lat)));
-                        lines.push(Line::from(format!("  - RAM -> Ekran Gecikmesi     : {} ms", screen_delay)));
-                        lines.push(Line::from(Span::styled(format!("  - Toplam Uçtan Uca Gecikme   : {} ms", e2e_delay), Style::default().fg(Color::Yellow))));
-                        
-                        lines.push(Line::from(""));
                         lines.push(Line::from(Span::styled("Ham JSON:", Style::default().fg(Color::DarkGray))));
                         let pretty_json = serde_json::to_string_pretty(&json).unwrap_or_default();
                         for l in pretty_json.lines() {
@@ -269,9 +251,9 @@ pub fn draw_ui(f: &mut Frame, app: &mut App) {
         let text_inspector = Paragraph::new(text_content)
             .scroll((app.monitor_scroll, 0))
             .block(Block::default()
-                .title(Span::styled(" 📄 Canlı Veri (Okunabilir) ", Style::default().fg(Color::LightGreen).add_modifier(Modifier::BOLD)))
+                .title(Span::styled(" LIVE DATA FEED ", Style::default().fg(Color::White).add_modifier(Modifier::BOLD)))
                 .borders(Borders::ALL)
-                .border_type(BorderType::Rounded)
+                .border_type(BorderType::Plain)
                 .border_style(Style::default().fg(Color::DarkGray))
                 .padding(Padding::horizontal(1)))
             .wrap(ratatui::widgets::Wrap { trim: true });
@@ -287,9 +269,9 @@ pub fn draw_ui(f: &mut Frame, app: &mut App) {
 
         let log_list = List::new(log_items)
             .block(Block::default()
-                .title(Span::styled(" 📜 Sistem Olay Günlüğü ", Style::default().fg(Color::LightMagenta).add_modifier(Modifier::BOLD)))
+                .title(Span::styled(" SYSTEM EVENTS ", Style::default().fg(Color::White).add_modifier(Modifier::BOLD)))
                 .borders(Borders::ALL)
-                .border_type(BorderType::Rounded)
+                .border_type(BorderType::Plain)
                 .border_style(Style::default().fg(Color::DarkGray))
                 .padding(Padding::horizontal(1)));
         f.render_widget(log_list, main_layout[3]);

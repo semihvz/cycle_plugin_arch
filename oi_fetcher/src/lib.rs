@@ -1,7 +1,6 @@
 use std::ffi::c_void;
 use std::sync::{Arc, Mutex};
 use std::sync::atomic::{AtomicBool, Ordering};
-use std::time::{SystemTime, UNIX_EPOCH};
 
 #[repr(C)]
 pub struct PluginOps {
@@ -74,14 +73,13 @@ unsafe extern "C" fn handle_endpoint(
             if payload_len > 0 {
                 let slice = std::slice::from_raw_parts(payload, payload_len);
                 if let Ok(msg) = serde_json::from_slice::<serde_json::Value>(slice) {
-                    if msg["action"].as_str() == Some("fetch") {
+                    if msg["action"].as_str() == Some("fetch_oi") {
                         let symbol = msg["symbol"].as_str().unwrap_or("BTCUSDT").to_string();
-                        let interval = msg["interval"].as_str().unwrap_or("1m").to_string();
-                        let limit = msg["limit"].as_i64().unwrap_or(5);
+                        let interval = msg["interval"].as_str().unwrap_or("5m").to_string();
+                        let limit = msg["limit"].as_i64().unwrap_or(30);
                         let from = msg["from"].as_str().unwrap_or("").to_string();
                         let context = msg["context"].clone();
                         
-                        let is_running = state.is_running.clone();
                         let outbox = state.outbox.clone();
                         let data = state.data.clone();
                         
@@ -91,16 +89,17 @@ unsafe extern "C" fn handle_endpoint(
                         }
                         
                         state.runtime.spawn(async move {
-                            let url = format!("https://fapi.binance.com/fapi/v1/klines?symbol={}&interval={}&limit={}", symbol, interval, limit);
+                            // OI verisini çekerken 'period' parametresi kullanılıyor.
+                            let url = format!("https://fapi.binance.com/futures/data/openInterestHist?symbol={}&period={}&limit={}", symbol, interval, limit);
                             if let Ok(resp) = reqwest::get(&url).await {
-                                if let Ok(klines) = resp.json::<serde_json::Value>().await {
+                                if let Ok(oi_data) = resp.json::<serde_json::Value>().await {
                                     let mut response_msg = serde_json::json!({
                                         "to": from,
-                                        "action": "fetch_response",
+                                        "action": "fetch_oi_response",
                                         "symbol": symbol,
                                         "interval": interval,
-                                        "data": klines,
-                                        "type": "ohlcv"
+                                        "data": oi_data,
+                                        "type": "oi"
                                     });
                                     
                                     if !context.is_null() {
@@ -111,7 +110,7 @@ unsafe extern "C" fn handle_endpoint(
                                     q.push(response_msg);
                                     
                                     let mut guard = data.lock().unwrap();
-                                    *guard = format!("Veri cekildi, kuyruga eklendi: {} {} {}", symbol, interval, limit).into_bytes();
+                                    *guard = format!("OI verisi cekildi, kuyruga eklendi: {} {} {}", symbol, interval, limit).into_bytes();
                                 }
                             }
                         });

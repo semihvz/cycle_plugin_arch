@@ -1,7 +1,6 @@
 use std::ffi::c_void;
 use std::sync::{Arc, Mutex};
 use std::sync::atomic::{AtomicBool, Ordering};
-use std::time::{SystemTime, UNIX_EPOCH};
 
 #[repr(C)]
 pub struct PluginOps {
@@ -13,7 +12,6 @@ pub struct PluginOps {
 }
 
 struct PluginState {
-    runtime: tokio::runtime::Runtime,
     is_running: Arc<AtomicBool>,
     data: Arc<Mutex<Vec<u8>>>,
     outbox: Arc<Mutex<Vec<serde_json::Value>>>,
@@ -21,16 +19,9 @@ struct PluginState {
 
 #[no_mangle]
 pub unsafe extern "C" fn init_plugin(state_out: *mut *mut c_void) -> unsafe extern "C" fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -> usize {
-    let runtime = tokio::runtime::Builder::new_multi_thread()
-        .worker_threads(1)
-        .enable_all()
-        .build()
-        .expect("Tokio runtime olusturulamadi");
-
     let state = Box::new(PluginState {
-        runtime,
         is_running: Arc::new(AtomicBool::new(false)),
-        data: Arc::new(Mutex::new(b"Hazir. Istek bekleniyor.".to_vec())),
+        data: Arc::new(Mutex::new(b"Deneme plugin hazir. Baslatildiginda istek atacak.".to_vec())),
         outbox: Arc::new(Mutex::new(Vec::new())),
     });
 
@@ -52,6 +43,8 @@ unsafe extern "C" fn handle_endpoint(
     match endpoint_id {
         0 => { // Start
             state.is_running.store(true, Ordering::Relaxed);
+            let mut guard = state.data.lock().unwrap();
+            *guard = b"Manuel request eklentisi baslatildi. TUI uzerinden 'i' tusuna basarak form doldurun.".to_vec();
             0
         }
         1 => { // Stop
@@ -74,47 +67,31 @@ unsafe extern "C" fn handle_endpoint(
             if payload_len > 0 {
                 let slice = std::slice::from_raw_parts(payload, payload_len);
                 if let Ok(msg) = serde_json::from_slice::<serde_json::Value>(slice) {
-                    if msg["action"].as_str() == Some("fetch") {
-                        let symbol = msg["symbol"].as_str().unwrap_or("BTCUSDT").to_string();
-                        let interval = msg["interval"].as_str().unwrap_or("1m").to_string();
+                    if msg["action"].as_str() == Some("manual_trigger") {
+                        // TUI formundan geldi, ohlcv_fetcher'a yonlendir
+                        let symbol = msg["symbol"].as_str().unwrap_or("BTCUSDT");
+                        let interval = msg["interval"].as_str().unwrap_or("1m");
                         let limit = msg["limit"].as_i64().unwrap_or(5);
-                        let from = msg["from"].as_str().unwrap_or("").to_string();
-                        let context = msg["context"].clone();
                         
-                        let is_running = state.is_running.clone();
-                        let outbox = state.outbox.clone();
-                        let data = state.data.clone();
-                        
-                        {
-                            let mut guard = data.lock().unwrap();
-                            *guard = format!("Istek isleniyor: {} {} {}", symbol, interval, limit).into_bytes();
-                        }
-                        
-                        state.runtime.spawn(async move {
-                            let url = format!("https://fapi.binance.com/fapi/v1/klines?symbol={}&interval={}&limit={}", symbol, interval, limit);
-                            if let Ok(resp) = reqwest::get(&url).await {
-                                if let Ok(klines) = resp.json::<serde_json::Value>().await {
-                                    let mut response_msg = serde_json::json!({
-                                        "to": from,
-                                        "action": "fetch_response",
-                                        "symbol": symbol,
-                                        "interval": interval,
-                                        "data": klines,
-                                        "type": "ohlcv"
-                                    });
-                                    
-                                    if !context.is_null() {
-                                        response_msg["context"] = context;
-                                    }
-                                    
-                                    let mut q = outbox.lock().unwrap();
-                                    q.push(response_msg);
-                                    
-                                    let mut guard = data.lock().unwrap();
-                                    *guard = format!("Veri cekildi, kuyruga eklendi: {} {} {}", symbol, interval, limit).into_bytes();
-                                }
-                            }
+                        let request_msg = serde_json::json!({
+                            "to": "plugin_ms_analyzer",
+                            "from": "plugin_manuel_ms_req",
+                            "action": "analyze",
+                            "symbol": symbol,
+                            "interval": interval,
+                            "limit": limit
                         });
+                        
+                        let mut q = state.outbox.lock().unwrap();
+                        q.push(request_msg);
+                        
+                        let mut guard = state.data.lock().unwrap();
+                        *guard = format!("Analiz istegi ms_analyzer'a iletildi ({} {} {} bar). Yanit bekleniyor...", symbol, interval, limit).into_bytes();
+                    } else if msg["action"].as_str() == Some("analyze_response") || msg["action"].as_str() == Some("fetch_response") {
+                        // Analiz verisi geldi
+                        let mut guard = state.data.lock().unwrap();
+                        let bytes = serde_json::to_vec_pretty(&msg).unwrap_or_default();
+                        *guard = bytes;
                     }
                 }
             }

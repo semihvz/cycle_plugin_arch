@@ -1,19 +1,20 @@
 [workspace]
 members = [
     "orchestrator",
-    "aceusdt_best_price",
-    "btcusdt_best_price",
-    "ethusdt_best_price",
-    "aceusdt_aggtrade",
-    "btcusdt_aggtrade",
-    "ethusdt_aggtrade",
-    "aceusdt_depth",
-    "btcusdt_depth",
-    "ethusdt_depth",
-    "aceusdt_markprice",
-    "btcusdt_markprice",
-    "ethusdt_markprice",
     "ohlcv_fetcher",
+    "ms_analyzer",
+    "manuel_ms_req",
     "manuel_request",
+    "binance_trader",
+    "plugin_breakout",
+    "oi_fetcher",
+    "manuel_oi_req",
+    "all_liquidations",
+    "plugin_data_aggregator",
+    "plugin_feature_engine",
+    "all_aggtrades",
+    "all_markprices",
+    "all_bestprices",
+    "all_depths"
 ]
 resolver = "2"
