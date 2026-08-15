@@ -1,0 +1,16 @@
+[package]
+name = "plugin_validator"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+orchestrator = { path = "../orchestrator" }
+tokio = { version = "1.0", features = ["full"] }
+tokio-tungstenite = { version = "0.20", features = ["rustls-tls-webpki-roots"] }
+futures-util = "0.3"
+serde_json = "1.0"
+serde = { version = "1.0", features = ["derive"] }
+url = "2.2"

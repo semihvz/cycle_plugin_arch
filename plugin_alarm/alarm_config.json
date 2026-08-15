@@ -1,0 +1,8 @@
+{
+  "alarms": [
+    { "symbol": "BTCUSDT", "type": "up", "threshold": 65000.0 },
+    { "symbol": "BTCUSDT", "type": "down", "threshold": 60000.0 },
+    { "symbol": "ETHUSDT", "type": "up", "threshold": 3500.0 },
+    { "symbol": "ETHUSDT", "type": "down", "threshold": 3000.0 }
+  ]
+}
