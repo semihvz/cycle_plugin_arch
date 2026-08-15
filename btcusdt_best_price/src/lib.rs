@@ -1,6 +1,6 @@
 // ═══════════════════════════════════════════════════════════════════
-// Plugin: aceusdt_best_price
-// Binance Futures BookTicker Stream — ACEUSDT
+// Plugin: btcusdt_best_price
+// Binance Futures BookTicker Stream — BTCUSDT
 // HFT C-ABI Eklenti (init_plugin / RawEndpointFn)
 // ═══════════════════════════════════════════════════════════════════
 
@@ -123,7 +123,7 @@ async fn stream_book_ticker(
     use tokio_tungstenite::connect_async;
     use tokio_tungstenite::tungstenite::Message;
 
-    let url = "wss://fstream.binance.com/ws/aceusdt@bookTicker";
+    let url = "wss://fstream.binance.com/ws/btcusdt@bookTicker";
 
     let (db_tx, mut db_rx) = tokio::sync::mpsc::unbounded_channel::<serde_json::Value>();
     let db_latency_us = Arc::new(std::sync::atomic::AtomicI64::new(0));
@@ -131,7 +131,7 @@ async fn stream_book_ticker(
 
     // SQLite DB Yazıcı Thread (Ayrı Arka Plan Süreci)
     std::thread::spawn(move || {
-        if let Ok(conn) = rusqlite::Connection::open("ACEUSDT_data.db") {
+        if let Ok(conn) = rusqlite::Connection::open("BTCUSDT_data.db") {
             let _ = conn.execute(
                 "CREATE TABLE IF NOT EXISTS bookticker (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -224,7 +224,7 @@ async fn stream_book_ticker(
 
                                         // RAM'e JSON binary olarak yaz
                                         let output = serde_json::json!({
-                                            "symbol": "ACEUSDT",
+                                            "symbol": "BTCUSDT",
                                             "best_bid": bid,
                                             "best_bid_qty": json["B"].as_str().unwrap_or("0"),
                                             "best_ask": ask,

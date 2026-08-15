@@ -2,5 +2,7 @@
 members = [
     "orchestrator",
     "aceusdt_best_price",
+    "btcusdt_best_price",
+    "ethusdt_best_price",
 ]
 resolver = "2"
