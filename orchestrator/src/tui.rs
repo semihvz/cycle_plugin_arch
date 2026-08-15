@@ -154,8 +154,57 @@ pub fn draw_ui(f: &mut Frame, app: &mut App) {
             if data.is_empty() {
                 vec![Line::from(Span::styled("Veri yok.", Style::default().fg(Color::DarkGray)))]
             } else {
-                let s = String::from_utf8_lossy(data);
-                s.lines().map(|l| Line::from(Span::styled(l.to_string(), Style::default().fg(Color::LightGreen)))).collect()
+                if let Ok(json) = serde_json::from_slice::<serde_json::Value>(data) {
+                    // JSON ise güzelce formatla ve ekran gecikmesini hesapla
+                    let mut lines = Vec::new();
+                    let current_time = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_millis() as i64;
+                    
+                    if let Some(obj) = json.as_object() {
+                        let symbol = obj.get("symbol").and_then(|v| v.as_str()).unwrap_or("UNKNOWN");
+                        lines.push(Line::from(Span::styled(format!("🚀 {} Canlı Veri", symbol), Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD))));
+                        lines.push(Line::from(""));
+                        
+                        let bid = obj.get("best_bid").and_then(|v| v.as_str()).unwrap_or("");
+                        let bid_qty = obj.get("best_bid_qty").and_then(|v| v.as_str()).unwrap_or("");
+                        let ask = obj.get("best_ask").and_then(|v| v.as_str()).unwrap_or("");
+                        let ask_qty = obj.get("best_ask_qty").and_then(|v| v.as_str()).unwrap_or("");
+                        let spread = obj.get("spread").and_then(|v| v.as_str()).unwrap_or("");
+                        
+                        lines.push(Line::from(vec![
+                            Span::raw("Alış : "), Span::styled(format!("{} (Miktar: {})", bid, bid_qty), Style::default().fg(Color::Green)),
+                        ]));
+                        lines.push(Line::from(vec![
+                            Span::raw("Satış: "), Span::styled(format!("{} (Miktar: {})", ask, ask_qty), Style::default().fg(Color::Red)),
+                        ]));
+                        lines.push(Line::from(vec![Span::raw("Fark : "), Span::styled(spread.to_string(), Style::default().fg(Color::Cyan))]));
+                        lines.push(Line::from(""));
+                        
+                        // Metrikler
+                        lines.push(Line::from(Span::styled("⚡ HFT Gecikme Metrikleri", Style::default().fg(Color::LightMagenta).add_modifier(Modifier::BOLD))));
+                        
+                        let exchange_lat = obj.get("exchange_latency_ms").and_then(|v| v.as_i64()).unwrap_or(0);
+                        let proc_lat = obj.get("processing_latency_us").and_then(|v| v.as_i64()).unwrap_or(0);
+                        let write_time = obj.get("local_write_time_ms").and_then(|v| v.as_i64()).unwrap_or(current_time);
+                        let screen_delay = current_time.saturating_sub(write_time);
+                        let e2e_delay = exchange_lat + (proc_lat / 1000) + screen_delay;
+
+                        lines.push(Line::from(format!("  - Borsa (Exchange) Gecikmesi : {} ms", exchange_lat)));
+                        lines.push(Line::from(format!("  - Plugin İşleme Gecikmesi    : {} µs (mikrosaniye)", proc_lat)));
+                        lines.push(Line::from(format!("  - RAM -> Ekran Gecikmesi     : {} ms", screen_delay)));
+                        lines.push(Line::from(Span::styled(format!("  - Toplam Uçtan Uca Gecikme   : {} ms", e2e_delay), Style::default().fg(Color::Yellow))));
+                        
+                        lines.push(Line::from(""));
+                        lines.push(Line::from(Span::styled("Ham JSON:", Style::default().fg(Color::DarkGray))));
+                        let pretty_json = serde_json::to_string_pretty(&json).unwrap_or_default();
+                        for l in pretty_json.lines() {
+                            lines.push(Line::from(Span::styled(l.to_string(), Style::default().fg(Color::DarkGray))));
+                        }
+                    }
+                    lines
+                } else {
+                    let s = String::from_utf8_lossy(data);
+                    s.lines().map(|l| Line::from(Span::styled(l.to_string(), Style::default().fg(Color::LightGreen)))).collect()
+                }
             }
         } else {
             vec![Line::from(Span::styled("Bekleniyor...", Style::default().fg(Color::DarkGray)))]

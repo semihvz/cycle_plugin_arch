@@ -146,11 +146,21 @@ async fn stream_book_ticker(
                         msg = read.next() => {
                             match msg {
                                 Some(Ok(Message::Text(text))) => {
+                                    use std::time::{SystemTime, UNIX_EPOCH};
+                                    let recv_time = SystemTime::now().duration_since(UNIX_EPOCH).unwrap();
+                                    
                                     if let Ok(json) = serde_json::from_str::<serde_json::Value>(&text) {
                                         let bid = json["b"].as_str().unwrap_or("0");
                                         let ask = json["a"].as_str().unwrap_or("0");
                                         let bid_f: f64 = bid.parse().unwrap_or(0.0);
                                         let ask_f: f64 = ask.parse().unwrap_or(0.0);
+                                        let event_time = json["E"].as_i64().unwrap_or(0);
+                                        
+                                        let recv_ms = recv_time.as_millis() as i64;
+                                        let exchange_latency_ms = recv_ms.saturating_sub(event_time);
+
+                                        let write_time = SystemTime::now().duration_since(UNIX_EPOCH).unwrap();
+                                        let processing_latency_us = write_time.as_micros().saturating_sub(recv_time.as_micros()) as i64;
 
                                         // RAM'e JSON binary olarak yaz
                                         let output = serde_json::json!({
@@ -161,7 +171,11 @@ async fn stream_book_ticker(
                                             "best_ask_qty": json["A"].as_str().unwrap_or("0"),
                                             "spread": format!("{:.10}", ask_f - bid_f),
                                             "timestamp": json["T"].as_i64().unwrap_or(0),
-                                            "event_time": json["E"].as_i64().unwrap_or(0)
+                                            "event_time": event_time,
+                                            "local_recv_time_ms": recv_ms,
+                                            "local_write_time_ms": write_time.as_millis() as i64,
+                                            "exchange_latency_ms": exchange_latency_ms,
+                                            "processing_latency_us": processing_latency_us
                                         });
 
                                         let bytes = serde_json::to_vec(&output).unwrap_or_default();
