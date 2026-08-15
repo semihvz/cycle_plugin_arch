@@ -175,8 +175,10 @@ async fn main() -> anyhow::Result<()> {
         }
     };
     
+    let mut engine_opt = None;
     if let Some(ref config) = flow_config {
         let engine = std::sync::Arc::new(flow_engine::FlowEngine::new(config.clone()));
+        engine_opt = Some(engine.clone());
         app.log("Flow Engine config yüklendi. Router thread başlatılıyor...");
 
         let orc_clone = orchestrator.clone();
@@ -244,8 +246,42 @@ async fn main() -> anyhow::Result<()> {
     // Pre-allocated HFT buffer (sıcak yolda yeni allokasyonu önler)
     let mut hft_buf = vec![0u8; 1024 * 1024]; // 1MB
     
+    let mut last_config_modified = std::fs::metadata(config_path)
+        .and_then(|m| m.modified())
+        .unwrap_or(std::time::SystemTime::now());
+    let mut last_config_check = std::time::Instant::now();
+    
     while app.running {
         terminal.draw(|f| tui::draw_ui(f, &mut app))?;
+        
+        // Hot-reload check for flow_config.json
+        if last_config_check.elapsed().as_secs() >= 2 {
+            last_config_check = std::time::Instant::now();
+            if let Ok(meta) = std::fs::metadata(config_path) {
+                if let Ok(modified) = meta.modified() {
+                    if modified > last_config_modified {
+                        last_config_modified = modified;
+                        app.log("Ayarlar degisti! flow_config.json yeniden yukleniyor...");
+                        if let Ok(new_config) = flow_engine::FlowConfig::load(config_path) {
+                            if let Some(ref eng) = engine_opt {
+                                eng.update_config(new_config.clone());
+                            }
+                            
+                            // Send new config to plugins
+                            for (id, _, _) in app.orchestrator.list_systems() {
+                                if let Some(plugin_conf) = new_config.iter().find(|p| p.plugin_name == id) {
+                                    let payload = serde_json::to_vec(&plugin_conf).unwrap_or_default();
+                                    app.orchestrator.call_endpoint(&id, StandardEndpoint::Start, &payload, &mut hft_buf);
+                                }
+                            }
+                            app.log("Yeni ayarlar basariyla uygulandi.");
+                        } else {
+                            app.log("HATA: Yeni flow_config.json okunamadi veya parse edilemedi.");
+                        }
+                    }
+                }
+            }
+        }
         
         if event::poll(std::time::Duration::from_millis(100))? {
             if let Event::Key(key) = event::read()? {

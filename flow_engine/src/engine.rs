@@ -4,7 +4,7 @@ use std::sync::Arc;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 pub struct FlowEngine {
-    pub plugins: Vec<PluginConfig>,
+    pub plugins: std::sync::RwLock<Vec<PluginConfig>>,
     pub router: Arc<MemoryRouter>,
     pub last_pushed: std::sync::Mutex<std::collections::HashMap<(String, String), u64>>,
 }
@@ -23,9 +23,23 @@ impl FlowEngine {
         }
         
         Self {
-            plugins,
+            plugins: std::sync::RwLock::new(plugins),
             router,
             last_pushed: std::sync::Mutex::new(std::collections::HashMap::new()),
+        }
+    }
+
+    pub fn update_config(&self, new_plugins: Vec<PluginConfig>) {
+        for plugin in &new_plugins {
+            for out in &plugin.plugin_outputs {
+                self.router.get_or_create_stream(out);
+            }
+            for input in &plugin.plugin_inputs {
+                self.router.get_or_create_stream(&input.stream_id);
+            }
+        }
+        if let Ok(mut guard) = self.plugins.write() {
+            *guard = new_plugins;
         }
     }
 
@@ -53,7 +67,8 @@ impl FlowEngine {
         F: FnMut(&str, u32, &[u8], &mut [u8]) -> usize,
     {
         let mut temp_buf = vec![0u8; 1024 * 1024];
-        for plugin in &self.plugins {
+        let plugins_guard = self.plugins.read().unwrap();
+        for plugin in plugins_guard.iter() {
             // Pull data from producers
             if !plugin.plugin_outputs.is_empty() {
                 let bytes_read = caller(&plugin.plugin_name, 5, &[], &mut temp_buf); // 5 = RawData
