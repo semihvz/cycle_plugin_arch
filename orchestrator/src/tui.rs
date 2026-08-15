@@ -189,6 +189,20 @@ pub fn draw_ui(f: &mut Frame, app: &mut App) {
                             lines.push(Line::from(vec![
                                 Span::raw("İşlem : "), Span::styled(format!("{} @ {} (Miktar: {})", side, price, quantity), Style::default().fg(color)),
                             ]));
+                        } else if obj.contains_key("mark_price") {
+                            let mark_price = obj.get("mark_price").and_then(|v| v.as_str()).unwrap_or("");
+                            let index_price = obj.get("index_price").and_then(|v| v.as_str()).unwrap_or("");
+                            let funding_rate = obj.get("funding_rate").and_then(|v| v.as_str()).unwrap_or("");
+                            
+                            lines.push(Line::from(vec![
+                                Span::raw("Mark Fiyatı : "), Span::styled(mark_price.to_string(), Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)),
+                            ]));
+                            lines.push(Line::from(vec![
+                                Span::raw("Endeks Fiyat: "), Span::styled(index_price.to_string(), Style::default().fg(Color::Cyan)),
+                            ]));
+                            lines.push(Line::from(vec![
+                                Span::raw("Fonlama Oranı: "), Span::styled(funding_rate.to_string(), Style::default().fg(Color::LightMagenta)),
+                            ]));
                         }
                         lines.push(Line::from(""));
                         

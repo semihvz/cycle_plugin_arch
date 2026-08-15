@@ -10,5 +10,8 @@ members = [
     "aceusdt_depth",
     "btcusdt_depth",
     "ethusdt_depth",
+    "aceusdt_markprice",
+    "btcusdt_markprice",
+    "ethusdt_markprice",
 ]
 resolver = "2"
