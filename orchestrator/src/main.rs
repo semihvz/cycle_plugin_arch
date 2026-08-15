@@ -141,8 +141,21 @@ async fn main() -> anyhow::Result<()> {
     let orchestrator = Arc::new(Orchestrator::new());
     let mut app = App::new(orchestrator.clone());
     
-    app.log("Sistem başlatıldı. Orkestratör devrede. [HFT Modu: CPU Pinning AÇIK]");
-    app.log("Lütfen 'l' tuşuna basarak eklentileri (plugin) yükleyin.");
+    // Tüm pluginleri otomatik tara, yükle ve başlat
+    app.available_plugins = scan_plugins();
+    for plugin_name in app.available_plugins.clone() {
+        app.log(&format!("Otomatik yükleniyor: {}", plugin_name));
+        unsafe { load_plugin_cabi(&mut app, &plugin_name); }
+    }
+    
+    // Yüklenen tüm pluginleri başlat
+    let mut startup_buf = [0u8; 8];
+    for (id, _, _) in app.orchestrator.list_systems() {
+        app.orchestrator.call_endpoint(&id, StandardEndpoint::Start, &[], &mut startup_buf);
+        app.log(&format!("Otomatik başlatıldı: {}", id));
+    }
+    
+    app.log("Sistem başlatıldı ve 9 veri çekme plugini otomatik yüklendi. [HFT Modu: CPU Pinning AÇIK]");
     
     enable_raw_mode()?;
     let mut stdout = io::stdout();
