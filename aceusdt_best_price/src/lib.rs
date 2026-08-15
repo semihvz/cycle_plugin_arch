@@ -147,37 +147,26 @@ async fn stream_book_ticker(
                             match msg {
                                 Some(Ok(Message::Text(text))) => {
                                     if let Ok(json) = serde_json::from_str::<serde_json::Value>(&text) {
-                                        let bid = json["b"].as_str().unwrap_or("N/A");
-                                        let bid_qty = json["B"].as_str().unwrap_or("N/A");
-                                        let ask = json["a"].as_str().unwrap_or("N/A");
-                                        let ask_qty = json["A"].as_str().unwrap_or("N/A");
-                                        let ts = json["T"].as_i64().unwrap_or(0);
-
+                                        let bid = json["b"].as_str().unwrap_or("0");
+                                        let ask = json["a"].as_str().unwrap_or("0");
                                         let bid_f: f64 = bid.parse().unwrap_or(0.0);
                                         let ask_f: f64 = ask.parse().unwrap_or(0.0);
-                                        let spread = ask_f - bid_f;
 
-                                        let formatted = format!(
-                                            concat!(
-                                                "══════════════════════════════════\n",
-                                                "  ACEUSDT — Best Price (Live)\n",
-                                                "══════════════════════════════════\n",
-                                                "  Best Bid : {} (Qty: {})\n",
-                                                "  Best Ask : {} (Qty: {})\n",
-                                                "  Spread   : {:.10}\n",
-                                                "  Timestamp: {}\n",
-                                                "══════════════════════════════════\n",
-                                                "  RAW JSON:\n  {}\n",
-                                            ),
-                                            bid, bid_qty,
-                                            ask, ask_qty,
-                                            spread,
-                                            ts,
-                                            text.trim(),
-                                        );
+                                        // RAM'e JSON binary olarak yaz
+                                        let output = serde_json::json!({
+                                            "symbol": "ACEUSDT",
+                                            "best_bid": bid,
+                                            "best_bid_qty": json["B"].as_str().unwrap_or("0"),
+                                            "best_ask": ask,
+                                            "best_ask_qty": json["A"].as_str().unwrap_or("0"),
+                                            "spread": format!("{:.10}", ask_f - bid_f),
+                                            "timestamp": json["T"].as_i64().unwrap_or(0),
+                                            "event_time": json["E"].as_i64().unwrap_or(0)
+                                        });
 
+                                        let bytes = serde_json::to_vec(&output).unwrap_or_default();
                                         let mut guard = data.lock().unwrap();
-                                        *guard = formatted.into_bytes();
+                                        *guard = bytes;
                                     }
                                 }
                                 Some(Ok(_)) => {} // Ping/Pong
