@@ -17,6 +17,7 @@ struct PluginState {
     is_running: Arc<AtomicBool>,
     data: Arc<Mutex<Vec<u8>>>,
     outbox: Arc<Mutex<Vec<serde_json::Value>>>,
+    current_config: Arc<Mutex<Option<(String, String, i64)>>>,
 }
 
 #[no_mangle]
@@ -32,6 +33,7 @@ pub unsafe extern "C" fn init_plugin(state_out: *mut *mut c_void) -> unsafe exte
         is_running: Arc::new(AtomicBool::new(false)),
         data: Arc::new(Mutex::new(b"Hazir. Istek bekleniyor.".to_vec())),
         outbox: Arc::new(Mutex::new(Vec::new())),
+        current_config: Arc::new(Mutex::new(None)),
     });
 
     unsafe { *state_out = Box::into_raw(state) as *mut c_void; }
@@ -51,7 +53,45 @@ unsafe extern "C" fn handle_endpoint(
 
     match endpoint_id {
         0 => { // Start
+            if state.is_running.load(Ordering::Relaxed) {
+                return 0;
+            }
             state.is_running.store(true, Ordering::Relaxed);
+            
+            // Okunan dinamik parametreleri payload'dan al
+            if payload_len > 0 {
+                let slice = std::slice::from_raw_parts(payload, payload_len);
+                if let Ok(params) = serde_json::from_slice::<serde_json::Value>(slice) {
+                    let symbol = params["symbol"].as_str().unwrap_or("BTCUSDT").to_string();
+                    let interval = params["interval"].as_str().unwrap_or("15m").to_string();
+                    let limit = params["limit"].as_i64().unwrap_or(1500);
+                    let mut config_guard = state.current_config.lock().unwrap();
+                    *config_guard = Some((symbol, interval, limit));
+                }
+            }
+            
+            let is_running = state.is_running.clone();
+            let data = state.data.clone();
+            let current_config = state.current_config.clone();
+            
+            state.runtime.spawn(async move {
+                while is_running.load(Ordering::Relaxed) {
+                    let config_opt = { current_config.lock().unwrap().clone() };
+                    
+                    if let Some((symbol, interval, limit)) = config_opt {
+                        let url = format!("https://fapi.binance.com/fapi/v1/klines?symbol={}&interval={}&limit={}", symbol, interval, limit);
+                        if let Ok(resp) = reqwest::get(&url).await {
+                            if let Ok(klines) = resp.json::<serde_json::Value>().await {
+                                let mut guard = data.lock().unwrap();
+                                *guard = serde_json::to_vec(&klines).unwrap_or_default();
+                            }
+                        }
+                    }
+                    
+                    // Fetch every 10 seconds for real-time OHLCV updates (can be adjusted)
+                    tokio::time::sleep(tokio::time::Duration::from_secs(10)).await;
+                }
+            });
             0
         }
         1 => { // Stop
@@ -64,58 +104,26 @@ unsafe extern "C" fn handle_endpoint(
         3 => { // DataValid
             1
         }
-        4 => { // DataMonitor
+        4 | 5 => { // DataMonitor & RawData
             let guard = state.data.lock().unwrap();
             let len = guard.len().min(out_max_len);
-            std::ptr::copy_nonoverlapping(guard.as_ptr(), out_buf, len);
+            if len > 0 {
+                std::ptr::copy_nonoverlapping(guard.as_ptr(), out_buf, len);
+            }
             len
         }
         6 => { // Inbox
-            if payload_len > 0 {
+            if payload_len > 32 {
                 let slice = std::slice::from_raw_parts(payload, payload_len);
-                if let Ok(msg) = serde_json::from_slice::<serde_json::Value>(slice) {
-                    if msg["action"].as_str() == Some("fetch") {
-                        let symbol = msg["symbol"].as_str().unwrap_or("BTCUSDT").to_string();
-                        let interval = msg["interval"].as_str().unwrap_or("1m").to_string();
-                        let limit = msg["limit"].as_i64().unwrap_or(5);
-                        let from = msg["from"].as_str().unwrap_or("").to_string();
-                        let context = msg["context"].clone();
-                        
-                        let is_running = state.is_running.clone();
-                        let outbox = state.outbox.clone();
-                        let data = state.data.clone();
-                        
-                        {
-                            let mut guard = data.lock().unwrap();
-                            *guard = format!("Istek isleniyor: {} {} {}", symbol, interval, limit).into_bytes();
-                        }
-                        
-                        state.runtime.spawn(async move {
-                            let url = format!("https://fapi.binance.com/fapi/v1/klines?symbol={}&interval={}&limit={}", symbol, interval, limit);
-                            if let Ok(resp) = reqwest::get(&url).await {
-                                if let Ok(klines) = resp.json::<serde_json::Value>().await {
-                                    let mut response_msg = serde_json::json!({
-                                        "to": from,
-                                        "action": "fetch_response",
-                                        "symbol": symbol,
-                                        "interval": interval,
-                                        "data": klines,
-                                        "type": "ohlcv"
-                                    });
-                                    
-                                    if !context.is_null() {
-                                        response_msg["context"] = context;
-                                    }
-                                    
-                                    let mut q = outbox.lock().unwrap();
-                                    q.push(response_msg);
-                                    
-                                    let mut guard = data.lock().unwrap();
-                                    *guard = format!("Veri cekildi, kuyruga eklendi: {} {} {}", symbol, interval, limit).into_bytes();
-                                }
-                            }
-                        });
-                    }
+                let data_slice = &slice[32..];
+                
+                if let Ok(req) = serde_json::from_slice::<serde_json::Value>(data_slice) {
+                    let symbol = req["symbol"].as_str().unwrap_or("BTCUSDT").to_string();
+                    let interval = req["interval"].as_str().unwrap_or("15m").to_string();
+                    let limit = req["limit"].as_i64().unwrap_or(1500);
+                    
+                    let mut config_guard = state.current_config.lock().unwrap();
+                    *config_guard = Some((symbol, interval, limit));
                 }
             }
             0

@@ -11,6 +11,7 @@ pub enum StandardEndpoint {
     RawData = 5,
     Inbox = 6,
     Outbox = 7,
+    GetSubscriptions = 8,
 }
 
 impl fmt::Display for StandardEndpoint {
@@ -24,6 +25,7 @@ impl fmt::Display for StandardEndpoint {
             StandardEndpoint::RawData => write!(f, "raw_data"),
             StandardEndpoint::Inbox => write!(f, "inbox"),
             StandardEndpoint::Outbox => write!(f, "outbox"),
+            StandardEndpoint::GetSubscriptions => write!(f, "get_subscriptions"),
         }
     }
 }
@@ -39,6 +41,7 @@ impl StandardEndpoint {
             StandardEndpoint::RawData,
             StandardEndpoint::Inbox,
             StandardEndpoint::Outbox,
+            StandardEndpoint::GetSubscriptions,
         ]
     }
 }

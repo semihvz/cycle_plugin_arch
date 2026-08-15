@@ -22,3 +22,4 @@ serde = { version = "1.0.229", features = ["derive"] }
 uuid = { version = "1.24.1", features = ["v4"] }
 core_affinity = "0.8.3"
 crossbeam = "0.8.4"
+flow_engine = { path = "../flow_engine" }

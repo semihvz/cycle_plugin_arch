@@ -1,0 +1,44 @@
+# Flow Engine Configuration
+
+[[plugin]]
+name = "plugin_ohlcv_fetcher"
+type = "producer"
+outputs = ["stream_ohlcv"]
+[plugin.params]
+symbol = "BTCUSDT"
+interval = "15m"
+limit = 1500
+mode = "subscription"
+
+[[plugin]]
+name = "plugin_all_markprices"
+type = "producer"
+outputs = ["stream_markprice"]
+
+[[plugin]]
+name = "plugin_all_aggtrades"
+type = "producer"
+outputs = ["stream_trades"]
+
+[[plugin]]
+name = "plugin_all_depths"
+type = "producer"
+outputs = ["stream_depth"]
+
+[[plugin]]
+name = "plugin_all_bestprices"
+type = "producer"
+outputs = ["stream_bestprice"]
+
+[[plugin]]
+name = "plugin_ms_analyzer"
+type = "processor"
+inputs = { ohlcv = "stream_ohlcv" }
+outputs = ["stream_ms_signals"]
+[plugin.params]
+analysis_mode = "deep"
+
+[[plugin]]
+name = "plugin_breakout"
+type = "consumer"
+inputs = { signals = "stream_ms_signals" }

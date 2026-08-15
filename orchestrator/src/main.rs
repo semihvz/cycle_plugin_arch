@@ -158,21 +158,86 @@ async fn main() -> anyhow::Result<()> {
     let orchestrator = Arc::new(Orchestrator::new());
     let mut app = App::new(orchestrator.clone());
     
-    // Tüm pluginleri otomatik tara, yükle ve başlat
+    // --- FLOW ENGINE & CONFIG INITIALIZATION ---
+    let config_path = if std::path::Path::new("flow_config.toml").exists() {
+        "flow_config.toml"
+    } else if std::path::Path::new("../flow_config.toml").exists() {
+        "../flow_config.toml"
+    } else {
+        "flow_config.toml" // Default fallback
+    };
+    
+    let flow_config = match flow_engine::FlowConfig::load(config_path) {
+        Ok(c) => Some(c),
+        Err(e) => {
+            app.log(&format!("UYARI: flow_config.toml okunamadı: {}", e));
+            None
+        }
+    };
+    
+    if let Some(ref config) = flow_config {
+        let engine = std::sync::Arc::new(flow_engine::FlowEngine::new(config.clone()));
+        app.log("Flow Engine config yüklendi. Router thread başlatılıyor...");
+
+        let orc_clone = orchestrator.clone();
+        let engine_clone = engine.clone();
+
+        std::thread::spawn(move || {
+            if let Some(core_ids) = core_affinity::get_core_ids() {
+                if core_ids.len() > 1 {
+                    core_affinity::set_for_current(core_ids[1]); // Router thread -> Core 1
+                }
+            }
+            
+            let mut last_health_check = std::time::Instant::now();
+            loop {
+                engine_clone.run_loop(|plugin_name, endpoint_id, payload, out_buf| {
+                    let ep = match endpoint_id {
+                        5 => StandardEndpoint::RawData,
+                        6 => StandardEndpoint::Inbox,
+                        7 => StandardEndpoint::Outbox,
+                        _ => return 0,
+                    };
+                    orc_clone.call_endpoint(plugin_name, ep, payload, out_buf)
+                });
+                
+                if last_health_check.elapsed().as_secs() >= 5 {
+                    let warnings = engine_clone.health_check();
+                    for _warning in warnings {}
+                    last_health_check = std::time::Instant::now();
+                }
+
+                std::thread::sleep(std::time::Duration::from_millis(1));
+            }
+        });
+    }
+    
+    // Tüm pluginleri otomatik tara, yükle
     app.available_plugins = scan_plugins();
     for plugin_name in app.available_plugins.clone() {
         app.log(&format!("Otomatik yükleniyor: {}", plugin_name));
         unsafe { load_plugin_cabi(&mut app, &plugin_name); }
     }
     
-    // Yüklenen tüm pluginleri başlat
+    // Yüklenen tüm pluginleri başlat ve parametrelerini gönder
     let mut startup_buf = [0u8; 8];
     for (id, _, _) in app.orchestrator.list_systems() {
-        app.orchestrator.call_endpoint(&id, StandardEndpoint::Start, &[], &mut startup_buf);
+        let mut payload_bytes = Vec::new();
+        if let Some(ref config) = flow_config {
+            if let Some(plugin_conf) = config.plugin.iter().find(|p| p.name == id) {
+                if let Some(ref params) = plugin_conf.params {
+                    // Convert toml::Value to JSON bytes
+                    if let Ok(json_val) = serde_json::to_value(params) {
+                        payload_bytes = serde_json::to_vec(&json_val).unwrap_or_default();
+                    }
+                }
+            }
+        }
+        app.orchestrator.call_endpoint(&id, StandardEndpoint::Start, &payload_bytes, &mut startup_buf);
         app.log(&format!("Otomatik başlatıldı: {}", id));
     }
     
-    app.log("Sistem başlatıldı ve 9 veri çekme plugini otomatik yüklendi. [HFT Modu: CPU Pinning AÇIK]");
+    app.log("Sistem başlatıldı ve eklentiler otomatik yüklendi. [HFT Modu: CPU Pinning AÇIK]");
     
     enable_raw_mode()?;
     let mut stdout = io::stdout();

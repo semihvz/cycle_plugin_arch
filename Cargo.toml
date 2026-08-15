@@ -3,18 +3,13 @@ members = [
     "orchestrator",
     "ohlcv_fetcher",
     "ms_analyzer",
-    "manuel_ms_req",
-    "manuel_request",
     "binance_trader",
     "plugin_breakout",
     "oi_fetcher",
-    "manuel_oi_req",
     "all_liquidations",
-    "plugin_data_aggregator",
-    "plugin_feature_engine",
     "all_aggtrades",
     "all_markprices",
     "all_bestprices",
     "all_depths"
-]
+, "flow_engine"]
 resolver = "2"
