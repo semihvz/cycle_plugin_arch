@@ -2,7 +2,7 @@ use ratatui::{
     layout::{Constraint, Direction, Layout, Rect, Alignment},
     style::{Color, Modifier, Style},
     text::{Line, Span},
-    widgets::{Block, Borders, BorderType, Cell, Paragraph, Row, Table, List, ListItem, Clear, Padding, Tabs},
+    widgets::{Block, Borders, BorderType, Cell, Paragraph, Row, Table, List, ListItem, Clear, Padding, Tabs, Wrap},
     Frame,
 };
 use crate::{App, ViewMode};
@@ -407,54 +407,43 @@ pub fn draw_ui(f: &mut Frame, app: &mut App<'_>) {
         f.render_widget(p, modal_area);
     }
     
-    if app.mode == ViewMode::InputForm {
-        let modal_area = centered_rect(40, 40, size);
+    if app.mode == ViewMode::Shell {
+        let modal_area = centered_rect(60, 20, size);
         f.render_widget(Clear, modal_area);
         
-        let mut form_lines = Vec::new();
-        form_lines.push(Line::from(Span::styled("Lütfen istek parametrelerini girin:", Style::default().fg(Color::Yellow))));
-        form_lines.push(Line::from(""));
+        let mut shell_lines = Vec::new();
+        shell_lines.push(Line::from(Span::styled(" KOMUT İSTEMİ (SHELL) ", Style::default().fg(Color::LightMagenta).add_modifier(Modifier::BOLD))));
+        shell_lines.push(Line::from(""));
         
-        // Symbol field
-        let sym_style = if app.input_active_field == 0 { Style::default().fg(Color::White).bg(Color::Rgb(60,60,60)) } else { Style::default().fg(Color::DarkGray) };
-        form_lines.push(Line::from(vec![
-            Span::raw(" Sembol: "),
-            Span::styled(format!(" {:<20} ", app.input_symbol), sym_style),
-            if app.input_active_field == 0 { Span::styled(" <", Style::default().fg(Color::Yellow)) } else { Span::raw("") }
-        ]));
-        form_lines.push(Line::from(""));
+        // Show history (last 10 commands)
+        let history_start = if app.shell_history.len() > 10 { app.shell_history.len() - 10 } else { 0 };
+        for cmd in app.shell_history.iter().skip(history_start) {
+            shell_lines.push(Line::from(vec![
+                Span::styled(" > ", Style::default().fg(Color::DarkGray)),
+                Span::raw(cmd)
+            ]));
+        }
         
-        // Interval field
-        let int_style = if app.input_active_field == 1 { Style::default().fg(Color::White).bg(Color::Rgb(60,60,60)) } else { Style::default().fg(Color::DarkGray) };
-        form_lines.push(Line::from(vec![
-            Span::raw(" Aralık: "),
-            Span::styled(format!(" {:<20} ", app.input_interval), int_style),
-            if app.input_active_field == 1 { Span::styled(" <", Style::default().fg(Color::Yellow)) } else { Span::raw("") }
-        ]));
-        form_lines.push(Line::from(""));
+        shell_lines.push(Line::from(""));
         
-        // Limit field
-        let lim_style = if app.input_active_field == 2 { Style::default().fg(Color::White).bg(Color::Rgb(60,60,60)) } else { Style::default().fg(Color::DarkGray) };
-        form_lines.push(Line::from(vec![
-            Span::raw(" Bar   : "),
-            Span::styled(format!(" {:<20} ", app.input_limit), lim_style),
-            if app.input_active_field == 2 { Span::styled(" <", Style::default().fg(Color::Yellow)) } else { Span::raw("") }
+        // Current input
+        shell_lines.push(Line::from(vec![
+            Span::styled(" > ", Style::default().fg(Color::Green).add_modifier(Modifier::BOLD)),
+            Span::styled(format!("{}_", app.input_shell), Style::default().fg(Color::White)),
         ]));
         
-        form_lines.push(Line::from(""));
-        form_lines.push(Line::from(Span::styled(" [ENTER] İleri/Gönder  |  [TAB] Değiştir  |  [ESC] Çıkış ", Style::default().fg(Color::DarkGray))));
-        
-        let p = Paragraph::new(form_lines)
-            .block(Block::default()
-                .title(Span::styled(" 📝 Manuel İstek Formu ", Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD)))
-                .borders(Borders::ALL)
-                .border_type(BorderType::Rounded)
-                .border_style(Style::default().fg(Color::Cyan))
-                .padding(Padding::new(2, 2, 1, 1)))
-            .alignment(Alignment::Left);
+        shell_lines.push(Line::from(""));
+        shell_lines.push(Line::from(Span::styled(" Örn: buy BTCUSDT 0.1 60000 20 | close BTCUSDT | trigger 15m 10", Style::default().fg(Color::DarkGray))));
+        shell_lines.push(Line::from(Span::styled(" [ENTER] Çalıştır  |  [ESC] Çıkış ", Style::default().fg(Color::DarkGray))));
+
+        let p = Paragraph::new(shell_lines)
+            .block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).border_style(Style::default().fg(Color::Cyan)).padding(Padding::new(2, 2, 1, 1)))
+            .alignment(Alignment::Left)
+            .wrap(Wrap { trim: true });
             
         f.render_widget(p, modal_area);
     }
+
     
     // Sağ Tık İçerik Menüsü (Context Menu)
     if let ViewMode::ContextMenu(ref id, cx, cy) = app.mode {

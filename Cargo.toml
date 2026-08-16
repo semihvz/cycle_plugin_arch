@@ -11,5 +11,5 @@ members = [
     "all_markprices",
     "all_bestprices",
     "all_depths"
-, "flow_engine"]
+, "flow_engine", "plugin_paper_exchange"]
 resolver = "2"

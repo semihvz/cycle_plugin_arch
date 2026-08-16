@@ -19,7 +19,7 @@ pub enum ViewMode {
     PluginSelection,
     ConfirmDelete(String),
     ContextMenu(String, u16, u16),
-    InputForm,
+    Shell,
     ConfigEditor,
 }
 
@@ -37,10 +37,8 @@ pub struct App<'a> {
     pub is_dragging_split: bool,
     pub monitor_scroll: u16,
     pub sys: sysinfo::System,
-    pub input_symbol: String,
-    pub input_interval: String,
-    pub input_limit: String,
-    pub input_active_field: u8,
+    pub input_shell: String,
+    pub shell_history: Vec<String>,
     pub textarea: Option<tui_textarea::TextArea<'a>>,
 }
 
@@ -62,10 +60,8 @@ impl<'a> App<'a> {
             is_dragging_split: false,
             monitor_scroll: 0,
             sys,
-            input_symbol: String::new(),
-            input_interval: String::new(),
-            input_limit: String::new(),
-            input_active_field: 0,
+            input_shell: String::new(),
+            shell_history: Vec::new(),
             textarea: None,
         }
     }
@@ -371,12 +367,9 @@ async fn main() -> anyhow::Result<()> {
                         
                         KeyCode::Char('i') => {
                             if let Some((id, _, _)) = systems.get(app.selected) {
-                                if id == "manuel_request_01" || id == "plugin_manuel_request_01" || id.contains("manuel_request") || id.contains("manuel_oi") {
-                                    app.mode = ViewMode::InputForm;
-                                    app.input_symbol = "BTCUSDT".to_string();
-                                    app.input_interval = if id.contains("manuel_oi") { "5m".to_string() } else { "1m".to_string() };
-                                    app.input_limit = if id.contains("manuel_oi") { "30".to_string() } else { "5".to_string() };
-                                    app.input_active_field = 0;
+                                if id == "manuel_request_01" || id == "plugin_manuel_request_01" || id.contains("manuel_request") || id.contains("manuel_oi") || id == "plugin_paper_exchange" {
+                                    app.mode = ViewMode::Shell;
+
                                 }
                             }
                         }
@@ -437,53 +430,116 @@ async fn main() -> anyhow::Result<()> {
                         }
                         _ => {}
                     }
-                } else if app.mode == ViewMode::InputForm {
+                } else if app.mode == ViewMode::Shell {
+                    let systems = app.orchestrator.list_systems();
+                    let sys_id = if let Some((id, _, _)) = systems.get(app.selected) {
+                        id.clone()
+                    } else {
+                        "".to_string()
+                    };
+
                     match key.code {
                         KeyCode::Esc => app.mode = ViewMode::Main,
-                        KeyCode::Tab | KeyCode::Down => {
-                            app.input_active_field = (app.input_active_field + 1) % 3;
-                        }
-                        KeyCode::Up => {
-                            app.input_active_field = if app.input_active_field == 0 { 2 } else { app.input_active_field - 1 };
-                        }
                         KeyCode::Enter => {
-                            if app.input_active_field == 2 {
-                                // Submit form
-                                let systems = app.orchestrator.list_systems();
-                                if let Some((id, _, _)) = systems.get(app.selected) {
-                                    let req = serde_json::json!({
-                                        "action": "manual_trigger",
-                                        "symbol": app.input_symbol.trim(),
-                                        "interval": app.input_interval.trim(),
-                                        "limit": app.input_limit.trim().parse::<i64>().unwrap_or(5)
-                                    });
-                                    let bytes = serde_json::to_vec(&req).unwrap_or_default();
-                                    app.orchestrator.call_endpoint(id, StandardEndpoint::Inbox, &bytes, &mut hft_buf);
-                                    app.log(&format!("Manuel istek {} eklentisine gönderildi", id));
+                            let cmd = app.input_shell.trim().to_string();
+                            if !cmd.is_empty() {
+                                app.shell_history.push(cmd.clone());
+                                if app.shell_history.len() > 50 {
+                                    app.shell_history.remove(0);
                                 }
-                                app.mode = ViewMode::Main;
-                            } else {
-                                app.input_active_field += 1;
+                                
+                                let parts: Vec<&str> = cmd.split_whitespace().collect();
+                                let mut hft_buf = vec![0u8; 1024];
+                                
+                                let action = parts[0].to_lowercase();
+                                
+                                if action == "help" {
+                                    app.log("--- Shell Komutları ---");
+                                    app.log("buy <sembol> <miktar> <fiyat|market> [kaldıraç]  (Örn: buy BTCUSDT 0.1 60000 20)");
+                                    app.log("sell <sembol> <miktar> <fiyat|market> [kaldıraç] (Örn: sell ETHUSDT 1.5 market 50)");
+                                    app.log("close <sembol> (Örn: close BTCUSDT) - Tüm açık pozisyonları kapatır");
+                                    app.log("trigger <zaman> <limit> (Örn: trigger 15m 10) - Manuel eklenti tetikler");
+                                    app.log("-----------------------");
+                                } else if sys_id == "plugin_paper_exchange" {
+                                    
+                                    if action == "close" && parts.len() >= 2 {
+                                        let symbol = parts[1].to_uppercase();
+                                        let req = serde_json::json!({
+                                            "action": "close_position",
+                                            "user_id": "admin",
+                                            "symbol": symbol
+                                        });
+                                        let bytes = serde_json::to_vec(&req).unwrap_or_default();
+                                        app.orchestrator.call_endpoint(&sys_id, StandardEndpoint::Inbox, &bytes, &mut hft_buf);
+                                        app.log(&format!("Close pozisyon emri gönderildi: {}", symbol));
+                                    } else if (action == "buy" || action == "sell") && parts.len() >= 4 {
+                                        let symbol = parts[1].to_uppercase();
+                                        let amount = parts[2].parse::<f64>().unwrap_or(0.0);
+                                        let price_str = parts[3].to_lowercase();
+                                        
+                                        let order_type = if price_str == "market" { "Market" } else { "Limit" };
+                                        let price = if price_str == "market" { 0.0 } else { price_str.parse::<f64>().unwrap_or(0.0) };
+                                        
+                                        let leverage = if parts.len() >= 5 {
+                                            parts[4].replace("x", "").parse::<f64>().unwrap_or(20.0)
+                                        } else {
+                                            20.0
+                                        };
+                                        
+                                        let req = serde_json::json!({
+                                            "action": "submit_order",
+                                            "user_id": "admin",
+                                            "data": {
+                                                "id": uuid::Uuid::new_v4().to_string(),
+                                                "user_id": "admin",
+                                                "symbol": symbol,
+                                                "side": if action == "buy" { "Buy" } else { "Sell" },
+                                                "position_side": if action == "buy" { "Long" } else { "Short" },
+                                                "order_type": order_type,
+                                                "price": price,
+                                                "stop_price": 0.0,
+                                                "amount": amount,
+                                                "leverage": leverage,
+                                                "executed": 0.0,
+                                                "timestamp": 0
+                                            }
+                                        });
+                                        let bytes = serde_json::to_vec(&req).unwrap_or_default();
+                                        app.orchestrator.call_endpoint(&sys_id, StandardEndpoint::Inbox, &bytes, &mut hft_buf);
+                                        app.log(&format!("Paper emri gönderildi: {} {} {} @ {} ({}x)", action, amount, symbol, price_str, leverage));
+                                    } else {
+                                        app.log("Hatalı Paper komutu. Örn: buy BTCUSDT 0.1 60000 20");
+                                    }
+                                } else {
+                                    if action == "trigger" && parts.len() >= 3 {
+                                        let interval = parts[1];
+                                        let limit = parts[2].parse::<i64>().unwrap_or(5);
+                                        
+                                        let req = serde_json::json!({
+                                            "action": "manual_trigger",
+                                            "symbol": "BTCUSDT",
+                                            "interval": interval,
+                                            "limit": limit
+                                        });
+                                        let bytes = serde_json::to_vec(&req).unwrap_or_default();
+                                        app.orchestrator.call_endpoint(&sys_id, StandardEndpoint::Inbox, &bytes, &mut hft_buf);
+                                        app.log(&format!("Manuel tetik gönderildi: {}", sys_id));
+                                    } else {
+                                        app.log("Hatalı komut. Örn: trigger 15m 10");
+                                    }
+                                }
                             }
+                            app.input_shell.clear();
                         }
                         KeyCode::Backspace => {
-                            match app.input_active_field {
-                                0 => { app.input_symbol.pop(); }
-                                1 => { app.input_interval.pop(); }
-                                2 => { app.input_limit.pop(); }
-                                _ => {}
-                            }
+                            app.input_shell.pop();
                         }
                         KeyCode::Char(c) => {
-                            match app.input_active_field {
-                                0 => app.input_symbol.push(c),
-                                1 => app.input_interval.push(c),
-                                2 => app.input_limit.push(c),
-                                _ => {}
-                            }
+                            app.input_shell.push(c);
                         }
                         _ => {}
                     }
+
                 }
             } else if let Event::Mouse(mouse_event) = event::read()? {
                 if mouse_event.kind == MouseEventKind::Down(MouseButton::Left) {

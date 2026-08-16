@@ -1,0 +1,13 @@
+[package]
+name = "plugin_paper_exchange"
+version = "0.1.0"
+edition = "2021"
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+dashmap = "6.2.1"
+rusqlite = { version = "0.40.2", features = ["bundled"] }
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.151"
+tokio = { version = "1.53.1", features = ["full"] }

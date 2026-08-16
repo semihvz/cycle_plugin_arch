@@ -38,9 +38,9 @@
         "params": {
           "symbol": "BTCUSDT",
           "interval": "15m",
-          "limit": 1500,
+          "limit": 5,
           "mode": "sub",
-          "sub_interval_secs": 10
+          "sub_interval_secs": 1
         }
       },
       {
@@ -49,9 +49,9 @@
         "params": {
           "symbol": "ETHUSDT",
           "interval": "5m",
-          "limit": 1000,
+          "limit": 5,
           "mode": "sub",
-          "sub_interval_secs": 5
+          "sub_interval_secs": 1
         }
       }
     ],
@@ -71,5 +71,22 @@
     ],
     "plugin_params": {},
     "plugin_outputs": []
+  },
+  {
+    "plugin_name": "plugin_paper_exchange",
+    "plugin_inputs": [
+      {
+        "source": "plugin_all_markprices",
+        "stream_id": "stream_markprice",
+        "params": {}
+      },
+      {
+        "source": "plugin_all_bestprices",
+        "stream_id": "stream_bestprice",
+        "params": {}
+      }
+    ],
+    "plugin_params": {},
+    "plugin_outputs": ["paper_exchange_updates"]
   }
 ]
