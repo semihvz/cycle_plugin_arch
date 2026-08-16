@@ -366,12 +366,7 @@ async fn main() -> anyhow::Result<()> {
                         }
                         
                         KeyCode::Char('i') => {
-                            if let Some((id, _, _)) = systems.get(app.selected) {
-                                if id == "manuel_request_01" || id == "plugin_manuel_request_01" || id.contains("manuel_request") || id.contains("manuel_oi") || id == "plugin_paper_exchange" {
-                                    app.mode = ViewMode::Shell;
-
-                                }
-                            }
+                            app.mode = ViewMode::Shell;
                         }
                         
                         _ => {}
@@ -458,60 +453,57 @@ async fn main() -> anyhow::Result<()> {
                                     app.log("buy <sembol> <miktar> <fiyat|market> [kaldıraç]  (Örn: buy BTCUSDT 0.1 60000 20)");
                                     app.log("sell <sembol> <miktar> <fiyat|market> [kaldıraç] (Örn: sell ETHUSDT 1.5 market 50)");
                                     app.log("close <sembol> (Örn: close BTCUSDT) - Tüm açık pozisyonları kapatır");
-                                    app.log("trigger <zaman> <limit> (Örn: trigger 15m 10) - Manuel eklenti tetikler");
+                                    app.log("trigger <zaman> <limit> (Örn: trigger 15m 10) - Seçili eklentiyi manuel tetikler");
                                     app.log("-----------------------");
-                                } else if sys_id == "plugin_paper_exchange" {
+                                } else if action == "close" && parts.len() >= 2 {
+                                    let symbol = parts[1].to_uppercase();
+                                    let req = serde_json::json!({
+                                        "action": "close_position",
+                                        "user_id": "admin",
+                                        "symbol": symbol
+                                    });
+                                    let bytes = serde_json::to_vec(&req).unwrap_or_default();
+                                    app.orchestrator.call_endpoint("plugin_paper_exchange", StandardEndpoint::Inbox, &bytes, &mut hft_buf);
+                                    app.log(&format!("Close pozisyon emri gönderildi: {}", symbol));
+                                } else if (action == "buy" || action == "sell") && parts.len() >= 4 {
+                                    let symbol = parts[1].to_uppercase();
+                                    let amount = parts[2].parse::<f64>().unwrap_or(0.0);
+                                    let price_str = parts[3].to_lowercase();
                                     
-                                    if action == "close" && parts.len() >= 2 {
-                                        let symbol = parts[1].to_uppercase();
-                                        let req = serde_json::json!({
-                                            "action": "close_position",
-                                            "user_id": "admin",
-                                            "symbol": symbol
-                                        });
-                                        let bytes = serde_json::to_vec(&req).unwrap_or_default();
-                                        app.orchestrator.call_endpoint(&sys_id, StandardEndpoint::Inbox, &bytes, &mut hft_buf);
-                                        app.log(&format!("Close pozisyon emri gönderildi: {}", symbol));
-                                    } else if (action == "buy" || action == "sell") && parts.len() >= 4 {
-                                        let symbol = parts[1].to_uppercase();
-                                        let amount = parts[2].parse::<f64>().unwrap_or(0.0);
-                                        let price_str = parts[3].to_lowercase();
-                                        
-                                        let order_type = if price_str == "market" { "Market" } else { "Limit" };
-                                        let price = if price_str == "market" { 0.0 } else { price_str.parse::<f64>().unwrap_or(0.0) };
-                                        
-                                        let leverage = if parts.len() >= 5 {
-                                            parts[4].replace("x", "").parse::<f64>().unwrap_or(20.0)
-                                        } else {
-                                            20.0
-                                        };
-                                        
-                                        let req = serde_json::json!({
-                                            "action": "submit_order",
-                                            "user_id": "admin",
-                                            "data": {
-                                                "id": uuid::Uuid::new_v4().to_string(),
-                                                "user_id": "admin",
-                                                "symbol": symbol,
-                                                "side": if action == "buy" { "Buy" } else { "Sell" },
-                                                "position_side": if action == "buy" { "Long" } else { "Short" },
-                                                "order_type": order_type,
-                                                "price": price,
-                                                "stop_price": 0.0,
-                                                "amount": amount,
-                                                "leverage": leverage,
-                                                "executed": 0.0,
-                                                "timestamp": 0
-                                            }
-                                        });
-                                        let bytes = serde_json::to_vec(&req).unwrap_or_default();
-                                        app.orchestrator.call_endpoint(&sys_id, StandardEndpoint::Inbox, &bytes, &mut hft_buf);
-                                        app.log(&format!("Paper emri gönderildi: {} {} {} @ {} ({}x)", action, amount, symbol, price_str, leverage));
+                                    let order_type = if price_str == "market" { "Market" } else { "Limit" };
+                                    let price = if price_str == "market" { 0.0 } else { price_str.parse::<f64>().unwrap_or(0.0) };
+                                    
+                                    let leverage = if parts.len() >= 5 {
+                                        parts[4].replace("x", "").parse::<f64>().unwrap_or(20.0)
                                     } else {
-                                        app.log("Hatalı Paper komutu. Örn: buy BTCUSDT 0.1 60000 20");
-                                    }
-                                } else {
-                                    if action == "trigger" && parts.len() >= 3 {
+                                        20.0
+                                    };
+                                    
+                                    let req = serde_json::json!({
+                                        "action": "submit_order",
+                                        "user_id": "admin",
+                                        "data": {
+                                            "id": uuid::Uuid::new_v4().to_string(),
+                                            "user_id": "admin",
+                                            "symbol": symbol,
+                                            "side": if action == "buy" { "Buy" } else { "Sell" },
+                                            "position_side": if action == "buy" { "Long" } else { "Short" },
+                                            "order_type": order_type,
+                                            "price": price,
+                                            "stop_price": 0.0,
+                                            "amount": amount,
+                                            "leverage": leverage,
+                                            "executed": 0.0,
+                                            "timestamp": 0
+                                        }
+                                    });
+                                    let bytes = serde_json::to_vec(&req).unwrap_or_default();
+                                    app.orchestrator.call_endpoint("plugin_paper_exchange", StandardEndpoint::Inbox, &bytes, &mut hft_buf);
+                                    app.log(&format!("Paper emri gönderildi: {} {} {} @ {} ({}x)", action, amount, symbol, price_str, leverage));
+                                } else if action == "trigger" && parts.len() >= 3 {
+                                    if sys_id.is_empty() {
+                                        app.log("Lütfen listeden tetiklenecek bir sistem seçin.");
+                                    } else {
                                         let interval = parts[1];
                                         let limit = parts[2].parse::<i64>().unwrap_or(5);
                                         
@@ -524,9 +516,9 @@ async fn main() -> anyhow::Result<()> {
                                         let bytes = serde_json::to_vec(&req).unwrap_or_default();
                                         app.orchestrator.call_endpoint(&sys_id, StandardEndpoint::Inbox, &bytes, &mut hft_buf);
                                         app.log(&format!("Manuel tetik gönderildi: {}", sys_id));
-                                    } else {
-                                        app.log("Hatalı komut. Örn: trigger 15m 10");
                                     }
+                                } else {
+                                    app.log("Geçersiz komut. Kullanım için 'help' yazabilirsiniz.");
                                 }
                             }
                             app.input_shell.clear();
