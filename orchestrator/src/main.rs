@@ -9,6 +9,7 @@ use crossterm::{
     ExecutableCommand,
 };
 use ratatui::{backend::CrosstermBackend, Terminal};
+use ratatui::layout::{Rect, Layout, Direction, Constraint};
 use std::io;
 use std::sync::Arc;
 use std::ffi::c_void;
@@ -21,6 +22,15 @@ pub enum ViewMode {
     ContextMenu(String, u16, u16),
     Shell,
     ConfigEditor,
+}
+
+#[derive(PartialEq, Clone, Copy, Debug)]
+pub enum ActivePanel {
+    Systems,
+    Hex,
+    LiveFeed,
+    Shell,
+    Logs,
 }
 
 pub struct App<'a> {
@@ -40,6 +50,10 @@ pub struct App<'a> {
     pub input_shell: String,
     pub shell_history: Vec<String>,
     pub textarea: Option<tui_textarea::TextArea<'a>>,
+    pub active_panel: ActivePanel,
+    pub hex_scroll: u16,
+    pub live_feed_scroll: u16,
+    pub logs_scroll: u16,
 }
 
 impl<'a> App<'a> {
@@ -63,6 +77,10 @@ impl<'a> App<'a> {
             input_shell: String::new(),
             shell_history: Vec::new(),
             textarea: None,
+            active_panel: ActivePanel::Systems,
+            hex_scroll: 0,
+            live_feed_scroll: 0,
+            logs_scroll: 0,
         }
     }
 
@@ -304,10 +322,40 @@ async fn main() -> anyhow::Result<()> {
                         }
 
                         KeyCode::PageDown => {
-                            app.monitor_scroll = app.monitor_scroll.saturating_add(5);
+                            match app.active_panel {
+                                ActivePanel::Systems => {
+                                    app.selected = (app.selected + 5).min(systems.len().saturating_sub(1));
+                                }
+                                ActivePanel::Hex => {
+                                    app.hex_scroll = app.hex_scroll.saturating_add(5);
+                                }
+                                ActivePanel::LiveFeed => {
+                                    app.live_feed_scroll = app.live_feed_scroll.saturating_add(5);
+                                }
+                                ActivePanel::Logs => {
+                                    app.logs_scroll = app.logs_scroll.saturating_sub(5);
+                                }
+                                _ => {}
+                            }
                         }
                         KeyCode::PageUp => {
-                            app.monitor_scroll = app.monitor_scroll.saturating_sub(5);
+                            match app.active_panel {
+                                ActivePanel::Systems => {
+                                    app.selected = app.selected.saturating_sub(5);
+                                }
+                                ActivePanel::Hex => {
+                                    app.hex_scroll = app.hex_scroll.saturating_sub(5);
+                                }
+                                ActivePanel::LiveFeed => {
+                                    app.live_feed_scroll = app.live_feed_scroll.saturating_sub(5);
+                                }
+                                ActivePanel::Logs => {
+                                    let max_lines = 6;
+                                    let max_scroll = app.logs.len().saturating_sub(max_lines) as u16;
+                                    app.logs_scroll = (app.logs_scroll + 5).min(max_scroll);
+                                }
+                                _ => {}
+                            }
                         }
                         
                         KeyCode::Char('x') => {
@@ -577,13 +625,45 @@ async fn main() -> anyhow::Result<()> {
 
                 }
             } else if let Event::Mouse(mouse_event) = event::read()? {
+                let row = mouse_event.row;
+                let col = mouse_event.column;
+                let size = terminal.size()?;
+
+                let main_layout = Layout::default()
+                    .direction(Direction::Vertical)
+                    .constraints([
+                        Constraint::Length(3),  // Tabs
+                        Constraint::Length(3),  // Header / System Stats
+                        Constraint::Min(10),    // Orta Alan (Tablo + Monitör)
+                        Constraint::Length(if app.active_tab == 0 { 8 } else { 0 }),  // Loglar
+                        Constraint::Length(3),  // Komutlar (Footer)
+                    ])
+                    .split(size);
+
+                let middle_layout = Layout::default()
+                    .direction(Direction::Horizontal)
+                    .constraints([
+                        Constraint::Percentage(app.systems_panel_width), 
+                        Constraint::Percentage(100 - app.systems_panel_width),
+                    ])
+                    .split(main_layout[2]);
+
+                let monitor_layout = Layout::default()
+                    .direction(Direction::Horizontal)
+                    .constraints([
+                        Constraint::Percentage(33), 
+                        Constraint::Percentage(33), 
+                        Constraint::Percentage(34),
+                    ])
+                    .split(middle_layout[1]);
+
+                let rect_contains = |rect: Rect, x: u16, y: u16| -> bool {
+                    x >= rect.x && x < rect.x + rect.width && y >= rect.y && y < rect.y + rect.height
+                };
+
                 if mouse_event.kind == MouseEventKind::Down(MouseButton::Left) {
-                    let row = mouse_event.row;
-                    let col = mouse_event.column;
-                    
-                    if app.mode == ViewMode::Main {
+                    if app.mode == ViewMode::Main || app.mode == ViewMode::Shell {
                         // Footer: "Yeni Eklenti Yükle" button
-                        let size = terminal.size()?;
                         if row >= size.height.saturating_sub(3) {
                             if col >= 3 && col <= 3 + 24 {
                                 app.mode = ViewMode::PluginSelection;
@@ -594,36 +674,52 @@ async fn main() -> anyhow::Result<()> {
                             if col < 15 { app.active_tab = 0; }
                             else if col < 35 { app.active_tab = 1; }
                             else { app.active_tab = 2; }
-                        } else if app.active_tab == 0 && row >= 8 && row < size.height.saturating_sub(11) {
-                            let systems = app.orchestrator.list_systems();
-                            let index = (row - 8) as usize;
-                            if index < systems.len() {
-                                app.selected = index;
-                                let sys_id = &systems[index].0;
-                                
-                                let table_width = (size.width as f32 * (app.systems_panel_width as f32 / 100.0)) as u16;
-                                let col3_start = (table_width as f32 * 0.5) as u16;
-                                
-                                if col >= col3_start {
-                                    let rel_col = col - col3_start;
-                                    if rel_col < 13 {
-                                        app.orchestrator.call_endpoint(sys_id, StandardEndpoint::Start, &[], &mut hft_buf);
-                                    } else if rel_col >= 14 && rel_col < 27 {
-                                        app.orchestrator.call_endpoint(sys_id, StandardEndpoint::Stop, &[], &mut hft_buf);
-                                    } else if rel_col >= 28 && rel_col < 39 {
-                                        if let Ok(data) = app.orchestrator.monitor_data(sys_id) {
-                                            app.monitored_data = Some(data);
+                        } else if rect_contains(middle_layout[0], col, row) {
+                            app.active_panel = ActivePanel::Systems;
+                            app.mode = ViewMode::Main;
+
+                            if row >= 8 {
+                                let systems = app.orchestrator.list_systems();
+                                let index = (row - 8) as usize;
+                                if index < systems.len() {
+                                    app.selected = index;
+                                    let sys_id = &systems[index].0;
+                                    
+                                    let table_width = middle_layout[0].width;
+                                    let col3_start = (table_width as f32 * 0.5) as u16;
+                                    
+                                    if col >= middle_layout[0].x + col3_start {
+                                        let rel_col = col - (middle_layout[0].x + col3_start);
+                                        if rel_col < 13 {
+                                            app.orchestrator.call_endpoint(sys_id, StandardEndpoint::Start, &[], &mut hft_buf);
+                                        } else if rel_col >= 14 && rel_col < 27 {
+                                            app.orchestrator.call_endpoint(sys_id, StandardEndpoint::Stop, &[], &mut hft_buf);
+                                        } else if rel_col >= 28 && rel_col < 39 {
+                                            if let Ok(data) = app.orchestrator.monitor_data(sys_id) {
+                                                app.monitored_data = Some(data);
+                                            }
+                                        } else if rel_col >= 40 && rel_col < 50 {
+                                            let _ = app.orchestrator.unregister_system(sys_id);
+                                            app.selected = app.selected.saturating_sub(1);
+                                            app.monitored_data = None;
                                         }
-                                    } else if rel_col >= 40 && rel_col < 50 {
-                                        let _ = app.orchestrator.unregister_system(sys_id);
-                                        app.selected = app.selected.saturating_sub(1);
-                                        app.monitored_data = None;
                                     }
                                 }
                             }
+                        } else if rect_contains(monitor_layout[0], col, row) {
+                            app.active_panel = ActivePanel::Hex;
+                            app.mode = ViewMode::Main;
+                        } else if rect_contains(monitor_layout[1], col, row) {
+                            app.active_panel = ActivePanel::LiveFeed;
+                            app.mode = ViewMode::Main;
+                        } else if rect_contains(monitor_layout[2], col, row) {
+                            app.active_panel = ActivePanel::Shell;
+                            app.mode = ViewMode::Shell;
+                        } else if app.active_tab == 0 && rect_contains(main_layout[3], col, row) {
+                            app.active_panel = ActivePanel::Logs;
+                            app.mode = ViewMode::Main;
                         }
                     } else if app.mode == ViewMode::PluginSelection {
-                        let size = terminal.size()?;
                         let popup_w = (size.width as f32 * 0.4) as u16;
                         let popup_h = (size.height as f32 * 0.6) as u16;
                         let popup_x = (size.width.saturating_sub(popup_w)) / 2;
@@ -641,6 +737,29 @@ async fn main() -> anyhow::Result<()> {
                         } else {
                             app.mode = ViewMode::Main;
                         }
+                    }
+                } else if mouse_event.kind == MouseEventKind::ScrollUp {
+                    if rect_contains(monitor_layout[0], col, row) {
+                        app.hex_scroll = app.hex_scroll.saturating_sub(2);
+                    } else if rect_contains(monitor_layout[1], col, row) {
+                        app.live_feed_scroll = app.live_feed_scroll.saturating_sub(2);
+                    } else if app.active_tab == 0 && rect_contains(main_layout[3], col, row) {
+                        let max_lines = 6;
+                        let max_scroll = app.logs.len().saturating_sub(max_lines) as u16;
+                        app.logs_scroll = (app.logs_scroll + 2).min(max_scroll);
+                    } else if rect_contains(middle_layout[0], col, row) {
+                        app.selected = app.selected.saturating_sub(1);
+                    }
+                } else if mouse_event.kind == MouseEventKind::ScrollDown {
+                    if rect_contains(monitor_layout[0], col, row) {
+                        app.hex_scroll = app.hex_scroll.saturating_add(2);
+                    } else if rect_contains(monitor_layout[1], col, row) {
+                        app.live_feed_scroll = app.live_feed_scroll.saturating_add(2);
+                    } else if app.active_tab == 0 && rect_contains(main_layout[3], col, row) {
+                        app.logs_scroll = app.logs_scroll.saturating_sub(2);
+                    } else if rect_contains(middle_layout[0], col, row) {
+                        let systems = app.orchestrator.list_systems();
+                        app.selected = (app.selected + 1) % systems.len().max(1);
                     }
                 }
             }

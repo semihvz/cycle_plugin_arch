@@ -5,7 +5,7 @@ use ratatui::{
     widgets::{Block, Borders, BorderType, Cell, Paragraph, Row, Table, List, ListItem, Clear, Padding, Tabs, Wrap},
     Frame,
 };
-use crate::{App, ViewMode};
+use crate::{App, ViewMode, ActivePanel};
 
 pub fn draw_ui(f: &mut Frame, app: &mut App<'_>) {
     let size = f.size();
@@ -112,7 +112,7 @@ pub fn draw_ui(f: &mut Frame, app: &mut App<'_>) {
                 .title(Span::styled(" SYSTEM MODULES ", Style::default().fg(Color::White).add_modifier(Modifier::BOLD)))
                 .borders(Borders::ALL)
                 .border_type(BorderType::Plain)
-                .border_style(Style::default().fg(if app.is_dragging_split { Color::White } else { Color::DarkGray }))
+                .border_style(Style::default().fg(if app.active_panel == ActivePanel::Systems { Color::Cyan } else if app.is_dragging_split { Color::White } else { Color::DarkGray }))
                 .padding(Padding::horizontal(1)))
             .widths(&[Constraint::Percentage(35), Constraint::Percentage(15), Constraint::Percentage(50)])
             .column_spacing(1);
@@ -141,12 +141,12 @@ pub fn draw_ui(f: &mut Frame, app: &mut App<'_>) {
         };
         
         let inspector = Paragraph::new(hex_content)
-            .scroll((app.monitor_scroll, 0))
+            .scroll((app.hex_scroll, 0))
             .block(Block::default()
                 .title(Span::styled(" RAW DATA (HEX) ", Style::default().fg(Color::White).add_modifier(Modifier::BOLD)))
                 .borders(Borders::ALL)
                 .border_type(BorderType::Plain)
-                .border_style(Style::default().fg(Color::DarkGray))
+                .border_style(Style::default().fg(if app.active_panel == ActivePanel::Hex { Color::Cyan } else { Color::DarkGray }))
                 .padding(Padding::horizontal(1)));
         f.render_widget(inspector, monitor_layout[0]);
 
@@ -250,19 +250,19 @@ pub fn draw_ui(f: &mut Frame, app: &mut App<'_>) {
         };
         
         let text_inspector = Paragraph::new(text_content)
-            .scroll((app.monitor_scroll, 0))
+            .scroll((app.live_feed_scroll, 0))
             .block(Block::default()
                 .title(Span::styled(" LIVE DATA FEED ", Style::default().fg(Color::White).add_modifier(Modifier::BOLD)))
                 .borders(Borders::ALL)
                 .border_type(BorderType::Plain)
-                .border_style(Style::default().fg(Color::DarkGray))
+                .border_style(Style::default().fg(if app.active_panel == ActivePanel::LiveFeed { Color::Cyan } else { Color::DarkGray }))
                 .padding(Padding::horizontal(1)))
             .wrap(ratatui::widgets::Wrap { trim: true });
         f.render_widget(text_inspector, monitor_layout[1]);
 
         // Shell (Komut İstemi) Sağ tarafta sabit
-        let shell_border_color = if app.mode == ViewMode::Shell { Color::Cyan } else { Color::DarkGray };
-        let shell_title_color = if app.mode == ViewMode::Shell { Color::Cyan } else { Color::White };
+        let shell_border_color = if app.active_panel == ActivePanel::Shell || app.mode == ViewMode::Shell { Color::Cyan } else { Color::DarkGray };
+        let shell_title_color = if app.active_panel == ActivePanel::Shell || app.mode == ViewMode::Shell { Color::Cyan } else { Color::White };
         let mut shell_lines = Vec::new();
         shell_lines.push(Line::from(""));
         
@@ -299,8 +299,10 @@ pub fn draw_ui(f: &mut Frame, app: &mut App<'_>) {
 
         // Loglar
         let max_lines = main_layout[3].height.saturating_sub(2) as usize; 
-        let skip = if app.logs.len() > max_lines { app.logs.len() - max_lines } else { 0 };
-        let logs_to_show = &app.logs[skip..];
+        let base_skip = if app.logs.len() > max_lines { app.logs.len() - max_lines } else { 0 };
+        let skip = base_skip.saturating_sub(app.logs_scroll as usize);
+        let take = max_lines.min(app.logs.len() - skip);
+        let logs_to_show = &app.logs[skip..skip + take];
         let log_items: Vec<ListItem> = logs_to_show.iter().map(|msg| {
             ListItem::new(Line::from(Span::styled(msg, Style::default().fg(Color::Gray))))
         }).collect();
@@ -310,7 +312,7 @@ pub fn draw_ui(f: &mut Frame, app: &mut App<'_>) {
                 .title(Span::styled(" SYSTEM EVENTS ", Style::default().fg(Color::White).add_modifier(Modifier::BOLD)))
                 .borders(Borders::ALL)
                 .border_type(BorderType::Plain)
-                .border_style(Style::default().fg(Color::DarkGray))
+                .border_style(Style::default().fg(if app.active_panel == ActivePanel::Logs { Color::Cyan } else { Color::DarkGray }))
                 .padding(Padding::horizontal(1)));
         f.render_widget(log_list, main_layout[3]);
         
