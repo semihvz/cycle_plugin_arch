@@ -67,8 +67,9 @@ pub fn draw_ui(f: &mut Frame, app: &mut App<'_>) {
         let monitor_layout = Layout::default()
             .direction(Direction::Horizontal)
             .constraints([
-                Constraint::Percentage(50), 
-                Constraint::Percentage(50), 
+                Constraint::Percentage(33), 
+                Constraint::Percentage(33), 
+                Constraint::Percentage(34),
             ])
             .split(middle_layout[1]);
             
@@ -259,6 +260,43 @@ pub fn draw_ui(f: &mut Frame, app: &mut App<'_>) {
             .wrap(ratatui::widgets::Wrap { trim: true });
         f.render_widget(text_inspector, monitor_layout[1]);
 
+        // Shell (Komut İstemi) Sağ tarafta sabit
+        let shell_border_color = if app.mode == ViewMode::Shell { Color::Cyan } else { Color::DarkGray };
+        let shell_title_color = if app.mode == ViewMode::Shell { Color::Cyan } else { Color::White };
+        let mut shell_lines = Vec::new();
+        shell_lines.push(Line::from(""));
+        
+        let history_start = if app.shell_history.len() > 10 { app.shell_history.len() - 10 } else { 0 };
+        for cmd in app.shell_history.iter().skip(history_start) {
+            shell_lines.push(Line::from(vec![
+                Span::styled(" > ", Style::default().fg(Color::DarkGray)),
+                Span::raw(cmd)
+            ]));
+        }
+        
+        shell_lines.push(Line::from(""));
+        
+        // Current input
+        shell_lines.push(Line::from(vec![
+            Span::styled(" > ", Style::default().fg(if app.mode == ViewMode::Shell { Color::Green } else { Color::DarkGray }).add_modifier(Modifier::BOLD)),
+            Span::styled(format!("{}_", app.input_shell), Style::default().fg(Color::White)),
+        ]));
+        
+        shell_lines.push(Line::from(""));
+        shell_lines.push(Line::from(Span::styled(" 'i' ile Shell'e geç. Shell'deyken ESC ile çık.", Style::default().fg(Color::DarkGray))));
+
+        let p = Paragraph::new(shell_lines)
+            .block(Block::default()
+                .title(Span::styled(" COMMAND SHELL ", Style::default().fg(shell_title_color).add_modifier(Modifier::BOLD)))
+                .borders(Borders::ALL)
+                .border_type(if app.mode == ViewMode::Shell { BorderType::Rounded } else { BorderType::Plain })
+                .border_style(Style::default().fg(shell_border_color))
+                .padding(Padding::horizontal(1)))
+            .alignment(Alignment::Left)
+            .wrap(Wrap { trim: true });
+            
+        f.render_widget(p, monitor_layout[2]);
+
         // Loglar
         let max_lines = main_layout[3].height.saturating_sub(2) as usize; 
         let skip = if app.logs.len() > max_lines { app.logs.len() - max_lines } else { 0 };
@@ -407,42 +445,7 @@ pub fn draw_ui(f: &mut Frame, app: &mut App<'_>) {
         f.render_widget(p, modal_area);
     }
     
-    if app.mode == ViewMode::Shell {
-        let modal_area = centered_rect(60, 20, size);
-        f.render_widget(Clear, modal_area);
-        
-        let mut shell_lines = Vec::new();
-        shell_lines.push(Line::from(Span::styled(" KOMUT İSTEMİ (SHELL) ", Style::default().fg(Color::LightMagenta).add_modifier(Modifier::BOLD))));
-        shell_lines.push(Line::from(""));
-        
-        // Show history (last 10 commands)
-        let history_start = if app.shell_history.len() > 10 { app.shell_history.len() - 10 } else { 0 };
-        for cmd in app.shell_history.iter().skip(history_start) {
-            shell_lines.push(Line::from(vec![
-                Span::styled(" > ", Style::default().fg(Color::DarkGray)),
-                Span::raw(cmd)
-            ]));
-        }
-        
-        shell_lines.push(Line::from(""));
-        
-        // Current input
-        shell_lines.push(Line::from(vec![
-            Span::styled(" > ", Style::default().fg(Color::Green).add_modifier(Modifier::BOLD)),
-            Span::styled(format!("{}_", app.input_shell), Style::default().fg(Color::White)),
-        ]));
-        
-        shell_lines.push(Line::from(""));
-        shell_lines.push(Line::from(Span::styled(" Örn: buy BTCUSDT 0.1 60000 20 | close BTCUSDT | trigger 15m 10", Style::default().fg(Color::DarkGray))));
-        shell_lines.push(Line::from(Span::styled(" [ENTER] Çalıştır  |  [ESC] Çıkış ", Style::default().fg(Color::DarkGray))));
 
-        let p = Paragraph::new(shell_lines)
-            .block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).border_style(Style::default().fg(Color::Cyan)).padding(Padding::new(2, 2, 1, 1)))
-            .alignment(Alignment::Left)
-            .wrap(Wrap { trim: true });
-            
-        f.render_widget(p, modal_area);
-    }
 
     
     // Sağ Tık İçerik Menüsü (Context Menu)
