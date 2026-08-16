@@ -96,7 +96,7 @@ async fn stream_combined_markprices(
     use tokio_tungstenite::tungstenite::Message;
 
     // Combined stream for markPrice@1s
-    let url = "wss://fstream.binance.com/market/stream?streams=btcusdt@markPrice@1s/ethusdt@markPrice@1s/aceusdt@markPrice@1s";
+    let url = "wss://fstream.binance.com/stream?streams=btcusdt@markPrice@1s/ethusdt@markPrice@1s/aceusdt@markPrice@1s";
 
     let mut retry_count = 0;
     while is_running.load(Ordering::Relaxed) {

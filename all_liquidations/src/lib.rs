@@ -94,7 +94,7 @@ async fn stream_all_liquidations(
     use tokio_tungstenite::connect_async;
     
     // Tüm sembollerin likidasyon akışını dinler
-    let url = "wss://fstream.binance.com/market/ws/!forceOrder@arr";
+    let url = "wss://fstream.binance.com/ws/!forceOrder@arr";
     let mut retry_count = 0;
 
     while is_running.load(Ordering::Relaxed) {

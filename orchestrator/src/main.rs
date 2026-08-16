@@ -453,8 +453,51 @@ async fn main() -> anyhow::Result<()> {
                                     app.log("buy <sembol> <miktar> <fiyat|market> [kaldıraç]  (Örn: buy BTCUSDT 0.1 60000 20)");
                                     app.log("sell <sembol> <miktar> <fiyat|market> [kaldıraç] (Örn: sell ETHUSDT 1.5 market 50)");
                                     app.log("close <sembol> (Örn: close BTCUSDT) - Tüm açık pozisyonları kapatır");
-                                    app.log("trigger <zaman> <limit> (Örn: trigger 15m 10) - Seçili eklentiyi manuel tetikler");
+                                    app.log("trigger <zaman> <limit> (Örn: trigger 15m 10) - Seçili eklentiyi tetikler");
+                                    app.log("start <plugin_id|all> (Örn: start plugin_oi_fetcher) - Eklentiyi başlatır");
+                                    app.log("stop <plugin_id|all> (Örn: stop all) - Eklentiyi durdurur");
+                                    app.log("fetch oi <sembol> [interval] [limit] - OI verisi çeker");
+                                    app.log("quit / exit - Sistemi toptan kapatır");
                                     app.log("-----------------------");
+                                } else if action == "quit" || action == "exit" {
+                                    app.running = false;
+                                } else if action == "start" && parts.len() >= 2 {
+                                    let target = parts[1];
+                                    if target == "all" {
+                                        for (id, _, _) in app.orchestrator.list_systems() {
+                                            app.orchestrator.call_endpoint(&id, StandardEndpoint::Start, &[], &mut hft_buf);
+                                        }
+                                        app.log("Tüm sistemler başlatıldı.");
+                                    } else {
+                                        let written = app.orchestrator.call_endpoint(target, StandardEndpoint::Start, &[], &mut hft_buf);
+                                        app.log(&format!("{} başlatıldı.", target));
+                                    }
+                                } else if action == "stop" && parts.len() >= 2 {
+                                    let target = parts[1];
+                                    if target == "all" {
+                                        for (id, _, _) in app.orchestrator.list_systems() {
+                                            app.orchestrator.call_endpoint(&id, StandardEndpoint::Stop, &[], &mut hft_buf);
+                                        }
+                                        app.log("Tüm sistemler durduruldu.");
+                                    } else {
+                                        app.orchestrator.call_endpoint(target, StandardEndpoint::Stop, &[], &mut hft_buf);
+                                        app.log(&format!("{} durduruldu.", target));
+                                    }
+                                } else if action == "fetch" && parts.len() >= 3 && parts[1] == "oi" {
+                                    let symbol = parts[2].to_uppercase();
+                                    let interval = if parts.len() >= 4 { parts[3] } else { "5m" };
+                                    let limit = if parts.len() >= 5 { parts[4].parse::<i64>().unwrap_or(30) } else { 30 };
+                                    let req = serde_json::json!({
+                                        "action": "fetch_oi",
+                                        "symbol": symbol,
+                                        "interval": interval,
+                                        "limit": limit,
+                                        "from": "admin",
+                                        "context": {}
+                                    });
+                                    let bytes = serde_json::to_vec(&req).unwrap_or_default();
+                                    app.orchestrator.call_endpoint("plugin_oi_fetcher", StandardEndpoint::Inbox, &bytes, &mut hft_buf);
+                                    app.log(&format!("OI fetch isteği gönderildi: {} {} {}", symbol, interval, limit));
                                 } else if action == "close" && parts.len() >= 2 {
                                     let symbol = parts[1].to_uppercase();
                                     let req = serde_json::json!({
