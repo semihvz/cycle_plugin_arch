@@ -6,28 +6,18 @@
     "plugin_outputs": ["btc_15m", "eth_5m"]
   },
   {
-    "plugin_name": "plugin_all_markprices",
+    "plugin_name": "plugin_binance_gateway",
     "plugin_inputs": [],
-    "plugin_params": {},
-    "plugin_outputs": ["stream_markprice"]
-  },
-  {
-    "plugin_name": "plugin_all_aggtrades",
-    "plugin_inputs": [],
-    "plugin_params": {},
-    "plugin_outputs": ["stream_trades"]
-  },
-  {
-    "plugin_name": "plugin_all_depths",
-    "plugin_inputs": [],
-    "plugin_params": {},
-    "plugin_outputs": ["stream_depth"]
-  },
-  {
-    "plugin_name": "plugin_all_bestprices",
-    "plugin_inputs": [],
-    "plugin_params": {},
-    "plugin_outputs": ["stream_bestprice"]
+    "plugin_params": {
+      "symbols": ["BTCUSDT", "ETHUSDT", "ACEUSDT"]
+    },
+    "plugin_outputs": [
+      "stream_markprice",
+      "stream_trades",
+      "stream_depth",
+      "stream_bestprice",
+      "stream_liquidations"
+    ]
   },
   {
     "plugin_name": "plugin_ms_analyzer",
@@ -76,12 +66,12 @@
     "plugin_name": "plugin_paper_exchange",
     "plugin_inputs": [
       {
-        "source": "plugin_all_markprices",
+        "source": "plugin_binance_gateway",
         "stream_id": "stream_markprice",
         "params": {}
       },
       {
-        "source": "plugin_all_bestprices",
+        "source": "plugin_binance_gateway",
         "stream_id": "stream_bestprice",
         "params": {}
       }

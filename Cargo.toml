@@ -6,10 +6,8 @@ members = [
     "binance_trader",
     "plugin_breakout",
     "oi_fetcher",
-    "all_liquidations",
-    "all_aggtrades",
-    "all_markprices",
-    "all_bestprices",
-    "all_depths"
-, "flow_engine", "plugin_paper_exchange"]
+    "flow_engine",
+    "plugin_paper_exchange",
+    "binance_gateway"
+]
 resolver = "2"

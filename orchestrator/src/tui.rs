@@ -130,8 +130,8 @@ pub fn draw_ui(f: &mut Frame, app: &mut App<'_>) {
                     let hex: Vec<String> = chunk.iter().map(|b| format!("{:02x}", b)).collect();
                     let ascii: String = chunk.iter().map(|&b| if b >= 32 && b <= 126 { b as char } else { '.' }).collect();
                     lines.push(Line::from(vec![
-                        Span::styled(format!("{:<48} ", hex.join(" ")), Style::default().fg(Color::Rgb(100, 150, 255))),
-                        Span::styled(ascii, Style::default().fg(Color::Rgb(200, 200, 100))),
+                        Span::styled(format!("{:<48} ", hex.join(" ")), Style::default().fg(Color::Rgb(0, 255, 65))),
+                        Span::styled(ascii, Style::default().fg(Color::Rgb(0, 255, 65))),
                     ]));
                 }
                 lines

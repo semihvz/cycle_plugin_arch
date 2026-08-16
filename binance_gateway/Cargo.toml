@@ -1,5 +1,5 @@
 [package]
-name = "plugin_all_liquidations"
+name = "plugin_binance_gateway"
 version = "0.1.0"
 edition = "2021"
 
