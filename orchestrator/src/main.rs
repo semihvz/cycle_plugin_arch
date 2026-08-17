@@ -498,6 +498,9 @@ async fn main() -> anyhow::Result<()> {
                                 
                                 if action == "help" {
                                     app.log("--- Shell Komutları ---");
+                                    app.log("sql <QUERY> (Örn: sql SELECT * FROM mark_prices ORDER BY id DESC LIMIT 5) - Anlık SQL sorgusu çalıştırır");
+                                    app.log("tables - SQLite veritabanındaki tabloları ve kayıt sayılarını listeler");
+                                    app.log("schema <tablo_adı> - Tablo sütun şemasını gösterir");
                                     app.log("buy <sembol> <miktar> <fiyat|market> [kaldıraç]  (Örn: buy BTCUSDT 0.1 60000 20)");
                                     app.log("sell <sembol> <miktar> <fiyat|market> [kaldıraç] (Örn: sell ETHUSDT 1.5 market 50)");
                                     app.log("close <sembol> (Örn: close BTCUSDT) - Tüm açık pozisyonları kapatır");
@@ -607,6 +610,47 @@ async fn main() -> anyhow::Result<()> {
                                         let bytes = serde_json::to_vec(&req).unwrap_or_default();
                                         app.orchestrator.call_endpoint(&sys_id, StandardEndpoint::Inbox, &bytes, &mut hft_buf);
                                         app.log(&format!("Manuel tetik gönderildi: {}", sys_id));
+                                    }
+                                } else if (action == "sql" || action == "query") && parts.len() >= 2 {
+                                    let sql_query = cmd[parts[0].len()..].trim();
+                                    let req = serde_json::json!({
+                                        "action": "query",
+                                        "sql": sql_query
+                                    });
+                                    let bytes = serde_json::to_vec(&req).unwrap_or_default();
+                                    let mut out_res_buf = vec![0u8; 8192];
+                                    let len = app.orchestrator.call_endpoint("plugin_sqlite_query", StandardEndpoint::Inbox, &bytes, &mut out_res_buf);
+                                    if len > 0 {
+                                        if let Ok(res_str) = std::str::from_utf8(&out_res_buf[..len]) {
+                                            for line in res_str.lines() {
+                                                app.log(line);
+                                            }
+                                        }
+                                    }
+                                } else if action == "tables" {
+                                    let req = serde_json::json!({ "action": "tables" });
+                                    let bytes = serde_json::to_vec(&req).unwrap_or_default();
+                                    let mut out_res_buf = vec![0u8; 8192];
+                                    let len = app.orchestrator.call_endpoint("plugin_sqlite_query", StandardEndpoint::Inbox, &bytes, &mut out_res_buf);
+                                    if len > 0 {
+                                        if let Ok(res_str) = std::str::from_utf8(&out_res_buf[..len]) {
+                                            for line in res_str.lines() {
+                                                app.log(line);
+                                            }
+                                        }
+                                    }
+                                } else if action == "schema" && parts.len() >= 2 {
+                                    let tbl = parts[1];
+                                    let req = serde_json::json!({ "action": "schema", "table": tbl });
+                                    let bytes = serde_json::to_vec(&req).unwrap_or_default();
+                                    let mut out_res_buf = vec![0u8; 8192];
+                                    let len = app.orchestrator.call_endpoint("plugin_sqlite_query", StandardEndpoint::Inbox, &bytes, &mut out_res_buf);
+                                    if len > 0 {
+                                        if let Ok(res_str) = std::str::from_utf8(&out_res_buf[..len]) {
+                                            for line in res_str.lines() {
+                                                app.log(line);
+                                            }
+                                        }
                                     }
                                 } else {
                                     app.log("Geçersiz komut. Kullanım için 'help' yazabilirsiniz.");

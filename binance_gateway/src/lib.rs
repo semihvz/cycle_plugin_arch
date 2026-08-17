@@ -29,7 +29,7 @@ pub unsafe extern "C" fn init_plugin(
     let state = Box::new(PluginState {
         runtime,
         is_running: Arc::new(AtomicBool::new(false)),
-        data: Arc::new(Mutex::new(br#"{"stream_markprice":{},"stream_bestprice":{},"stream_liquidations":[],"stream_aggtrades":{},"stream_depth":{}}"#.to_vec())),
+        data: Arc::new(Mutex::new(br#"{"stream_markprice":{},"stream_bestprice":{},"stream_liquidations":[],"stream_aggtrades":{},"stream_trades":{},"stream_depth":{}}"#.to_vec())),
         shutdown_tx: Mutex::new(None),
     });
 
@@ -192,6 +192,7 @@ async fn run_websocket_loop(
                                                 if !obj.contains_key("stream_bestprice") { obj.insert("stream_bestprice".to_string(), serde_json::json!({})); }
                                                 if !obj.contains_key("stream_liquidations") { obj.insert("stream_liquidations".to_string(), serde_json::json!([])); }
                                                 if !obj.contains_key("stream_aggtrades") { obj.insert("stream_aggtrades".to_string(), serde_json::json!({})); }
+                                                if !obj.contains_key("stream_trades") { obj.insert("stream_trades".to_string(), serde_json::json!({})); }
                                                 if !obj.contains_key("stream_depth") { obj.insert("stream_depth".to_string(), serde_json::json!({})); }
                                             }
 
@@ -247,7 +248,8 @@ async fn run_websocket_loop(
                                                     "event_time": json["E"].as_i64().unwrap_or(0),
                                                     "local_recv_time_ms": recv_ms
                                                 });
-                                                combined["stream_aggtrades"][symbol] = output;
+                                                combined["stream_aggtrades"][symbol.clone()] = output.clone();
+                                                combined["stream_trades"][symbol] = output;
                                             } else if stream_name.to_lowercase().ends_with("@depth20@100ms") {
                                                 let symbol = stream_name.split('@').next().unwrap_or("").to_uppercase();
                                                 let output = serde_json::json!({

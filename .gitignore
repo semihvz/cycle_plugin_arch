@@ -21,3 +21,6 @@ venv/
 *.swo
 *.db
 *.db-journal
+*.db-shm
+*.db-wal
+

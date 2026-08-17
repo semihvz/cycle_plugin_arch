@@ -9,6 +9,8 @@ members = [
     "flow_engine",
     "plugin_paper_exchange",
     "binance_gateway",
-    "plugin_scout"
+    "plugin_scout",
+    "plugin_binance_sqlite",
+    "plugin_sqlite_query"
 ]
 resolver = "2"
