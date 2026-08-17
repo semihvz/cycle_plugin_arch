@@ -78,5 +78,11 @@
     ],
     "plugin_params": {},
     "plugin_outputs": ["paper_exchange_updates"]
+  },
+  {
+    "plugin_name": "plugin_scout",
+    "plugin_inputs": [],
+    "plugin_params": {},
+    "plugin_outputs": []
   }
 ]

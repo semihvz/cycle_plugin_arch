@@ -8,6 +8,7 @@ members = [
     "oi_fetcher",
     "flow_engine",
     "plugin_paper_exchange",
-    "binance_gateway"
+    "binance_gateway",
+    "plugin_scout"
 ]
 resolver = "2"
