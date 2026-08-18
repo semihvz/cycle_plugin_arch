@@ -217,6 +217,56 @@ pub async fn run_interactive_shell_loop(
                         println!("  • RAM Bellek Harcaması  : {}{} MB / {} MB{}", WHITE, mem_used, mem_total, RESET);
                         println!("  • HFT Core Pinning      : {}Core 0 (UI/Shell), Core 1 (FlowEngine Router){}\n", BRIGHT_YELLOW, RESET);
                     }
+                    "dump" | "memdump" | "memory" => {
+                        if parts.len() < 2 {
+                            println!("{}{}HATA: Kullanım: dump <plugin_id> [max_bytes]{}\n", RED, BOLD, RESET);
+                        } else {
+                            let id = parts[1];
+                            let sys_opt = orchestrator.get_system(id);
+                            if let Some(sys) = sys_opt {
+                                let ptr_addr = format!("{:p}", sys.plugin_state);
+                                let max_bytes = parts.get(2).and_then(|s| s.parse::<usize>().ok()).unwrap_or(1024 * 1024);
+                                
+                                let mut full_buf = vec![0u8; max_bytes];
+                                let written = orchestrator.call_endpoint(id, StandardEndpoint::DataMonitor, &[], &mut full_buf);
+                                full_buf.truncate(written);
+
+                                let non_zero = full_buf.iter().filter(|&&b| b != 0).count();
+                                let validity_pct = if written > 0 { (non_zero as f64 / written as f64) * 100.0 } else { 0.0 };
+
+                                println!("{}{}=== 🧠 EKLENTİ TAM BELLEK DÖKÜMÜ (FULL MEMORY DUMP): {} ==={}", BRIGHT_CYAN, BOLD, id, RESET);
+                                println!("  • C-ABI Bellek Pointer  : {}{}{}", BRIGHT_YELLOW, ptr_addr, RESET);
+                                println!("  • Okunan Bellek Boyutu  : {}{} Bytes ({:.2} KB){}", WHITE, written, written as f64 / 1024.0, RESET);
+                                println!("  • Doluluk & Veri Oranı  : {}{:.1}% Non-Zero Bytes{}\n", GREEN, validity_pct, RESET);
+
+                                if written == 0 {
+                                    println!("{}{}Bellek tamponu boş veya 0 byte veri döndü.{}\n", YELLOW, BOLD, RESET);
+                                } else {
+                                    println!("{}OFFSET     00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F  | ASCII          |{}", GRAY, RESET);
+                                    println!("-------------------------------------------------------------------------");
+
+                                    for (offset, chunk) in full_buf.chunks(16).enumerate() {
+                                        let hex: Vec<String> = chunk.iter().map(|b| format!("{:02X}", b)).collect();
+                                        let ascii: String = chunk.iter().map(|&b| if b >= 32 && b <= 126 { b as char } else { '.' }).collect();
+                                        println!("  {:06X}: {:<48}  |{}{:<16}{}|", offset * 16, hex.join(" "), GREEN, ascii, RESET);
+                                    }
+                                    println!("-------------------------------------------------------------------------\n");
+
+                                    if let Ok(json_val) = serde_json::from_slice::<serde_json::Value>(&full_buf) {
+                                        println!("{}{}=== BELLEK METİN / JSON TEMSİLİ ==={}", BRIGHT_CYAN, BOLD, RESET);
+                                        println!("{}\n", serde_json::to_string_pretty(&json_val).unwrap_or_default());
+                                    } else if let Ok(utf8_str) = std::str::from_utf8(&full_buf) {
+                                        if !utf8_str.trim().is_empty() {
+                                            println!("{}{}=== BELLEK METİN TEMSİLİ ==={}", BRIGHT_CYAN, BOLD, RESET);
+                                            println!("{}\n", utf8_str);
+                                        }
+                                    }
+                                }
+                            } else {
+                                println!("{}{}HATA: {} adında yüklü bir eklenti bulunamadı.{}\n", RED, BOLD, id, RESET);
+                            }
+                        }
+                    }
                     "peek" => {
                         if parts.len() < 2 {
                             println!("{}{}HATA: Kullanım: peek <plugin_id> [len]{}\n", RED, BOLD, RESET);

@@ -85,7 +85,8 @@ pub fn format_help_menu() -> String {
     out.push_str(&format!("  {}graph{} / {}routes{}         : Flow Engine düğüm yönlendirme grafiğini (DAG) görselleştirir\n", GREEN, RESET, GREEN, RESET));
 
     out.push_str(&format!("\n{}{}🛠️ KONTROL VE APİ DÜZEYİ:{}\n", BRIGHT_YELLOW, BOLD, RESET));
-    out.push_str(&format!("  {}peek <plugin_id> [len]{}  : Eklentinin RAM bellek tamponunu (Hex & ASCII) inceler\n", GREEN, RESET));
+    out.push_str(&format!("  {}dump <plugin_id> [max_bytes]{}: Eklentinin TÜM RAM bellek tamponunu (Full Memory Hex Dump & ASCII) döker\n", GREEN, RESET));
+    out.push_str(&format!("  {}peek <plugin_id> [len]{}  : Eklentinin ilk RAM bellek özetini inceler\n", GREEN, RESET));
     out.push_str(&format!("  {}web <start|stop|status>{} : Port 8080 Web sunucusunu başlatır, durdurur veya durumunu verir\n", GREEN, RESET));
     out.push_str(&format!("  {}config [show|reload]{}   : flow_config.json içeriğini okur veya hot-reload tetikler\n", GREEN, RESET));
     out.push_str(&format!("  {}clear{}                  : Ekranı temizler\n", GREEN, RESET));
