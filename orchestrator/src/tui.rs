@@ -332,12 +332,19 @@ pub fn draw_ui(f: &mut Frame, app: &mut App<'_>) {
     } else {
         // AYARLAR
         let text = vec![
-            Line::from("Ayarlar Menüsü"),
+            Line::from(Span::styled("⚙ Ayarlar & Görsel JSON Düzenleyici", Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD))),
             Line::from(""),
             Line::from(vec![
                 Span::raw(" [E] "),
-                Span::styled("flow_config.json Düzenle (Config Editor)", Style::default().fg(Color::Cyan)),
+                Span::styled("Görsel JSON Studio (Web UI) - http://localhost:3030", Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD)),
             ]),
+            Line::from(vec![
+                Span::raw(" [T] "),
+                Span::styled("Terminal İçi Metin Editörü (tui-textarea)", Style::default().fg(Color::Green)),
+            ]),
+            Line::from(""),
+            Line::from(Span::styled("Görsel editörde eklentileri (plugins) sürükleyip birbirine bağlayabilir,", Style::default().fg(Color::White))),
+            Line::from(Span::styled("JSON yapısını canlı grafik ve ağaç üzerinde kolayca düzenleyebilirsiniz.", Style::default().fg(Color::White))),
             Line::from(""),
             Line::from(Span::styled("Sistem çalışırken ayarları değiştirdiğinizde Hot-Reload ile motor anında güncellenir.", Style::default().fg(Color::DarkGray))),
         ];

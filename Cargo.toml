@@ -11,6 +11,8 @@ members = [
     "binance_gateway",
     "plugin_scout",
     "plugin_binance_sqlite",
-    "plugin_sqlite_query"
+    "plugin_sqlite_query",
+    "plugin_aggtrade_stats",
+    "plugin_aggtrade_ohlcv"
 ]
 resolver = "2"

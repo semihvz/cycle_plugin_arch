@@ -393,9 +393,18 @@ async fn main() -> anyhow::Result<()> {
                             app.plugin_selected = 0;
                         }
                         
-                        KeyCode::Char('e') | KeyCode::Char('c') => {
+                        KeyCode::Char('e') => {
                             if app.active_tab == 2 {
-                                // Ayarlar sekmesinde 'e' basıldıysa editörü aç
+                                app.log("🚀 Görsel JSON Studio başlatılıyor: http://localhost:3030");
+                                let _ = std::process::Command::new("xdg-open")
+                                    .arg("http://localhost:3030")
+                                    .spawn();
+                            }
+                        }
+
+                        KeyCode::Char('t') | KeyCode::Char('c') => {
+                            if app.active_tab == 2 {
+                                // Ayarlar sekmesinde 't' basıldıysa terminal editörünü aç
                                 if let Ok(content) = std::fs::read_to_string(config_path) {
                                     let mut textarea = tui_textarea::TextArea::default();
                                     for line in content.lines() {

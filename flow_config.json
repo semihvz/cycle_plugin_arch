@@ -3,13 +3,20 @@
     "plugin_name": "plugin_ohlcv_fetcher",
     "plugin_inputs": [],
     "plugin_params": {},
-    "plugin_outputs": ["btc_15m", "eth_5m"]
+    "plugin_outputs": [
+      "btc_15m",
+      "eth_5m"
+    ]
   },
   {
     "plugin_name": "plugin_binance_gateway",
     "plugin_inputs": [],
     "plugin_params": {
-      "symbols": ["BTCUSDT", "ETHUSDT", "ACEUSDT"]
+      "symbols": [
+        "BTCUSDT",
+        "ETHUSDT",
+        "ACEUSDT"
+      ]
     },
     "plugin_outputs": [
       "stream_markprice",
@@ -49,7 +56,10 @@
     "plugin_params": {
       "analysis_mode": "deep"
     },
-    "plugin_outputs": ["ms_signals_btc", "ms_signals_eth"]
+    "plugin_outputs": [
+      "ms_signals_btc",
+      "ms_signals_eth"
+    ]
   },
   {
     "plugin_name": "plugin_breakout",
@@ -78,7 +88,9 @@
       }
     ],
     "plugin_params": {},
-    "plugin_outputs": ["paper_exchange_updates"]
+    "plugin_outputs": [
+      "paper_exchange_updates"
+    ]
   },
   {
     "plugin_name": "plugin_scout",
@@ -132,5 +144,35 @@
       "db_path": "binance_market_data.db"
     },
     "plugin_outputs": []
+  },
+  {
+    "plugin_name": "plugin_aggtrade_stats",
+    "plugin_inputs": [
+      {
+        "source": "plugin_binance_gateway",
+        "stream_id": "stream_aggtrades",
+        "params": {}
+      }
+    ],
+    "plugin_params": {
+      "window_ms": 10000000
+    },
+    "plugin_outputs": []
+  },
+  {
+    "plugin_name": "plugin_aggtrade_ohlcv",
+    "plugin_inputs": [
+      {
+        "source": "plugin_binance_gateway",
+        "stream_id": "stream_aggtrades",
+        "params": {}
+      }
+    ],
+    "plugin_params": {
+      "history_limit": 60
+    },
+    "plugin_outputs": [
+      "stream_1s_ohlcv"
+    ]
   }
 ]
