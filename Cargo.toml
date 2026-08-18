@@ -15,6 +15,10 @@ members = [
     "plugin_aggtrade_stats",
     "plugin_aggtrade_ohlcv",
     "plugin_sys_metrics",
+    "plugin_binance_ticker",
+    "plugin_binance_trades",
+    "plugin_binance_markprice",
+    "plugin_binance_liquidations",
     "interactive_shell",
     "cycle_lang"
 ]

@@ -185,6 +185,22 @@ impl cycle_lang::OrchestratorHandler for ShellOrchestratorHandler {
 
     fn call_plugin(&mut self, plugin: &str, method: &str, args: &[cycle_lang::Value]) -> Result<cycle_lang::Value, String> {
         println!("{}{}CycleLang Metot Çağrısı: {}.{}({:?}){}\n", BRIGHT_CYAN, BOLD, plugin, method, args, RESET);
+
+        if method == "set_symbols" || method == "subscribe" || method == "config" {
+            let mut symbols_vec = Vec::new();
+            for arg in args {
+                symbols_vec.push(arg.to_string());
+            }
+            let payload = serde_json::json!({
+                "action": "set_symbols",
+                "symbols": symbols_vec
+            });
+            let payload_bytes = serde_json::to_vec(&payload).unwrap_or_default();
+            let mut out_buf = [0u8; 1024];
+            self.orchestrator.call_endpoint(plugin, StandardEndpoint::Inbox, &payload_bytes, &mut out_buf);
+            println!("{}{}✓ Canlı Dinamik Semboller Atandı ({}): {:?}{}\n", GREEN, BOLD, plugin, symbols_vec, RESET);
+        }
+
         Ok(cycle_lang::Value::Nil)
     }
 }
