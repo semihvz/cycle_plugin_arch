@@ -1,6 +1,18 @@
 #[derive(Debug, Clone, PartialEq)]
 pub enum Token {
-    // Keywords
+    // Keywords (Python & DSL)
+    Def,
+    If,
+    Elif,
+    Else,
+    While,
+    Pass,
+    Import,
+    As,
+    And,
+    Or,
+    Not,
+
     Let,
     Plugin,
     Load,
@@ -51,7 +63,6 @@ pub enum Token {
 }
 
 pub struct Lexer<'a> {
-    input: &'a str,
     chars: std::str::Chars<'a>,
     current_char: Option<char>,
 }
@@ -59,7 +70,6 @@ pub struct Lexer<'a> {
 impl<'a> Lexer<'a> {
     pub fn new(input: &'a str) -> Self {
         let mut lexer = Lexer {
-            input,
             chars: input.chars(),
             current_char: None,
         };
@@ -75,10 +85,19 @@ impl<'a> Lexer<'a> {
         while let Some(c) = self.current_char {
             if c.is_whitespace() {
                 self.advance();
+            } else if c == '#' {
+                // Python style line comment: # comment
+                while let Some(ch) = self.current_char {
+                    if ch == '\n' {
+                        self.advance();
+                        break;
+                    }
+                    self.advance();
+                }
             } else if c == '/' {
                 let mut peek_chars = self.chars.clone();
                 if peek_chars.next() == Some('/') {
-                    // Line comment
+                    // C style line comment: // comment
                     self.advance();
                     self.advance();
                     while let Some(ch) = self.current_char {
@@ -113,8 +132,8 @@ impl<'a> Lexer<'a> {
             return self.read_number();
         }
 
-        if ch == '"' {
-            return self.read_string();
+        if ch == '"' || ch == '\'' {
+            return self.read_string(ch);
         }
 
         match ch {
@@ -193,6 +212,18 @@ impl<'a> Lexer<'a> {
         }
 
         match ident.as_str() {
+            "def" => Token::Def,
+            "if" => Token::If,
+            "elif" => Token::Elif,
+            "else" => Token::Else,
+            "while" => Token::While,
+            "pass" => Token::Pass,
+            "import" => Token::Import,
+            "as" => Token::As,
+            "and" => Token::And,
+            "or" => Token::Or,
+            "not" => Token::Not,
+
             "let" => Token::Let,
             "plugin" => Token::Plugin,
             "load" => Token::Load,
@@ -208,8 +239,8 @@ impl<'a> Lexer<'a> {
             "print" => Token::Print,
             "sql" => Token::Sql,
             "fn" => Token::Fn,
-            "true" => Token::True,
-            "false" => Token::False,
+            "True" | "true" => Token::True,
+            "False" | "false" => Token::False,
             _ => Token::Ident(ident),
         }
     }
@@ -223,7 +254,6 @@ impl<'a> Lexer<'a> {
                 num_str.push(c);
                 self.advance();
             } else if c == '.' && !has_dot {
-                // Check if next char is digit (so it's a float, not a method call `.`)
                 let mut peek_chars = self.chars.clone();
                 if peek_chars.next().map_or(false, |next_c| next_c.is_ascii_digit()) {
                     has_dot = true;
@@ -241,11 +271,11 @@ impl<'a> Lexer<'a> {
         Token::Number(val)
     }
 
-    fn read_string(&mut self) -> Token {
-        self.advance(); // Skip opening "
+    fn read_string(&mut self, quote_char: char) -> Token {
+        self.advance(); // Skip opening quote
         let mut str_val = String::new();
         while let Some(c) = self.current_char {
-            if c == '"' {
+            if c == quote_char {
                 self.advance();
                 break;
             } else if c == '\\' {
@@ -257,6 +287,7 @@ impl<'a> Lexer<'a> {
                         'r' => str_val.push('\r'),
                         '\\' => str_val.push('\\'),
                         '"' => str_val.push('"'),
+                        '\'' => str_val.push('\''),
                         _ => str_val.push(escaped),
                     }
                     self.advance();

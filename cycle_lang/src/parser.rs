@@ -36,19 +36,27 @@ impl<'a> Parser<'a> {
 
     fn parse_statement(&mut self) -> Result<Statement, String> {
         match &self.current_token {
+            Token::Pass => {
+                self.advance();
+                Ok(Statement::ExprStmt(Expr::Bool(true)))
+            }
+            Token::Import => self.parse_import_statement(),
             Token::Let => self.parse_let_statement(),
             Token::Pipe => self.parse_pipe_statement(),
-            Token::When => self.parse_when_statement(),
+            Token::If | Token::When => self.parse_if_statement(),
             Token::Buy => self.parse_buy_statement(),
             Token::Sell => self.parse_sell_statement(),
             Token::Close => self.parse_close_statement(),
             Token::Log => self.parse_log_statement(),
             Token::Print => self.parse_print_statement(),
             Token::Sql => self.parse_sql_statement(),
-            Token::Fn => self.parse_fn_statement(),
+            Token::Def | Token::Fn => self.parse_fn_statement(),
             Token::Ident(_) => {
-                // Could be `gateway.start()`, `breakout.pin_core(1)`, `gateway.stop()`
-                self.parse_ident_statement()
+                if self.peek_token == Token::Assign {
+                    self.parse_let_statement()
+                } else {
+                    self.parse_ident_statement()
+                }
             }
             _ => {
                 let expr = self.parse_expression(0)?;
@@ -57,11 +65,36 @@ impl<'a> Parser<'a> {
         }
     }
 
+    fn parse_import_statement(&mut self) -> Result<Statement, String> {
+        self.advance(); // skip 'import'
+        let path = match &self.current_token {
+            Token::Ident(p) | Token::StringLit(p) => p.clone(),
+            _ => return Err("'import' sonrasında eklenti adı bekleniyor".to_string()),
+        };
+        self.advance();
+
+        let var_name = if self.current_token == Token::As {
+            self.advance();
+            match &self.current_token {
+                Token::Ident(alias) => alias.clone(),
+                _ => return Err("'as' sonrasında alias adı bekleniyor".to_string()),
+            }
+        } else {
+            path.clone()
+        };
+        if self.current_token == Token::As { self.advance(); }
+
+        Ok(Statement::PluginLoad { var_name, path })
+    }
+
     fn parse_let_statement(&mut self) -> Result<Statement, String> {
-        self.advance(); // skip 'let'
+        if self.current_token == Token::Let {
+            self.advance(); // optional 'let'
+        }
+
         let var_name = match &self.current_token {
             Token::Ident(name) => name.clone(),
-            _ => return Err("'let' sonrasında değişken adı bekleniyor".to_string()),
+            _ => return Err("Değişken adı bekleniyor".to_string()),
         };
         self.advance();
 
@@ -87,8 +120,8 @@ impl<'a> Parser<'a> {
                     }
                     self.advance();
                     let path = match &self.current_token {
-                        Token::StringLit(s) => s.clone(),
-                        _ => return Err("'plugin.load' parametresi string olmalı".to_string()),
+                        Token::StringLit(s) | Token::Ident(s) => s.clone(),
+                        _ => return Err("'plugin.load' parametresi eklenti adı olmalı".to_string()),
                     };
                     self.advance();
                     if self.current_token == Token::RParen {
@@ -146,7 +179,6 @@ impl<'a> Parser<'a> {
                     Ok(Statement::PluginPinCore { var_name, core })
                 }
                 _ => {
-                    // Generic plugin call method
                     let mut args = Vec::new();
                     if self.current_token != Token::RParen {
                         args.push(self.parse_expression(0)?);
@@ -171,13 +203,13 @@ impl<'a> Parser<'a> {
 
     fn parse_pipe_statement(&mut self) -> Result<Statement, String> {
         self.advance(); // skip 'pipe'
+        if self.current_token == Token::LParen { self.advance(); }
         if let Token::Ident(_) = &self.current_token {
-            self.advance(); // optional pipe name
+            if self.peek_token != Token::Dot && self.peek_token != Token::Comma {
+                self.advance(); // optional pipe name
+            }
         }
-        if self.current_token != Token::LBrace {
-            return Err("'pipe' bloğu '{' ile başlamalı".to_string());
-        }
-        self.advance();
+        if self.current_token == Token::LBrace { self.advance(); }
 
         let from_plugin = match &self.current_token {
             Token::Ident(p) => p.clone(),
@@ -196,10 +228,8 @@ impl<'a> Parser<'a> {
         };
         self.advance();
 
-        if self.current_token != Token::Arrow {
-            return Err("'->' bekleniyor".to_string());
-        }
-        self.advance();
+        if self.current_token == Token::Comma { self.advance(); }
+        if self.current_token == Token::Arrow { self.advance(); }
 
         let to_plugin = match &self.current_token {
             Token::Ident(p) => p.clone(),
@@ -218,6 +248,7 @@ impl<'a> Parser<'a> {
         };
         self.advance();
 
+        if self.current_token == Token::RParen { self.advance(); }
         if self.current_token == Token::Semicolon { self.advance(); }
         if self.current_token == Token::RBrace { self.advance(); }
 
@@ -229,8 +260,8 @@ impl<'a> Parser<'a> {
         })
     }
 
-    fn parse_when_statement(&mut self) -> Result<Statement, String> {
-        self.advance(); // skip 'when'
+    fn parse_if_statement(&mut self) -> Result<Statement, String> {
+        self.advance(); // skip 'if' or 'when'
         if self.current_token == Token::LParen {
             self.advance();
         }
@@ -238,13 +269,15 @@ impl<'a> Parser<'a> {
         if self.current_token == Token::RParen {
             self.advance();
         }
-        if self.current_token != Token::LBrace {
-            return Err("'when' bloğu '{' ile başlamalı".to_string());
+        if self.current_token == Token::Colon {
+            self.advance(); // skip ':' in Python `if cond:`
         }
-        self.advance();
+        if self.current_token == Token::LBrace {
+            self.advance(); // optional '{'
+        }
 
         let mut body = Vec::new();
-        while self.current_token != Token::RBrace && self.current_token != Token::Eof {
+        while self.current_token != Token::RBrace && self.current_token != Token::Eof && self.current_token != Token::Else && self.current_token != Token::Elif {
             let stmt = self.parse_statement()?;
             body.push(stmt);
             if self.current_token == Token::Semicolon {
@@ -333,7 +366,7 @@ impl<'a> Parser<'a> {
     }
 
     fn parse_fn_statement(&mut self) -> Result<Statement, String> {
-        self.advance(); // skip 'fn'
+        self.advance(); // skip 'def' or 'fn'
         let name = match &self.current_token {
             Token::Ident(n) => n.clone(),
             _ => return Err("Fonksiyon adı bekleniyor".to_string()),
@@ -357,10 +390,12 @@ impl<'a> Parser<'a> {
         }
         if self.current_token == Token::RParen { self.advance(); }
 
-        if self.current_token != Token::LBrace {
-            return Err("'{' bekleniyor".to_string());
+        if self.current_token == Token::Colon {
+            self.advance(); // skip ':' in Python `def foo():`
         }
-        self.advance();
+        if self.current_token == Token::LBrace {
+            self.advance(); // optional '{'
+        }
 
         let mut body = Vec::new();
         while self.current_token != Token::RBrace && self.current_token != Token::Eof {
@@ -375,9 +410,9 @@ impl<'a> Parser<'a> {
 
     fn parse_named_or_expr(&mut self, _name: &str) -> Result<Expr, String> {
         if let Token::Ident(_) = &self.current_token {
-            if self.peek_token == Token::Colon {
+            if self.peek_token == Token::Assign || self.peek_token == Token::Colon {
                 self.advance(); // skip ident
-                self.advance(); // skip ':'
+                self.advance(); // skip '=' or ':'
             }
         }
         self.parse_expression(0)
@@ -466,6 +501,8 @@ impl<'a> Parser<'a> {
                 Token::Lte => "<=",
                 Token::Eq => "==",
                 Token::Neq => "!=",
+                Token::And => "and",
+                Token::Or => "or",
                 _ => break,
             }.to_string();
 
@@ -484,10 +521,12 @@ impl<'a> Parser<'a> {
 
     fn get_precedence(&self, token: &Token) -> u8 {
         match token {
-            Token::Eq | Token::Neq => 1,
-            Token::Gt | Token::Lt | Token::Gte | Token::Lte => 2,
-            Token::Plus | Token::Minus => 3,
-            Token::Star | Token::Slash => 4,
+            Token::Or => 1,
+            Token::And => 2,
+            Token::Eq | Token::Neq => 3,
+            Token::Gt | Token::Lt | Token::Gte | Token::Lte => 4,
+            Token::Plus | Token::Minus => 5,
+            Token::Star | Token::Slash => 6,
             _ => 0,
         }
     }
