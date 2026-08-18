@@ -43,6 +43,7 @@ pub struct App<'a> {
     pub hex_scroll: u16,
     pub live_feed_scroll: u16,
     pub logs_scroll: u16,
+    pub web_server_started: bool,
 }
 
 impl<'a> App<'a> {
@@ -71,6 +72,21 @@ impl<'a> App<'a> {
             hex_scroll: 0,
             live_feed_scroll: 0,
             logs_scroll: 0,
+            web_server_started: false,
+        }
+    }
+
+    pub fn toggle_web_server(&mut self) {
+        if !self.web_server_started {
+            self.web_server_started = true;
+            let orchestrator = self.orchestrator.clone();
+            let log_tx = self.log_tx.clone();
+            tokio::spawn(async move {
+                crate::web_server::start_web_server(orchestrator, log_tx, 8080).await;
+            });
+            self.log("🚀 Web Arayüz Sunucusu Başlatıldı: http://localhost:8080");
+        } else {
+            self.log("ℹ️ Web Arayüz Sunucusu zaten aktif: http://localhost:8080");
         }
     }
 

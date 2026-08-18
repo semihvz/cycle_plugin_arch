@@ -337,20 +337,36 @@ pub fn draw_ui(f: &mut Frame, app: &mut App<'_>) {
         f.render_widget(log_list, main_layout[2]);
     } else {
         // AYARLAR
+        let web_status_span = if app.web_server_started {
+            Span::styled(" 🚀 ÇALIŞIYOR (http://localhost:8080) ", Style::default().fg(Color::Black).bg(Color::LightGreen).add_modifier(Modifier::BOLD))
+        } else {
+            Span::styled(" ⏹️ KAPALI (OFF) ", Style::default().fg(Color::White).bg(Color::Red).add_modifier(Modifier::BOLD))
+        };
+
         let text = vec![
-            Line::from(Span::styled("⚙ Ayarlar & Görsel JSON Düzenleyici", Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD))),
+            Line::from(Span::styled("⚙ Ayarlar & Sistem Web Sunucusu Kontrolü", Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD))),
             Line::from(""),
             Line::from(vec![
-                Span::raw(" [E] "),
-                Span::styled("Görsel JSON Studio (Web UI) - http://localhost:3030", Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD)),
-            ]),
-            Line::from(vec![
-                Span::raw(" [T] "),
-                Span::styled("Terminal İçi Metin Editörü (tui-textarea)", Style::default().fg(Color::Green)),
+                Span::styled("Port 8080 Web Sunucu Durumu: ", Style::default().fg(Color::White).add_modifier(Modifier::BOLD)),
+                web_status_span,
             ]),
             Line::from(""),
-            Line::from(Span::styled("Görsel editörde eklentileri (plugins) sürükleyip birbirine bağlayabilir,", Style::default().fg(Color::White))),
-            Line::from(Span::styled("JSON yapısını canlı grafik ve ağaç üzerinde kolayca düzenleyebilirsiniz.", Style::default().fg(Color::White))),
+            Line::from(vec![
+                Span::styled(" [W] ", Style::default().fg(Color::Black).bg(Color::Yellow).add_modifier(Modifier::BOLD)),
+                Span::styled(" WEB ARAYÜZÜNÜ BAŞLAT (Port 8080 Telemetri & Visual Studio)", Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD)),
+            ]),
+            Line::from(""),
+            Line::from(vec![
+                Span::styled(" [E] ", Style::default().fg(Color::Black).bg(Color::Cyan).add_modifier(Modifier::BOLD)),
+                Span::styled(" Web Arayüzünü Tarayıcıda Aç (http://localhost:8080)", Style::default().fg(Color::LightCyan)),
+            ]),
+            Line::from(vec![
+                Span::styled(" [T] ", Style::default().fg(Color::Black).bg(Color::Green).add_modifier(Modifier::BOLD)),
+                Span::styled(" Terminal İçi Metin Editörü (tui-textarea)", Style::default().fg(Color::Green)),
+            ]),
+            Line::from(""),
+            Line::from(Span::styled("Sistem başlatıldığında varsayılan olarak SADECE bu TUI ekranı çalışır.", Style::default().fg(Color::White))),
+            Line::from(Span::styled("Web arayüzüne ihtiyaç duyduğunuzda [W] veya [E] tuşuna basarak başlatabilirsiniz.", Style::default().fg(Color::Gray))),
             Line::from(""),
             Line::from(Span::styled("Sistem çalışırken ayarları değiştirdiğinizde Hot-Reload ile motor anında güncellenir.", Style::default().fg(Color::DarkGray))),
         ];

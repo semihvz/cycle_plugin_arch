@@ -98,13 +98,7 @@ async fn main() -> anyhow::Result<()> {
 
     let orchestrator = Arc::new(Orchestrator::new());
     let mut app = App::new(orchestrator.clone(), log_tx.clone());
-
-    // Spawn High-Speed Zero-Latency Telemetry Web Console on Port 8080
-    let web_orc = orchestrator.clone();
-    let web_log_tx = log_tx.clone();
-    tokio::spawn(async move {
-        cycle_finance_breakout_system::web_server::start_web_server(web_orc, web_log_tx, 8080).await;
-    });
+    app.log("Sadece TUI Konsolu Başlatıldı. Web Arayüzü için Ayarlar sekmesinden veya [W] tuşuna basarak başlatabilirsiniz.");
     
     // --- FLOW ENGINE & CONFIG INITIALIZATION ---
     let config_path = if std::path::Path::new("flow_config.json").exists() {
@@ -324,11 +318,18 @@ async fn main() -> anyhow::Result<()> {
                             app.plugin_selected = 0;
                         }
                         
-                        KeyCode::Char('e') => {
+                        KeyCode::Char('w') | KeyCode::Char('W') => {
+                            app.toggle_web_server();
+                        }
+
+                        KeyCode::Char('e') | KeyCode::Char('E') => {
                             if app.active_tab == 2 {
-                                app.log("🚀 Görsel JSON Studio başlatılıyor: http://localhost:3030");
+                                if !app.web_server_started {
+                                    app.toggle_web_server();
+                                }
+                                app.log("🚀 Web Arayüzü Tarayıcıda Açılıyor: http://localhost:8080");
                                 let _ = std::process::Command::new("xdg-open")
-                                    .arg("http://localhost:3030")
+                                    .arg("http://localhost:8080")
                                     .spawn();
                             }
                         }
