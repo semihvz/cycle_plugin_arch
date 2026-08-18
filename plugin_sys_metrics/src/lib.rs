@@ -24,6 +24,7 @@ pub struct SysMetricsReport {
 
 pub struct SysMetricsEngine {
     sys: Mutex<System>,
+    last_refresh: Mutex<std::time::Instant>,
     last_report: Arc<Mutex<String>>,
 }
 
@@ -44,13 +45,20 @@ impl SysMetricsEngine {
 
         Self {
             sys: Mutex::new(sys),
+            last_refresh: Mutex::new(std::time::Instant::now()),
             last_report: Arc::new(Mutex::new(initial_json)),
         }
     }
 
     pub fn refresh_and_get_report(&self, running_plugins: &[(&str, usize, bool)]) -> String {
+        let mut last_ref = self.last_refresh.lock().unwrap();
         let mut sys = self.sys.lock().unwrap();
-        sys.refresh_all();
+
+        if last_ref.elapsed().as_millis() >= 1000 {
+            sys.refresh_cpu();
+            sys.refresh_memory();
+            *last_ref = std::time::Instant::now();
+        }
 
         let global_cpu = sys.global_cpu_info().cpu_usage();
         let total_mem = sys.total_memory() / 1024 / 1024;

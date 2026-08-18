@@ -194,6 +194,7 @@ async fn main() -> anyhow::Result<()> {
     let mut last_config_check = std::time::Instant::now();
     
     let mut last_draw = std::time::Instant::now();
+    let mut last_monitor_update = std::time::Instant::now();
     
     while app.running {
         if last_draw.elapsed().as_millis() >= 16 {
@@ -753,8 +754,11 @@ async fn main() -> anyhow::Result<()> {
                     }
                 }
             }
-        } else {
-            // Background update of monitored data to ensure real-time UI
+        }
+
+        // Background update of monitored data (throttled to 100ms for zero CPU overhead)
+        if last_monitor_update.elapsed().as_millis() >= 100 {
+            last_monitor_update = std::time::Instant::now();
             if app.monitored_data.is_some() {
                 let systems = app.orchestrator.list_systems();
                 if let Some((id, _, _)) = systems.get(app.selected) {
@@ -763,21 +767,22 @@ async fn main() -> anyhow::Result<()> {
                     }
                 }
             }
-            
-            // Message Bus Routing (Inbox/Outbox) — Zero-copy HFT
-            let mut all_messages = Vec::new();
-            for (id, _, _) in app.orchestrator.list_systems() {
-                let written = app.orchestrator.call_endpoint(&id, StandardEndpoint::Outbox, &[], &mut hft_buf);
-                if written > 0 {
-                    if let Ok(json_array) = serde_json::from_slice::<serde_json::Value>(&hft_buf[..written]) {
-                        if let Some(arr) = json_array.as_array() {
-                            for msg in arr {
-                                all_messages.push(msg.clone());
-                            }
+        }
+        
+        // Message Bus Routing (Inbox/Outbox) — Zero-copy HFT
+        let mut all_messages = Vec::new();
+        for (id, _, _) in app.orchestrator.list_systems() {
+            let written = app.orchestrator.call_endpoint(&id, StandardEndpoint::Outbox, &[], &mut hft_buf);
+            if written > 0 {
+                if let Ok(json_array) = serde_json::from_slice::<serde_json::Value>(&hft_buf[..written]) {
+                    if let Some(arr) = json_array.as_array() {
+                        for msg in arr {
+                            all_messages.push(msg.clone());
                         }
                     }
                 }
             }
+        }
             
             for msg in all_messages {
                 if let Some(target) = msg.get("to").and_then(|v| v.as_str()) {
@@ -817,7 +822,6 @@ async fn main() -> anyhow::Result<()> {
                 }
             }
         }
-    }
     
     let mut stdout = io::stdout();
     stdout.execute(DisableMouseCapture)?;
