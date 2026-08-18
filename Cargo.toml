@@ -14,6 +14,7 @@ members = [
     "plugin_sqlite_query",
     "plugin_aggtrade_stats",
     "plugin_aggtrade_ohlcv",
-    "plugin_sys_metrics"
+    "plugin_sys_metrics",
+    "interactive_shell"
 ]
 resolver = "2"
