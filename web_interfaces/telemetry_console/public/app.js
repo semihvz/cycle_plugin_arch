@@ -1,6 +1,6 @@
 /**
  * Cycle-ORC Telemetry Console (Port 8080)
- * High-Speed Zero-Latency WebSocket Controller & Real-Time Orchestrator Dashboard
+ * High-Speed Zero-Latency WebSocket Controller & Integrated Visual JSON Studio
  */
 
 (function () {
@@ -19,7 +19,8 @@
     shellHistory: [],
     shellHistoryIdx: -1,
     autoscrollLogs: true,
-    pauseHexStream: false
+    pauseHexStream: false,
+    editorJsonData: []
   };
 
   const el = {
@@ -30,10 +31,12 @@
     tabBtnHex: document.getElementById('tab-btn-hex'),
     tabBtnLogs: document.getElementById('tab-btn-logs'),
     tabBtnShell: document.getElementById('tab-btn-shell'),
+    tabBtnEditor: document.getElementById('tab-btn-editor'),
     pageTelemetry: document.getElementById('page-telemetry'),
     pageHex: document.getElementById('page-hex'),
     pageLogs: document.getElementById('page-logs'),
     pageShell: document.getElementById('page-shell'),
+    pageEditor: document.getElementById('page-editor'),
     valTotalSystems: document.getElementById('val-total-systems'),
     valRunningSystems: document.getElementById('val-running-systems'),
     valCpuUsage: document.getElementById('val-cpu-usage'),
@@ -65,6 +68,12 @@
     shellOutputWindow: document.getElementById('shell-output-window'),
     shellInputField: document.getElementById('shell-input-field'),
     shellSendBtn: document.getElementById('shell-send-btn'),
+    btnEditorPrettify: document.getElementById('btn-editor-prettify'),
+    btnEditorReload: document.getElementById('btn-editor-reload'),
+    btnEditorSave: document.getElementById('btn-editor-save'),
+    btnEditorAddNode: document.getElementById('btn-editor-add-node'),
+    editorTreeView: document.getElementById('editor-tree-view'),
+    editorCodeTextarea: document.getElementById('editor-code-textarea'),
     toastContainer: document.getElementById('toast-container')
   };
 
@@ -75,6 +84,8 @@
     setupGlobalHotkeys();
     setupActions();
     setupShellInput();
+    setupEditorHandlers();
+    fetchConfig();
   }
 
   function setupMainTabSwitching() {
@@ -82,7 +93,8 @@
       { btn: el.tabBtnTelemetry, page: el.pageTelemetry, name: 'telemetry' },
       { btn: el.tabBtnHex, page: el.pageHex, name: 'hex' },
       { btn: el.tabBtnLogs, page: el.pageLogs, name: 'logs' },
-      { btn: el.tabBtnShell, page: el.pageShell, name: 'shell' }
+      { btn: el.tabBtnShell, page: el.pageShell, name: 'shell' },
+      { btn: el.tabBtnEditor, page: el.pageEditor, name: 'editor' }
     ];
 
     tabs.forEach(t => {
@@ -97,18 +109,20 @@
 
   function switchTab(tabName) {
     state.activeTab = tabName;
-    [el.tabBtnTelemetry, el.tabBtnHex, el.tabBtnLogs, el.tabBtnShell].forEach(btn => {
+    [el.tabBtnTelemetry, el.tabBtnHex, el.tabBtnLogs, el.tabBtnShell, el.tabBtnEditor].forEach(btn => {
       if (!btn) return;
       btn.classList.toggle('active', btn.dataset.tab === tabName);
     });
 
-    [el.pageTelemetry, el.pageHex, el.pageLogs, el.pageShell].forEach(page => {
+    [el.pageTelemetry, el.pageHex, el.pageLogs, el.pageShell, el.pageEditor].forEach(page => {
       if (!page) return;
       page.classList.toggle('active', page.id === `page-${tabName}`);
     });
 
     if (tabName === 'shell' && el.shellInputField) {
       setTimeout(() => el.shellInputField.focus(), 100);
+    } else if (tabName === 'editor') {
+      fetchConfig();
     }
   }
 
@@ -336,6 +350,155 @@
     }
   }
 
+  /* VISUAL JSON STUDIO FUNCTIONS */
+  function fetchConfig() {
+    fetch('/api/config')
+      .then(res => res.json())
+      .then(data => {
+        state.editorJsonData = data;
+        renderEditorWorkspace();
+        showToast('flow_config.json yüklendi.', 'info');
+      })
+      .catch(err => {
+        console.error('Config fetch error:', err);
+      });
+  }
+
+  function saveConfig() {
+    try {
+      const currentJsonStr = el.editorCodeTextarea.value;
+      const parsed = JSON.parse(currentJsonStr);
+      state.editorJsonData = parsed;
+
+      fetch('/api/config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(parsed)
+      })
+        .then(res => res.json())
+        .then(resData => {
+          if (resData.status === 'ok') {
+            showToast('💾 flow_config.json başarıyla kaydedildi!', 'success');
+            renderEditorWorkspace();
+          } else {
+            showToast('Kaydetme hatası!', 'error');
+          }
+        })
+        .catch(err => showToast('Kaydetme isteği başarısız!', 'error'));
+    } catch (e) {
+      showToast('Geçersiz JSON formatı! Lütfen düzeltip tekrar deneyin.', 'error');
+    }
+  }
+
+  function renderEditorWorkspace() {
+    if (el.editorCodeTextarea) {
+      el.editorCodeTextarea.value = JSON.stringify(state.editorJsonData, null, 2);
+    }
+    renderTreeCards();
+  }
+
+  function renderTreeCards() {
+    if (!el.editorTreeView) return;
+
+    if (!Array.isArray(state.editorJsonData) || state.editorJsonData.length === 0) {
+      el.editorTreeView.innerHTML = `<div style="color:var(--text-muted); font-size:0.85rem;">Düğüm bulunamadı. Boş dizi veya eklenti ekleyin.</div>`;
+      return;
+    }
+
+    el.editorTreeView.innerHTML = state.editorJsonData.map((node, nodeIdx) => {
+      const pluginName = node.plugin_name || `Eklenti #${nodeIdx + 1}`;
+      const paramKeys = Object.keys(node).filter(k => k !== 'plugin_name');
+
+      const paramsHtml = paramKeys.map(k => {
+        let valStr = typeof node[k] === 'object' ? JSON.stringify(node[k]) : String(node[k]);
+        return `
+          <div class="node-param-row">
+            <span class="param-key">${k}:</span>
+            <input type="text" class="param-val-input" data-node="${nodeIdx}" data-key="${k}" value="${valStr.replace(/"/g, '&quot;')}">
+          </div>`;
+      }).join('');
+
+      return `
+        <div class="json-node-card">
+          <div class="node-header-row">
+            <h5>🧩 ${pluginName}</h5>
+            <button class="btn-micro" data-remove-node="${nodeIdx}"><i class="fa-solid fa-trash"></i> Sil</button>
+          </div>
+          <div class="node-params-grid">
+            ${paramsHtml}
+          </div>
+        </div>`;
+    }).join('');
+
+    // Attach inline value change handlers
+    el.editorTreeView.querySelectorAll('.param-val-input').forEach(input => {
+      input.addEventListener('change', (e) => {
+        const nodeIdx = parseInt(input.dataset.node);
+        const key = input.dataset.key;
+        let newRaw = input.value;
+        let parsedVal = newRaw;
+        if (newRaw === 'true') parsedVal = true;
+        else if (newRaw === 'false') parsedVal = false;
+        else if (!isNaN(Number(newRaw)) && newRaw.trim() !== '') parsedVal = Number(newRaw);
+
+        if (state.editorJsonData[nodeIdx]) {
+          state.editorJsonData[nodeIdx][key] = parsedVal;
+          el.editorCodeTextarea.value = JSON.stringify(state.editorJsonData, null, 2);
+        }
+      });
+    });
+
+    el.editorTreeView.querySelectorAll('[data-remove-node]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const idx = parseInt(btn.dataset.remove-node);
+        state.editorJsonData.splice(idx, 1);
+        renderEditorWorkspace();
+      });
+    });
+  }
+
+  function setupEditorHandlers() {
+    if (el.btnEditorSave) el.btnEditorSave.addEventListener('click', saveConfig);
+    if (el.btnEditorReload) el.btnEditorReload.addEventListener('click', fetchConfig);
+    if (el.btnEditorPrettify) {
+      el.btnEditorPrettify.addEventListener('click', () => {
+        try {
+          const parsed = JSON.parse(el.editorCodeTextarea.value);
+          state.editorJsonData = parsed;
+          renderEditorWorkspace();
+          showToast('JSON formatlandı.', 'info');
+        } catch (e) {
+          showToast('Geçersiz JSON!', 'error');
+        }
+      });
+    }
+
+    if (el.btnEditorAddNode) {
+      el.btnEditorAddNode.addEventListener('click', () => {
+        const name = prompt('Eklenti Adı (örn: plugin_breakout):', 'plugin_new');
+        if (name) {
+          state.editorJsonData.push({
+            plugin_name: name,
+            symbol: 'BTCUSDT',
+            enabled: true
+          });
+          renderEditorWorkspace();
+        }
+      });
+    }
+
+    if (el.editorCodeTextarea) {
+      el.editorCodeTextarea.addEventListener('input', () => {
+        try {
+          state.editorJsonData = JSON.parse(el.editorCodeTextarea.value);
+          renderTreeCards();
+        } catch (e) {
+          // Ignore partial typing syntax errors
+        }
+      });
+    }
+  }
+
   function setupShellInput() {
     if (!el.shellInputField) return;
 
@@ -546,7 +709,14 @@ Komut geçmişinde gezinmek için [Yukarı / Aşağı] ok tuşlarını kullanabi
       if (key === '2') { switchTab('hex'); return; }
       if (key === '3') { switchTab('logs'); return; }
       if (key === '4' || key === '`') { switchTab('shell'); return; }
+      if (key === '5') { switchTab('editor'); return; }
       if (key === 'a' || key === 'l') { e.preventDefault(); openLoadModal(); return; }
+
+      if (e.ctrlKey && key === 's') {
+        e.preventDefault();
+        saveConfig();
+        return;
+      }
 
       if (state.selectedSystemId) {
         if (key === 's') {

@@ -40,6 +40,9 @@
       <button class="main-tab-btn" id="tab-btn-shell" data-tab="shell">
         <i class="fa-solid fa-terminal"></i> 📟 İnteraktif Shell <span class="tab-key">[4]</span>
       </button>
+      <button class="main-tab-btn" id="tab-btn-editor" data-tab="editor">
+        <i class="fa-solid fa-diagram-project"></i> 🛠️ Visual JSON Studio <span class="tab-key">[5]</span>
+      </button>
     </div>
 
     <!-- LATENCY BADGE & QUICK HOTKEYS -->
@@ -213,6 +216,41 @@ Komut geçmişinde gezinmek için [Yukarı / Aşağı] ok tuşlarını kullanabi
           <span class="prompt-label"><i class="fa-solid fa-angle-right" style="color:var(--accent-emerald);"></i> cycle-orc:hft-shell&gt;</span>
           <input type="text" id="shell-input-field" class="shell-input" placeholder="Komut yazın (örn: help, list, start plugin_breakout)..." autocomplete="off" spellcheck="false">
           <button class="btn btn-primary btn-sm" id="shell-send-btn"><i class="fa-solid fa-paper-plane"></i> Gönder</button>
+    <!-- TAB 5: VISUAL JSON & FLOW CONFIG STUDIO -->
+    <section class="tab-page" id="page-editor">
+      <div class="editor-studio-container">
+        <!-- EDITOR TOOLBAR -->
+        <div class="editor-toolbar">
+          <div class="editor-title-group">
+            <span class="editor-title"><i class="fa-solid fa-diagram-project" style="color:var(--accent-amber);"></i> flow_config.json Görsel Düzenleyici & Pipeline Akış Grafiği</span>
+          </div>
+          <div class="editor-actions">
+            <button class="btn btn-secondary btn-sm" id="btn-editor-prettify" title="Formatla"><i class="fa-solid fa-wand-magic-sparkles"></i> Prettify</button>
+            <button class="btn btn-secondary btn-sm" id="btn-editor-reload" title="Dosyadan Yeniden Yükle"><i class="fa-solid fa-rotate"></i> Yenile</button>
+            <button class="btn btn-primary btn-sm" id="btn-editor-save" title="flow_config.json Dosyasına Kaydet"><i class="fa-solid fa-floppy-disk"></i> Kaydet (flow_config.json)</button>
+          </div>
+        </div>
+
+        <!-- SPLIT VIEW: JSON TREE & CODE EDITOR -->
+        <div class="editor-split-workspace">
+          <!-- LEFT PANE: VISUAL JSON TREE & FLOW NODES -->
+          <div class="editor-pane visual-tree-pane">
+            <div class="pane-header">
+              <span><i class="fa-solid fa-sitemap"></i> Görsel Eklenti Düğümleri & Akış Yapısı</span>
+              <button class="btn-micro" id="btn-editor-add-node"><i class="fa-solid fa-plus"></i> Eklenti Ekle</button>
+            </div>
+            <div class="tree-content-body" id="editor-tree-view">
+              <!-- Visual node cards populate here -->
+            </div>
+          </div>
+
+          <!-- RIGHT PANE: LIVE RAW JSON CODE EDITOR -->
+          <div class="editor-pane code-editor-pane">
+            <div class="pane-header">
+              <span><i class="fa-solid fa-code"></i> Canlı Raw JSON Kod Editörü (flow_config.json)</span>
+            </div>
+            <textarea id="editor-code-textarea" class="code-textarea" spellcheck="false" placeholder="[ { &quot;plugin_name&quot;: &quot;plugin_breakout&quot; } ]"></textarea>
+          </div>
         </div>
       </div>
     </section>
