@@ -8,6 +8,7 @@ use ratatui::{
 use super::app::{App, ViewMode, ActivePanel};
 
 pub fn draw_ui(f: &mut Frame, app: &mut App<'_>) {
+    app.refresh_sys_if_needed();
     let size = f.size();
 
     let main_layout = Layout::default()

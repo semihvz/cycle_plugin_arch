@@ -193,8 +193,13 @@ async fn main() -> anyhow::Result<()> {
         .unwrap_or(std::time::SystemTime::now());
     let mut last_config_check = std::time::Instant::now();
     
+    let mut last_draw = std::time::Instant::now();
+    
     while app.running {
-        terminal.draw(|f| draw_ui(f, &mut app))?;
+        if last_draw.elapsed().as_millis() >= 16 {
+            terminal.draw(|f| draw_ui(f, &mut app))?;
+            last_draw = std::time::Instant::now();
+        }
         
         // Hot-reload check for flow_config.json
         if last_config_check.elapsed().as_secs() >= 2 {
@@ -225,7 +230,7 @@ async fn main() -> anyhow::Result<()> {
             }
         }
         
-        if event::poll(std::time::Duration::from_millis(100))? {
+        if event::poll(std::time::Duration::from_millis(10))? {
             if let Event::Key(key) = event::read()? {
                 if app.mode == ViewMode::Main {
                     let systems = app.orchestrator.list_systems();

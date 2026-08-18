@@ -44,12 +44,13 @@ pub struct App<'a> {
     pub live_feed_scroll: u16,
     pub logs_scroll: u16,
     pub web_server_started: bool,
+    pub last_sys_refresh: std::time::Instant,
 }
 
 impl<'a> App<'a> {
     pub fn new(orchestrator: Arc<Orchestrator>, log_tx: broadcast::Sender<String>) -> Self {
         let mut sys = sysinfo::System::new_all();
-        sys.refresh_all();
+        sys.refresh_processes();
         Self {
             orchestrator,
             log_tx,
@@ -73,6 +74,14 @@ impl<'a> App<'a> {
             live_feed_scroll: 0,
             logs_scroll: 0,
             web_server_started: false,
+            last_sys_refresh: std::time::Instant::now(),
+        }
+    }
+
+    pub fn refresh_sys_if_needed(&mut self) {
+        if self.last_sys_refresh.elapsed().as_secs() >= 2 {
+            self.sys.refresh_processes();
+            self.last_sys_refresh = std::time::Instant::now();
         }
     }
 
