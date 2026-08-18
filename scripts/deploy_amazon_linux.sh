@@ -9,9 +9,9 @@ echo "=================================================================="
 # 1. İşletim Sistemi Paketlerini Güncelle ve Gerekli Araçları Yükle
 echo "📦 1. İşletim sistemi bağımlılıkları yükleniyor..."
 if command -v dnf &> /dev/null; then
-    sudo dnf update -y
-    sudo dnf groupinstall "Development Tools" -y
-    sudo dnf install -y gcc gcc-c++ openssl-devel sqlite-devel pkgconfig git
+    sudo dnf update -y --allowerasing
+    sudo dnf groupinstall "Development Tools" -y --allowerasing
+    sudo dnf install -y --allowerasing gcc gcc-c++ openssl-devel sqlite-devel pkgconfig git
 elif command -v yum &> /dev/null; then
     sudo yum update -y
     sudo yum groupinstall "Development Tools" -y

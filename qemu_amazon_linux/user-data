@@ -1,0 +1,11 @@
+#cloud-config
+user: ec2-user
+password: amazon123
+chpasswd: { expire: False }
+ssh_pwauth: True
+write_files:
+  - path: /etc/ssh/sshd_config.d/01-permit-password.conf
+    content: |
+      PasswordAuthentication yes
+runcmd:
+  - systemctl restart sshd

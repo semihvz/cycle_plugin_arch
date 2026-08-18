@@ -1,0 +1,2 @@
+instance-id: qemu-amazon-linux-01
+local-hostname: amazon-linux-qemu
