@@ -728,7 +728,7 @@ pub async fn run_interactive_shell_loop(
                     }
                     "run" => {
                         if parts.len() < 2 {
-                            println!("{}{}HATA: Kullanım: run <script.cy>{}\n", RED, BOLD, RESET);
+                            println!("{}{}HATA: Kullanım: run <script.cycle>{}\n", RED, BOLD, RESET);
                         } else {
                             let filepath = parts[1];
                             match std::fs::read_to_string(filepath) {
@@ -746,7 +746,7 @@ pub async fn run_interactive_shell_loop(
                     }
                     "watch" => {
                         if parts.len() < 2 {
-                            println!("{}{}HATA: Kullanım: watch <script.cy>{}\n", RED, BOLD, RESET);
+                            println!("{}{}HATA: Kullanım: watch <script.cycle>{}\n", RED, BOLD, RESET);
                         } else {
                             let filepath = parts[1];
                             println!("{}{}👀 HOT-RELOADING BETİK İZLEYİCİ BAŞLATILDI: {}{}\n", BRIGHT_YELLOW, BOLD, filepath, RESET);

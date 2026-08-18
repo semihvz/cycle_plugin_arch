@@ -90,9 +90,9 @@ pub fn format_help_menu() -> String {
     out.push_str(&format!("  {}sysinfo{} / {}pc{}           : İşletim sistemi, çekirdek, CPU modeli, RAM ve disk kullanımını gösterir\n", GREEN, RESET, GREEN, RESET));
     out.push_str(&format!("  {}<yerel komutlar>{}         : Tüm Linux/OS komutlarını doğrudan çalıştırır (örn: ls, free -h, df -h, git status, ping)\n", GREEN, RESET));
 
-    out.push_str(&format!("\n{}{}📜 PYTHONIC CYCLELANG STRATEJİ VE AKIŞ MOTORU:{}\n", BRIGHT_YELLOW, BOLD, RESET));
-    out.push_str(&format!("  {}run <script.py / script.cy>{}  : Pythonic sözdizimli strateji betiğini derler ve yürütür\n", GREEN, RESET));
-    out.push_str(&format!("  {}watch <script.py>{}            : Strateji dosyasını canlıda izler ve değişiklikte anında uygular (Hot-Reloading)\n", GREEN, RESET));
+    out.push_str(&format!("\n{}{}📜 CYCLELANG (.cycle) STRATEJİ VE AKIŞ MOTORU:{}\n", BRIGHT_YELLOW, BOLD, RESET));
+    out.push_str(&format!("  {}run <script.cycle>{}           : .cycle uzantılı strateji/orkestrasyon betiğini yürütür\n", GREEN, RESET));
+    out.push_str(&format!("  {}watch <script.cycle>{}         : .cycle strateji dosyasını canlıda izler ve değişiklikte anında uygular (Hot-Reloading)\n", GREEN, RESET));
 
     out.push_str(&format!("\n{}{}🧮 HESAPLAMA VE FİNANSAL UTILITY:{}\n", BRIGHT_YELLOW, BOLD, RESET));
     out.push_str(&format!("  {}calc <ifade>{}            : Matematiksel/Finansal hesaplama yapar (örn: calc 65000 * 0.1 * 20)\n", GREEN, RESET));
