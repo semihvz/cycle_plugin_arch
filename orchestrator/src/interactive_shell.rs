@@ -297,6 +297,116 @@ pub async fn run_interactive_shell_loop(
                             }
                         }
                     }
+                    "buy" | "sell" => {
+                        if parts.len() < 3 {
+                            println!("{}{}HATA: Kullanım: {} <symbol> <quantity> [price] [leverage]{}\n", RED, BOLD, verb, RESET);
+                        } else {
+                            let symbol = parts[1].to_uppercase();
+                            let qty: f64 = parts[2].parse().unwrap_or(0.1);
+                            let price: f64 = parts.get(3).and_then(|p| p.parse().ok()).unwrap_or(0.0);
+                            let leverage: f64 = parts.get(4).and_then(|l| l.parse().ok()).unwrap_or(20.0);
+
+                            let order_payload = serde_json::json!({
+                                "action": "submit_order",
+                                "user_id": "admin",
+                                "data": {
+                                    "id": format!("ord_{}", std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_nanos()),
+                                    "user_id": "admin",
+                                    "symbol": symbol,
+                                    "side": if verb == "buy" { "Buy" } else { "Sell" },
+                                    "position_side": if verb == "buy" { "Long" } else { "Short" },
+                                    "order_type": if price == 0.0 { "Market" } else { "Limit" },
+                                    "price": price,
+                                    "stop_price": 0.0,
+                                    "amount": qty,
+                                    "leverage": leverage,
+                                    "executed": 0.0,
+                                    "timestamp": 0
+                                }
+                            });
+
+                            let mut buf = [0u8; 4096];
+                            let payload_bytes = serde_json::to_vec(&order_payload).unwrap_or_default();
+                            orchestrator.call_endpoint("plugin_paper_exchange", StandardEndpoint::Inbox, &payload_bytes, &mut buf);
+                            println!("{}{}✓ {} EMİR İLETİLDİ: {} | Miktar: {} | Fiyat: {} | Kaldıraç: {}x{}\n", 
+                                if verb == "buy" { GREEN } else { RED }, BOLD,
+                                verb.to_uppercase(), symbol, qty, if price == 0.0 { "MARKET".to_string() } else { format!("${:.2}", price) }, leverage, RESET
+                            );
+                        }
+                    }
+                    "positions" => {
+                        match orchestrator.monitor_data("plugin_paper_exchange") {
+                            Ok(data) if !data.is_empty() => {
+                                let report = String::from_utf8_lossy(&data);
+                                println!("{}{}=== PAPER EXCHANGE CANLI DURUM & POZİSYONLAR ==={}", BRIGHT_CYAN, BOLD, RESET);
+                                println!("{}\n", report);
+                            }
+                            _ => println!("{}{}Paper exchange eklentisinden pozisyon verisi okunamadı.{}\n", YELLOW, BOLD, RESET),
+                        }
+                    }
+                    "close" => {
+                        let symbol = parts.get(1).unwrap_or(&"BTCUSDT").to_uppercase();
+                        let payload = serde_json::json!({
+                            "action": "close_position",
+                            "user_id": "admin",
+                            "symbol": symbol
+                        });
+                        let mut buf = [0u8; 1024];
+                        let payload_bytes = serde_json::to_vec(&payload).unwrap_or_default();
+                        orchestrator.call_endpoint("plugin_paper_exchange", StandardEndpoint::Inbox, &payload_bytes, &mut buf);
+                        println!("{}{}✓ POZİSYON KAPATMA SİNYALİ GÖNDERİLDİ: {}{}\n", YELLOW, BOLD, symbol, RESET);
+                    }
+                    "sql" | "tables" | "schema" => {
+                        let sql_cmd = if verb == "tables" {
+                            serde_json::json!({ "action": "tables" })
+                        } else if verb == "schema" {
+                            let tbl = parts.get(1).unwrap_or(&"mark_prices");
+                            serde_json::json!({ "action": "schema", "table": tbl })
+                        } else {
+                            let query = parts[1..].join(" ");
+                            serde_json::json!({ "action": "query", "sql": query })
+                        };
+
+                        let mut out_buf = vec![0u8; 64 * 1024];
+                        let payload_bytes = serde_json::to_vec(&sql_cmd).unwrap_or_default();
+                        let written = orchestrator.call_endpoint("plugin_sqlite_query", StandardEndpoint::Inbox, &payload_bytes, &mut out_buf);
+                        if written > 0 {
+                            let output_str = String::from_utf8_lossy(&out_buf[..written]);
+                            println!("{}{}=== SQLITE SORGU SONUCU ==={}", BRIGHT_CYAN, BOLD, RESET);
+                            println!("{}\n", output_str);
+                        } else {
+                            println!("{}{}Sorgu yürütülemedi veya veritabanı eklentisi yanıt vermedi.{}\n", RED, BOLD, RESET);
+                        }
+                    }
+                    "bench" => {
+                        let iterations: usize = parts.get(1).and_then(|s| s.parse().ok()).unwrap_or(1_000_000);
+                        println!("{}{}⚡ C-ABI ZERO-COPY BENCHMARK BAŞLATILIYOR ({} Çağrı)...{}", BRIGHT_YELLOW, BOLD, iterations, RESET);
+
+                        let start = std::time::Instant::now();
+                        let mut dummy_buf = [0u8; 8];
+                        for _ in 0..iterations {
+                            let _ = orchestrator.call_endpoint("plugin_sys_metrics", StandardEndpoint::IsWorking, &[], &mut dummy_buf);
+                        }
+                        let elapsed = start.elapsed();
+                        let elapsed_ms = elapsed.as_secs_f64() * 1000.0;
+                        let avg_ns = elapsed.as_nanos() as f64 / iterations as f64;
+                        let avg_us = avg_ns / 1000.0;
+                        let ops_sec = if elapsed.as_secs_f64() > 0.0 { (iterations as f64 / elapsed.as_secs_f64()) as u64 } else { 0 };
+
+                        println!("{}{}=== C-ABI ZERO-COPY BENCHMARK SONUÇLARI ==={}", BRIGHT_CYAN, BOLD, RESET);
+                        println!("  • Toplam İşlem Sayısı : {}{}{}", WHITE, iterations, RESET);
+                        println!("  • Toplam Geçen Süre   : {}{:.2} ms{}", WHITE, elapsed_ms, RESET);
+                        println!("  • Çağrı Başına Gecikme: {}{:.2} ns ({:.5} µs){}", GREEN, avg_ns, avg_us, RESET);
+                        println!("  • Saniye Başına Çağrı : {}{} ops/sec{}\n", BRIGHT_GREEN, ops_sec, RESET);
+                    }
+                    "graph" | "routes" => {
+                        println!("{}{}=== HFT FLOW ENGINE DÜĞÜM VE YÖNLENDİRME TOPOLOJİSİ (DAG) ==={}", BRIGHT_CYAN, BOLD, RESET);
+                        println!("  [binance_spot_01] ────── (depth / ticker) ──────► [validator_01]");
+                        println!("  [aggtrade_stats_01] ──── (volume / delta) ─────► [validator_01]");
+                        println!("  [scout_futures_01] ───── (liquidation) ─────────► [validator_01] ──► [paper_exchange]");
+                        println!("  [ohlcv_fetcher] ──────── (1m klines) ───────────► [ms_analyzer]");
+                        println!("  [sys_metrics] ────────── (telemetry) ───────────► [orchestrator]\n");
+                    }
                     "config" => {
                         if let Ok(content) = std::fs::read_to_string("flow_config.json") {
                             println!("{}{}=== FLOW CONFIG (flow_config.json) ==={}", BRIGHT_CYAN, BOLD, RESET);

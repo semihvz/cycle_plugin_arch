@@ -75,9 +75,14 @@ pub fn format_help_menu() -> String {
     out.push_str(&format!("  {}tables{}                 : SQLite veritabanındaki tüm tabloları ve kayıt sayılarını gösterir\n", GREEN, RESET));
     out.push_str(&format!("  {}schema <table>{}          : Tablo yapısını ve sütun tiplerini görüntüler\n", GREEN, RESET));
     out.push_str(&format!("  {}sql <query>{}            : Doğrudan SQL sorgusu çalıştırır (örn: sql SELECT * FROM mark_prices LIMIT 5)\n", GREEN, RESET));
-    out.push_str(&format!("  {}buy <sym> <qty> <price>{} : Sanal alım (Long) emri girer\n", GREEN, RESET));
-    out.push_str(&format!("  {}sell <sym> <qty> <price>{}: Sanal satım (Short) emri girer\n", GREEN, RESET));
+    out.push_str(&format!("  {}buy <sym> <qty> <price> [lev]{}: Sanal alım (Long) emri girer (örn: buy BTCUSDT 0.1 60000 20)\n", GREEN, RESET));
+    out.push_str(&format!("  {}sell <sym> <qty> <price> [lev]{}: Sanal satım (Short) emri girer (örn: sell ETHUSDT 1.5 3000 50)\n", GREEN, RESET));
     out.push_str(&format!("  {}positions{}              : Açık paper trading pozisyonlarını ve PnL durumunu listeler\n", GREEN, RESET));
+    out.push_str(&format!("  {}close <symbol|all>{}       : Açık pozisyonu veya tüm pozisyonları kapatır\n", GREEN, RESET));
+
+    out.push_str(&format!("\n{}{}⚡ HFT BENCHMARK VE TOPOLOJİ:{}\n", BRIGHT_YELLOW, BOLD, RESET));
+    out.push_str(&format!("  {}bench [iterations]{}     : Zero-copy C-ABI endpoint gecikmesini nanosaniye (ns) düzeyinde ölçer\n", GREEN, RESET));
+    out.push_str(&format!("  {}graph{} / {}routes{}         : Flow Engine düğüm yönlendirme grafiğini (DAG) görselleştirir\n", GREEN, RESET, GREEN, RESET));
 
     out.push_str(&format!("\n{}{}🛠️ KONTROL VE APİ DÜZEYİ:{}\n", BRIGHT_YELLOW, BOLD, RESET));
     out.push_str(&format!("  {}peek <plugin_id> [len]{}  : Eklentinin RAM bellek tamponunu (Hex & ASCII) inceler\n", GREEN, RESET));
