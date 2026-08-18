@@ -288,9 +288,12 @@ pub async fn start_web_server(
     port: u16,
     shutdown_rx: tokio::sync::oneshot::Receiver<()>,
 ) {
+    let addr = format!("0.0.0.0:{}", port);
+    let _ = log_tx.send(format!("[HFT WEB] Gecikmesiz Telemetri Konsolu Başlatılıyor: http://localhost:{}", port));
+
     let state = AppState {
         orchestrator,
-        log_tx,
+        log_tx: log_tx.clone(),
         selected_monitor: Arc::new(Mutex::new(None)),
     };
 
@@ -323,20 +326,17 @@ pub async fn start_web_server(
         .layer(cors)
         .with_state(state);
 
-    let addr = format!("0.0.0.0:{}", port);
-    eprintln!("[HFT WEB] Gecikmesiz Telemetri Konsolu Başlatılıyor: http://localhost:{}", port);
-
     match tokio::net::TcpListener::bind(&addr).await {
         Ok(listener) => {
             let server = axum::serve(listener, app).with_graceful_shutdown(async move {
                 let _ = shutdown_rx.await;
             });
             if let Err(e) = server.await {
-                eprintln!("[HFT WEB] Sunucu hatası: {}", e);
+                let _ = log_tx.send(format!("[HFT WEB] Sunucu hatası: {}", e));
             }
         }
         Err(e) => {
-            eprintln!("[HFT WEB] Port {} dinlenemedi: {}", port, e);
+            let _ = log_tx.send(format!("[HFT WEB] Port {} dinlenemedi: {}", port, e));
         }
     }
 }

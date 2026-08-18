@@ -86,18 +86,19 @@ async fn main() -> anyhow::Result<()> {
     // HFT: CPU Çekirdek Sabitleme (Core Pinning)
     // Ana thread → Çekirdek 0, Router thread → Çekirdek 1
     // ═══════════════════════════════════════════════════════
+    let mut pinned_core = 0;
     if let Some(core_ids) = core_affinity::get_core_ids() {
         if let Some(core) = core_ids.first() {
             core_affinity::set_for_current(*core);
         }
-        let pinned_core = core_ids.first().map(|c| c.id).unwrap_or(0);
-        eprintln!("[HFT] Ana thread CPU çekirdeğine sabitlendi: Core {}", pinned_core);
+        pinned_core = core_ids.first().map(|c| c.id).unwrap_or(0);
     }
 
     let (log_tx, _log_rx) = tokio::sync::broadcast::channel::<String>(200);
 
     let orchestrator = Arc::new(Orchestrator::new());
     let mut app = App::new(orchestrator.clone(), log_tx.clone());
+    app.log(&format!("[HFT] Ana thread CPU çekirdeğine sabitlendi: Core {}", pinned_core));
     app.log("Sadece TUI Konsolu Başlatıldı. Web Arayüzü için Ayarlar sekmesinden veya [W] tuşuna basarak başlatabilirsiniz.");
     
     // --- FLOW ENGINE & CONFIG INITIALIZATION ---
