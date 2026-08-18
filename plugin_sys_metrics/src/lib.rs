@@ -144,7 +144,10 @@ unsafe extern "C" fn handle_endpoint(
             state.is_running.store(false, Ordering::Relaxed);
             0
         }
-        2 => { // Read Memory Address / Buffer
+        2 => { // IsWorking
+            if state.is_running.load(Ordering::Relaxed) { 1 } else { 0 }
+        }
+        3 | 4 | 5 => { // DataValid (3), DataMonitor (4), RawData (5)
             let sys_list = vec![
                 ("plugin_sys_metrics", 65536, true),
                 ("plugin_binance_gateway", 262144, true),
@@ -161,25 +164,10 @@ unsafe extern "C" fn handle_endpoint(
             }
             len
         }
-        3 => { // Process Data / Telemetry Input
-            if payload_len > 0 && !payload.is_null() {
-                let slice = std::slice::from_raw_parts(payload, payload_len);
-                if let Ok(val) = serde_json::from_slice::<Value>(slice) {
-                    if let Some(list) = val.get("plugins").and_then(|v| v.as_array()) {
-                        let mut parsed_plugins = Vec::new();
-                        for p in list {
-                            let id = p.get("id").and_then(|v| v.as_str()).unwrap_or("unknown");
-                            let ram = p.get("ram_bytes").and_then(|v| v.as_u64()).unwrap_or(16384) as usize;
-                            let running = p.get("is_running").and_then(|v| v.as_bool()).unwrap_or(true);
-                            parsed_plugins.push((id, ram, running));
-                        }
-
-                        let report_str = state.engine.refresh_and_get_report(&parsed_plugins);
-                        let mut data_lock = state.data.lock().unwrap();
-                        *data_lock = report_str.into_bytes();
-                    }
-                }
-            }
+        6 => { // Inbox
+            0
+        }
+        7 => { // Outbox
             0
         }
         _ => 0,

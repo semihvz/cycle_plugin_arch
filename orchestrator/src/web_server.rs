@@ -431,7 +431,10 @@ async fn handle_socket(mut socket: WebSocket, state: AppState) {
                 let mem_total = sys_info_collector.total_memory() / (1024 * 1024);
 
                 let selected_id = {
-                    let guard = state.selected_monitor.lock().unwrap();
+                    let mut guard = state.selected_monitor.lock().unwrap();
+                    if guard.is_none() && !systems_info.is_empty() {
+                        *guard = Some(systems_info[0].id.clone());
+                    }
                     guard.clone()
                 };
 
