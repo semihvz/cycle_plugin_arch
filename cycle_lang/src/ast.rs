@@ -54,6 +54,9 @@ pub enum Statement {
     Sql {
         query: Expr,
     },
+    Sleep {
+        seconds: Expr,
+    },
     FnDef {
         name: String,
         params: Vec<String>,
