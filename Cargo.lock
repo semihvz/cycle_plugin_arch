@@ -1523,6 +1523,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "plugin_sys_metrics"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "sysinfo",
+ "tokio",
+]
+
+[[package]]
 name = "potential_utf"
 version = "0.1.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"

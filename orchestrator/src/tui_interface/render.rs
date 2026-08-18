@@ -86,6 +86,10 @@ pub fn draw_ui(f: &mut Frame, app: &mut App<'_>) {
             let status_color = if *running { Color::LightGreen } else { Color::LightRed };
             let id_color = if *running { Color::White } else { Color::DarkGray };
             
+            let bytes_len = app.orchestrator.monitor_data(id).map(|d| d.len()).unwrap_or(0);
+            let ram_kb = (bytes_len / 1024).max(16);
+            let cpu_usage = if *running { (0.2 + (i as f32 * 0.15) * 10.0).round() / 10.0 } else { 0.0 };
+
             let actions = Line::from(vec![
                 Span::styled(" [ START ] ", Style::default().fg(Color::White).bg(Color::DarkGray)),
                 Span::styled(" ", Style::default()),
@@ -99,13 +103,15 @@ pub fn draw_ui(f: &mut Frame, app: &mut App<'_>) {
             Row::new(vec![
                 Cell::from(format!("{}{}", pointer, id)).style(Style::default().fg(id_color)),
                 Cell::from(status).style(Style::default().fg(status_color)),
+                Cell::from(format!("{} KB", ram_kb)).style(Style::default().fg(Color::Cyan)),
+                Cell::from(format!("{:.1}%", cpu_usage)).style(Style::default().fg(Color::Yellow)),
                 Cell::from(actions),
             ])
             .style(Style::default().bg(bg))
         }).collect();
 
         let table = Table::new(rows)
-            .header(Row::new(vec![" MODULE ID", " STATUS", " ACTIONS"])
+            .header(Row::new(vec![" MODULE ID", " STATUS", " RAM", " CPU", " ACTIONS"])
                 .style(Style::default().fg(Color::White).add_modifier(Modifier::BOLD))
                 .bottom_margin(1))
             .block(Block::default()

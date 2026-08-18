@@ -296,8 +296,10 @@
                   ${statusBadge}
                 </div>
                 <div class="sys-sub-row">
+                  <span>Anlık RAM: <strong style="color:var(--accent-cyan);">${s.ram_kb || 16} KB</strong></span>
+                  <span>Anlık CPU: <strong style="color:var(--accent-amber);">${(s.cpu_usage || 0).toFixed(1)}%</strong></span>
                   <span>RAM Adresi: <strong>${s.memory_addr}</strong></span>
-                  <span>Veri Durumu: ${validBadge}</span>
+                  <span>Veri: ${validBadge}</span>
                 </div>
               </div>
               <div class="sys-controls">

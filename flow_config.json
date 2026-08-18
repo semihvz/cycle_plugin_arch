@@ -174,5 +174,13 @@
     "plugin_params": {
       "history_limit": 60
     }
+  },
+  {
+    "plugin_inputs": [],
+    "plugin_name": "plugin_sys_metrics",
+    "plugin_outputs": [],
+    "plugin_params": {
+      "interval_ms": 1000
+    }
   }
 ]
