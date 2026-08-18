@@ -1,0 +1,35 @@
+# 🛠️ Stage 1: Build Environment on Amazon Linux 2023
+FROM amazonlinux:2023 AS builder
+
+# Sistem Bağımlılıkları
+RUN dnf update -y && \
+    dnf groupinstall "Development Tools" -y && \
+    dnf install -y gcc gcc-c++ openssl-devel sqlite-devel pkgconfig curl git
+
+# Rust Kurulumu
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+ENV PATH="/root/.cargo/bin:${PATH}"
+
+WORKDIR /app
+COPY . .
+
+# Release Derlemesi
+RUN cargo build --release
+
+# 🚀 Stage 2: Runtime Environment on Amazon Linux 2023
+FROM amazonlinux:2023
+
+RUN dnf update -y && \
+    dnf install -y openssl sqlite libgcc && \
+    dnf clean all
+
+WORKDIR /app
+
+# Derlenen Binary ve Eklentileri Kopyala
+COPY --from=builder /app/target/release/cycle-finance-breakout-system /app/
+COPY --from=builder /app/target/release/libplugin_*.so /app/
+COPY --from=builder /app/flow_config.json /app/
+
+ENV RUST_LOG=info
+
+ENTRYPOINT ["./cycle-finance-breakout-system"]

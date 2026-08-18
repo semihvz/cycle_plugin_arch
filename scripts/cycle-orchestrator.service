@@ -1,0 +1,17 @@
+[Unit]
+Description=Cycle Orchestrator High Frequency Trading System
+After=network.target
+
+[Service]
+Type=simple
+User=ec2-user
+WorkingDirectory=/home/ec2-user/cycle-orc
+ExecStart=/home/ec2-user/cycle-orc/target/release/cycle-finance-breakout-system
+Restart=always
+RestartSec=3
+LimitNOFILE=65535
+CPUSchedulingPolicy=rr
+CPUSchedulingPriority=99
+
+[Install]
+WantedBy=multi-user.target
