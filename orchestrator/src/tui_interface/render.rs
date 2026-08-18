@@ -40,10 +40,13 @@ pub fn draw_ui(f: &mut Frame, app: &mut App<'_>) {
         (0.0, 0)
     };
 
+    use chrono::Timelike;
     let now = chrono::Local::now();
-    let ms = now.timestamp_subsec_millis();
-    let us = now.timestamp_subsec_micros() % 1000;
-    let time_str = format!("{}.{:03}.{:03}", now.format("%H.%M.%S"), ms, us);
+    let nanos = now.nanosecond();
+    let millis = (nanos / 1_000_000) % 1_000;
+    let micros = (nanos / 1_000) % 1_000;
+    let nanos_part = nanos % 1_000;
+    let time_str = format!("{}.{:03}.{:03}.{:03}", now.format("%H.%M.%S"), millis, micros, nanos_part);
 
     let header_text = vec![
         Line::from(vec![
