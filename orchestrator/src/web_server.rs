@@ -116,9 +116,10 @@ unsafe fn load_plugin_dynamic(orchestrator: &Orchestrator, plugin_name: &str) ->
               else if cfg!(target_os = "macos") { "dylib" } 
               else { "so" };
     let prefix = if cfg!(target_os = "windows") { "" } else { "lib" };
+    let clean_name = plugin_name.strip_prefix("lib").unwrap_or(plugin_name);
     
     let mut lib_path_buf = get_plugin_dir();
-    lib_path_buf.push(format!("{}{}.{}", prefix, plugin_name, ext));
+    lib_path_buf.push(format!("{}{}.{}", prefix, clean_name, ext));
     let lib_path = lib_path_buf.to_string_lossy().to_string();
     
     match libloading::Library::new(&lib_path) {
