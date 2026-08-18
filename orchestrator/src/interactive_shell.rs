@@ -789,41 +789,15 @@ pub async fn run_interactive_shell_loop(
                         if parts.len() < 2 {
                             println!("{}{}HATA: Kullanım: watch <script.cycle>{}\n", RED, BOLD, RESET);
                         } else {
-                            let filepath = parts[1].to_string();
-                            let orchestrator_clone = orchestrator.clone();
-
-                            println!("{}{}👀 CANLI (HOT-RELOADING) BETİK İZLEYİCİ BAŞLATILDI: {}{}\n", BRIGHT_YELLOW, BOLD, filepath, RESET);
-
-                            tokio::spawn(async move {
-                                let mut last_mod_time = std::fs::metadata(&filepath)
-                                    .and_then(|m| m.modified())
-                                    .ok();
-
-                                // İlk Yürütme
-                                if let Ok(code) = std::fs::read_to_string(&filepath) {
-                                    let mut handler = ShellOrchestratorHandler { orchestrator: orchestrator_clone.clone() };
+                            let filepath = parts[1];
+                            println!("{}{}👀 HOT-RELOADING BETİK İZLEYİCİ BAŞLATILDI: {}{}\n", BRIGHT_YELLOW, BOLD, filepath, RESET);
+                            match std::fs::read_to_string(filepath) {
+                                Ok(code) => {
+                                    let mut handler = ShellOrchestratorHandler { orchestrator: orchestrator.clone() };
                                     let _ = cycle_lang::run_script(&code, &mut handler);
                                 }
-
-                                loop {
-                                    tokio::time::sleep(tokio::time::Duration::from_millis(500)).await;
-                                    if let Ok(meta) = std::fs::metadata(&filepath) {
-                                        if let Ok(mod_time) = meta.modified() {
-                                            if last_mod_time.map_or(true, |last| mod_time > last) {
-                                                last_mod_time = Some(mod_time);
-                                                println!("\n{}{}🔄 DOSYA DEĞİŞİKLİĞİ ALGILANDI ({}) -> YENİDEN YÜKLENİYOR...{}\n", BRIGHT_CYAN, BOLD, filepath, RESET);
-                                                if let Ok(code) = std::fs::read_to_string(&filepath) {
-                                                    let mut handler = ShellOrchestratorHandler { orchestrator: orchestrator_clone.clone() };
-                                                    match cycle_lang::run_script(&code, &mut handler) {
-                                                        Ok(_) => println!("{}{}✓ BETİK BAŞARIYLA YENİDEN YÜRÜTÜLDÜ: {}{}\n", BRIGHT_GREEN, BOLD, filepath, RESET),
-                                                        Err(err_msg) => println!("{}{}Betik yenileme hatası ({}): {}{}\n", RED, BOLD, filepath, err_msg, RESET),
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            });
+                                Err(e) => println!("{}{}Betik okunamadı: {}{}\n", RED, BOLD, e, RESET),
+                            }
                         }
                     }
                     "config" => {

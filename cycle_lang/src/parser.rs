@@ -50,7 +50,6 @@ impl<'a> Parser<'a> {
             Token::Log => self.parse_log_statement(),
             Token::Print => self.parse_print_statement(),
             Token::Sql => self.parse_sql_statement(),
-            Token::Sleep => self.parse_sleep_statement(),
             Token::Def | Token::Fn => self.parse_fn_statement(),
             Token::Ident(_) => {
                 if self.peek_token == Token::Assign {
@@ -364,14 +363,6 @@ impl<'a> Parser<'a> {
         let query = self.parse_expression(0)?;
         if self.current_token == Token::RParen { self.advance(); }
         Ok(Statement::Sql { query })
-    }
-
-    fn parse_sleep_statement(&mut self) -> Result<Statement, String> {
-        self.advance(); // skip 'sleep'
-        if self.current_token == Token::LParen { self.advance(); }
-        let seconds = self.parse_expression(0)?;
-        if self.current_token == Token::RParen { self.advance(); }
-        Ok(Statement::Sleep { seconds })
     }
 
     fn parse_fn_statement(&mut self) -> Result<Statement, String> {

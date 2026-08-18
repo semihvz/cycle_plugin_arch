@@ -118,10 +118,6 @@ impl Evaluator {
                 let res = handler.run_sql(&q_str)?;
                 println!("\x1b[96m\x1b[1m[SQL Result]\x1b[0m\n{}", res);
             }
-            Statement::Sleep { seconds } => {
-                let secs = self.eval_number(seconds, handler)?;
-                std::thread::sleep(std::time::Duration::from_secs_f64(secs));
-            }
             Statement::FnDef { name, params, body } => {
                 self.functions
                     .insert(name.clone(), (params.clone(), body.clone()));
