@@ -354,7 +354,10 @@ pub fn draw_ui(f: &mut Frame, app: &mut App<'_>) {
             Line::from(""),
             Line::from(vec![
                 Span::styled(" [W] ", Style::default().fg(Color::Black).bg(Color::Yellow).add_modifier(Modifier::BOLD)),
-                Span::styled(" WEB ARAYÜZÜNÜ BAŞLAT (Port 8080 Telemetri & Visual Studio)", Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD)),
+                Span::styled(
+                    if app.web_server_started { " ⏹️ WEB ARAYÜZÜNÜ DURDUR (Port 8080 Kapat)" } else { " 🚀 WEB ARAYÜZÜNÜ BAŞLAT (Port 8080 Aç)" },
+                    Style::default().fg(if app.web_server_started { Color::LightRed } else { Color::Cyan }).add_modifier(Modifier::BOLD)
+                ),
             ]),
             Line::from(""),
             Line::from(vec![
@@ -367,7 +370,7 @@ pub fn draw_ui(f: &mut Frame, app: &mut App<'_>) {
             ]),
             Line::from(""),
             Line::from(Span::styled("Sistem başlatıldığında varsayılan olarak SADECE bu TUI ekranı çalışır.", Style::default().fg(Color::White))),
-            Line::from(Span::styled("Web arayüzüne ihtiyaç duyduğunuzda [W] veya [E] tuşuna basarak başlatabilirsiniz.", Style::default().fg(Color::Gray))),
+            Line::from(Span::styled("[W] tuşuna basarak Port 8080 Web Sunucusunu dilediğiniz an BAŞLATABİLİR veya KAPATABİLİRSİNİZ.", Style::default().fg(Color::LightYellow))),
             Line::from(""),
             Line::from(Span::styled("Sistem çalışırken ayarları değiştirdiğinizde Hot-Reload ile motor anında güncellenir.", Style::default().fg(Color::DarkGray))),
         ];

@@ -286,6 +286,7 @@ pub async fn start_web_server(
     orchestrator: Arc<Orchestrator>,
     log_tx: broadcast::Sender<String>,
     port: u16,
+    shutdown_rx: tokio::sync::oneshot::Receiver<()>,
 ) {
     let state = AppState {
         orchestrator,
@@ -327,7 +328,10 @@ pub async fn start_web_server(
 
     match tokio::net::TcpListener::bind(&addr).await {
         Ok(listener) => {
-            if let Err(e) = axum::serve(listener, app).await {
+            let server = axum::serve(listener, app).with_graceful_shutdown(async move {
+                let _ = shutdown_rx.await;
+            });
+            if let Err(e) = server.await {
                 eprintln!("[HFT WEB] Sunucu hatası: {}", e);
             }
         }

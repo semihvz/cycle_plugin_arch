@@ -44,6 +44,7 @@ pub struct App<'a> {
     pub live_feed_scroll: u16,
     pub logs_scroll: u16,
     pub web_server_started: bool,
+    pub web_shutdown_tx: Option<tokio::sync::oneshot::Sender<()>>,
     pub last_sys_refresh: std::time::Instant,
 }
 
@@ -74,6 +75,7 @@ impl<'a> App<'a> {
             live_feed_scroll: 0,
             logs_scroll: 0,
             web_server_started: false,
+            web_shutdown_tx: None,
             last_sys_refresh: std::time::Instant::now(),
         }
     }
@@ -86,16 +88,23 @@ impl<'a> App<'a> {
     }
 
     pub fn toggle_web_server(&mut self) {
-        if !self.web_server_started {
+        if !self.web_server_started || self.web_shutdown_tx.is_none() {
+            let (tx, rx) = tokio::sync::oneshot::channel();
+            self.web_shutdown_tx = Some(tx);
             self.web_server_started = true;
+
             let orchestrator = self.orchestrator.clone();
             let log_tx = self.log_tx.clone();
             tokio::spawn(async move {
-                crate::web_server::start_web_server(orchestrator, log_tx, 8080).await;
+                crate::web_server::start_web_server(orchestrator, log_tx, 8080, rx).await;
             });
-            self.log("🚀 Web Arayüz Sunucusu Başlatıldı: http://localhost:8080");
+            self.log("🚀 Web Arayüz Sunucusu Başlatıldı (Port 8080): http://localhost:8080");
         } else {
-            self.log("ℹ️ Web Arayüz Sunucusu zaten aktif: http://localhost:8080");
+            if let Some(tx) = self.web_shutdown_tx.take() {
+                let _ = tx.send(());
+            }
+            self.web_server_started = false;
+            self.log("⏹️ Web Arayüz Sunucusu Durduruldu (Port 8080 Kapalı).");
         }
     }
 
