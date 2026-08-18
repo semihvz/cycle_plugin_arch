@@ -1512,38 +1512,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "plugin_binance_gateway"
-version = "0.1.0"
-dependencies = [
- "futures-util",
- "serde_json",
- "tokio",
- "tokio-tungstenite 0.21.0",
-]
-
-[[package]]
-name = "plugin_binance_liquidations"
-version = "0.1.0"
-dependencies = [
- "futures-util",
- "serde",
- "serde_json",
- "tokio",
- "tokio-tungstenite 0.23.1",
-]
-
-[[package]]
-name = "plugin_binance_markprice"
-version = "0.1.0"
-dependencies = [
- "futures-util",
- "serde",
- "serde_json",
- "tokio",
- "tokio-tungstenite 0.23.1",
-]
-
-[[package]]
 name = "plugin_binance_sqlite"
 version = "0.1.0"
 dependencies = [
@@ -1552,17 +1520,6 @@ dependencies = [
  "serde",
  "serde_json",
  "tokio",
-]
-
-[[package]]
-name = "plugin_binance_ticker"
-version = "0.1.0"
-dependencies = [
- "futures-util",
- "serde",
- "serde_json",
- "tokio",
- "tokio-tungstenite 0.23.1",
 ]
 
 [[package]]
@@ -1579,7 +1536,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "plugin_binance_trades"
+name = "plugin_binance_ws"
 version = "0.1.0"
 dependencies = [
  "futures-util",
@@ -2177,20 +2134,6 @@ dependencies = [
 
 [[package]]
 name = "rustls"
-version = "0.22.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bf4ef73721ac7bcd79b2b315da7779d8fc09718c6b3d2d1b2d94850eb8c18432"
-dependencies = [
- "log",
- "ring",
- "rustls-pki-types",
- "rustls-webpki 0.102.8",
- "subtle",
- "zeroize",
-]
-
-[[package]]
-name = "rustls"
 version = "0.23.43"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0283386ce02abc0151e1761d08802dfe86c173b0b494af5cbc086574e453da06"
@@ -2229,17 +2172,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8b6275d1ee7a1cd780b64aca7726599a1dbc893b1e64144529e55c3c2f745765"
 dependencies = [
  "ring",
- "untrusted",
-]
-
-[[package]]
-name = "rustls-webpki"
-version = "0.102.8"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "64ca1bc8749bd4cf37b5ce386cc146580777b4e8572c7b97baf22c83f444bee9"
-dependencies = [
- "ring",
- "rustls-pki-types",
  "untrusted",
 ]
 
@@ -2759,39 +2691,12 @@ dependencies = [
 
 [[package]]
 name = "tokio-rustls"
-version = "0.25.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "775e0c0f0adb3a2f22a00c4745d728b479985fc15ee7ca6a2608388c5569860f"
-dependencies = [
- "rustls 0.22.4",
- "rustls-pki-types",
- "tokio",
-]
-
-[[package]]
-name = "tokio-rustls"
 version = "0.26.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1729aa945f29d91ba541258c8df89027d5792d85a8841fb65e8bf0f4ede4ef61"
 dependencies = [
  "rustls 0.23.43",
  "tokio",
-]
-
-[[package]]
-name = "tokio-tungstenite"
-version = "0.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c83b561d025642014097b66e6c1bb422783339e0909e4429cde4749d1990bc38"
-dependencies = [
- "futures-util",
- "log",
- "rustls 0.22.4",
- "rustls-pki-types",
- "tokio",
- "tokio-rustls 0.25.0",
- "tungstenite 0.21.0",
- "webpki-roots 0.26.11",
 ]
 
 [[package]]
@@ -3067,27 +2972,6 @@ dependencies = [
  "crossterm",
  "ratatui",
  "unicode-width",
-]
-
-[[package]]
-name = "tungstenite"
-version = "0.21.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9ef1a641ea34f399a848dea702823bbecfb4c486f911735368f1f137cb8257e1"
-dependencies = [
- "byteorder",
- "bytes",
- "data-encoding",
- "http 1.5.0",
- "httparse",
- "log",
- "rand 0.8.7",
- "rustls 0.22.4",
- "rustls-pki-types",
- "sha1",
- "thiserror 1.0.69",
- "url",
- "utf-8",
 ]
 
 [[package]]

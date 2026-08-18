@@ -186,19 +186,44 @@ impl cycle_lang::OrchestratorHandler for ShellOrchestratorHandler {
     fn call_plugin(&mut self, plugin: &str, method: &str, args: &[cycle_lang::Value]) -> Result<cycle_lang::Value, String> {
         println!("{}{}CycleLang Metot Çağrısı: {}.{}({:?}){}\n", BRIGHT_CYAN, BOLD, plugin, method, args, RESET);
 
-        if method == "set_symbols" || method == "subscribe" || method == "config" {
+        if method == "subscribe" || method == "config" || method == "set_symbols" {
+            let mut stream_name = "bookTicker".to_string();
             let mut symbols_vec = Vec::new();
-            for arg in args {
-                symbols_vec.push(arg.to_string());
+
+            if !args.is_empty() {
+                let first_arg = args[0].to_string();
+                if first_arg.contains('@') || first_arg == "bookTicker" || first_arg == "aggTrade" || first_arg == "markPrice@1s" || first_arg == "forceOrder" || first_arg == "trade" || first_arg == "depth10@100ms" {
+                    stream_name = first_arg;
+                    for arg in &args[1..] {
+                        symbols_vec.push(arg.to_string());
+                    }
+                } else {
+                    for arg in args {
+                        symbols_vec.push(arg.to_string());
+                    }
+                }
             }
+
             let payload = serde_json::json!({
-                "action": "set_symbols",
+                "action": "subscribe",
+                "stream": stream_name,
                 "symbols": symbols_vec
             });
             let payload_bytes = serde_json::to_vec(&payload).unwrap_or_default();
             let mut out_buf = [0u8; 1024];
             self.orchestrator.call_endpoint(plugin, StandardEndpoint::Inbox, &payload_bytes, &mut out_buf);
-            println!("{}{}✓ Canlı Dinamik Semboller Atandı ({}): {:?}{}\n", GREEN, BOLD, plugin, symbols_vec, RESET);
+            println!("{}{}✓ Evrensel Akış Yapılandırıldı ({}): Stream='{}', Semboller={:?}{}\n", GREEN, BOLD, plugin, stream_name, symbols_vec, RESET);
+        } else if method == "connect" {
+            if let Some(url_arg) = args.get(0) {
+                let payload = serde_json::json!({
+                    "action": "connect",
+                    "url": url_arg.to_string()
+                });
+                let payload_bytes = serde_json::to_vec(&payload).unwrap_or_default();
+                let mut out_buf = [0u8; 1024];
+                self.orchestrator.call_endpoint(plugin, StandardEndpoint::Inbox, &payload_bytes, &mut out_buf);
+                println!("{}{}✓ Özel WebSocket URL Bağlandı ({}): {}{}\n", GREEN, BOLD, plugin, url_arg, RESET);
+            }
         }
 
         Ok(cycle_lang::Value::Nil)

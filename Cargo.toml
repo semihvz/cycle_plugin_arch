@@ -8,17 +8,13 @@ members = [
     "oi_fetcher",
     "flow_engine",
     "plugin_paper_exchange",
-    "binance_gateway",
     "plugin_scout",
     "plugin_binance_sqlite",
     "plugin_sqlite_query",
     "plugin_aggtrade_stats",
     "plugin_aggtrade_ohlcv",
     "plugin_sys_metrics",
-    "plugin_binance_ticker",
-    "plugin_binance_trades",
-    "plugin_binance_markprice",
-    "plugin_binance_liquidations",
+    "plugin_binance_ws",
     "interactive_shell",
     "cycle_lang"
 ]

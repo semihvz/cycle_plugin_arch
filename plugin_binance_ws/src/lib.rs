@@ -2,10 +2,16 @@ use std::ffi::c_void;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Mutex};
 
+struct StreamConfig {
+    stream_type: String, // bookTicker, aggTrade, markPrice@1s, forceOrder, depth, etc.
+    symbols: Vec<String>,
+    custom_url: Option<String>,
+}
+
 struct PluginState {
     runtime: tokio::runtime::Runtime,
     is_running: Arc<AtomicBool>,
-    symbols: Arc<Mutex<Vec<String>>>,
+    config: Arc<Mutex<StreamConfig>>,
     data: Arc<Mutex<Vec<u8>>>,
     shutdown_tx: Mutex<Option<tokio::sync::watch::Sender<bool>>>,
 }
@@ -23,7 +29,11 @@ pub unsafe extern "C" fn init_plugin(
     let state = Box::new(PluginState {
         runtime,
         is_running: Arc::new(AtomicBool::new(false)),
-        symbols: Arc::new(Mutex::new(Vec::new())),
+        config: Arc::new(Mutex::new(StreamConfig {
+            stream_type: "bookTicker".to_string(),
+            symbols: Vec::new(),
+            custom_url: None,
+        })),
         data: Arc::new(Mutex::new(b"{}".to_vec())),
         shutdown_tx: Mutex::new(None),
     });
@@ -48,14 +58,18 @@ unsafe extern "C" fn handle_endpoint(
                 return 0;
             }
 
-            // Parse payload for dynamic symbols if passed
             if payload_len > 0 {
                 let slice = std::slice::from_raw_parts(payload, payload_len);
-                parse_and_set_symbols(slice, &state.symbols);
+                parse_config(slice, &state.config);
             }
 
             let is_running = state.is_running.clone();
-            let symbols = state.symbols.lock().unwrap().clone();
+            let config = state.config.lock().unwrap();
+            let stream_type = config.stream_type.clone();
+            let symbols = config.symbols.clone();
+            let custom_url = config.custom_url.clone();
+            drop(config);
+
             let data = state.data.clone();
             let (tx, rx) = tokio::sync::watch::channel(false);
 
@@ -63,7 +77,7 @@ unsafe extern "C" fn handle_endpoint(
             is_running.store(true, Ordering::Relaxed);
 
             state.runtime.spawn(async move {
-                stream_ticker(symbols, is_running, data, rx).await;
+                universal_stream_loop(stream_type, symbols, custom_url, is_running, data, rx).await;
             });
             0
         }
@@ -83,10 +97,10 @@ unsafe extern "C" fn handle_endpoint(
                 0
             }
         }
-        3 => { // Inbox / Config payload (set_symbols)
+        3 => { // Inbox / Config payload
             if payload_len > 0 {
                 let slice = std::slice::from_raw_parts(payload, payload_len);
-                parse_and_set_symbols(slice, &state.symbols);
+                parse_config(slice, &state.config);
             }
             0
         }
@@ -102,26 +116,38 @@ unsafe extern "C" fn handle_endpoint(
     }
 }
 
-fn parse_and_set_symbols(slice: &[u8], symbols_target: &Arc<Mutex<Vec<String>>>) {
+fn parse_config(slice: &[u8], config_target: &Arc<Mutex<StreamConfig>>) {
     if let Ok(json) = serde_json::from_slice::<serde_json::Value>(slice) {
-        let mut list = Vec::new();
+        let mut cfg = config_target.lock().unwrap();
+
+        if let Some(url) = json.get("url").and_then(|u| u.as_str()) {
+            cfg.custom_url = Some(url.to_string());
+        }
+
+        if let Some(st) = json.get("stream").and_then(|s| s.as_str()) {
+            cfg.stream_type = st.to_string();
+        }
+
         if let Some(arr) = json.get("symbols").and_then(|s| s.as_array()) {
+            let mut list = Vec::new();
             for item in arr {
                 if let Some(s) = item.as_str() {
                     list.push(s.to_uppercase());
                 }
             }
+            if !list.is_empty() {
+                cfg.symbols = list;
+            }
         } else if let Some(s) = json.get("symbol").and_then(|s| s.as_str()) {
-            list.push(s.to_uppercase());
-        }
-        if !list.is_empty() {
-            *symbols_target.lock().unwrap() = list;
+            cfg.symbols = vec![s.to_uppercase()];
         }
     }
 }
 
-async fn stream_ticker(
+async fn universal_stream_loop(
+    stream_type: String,
     symbols: Vec<String>,
+    custom_url: Option<String>,
     is_running: Arc<AtomicBool>,
     data: Arc<Mutex<Vec<u8>>>,
     mut shutdown_rx: tokio::sync::watch::Receiver<bool>,
@@ -131,12 +157,13 @@ async fn stream_ticker(
     use tokio_tungstenite::tungstenite::Message;
     use std::time::{SystemTime, UNIX_EPOCH};
 
-    let ws_url = if symbols.is_empty() || symbols.iter().any(|s| s == "ALL") {
-        "wss://fstream.binance.com/ws/!bookTicker".to_string()
+    let ws_url = if let Some(url) = custom_url {
+        url
     } else {
-        let streams: Vec<String> = symbols.iter().map(|s| format!("{}@bookTicker", s.to_lowercase())).collect();
-        format!("wss://fstream.binance.com/stream?streams={}", streams.join("/"))
+        build_binance_ws_url(&stream_type, &symbols)
     };
+
+    println!("\x1b[94m\x1b[1m[plugin_binance_ws]\x1b[0m WebSocket Akışına Bağlanılıyor: {}", ws_url);
 
     let mut retry_count = 0;
     while is_running.load(Ordering::Relaxed) {
@@ -156,21 +183,26 @@ async fn stream_ticker(
                                 if let Ok(wrapper) = serde_json::from_str::<serde_json::Value>(&text) {
                                     let json = wrapper.get("data").unwrap_or(&wrapper);
                                     let symbol = json["s"].as_str().unwrap_or("").to_string();
+
+                                    let mut guard = data.lock().unwrap();
+                                    let mut combined: serde_json::Value = serde_json::from_slice(&guard).unwrap_or_else(|_| serde_json::json!({}));
+
                                     if !symbol.is_empty() {
-                                        let output = serde_json::json!({
-                                            "symbol": symbol,
-                                            "best_bid": json["b"].as_str().unwrap_or("0").parse::<f64>().unwrap_or(0.0),
-                                            "best_bid_qty": json["B"].as_str().unwrap_or("0").parse::<f64>().unwrap_or(0.0),
-                                            "best_ask": json["a"].as_str().unwrap_or("0").parse::<f64>().unwrap_or(0.0),
-                                            "best_ask_qty": json["A"].as_str().unwrap_or("0").parse::<f64>().unwrap_or(0.0),
-                                            "event_time": json["E"].as_i64().unwrap_or(0),
-                                            "local_recv_time_ms": recv_ms
-                                        });
-                                        let mut guard = data.lock().unwrap();
-                                        let mut combined: serde_json::Value = serde_json::from_slice(&guard).unwrap_or_else(|_| serde_json::json!({}));
-                                        combined[symbol] = output;
-                                        *guard = serde_json::to_vec_pretty(&combined).unwrap_or_default();
+                                        let mut frame = json.clone();
+                                        if let Some(obj) = frame.as_object_mut() {
+                                            obj.insert("local_recv_time_ms".to_string(), serde_json::json!(recv_ms));
+                                        }
+                                        combined[symbol] = frame;
+                                    } else if combined.is_array() {
+                                        if let Some(arr) = combined.as_array_mut() {
+                                            arr.push(json.clone());
+                                            if arr.len() > 50 { arr.remove(0); }
+                                        }
+                                    } else {
+                                        combined = json.clone();
                                     }
+
+                                    *guard = serde_json::to_vec_pretty(&combined).unwrap_or_default();
                                 }
                             }
                             Some(Err(_)) | None => { break; }
@@ -181,5 +213,33 @@ async fn stream_ticker(
             }
         }
         retry_count += 1;
+    }
+}
+
+fn build_binance_ws_url(stream_type: &str, symbols: &[String]) -> String {
+    let clean_stream = stream_type.trim();
+
+    if symbols.is_empty() || symbols.iter().any(|s| s == "ALL") {
+        if clean_stream == "forceOrder" || clean_stream == "!forceOrder@arr" {
+            "wss://fstream.binance.com/ws/!forceOrder@arr".to_string()
+        } else if clean_stream == "markPrice" || clean_stream == "markPrice@1s" || clean_stream == "!markPrice@arr@1s" {
+            "wss://fstream.binance.com/ws/!<markPrice@arr@1s".to_string()
+        } else if clean_stream == "bookTicker" || clean_stream == "!bookTicker" {
+            "wss://fstream.binance.com/ws/!bookTicker".to_string()
+        } else if clean_stream == "aggTrade" || clean_stream == "!aggTrade@arr" {
+            "wss://fstream.binance.com/ws/!aggTrade@arr".to_string()
+        } else {
+            format!("wss://fstream.binance.com/ws/{}", clean_stream)
+        }
+    } else {
+        let formatted_streams: Vec<String> = symbols.iter().map(|sym| {
+            let s = sym.to_lowercase();
+            if clean_stream.contains('@') {
+                format!("{}@{}", s, clean_stream.split('@').nth(1).unwrap_or(clean_stream))
+            } else {
+                format!("{}@{}", s, clean_stream)
+            }
+        }).collect();
+        format!("wss://fstream.binance.com/stream?streams={}", formatted_streams.join("/"))
     }
 }
