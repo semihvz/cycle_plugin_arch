@@ -420,12 +420,6 @@ pub fn draw_ui(f: &mut Frame, app: &mut App<'_>) {
         }
     }
 
-    // Footer Layout
-    let footer_layout = Layout::default()
-        .direction(Direction::Horizontal)
-        .constraints([Constraint::Percentage(80), Constraint::Percentage(20)])
-        .split(main_layout[4]);
-
     let help_line = Line::from(vec![
         Span::styled("   ", Style::default()), // offset x=3
         Span::styled(" [+ Yeni Eklenti Yükle] ", Style::default().fg(Color::White).bg(Color::Rgb(150, 150, 40)).add_modifier(Modifier::BOLD)),
@@ -436,16 +430,7 @@ pub fn draw_ui(f: &mut Frame, app: &mut App<'_>) {
     let help = Paragraph::new(help_line)
         .block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).border_style(Style::default().fg(Color::DarkGray)))
         .alignment(Alignment::Left);
-    f.render_widget(help, footer_layout[0]);
-
-    let now = chrono::Local::now();
-    let time_str = format!(" {} ", now.format("%H.%M.%S"));
-    let time_line = Line::from(Span::styled(time_str, Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD)));
-    let time_widget = Paragraph::new(time_line)
-        .block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).border_style(Style::default().fg(Color::DarkGray)))
-        .alignment(Alignment::Center);
-    
-    f.render_widget(time_widget, footer_layout[1]);
+    f.render_widget(help, main_layout[4]);
 
     // Popup (Eklenti Seçimi)
     if app.mode == ViewMode::PluginSelection {
