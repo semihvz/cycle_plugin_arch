@@ -41,7 +41,7 @@ pub fn draw_ui(f: &mut Frame, app: &mut App<'_>) {
     };
 
     let now = chrono::Local::now();
-    let time_str = now.format("%H:%M:%S.%3f").to_string();
+    let time_str = now.format("%H:%M:%S.%6f").to_string();
 
     let header_text = vec![
         Line::from(vec![
