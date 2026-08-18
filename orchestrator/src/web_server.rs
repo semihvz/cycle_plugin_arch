@@ -1,5 +1,6 @@
 use crate::orchestrator::Orchestrator;
 use crate::endpoint::StandardEndpoint;
+use crate::system::{SystemInstance, RawEndpointFn};
 
 use axum::{
     extract::ws::{WebSocket, WebSocketUpgrade, Message},
@@ -9,6 +10,7 @@ use axum::{
     Router, Json,
 };
 use serde::{Deserialize, Serialize};
+use std::ffi::c_void;
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
 use tokio::sync::broadcast;
@@ -52,6 +54,8 @@ pub enum WebCommand {
     Monitor { id: String },
     #[serde(rename = "delete")]
     Delete { id: String },
+    #[serde(rename = "load")]
+    Load { name: String },
     #[serde(rename = "ping")]
     Ping,
 }
@@ -63,6 +67,7 @@ pub enum WebResponse {
     Telemetry {
         systems: Vec<SystemInfo>,
         telemetry: TelemetryData,
+        available_plugins: Vec<String>,
         monitored_id: Option<String>,
         monitored_hex: Option<String>,
         monitored_str: Option<String>,
@@ -70,6 +75,68 @@ pub enum WebResponse {
     },
     #[serde(rename = "log")]
     Log { message: String },
+}
+
+fn get_plugin_dir() -> std::path::PathBuf {
+    let mut dir = std::env::current_exe().unwrap_or_else(|_| std::path::PathBuf::from("."));
+    dir.pop();
+    if dir.ends_with("deps") {
+        dir.pop();
+    }
+    dir
+}
+
+fn scan_available_plugins() -> Vec<String> {
+    let mut plugins = Vec::new();
+    let lib_dir = get_plugin_dir();
+    let prefix = if cfg!(target_os = "windows") { "" } else { "lib" };
+    if let Ok(entries) = std::fs::read_dir(&lib_dir) {
+        for entry in entries.flatten() {
+            let name = entry.file_name().to_string_lossy().into_owned();
+            if name.starts_with(&format!("{}plugin_", prefix)) && (name.ends_with(".so") || name.ends_with(".dll") || name.ends_with(".dylib")) {
+                let ext_len = if name.ends_with(".so") { 3 } else if name.ends_with(".dll") { 4 } else { 6 };
+                let plugin_name = &name[prefix.len()..name.len()-ext_len];
+                plugins.push(plugin_name.to_string());
+            }
+        }
+    }
+    plugins.sort();
+    plugins.dedup();
+    plugins
+}
+
+unsafe fn load_plugin_dynamic(orchestrator: &Orchestrator, plugin_name: &str) -> Result<String, String> {
+    let ext = if cfg!(target_os = "windows") { "dll" } 
+              else if cfg!(target_os = "macos") { "dylib" } 
+              else { "so" };
+    let prefix = if cfg!(target_os = "windows") { "" } else { "lib" };
+    
+    let mut lib_path_buf = get_plugin_dir();
+    lib_path_buf.push(format!("{}{}.{}", prefix, plugin_name, ext));
+    let lib_path = lib_path_buf.to_string_lossy().to_string();
+    
+    match libloading::Library::new(&lib_path) {
+        Ok(lib) => {
+            type PluginInit = unsafe extern "C" fn(state_out: *mut *mut c_void) -> RawEndpointFn;
+            match lib.get::<PluginInit>(b"init_plugin") {
+                Ok(init_fn) => {
+                    let mut state_ptr: *mut c_void = std::ptr::null_mut();
+                    let endpoint_fn = init_fn(&mut state_ptr);
+                    let sys = SystemInstance::new(
+                        plugin_name.to_string(), 
+                        plugin_name.to_string(), 
+                        state_ptr, 
+                        endpoint_fn,
+                    );
+                    orchestrator.register_system(sys);
+                    Box::leak(Box::new(lib));
+                    Ok(format!("{} eklentisi başarıyla yüklendi ve sisteme bağlandı.", plugin_name))
+                }
+                Err(_) => Err(format!("{} eklentisinde init_plugin sembolü bulunamadı.", plugin_name)),
+            }
+        }
+        Err(e) => Err(format!("{} eklentisi yüklenemedi: {}", plugin_name, e)),
+    }
 }
 
 pub async fn start_web_server(
@@ -123,9 +190,11 @@ pub async fn start_web_server(
 
 async fn status_handler(State(state): State<AppState>) -> Json<serde_json::Value> {
     let systems = state.orchestrator.list_systems();
+    let available = scan_available_plugins();
     Json(serde_json::json!({
         "status": "online",
         "systems_count": systems.len(),
+        "available_plugins": available,
         "telemetry_port": 8080
     }))
 }
@@ -149,6 +218,7 @@ async fn handle_socket(mut socket: WebSocket, state: AppState) {
                 sys_info_collector.refresh_memory();
 
                 let raw_systems = state.orchestrator.list_systems();
+                let available = scan_available_plugins();
                 let mut systems_info = Vec::new();
                 let mut running_count = 0;
 
@@ -202,6 +272,7 @@ async fn handle_socket(mut socket: WebSocket, state: AppState) {
                         total_systems: raw_systems.len(),
                         running_systems: running_count,
                     },
+                    available_plugins: available,
                     monitored_id: selected_id,
                     monitored_hex,
                     monitored_str,
@@ -266,6 +337,16 @@ async fn handle_socket(mut socket: WebSocket, state: AppState) {
                                     }
                                     let msg = format!("{} Web (Port 8080) üzerinden silindi", id);
                                     let _ = state.log_tx.send(msg);
+                                }
+                            }
+                            WebCommand::Load { name } => {
+                                match unsafe { load_plugin_dynamic(&state.orchestrator, &name) } {
+                                    Ok(success_msg) => {
+                                        let _ = state.log_tx.send(success_msg);
+                                    }
+                                    Err(err_msg) => {
+                                        let _ = state.log_tx.send(format!("HATA: {}", err_msg));
+                                    }
                                 }
                             }
                             WebCommand::Ping => {}

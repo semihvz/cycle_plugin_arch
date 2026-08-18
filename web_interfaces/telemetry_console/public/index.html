@@ -97,7 +97,10 @@
         <div class="systems-card-panel">
           <div class="panel-section-title">
             <span><i class="fa-solid fa-server"></i> Yüklü Eklentiler (RAM Bağlantılı HFT Sistemleri)</span>
-            <button class="btn-micro" id="btn-refresh-systems"><i class="fa-solid fa-rotate"></i> Yenile</button>
+            <div class="panel-actions-group">
+              <button class="btn btn-secondary btn-sm" id="btn-open-load-modal"><i class="fa-solid fa-plus"></i> Eklenti Yükle</button>
+              <button class="btn-micro" id="btn-refresh-systems"><i class="fa-solid fa-rotate"></i> Yenile</button>
+            </div>
           </div>
           <div class="systems-list-wrapper" id="systems-card-list">
             <div class="empty-state">
@@ -181,6 +184,32 @@
       </div>
     </section>
 
+  </div>
+
+  <!-- MODAL: LOAD PLUGIN DIALOG -->
+  <div class="modal-overlay" id="load-plugin-modal" style="display:none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-plus-circle"></i> Eklenti Yükle (Dinamik C-ABI / RAM)</h3>
+        <button class="btn-icon" id="close-load-modal-btn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-desc" style="font-size:0.82rem; color:var(--text-muted);">
+          Sistemde (target/debug) derlenmiş olan <code>.so</code> / <code>.dll</code> eklenti kütüphaneleri aşağıda listelenmiştir. Yüklemek istediğiniz eklentiye tıklayın:
+        </p>
+        <div class="available-plugins-grid" id="available-plugins-grid">
+          <!-- Dynamic available plugin pills render here -->
+        </div>
+        <div class="form-group" style="margin-top:10px;">
+          <label style="font-size:0.8rem; color:var(--text-muted);">Veya Eklenti Adı Girin:</label>
+          <input type="text" id="manual-plugin-input" placeholder="Örn: plugin_breakout">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="cancel-load-modal-btn">İptal</button>
+        <button class="btn btn-primary" id="confirm-load-modal-btn"><i class="fa-solid fa-upload"></i> Yükle</button>
+      </div>
+    </div>
   </div>
 
   <!-- TOAST NOTIFICATIONS -->

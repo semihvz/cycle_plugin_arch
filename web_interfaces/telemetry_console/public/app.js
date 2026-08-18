@@ -12,7 +12,9 @@
     wsConnected: false,
     selectedSystemId: null,
     systems: [],
+    availablePlugins: [],
     lastSystemsJson: '',
+    lastAvailableJson: '',
     logs: [],
     autoscrollLogs: true,
     pauseHexStream: false
@@ -34,6 +36,13 @@
     valRamUsage: document.getElementById('val-ram-usage'),
     systemsCardList: document.getElementById('systems-card-list'),
     btnRefreshSystems: document.getElementById('btn-refresh-systems'),
+    btnOpenLoadModal: document.getElementById('btn-open-load-modal'),
+    loadPluginModal: document.getElementById('load-plugin-modal'),
+    closeLoadModalBtn: document.getElementById('close-load-modal-btn'),
+    cancelLoadModalBtn: document.getElementById('cancel-load-modal-btn'),
+    confirmLoadModalBtn: document.getElementById('confirm-load-modal-btn'),
+    availablePluginsGrid: document.getElementById('available-plugins-grid'),
+    manualPluginInput: document.getElementById('manual-plugin-input'),
     focusSystemTitle: document.getElementById('focus-system-title'),
     focusSystemAddr: document.getElementById('focus-system-addr'),
     focusBufferLen: document.getElementById('focus-buffer-len'),
@@ -90,7 +99,7 @@
     });
   }
 
-  // EVENT DELEGATION FOR SYSTEM CARDS (Prevents DOM destruction bugs)
+  // EVENT DELEGATION FOR SYSTEM CARDS
   function setupCardEventDelegation() {
     if (!el.systemsCardList) return;
 
@@ -203,12 +212,42 @@
 
   function renderTelemetry(data) {
     state.systems = data.systems || [];
+    state.availablePlugins = data.available_plugins || [];
 
     if (el.valTotalSystems) el.valTotalSystems.textContent = data.telemetry.total_systems;
     if (el.valRunningSystems) el.valRunningSystems.textContent = data.telemetry.running_systems;
     if (el.valCpuUsage) el.valCpuUsage.textContent = `${data.telemetry.cpu_usage.toFixed(1)}%`;
     if (el.valRamUsage) el.valRamUsage.textContent = `${data.telemetry.memory_used_mb} MB`;
     if (el.wsLatencyVal) el.wsLatencyVal.textContent = `< 1 ms`;
+
+    // Render Available Plugins Pill Grid in Modal
+    const availableJson = JSON.stringify(state.availablePlugins);
+    if (availableJson !== state.lastAvailableJson && el.availablePluginsGrid) {
+      state.lastAvailableJson = availableJson;
+      if (state.availablePlugins.length === 0) {
+        el.availablePluginsGrid.innerHTML = `<div style="grid-column:1/-1; color:var(--text-muted); font-size:0.8rem;">Eklenti bulunamadı (target/debug).</div>`;
+      } else {
+        el.availablePluginsGrid.innerHTML = state.availablePlugins.map(name => {
+          const isLoaded = state.systems.some(s => s.id === name);
+          const badgeHtml = isLoaded
+            ? `<span style="color:var(--accent-emerald); font-size:0.7rem;"><i class="fa-solid fa-check"></i> Yüklü</span>`
+            : `<span style="color:var(--accent-cyan); font-size:0.7rem;"><i class="fa-solid fa-plus"></i> Yükle</span>`;
+
+          return `
+            <div class="plugin-pill-item" data-name="${name}">
+              <span>${name}</span>
+              ${badgeHtml}
+            </div>`;
+        }).join('');
+
+        el.availablePluginsGrid.querySelectorAll('.plugin-pill-item').forEach(pill => {
+          pill.addEventListener('click', () => {
+            const pluginName = pill.dataset.name;
+            loadPlugin(pluginName);
+          });
+        });
+      }
+    }
 
     // Smart DOM diffing check to prevent click interruption
     const systemsJson = JSON.stringify(state.systems) + `:${state.selectedSystemId}`;
@@ -219,7 +258,7 @@
         el.systemsCardList.innerHTML = `
           <div class="empty-state">
             <i class="fa-solid fa-ghost"></i>
-            <p>Yüklü eklenti bulunamadı. Eklentileri derleyip orchestrator'ı çalıştırın.</p>
+            <p>Yüklü eklenti bulunamadı. "Eklenti Yükle" butonuna tıklayarak sisteme eklenti bağlayın.</p>
           </div>`;
       } else {
         el.systemsCardList.innerHTML = state.systems.map(s => {
@@ -282,6 +321,22 @@
     }
   }
 
+  function loadPlugin(pluginName) {
+    if (!pluginName) return;
+    sendWsCommand({ type: 'load', name: pluginName });
+    showToast(`🧩 ${pluginName} eklentisi yükleniyor...`, 'info');
+    closeLoadModal();
+  }
+
+  function openLoadModal() {
+    if (el.loadPluginModal) el.loadPluginModal.style.display = 'flex';
+  }
+
+  function closeLoadModal() {
+    if (el.loadPluginModal) el.loadPluginModal.style.display = 'none';
+    if (el.manualPluginInput) el.manualPluginInput.value = '';
+  }
+
   function selectSystem(id) {
     state.selectedSystemId = id;
     sendWsCommand({ type: 'monitor', id });
@@ -318,9 +373,30 @@
   }
 
   function setupActions() {
+    if (el.btnOpenLoadModal) {
+      el.btnOpenLoadModal.addEventListener('click', openLoadModal);
+    }
+
+    if (el.closeLoadModalBtn) {
+      el.closeLoadModalBtn.addEventListener('click', closeLoadModal);
+    }
+
+    if (el.cancelLoadModalBtn) {
+      el.cancelLoadModalBtn.addEventListener('click', closeLoadModal);
+    }
+
+    if (el.confirmLoadModalBtn) {
+      el.confirmLoadModalBtn.addEventListener('click', () => {
+        const val = el.manualPluginInput ? el.manualPluginInput.value.trim() : '';
+        if (val) loadPlugin(val);
+        else showToast('Lütfen bir eklenti adı girin veya listeden seçin.', 'warn');
+      });
+    }
+
     if (el.btnRefreshSystems) {
       el.btnRefreshSystems.addEventListener('click', () => {
         state.lastSystemsJson = '';
+        state.lastAvailableJson = '';
         sendWsCommand({ type: 'ping' });
       });
     }
@@ -364,6 +440,7 @@
       if (key === '1') { switchTab('telemetry'); return; }
       if (key === '2') { switchTab('hex'); return; }
       if (key === '3') { switchTab('logs'); return; }
+      if (key === 'a' || key === 'l') { e.preventDefault(); openLoadModal(); return; }
 
       if (state.selectedSystemId) {
         if (key === 's') {
