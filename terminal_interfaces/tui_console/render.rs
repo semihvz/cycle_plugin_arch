@@ -5,7 +5,7 @@ use ratatui::{
     widgets::{Block, Borders, BorderType, Cell, Paragraph, Row, Table, List, ListItem, Clear, Padding, Tabs, Wrap},
     Frame,
 };
-use crate::{App, ViewMode, ActivePanel};
+use super::app::{App, ViewMode, ActivePanel};
 
 pub fn draw_ui(f: &mut Frame, app: &mut App<'_>) {
     let size = f.size();

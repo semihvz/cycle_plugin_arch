@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cycle-ORC | Zero-Latency HFT Telemetry Console (Port 8080)</title>
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="dark-theme">
+
+  <!-- TOP NAVIGATION HEADER -->
+  <header class="app-header">
+    <div class="brand-section">
+      <div class="logo-icon">
+        <i class="fa-solid fa-bolt"></i>
+      </div>
+      <div class="brand-titles">
+        <h1>Cycle-ORC <span>HFT Telemetry Console</span></h1>
+        <span class="sub-badge" id="server-status-badge"><i class="fa-solid fa-circle-notch fa-spin"></i> Port 8080 Bağlanıyor...</span>
+      </div>
+    </div>
+
+    <!-- MAIN DASHBOARD TABS -->
+    <div class="main-tabs-group">
+      <button class="main-tab-btn active" id="tab-btn-telemetry" data-tab="telemetry">
+        <i class="fa-solid fa-microchip"></i> ⚡ Canlı Sistemler <span class="tab-key">[1]</span>
+      </button>
+      <button class="main-tab-btn" id="tab-btn-hex" data-tab="hex">
+        <i class="fa-solid fa-terminal"></i> 📟 Canlı Hex & Bellek <span class="tab-key">[2]</span>
+      </button>
+      <button class="main-tab-btn" id="tab-btn-logs" data-tab="logs">
+        <i class="fa-solid fa-list-ul"></i> 📜 Canlı Loglar <span class="tab-key">[3]</span>
+      </button>
+    </div>
+
+    <!-- LATENCY BADGE & QUICK HOTKEYS -->
+    <div class="header-right-tools">
+      <div class="hotkey-indicators">
+        <span class="hk-chip" title="Seçili Eklentiyi Başlat"><kbd>S</kbd> Başlat</span>
+        <span class="hk-chip" title="Seçili Eklentiyi Durdur"><kbd>X</kbd> Durdur</span>
+        <span class="hk-chip" title="Canlı Veriyi İzle"><kbd>M</kbd> Takip</span>
+        <span class="hk-chip" title="Eklentiyi Kaldır"><kbd>D</kbd> Sil</span>
+      </div>
+      <div class="latency-pill" id="latency-pill">
+        <i class="fa-solid fa-plug"></i> <span id="ws-latency-val">-- ms</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN TAB CONTENT AREA -->
+  <div class="app-content-body">
+
+    <!-- TAB 1: LIVE SYSTEMS TELEMETRY & CONTROL DASHBOARD -->
+    <section class="tab-page active" id="page-telemetry">
+      <div class="telemetry-banner">
+        <div class="metric-card">
+          <div class="metric-icon cyan"><i class="fa-solid fa-cubes"></i></div>
+          <div class="metric-data">
+            <span class="metric-label">Tüm Eklentiler</span>
+            <span class="metric-value" id="val-total-systems">0</span>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-icon emerald"><i class="fa-solid fa-play"></i></div>
+          <div class="metric-data">
+            <span class="metric-label">Aktif Çalışan</span>
+            <span class="metric-value" id="val-running-systems">0</span>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-icon amber"><i class="fa-solid fa-cpu"></i></div>
+          <div class="metric-data">
+            <span class="metric-label">CPU Kullanımı</span>
+            <span class="metric-value" id="val-cpu-usage">0.0%</span>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-icon pink"><i class="fa-solid fa-memory"></i></div>
+          <div class="metric-data">
+            <span class="metric-label">RAM Kullanımı</span>
+            <span class="metric-value" id="val-ram-usage">0 MB</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="telemetry-main-grid">
+        <!-- SYSTEMS LIST PANEL -->
+        <div class="systems-card-panel">
+          <div class="panel-section-title">
+            <span><i class="fa-solid fa-server"></i> Yüklü Eklentiler (RAM Bağlantılı HFT Sistemleri)</span>
+            <button class="btn-micro" id="btn-refresh-systems"><i class="fa-solid fa-rotate"></i> Yenile</button>
+          </div>
+          <div class="systems-list-wrapper" id="systems-card-list">
+            <div class="empty-state">
+              <i class="fa-solid fa-ghost"></i>
+              <p>Yüklü eklenti bekleniyor...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- QUICK ACTION & LOG MINI PREVIEW -->
+        <div class="telemetry-side-panel">
+          <div class="panel-section-title">
+            <span><i class="fa-solid fa-bolt"></i> Anlık Odaklı Eklenti & Bellek İzleme</span>
+          </div>
+          <div class="focused-monitor-box">
+            <div class="focus-header">
+              <span class="focus-title" id="focus-system-title">Henüz Eklenti Seçilmedi</span>
+              <span class="focus-addr" id="focus-system-addr">0x00000000</span>
+            </div>
+            <div class="focus-stats">
+              <span>Gecikme: <strong style="color:var(--accent-emerald);">0.00 ms (Direct RAM)</strong></span>
+              <span>Buffer Boyutu: <strong id="focus-buffer-len">0 bytes</strong></span>
+            </div>
+            <div class="focus-preview-hex" id="focus-preview-hex">
+              00 00 00 00 00 00 00 00 | Monitör bekliyor...
+            </div>
+          </div>
+
+          <div class="panel-section-title" style="margin-top:20px;">
+            <span><i class="fa-solid fa-list-ul"></i> Son Log Akışı</span>
+            <button class="btn-micro" id="btn-goto-logs">Tümünü Gör</button>
+          </div>
+          <div class="mini-log-box" id="mini-log-box">
+            <div class="log-line text-muted">[SİSTEM] Port 8080 Telemetri konsolu hazır.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: LIVE HEX & MEMORY STREAM VIEW -->
+    <section class="tab-page" id="page-hex">
+      <div class="hex-viewer-container">
+        <div class="hex-toolbar">
+          <span class="hex-title"><i class="fa-solid fa-terminal"></i> Canlı Bellek (DataMonitor EndPoint Raw Bytes)</span>
+          <div class="hex-actions">
+            <span class="hex-selected-name" id="hex-system-name">Seçili: Yok</span>
+            <button class="btn btn-secondary btn-sm" id="btn-pause-hex"><i class="fa-solid fa-pause"></i> Duraklat</button>
+            <button class="btn btn-secondary btn-sm" id="btn-clear-hex"><i class="fa-solid fa-trash"></i> Temizle</button>
+          </div>
+        </div>
+
+        <div class="hex-split-view">
+          <!-- RAW HEX MATRIX -->
+          <div class="hex-pane">
+            <div class="pane-sub-header">HEX BAYT MATRİSİ (1MB RAM Buffer)</div>
+            <pre class="hex-matrix-display" id="hex-matrix-display">Seçili eklenti verisi bekleniyor... Klavyeden 'M' tuşuna basarak veya eklenti kartından 'Canlı Takip' butonuna basarak izlemeyi başlatabilirsiniz.</pre>
+          </div>
+          <!-- STRING ASCII DECODE -->
+          <div class="hex-pane">
+            <div class="pane-sub-header">ASCII / METİN METADATA ÇIKTISI</div>
+            <pre class="ascii-string-display" id="ascii-string-display">---------------------------------------------------------</pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: LIVE LOG TERMINAL -->
+    <section class="tab-page" id="page-logs">
+      <div class="logs-console-container">
+        <div class="console-toolbar">
+          <span class="console-title"><i class="fa-solid fa-terminal"></i> Orchestrator Canlı Log Konsolu</span>
+          <div class="console-actions">
+            <input type="text" id="log-filter-input" placeholder="Loglarda filtrele..." class="console-filter">
+            <button class="btn btn-secondary btn-sm" id="btn-toggle-autoscroll"><i class="fa-solid fa-arrow-down-long"></i> Oto-Kaydır: AÇIK</button>
+            <button class="btn btn-secondary btn-sm" id="btn-clear-logs"><i class="fa-solid fa-broom"></i> Temizle</button>
+          </div>
+        </div>
+        <div class="console-output" id="main-console-output">
+          <div class="log-line info">[SİSTEM] Port 8080 konsolu log yayın kanalına bağlandı.</div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- TOAST NOTIFICATIONS -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

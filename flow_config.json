@@ -3,20 +3,13 @@
     "plugin_name": "plugin_ohlcv_fetcher",
     "plugin_inputs": [],
     "plugin_params": {},
-    "plugin_outputs": [
-      "btc_15m",
-      "eth_5m"
-    ]
+    "plugin_outputs": ["btc_15m", "eth_5m"]
   },
   {
     "plugin_name": "plugin_binance_gateway",
     "plugin_inputs": [],
     "plugin_params": {
-      "symbols": [
-        "BTCUSDT",
-        "ETHUSDT",
-        "ACEUSDT"
-      ]
+      "symbols": ["BTCUSDT", "ETHUSDT", "ACEUSDT"]
     },
     "plugin_outputs": [
       "stream_markprice",
@@ -56,10 +49,7 @@
     "plugin_params": {
       "analysis_mode": "deep"
     },
-    "plugin_outputs": [
-      "ms_signals_btc",
-      "ms_signals_eth"
-    ]
+    "plugin_outputs": ["ms_signals_btc", "ms_signals_eth"]
   },
   {
     "plugin_name": "plugin_breakout",
@@ -88,9 +78,7 @@
       }
     ],
     "plugin_params": {},
-    "plugin_outputs": [
-      "paper_exchange_updates"
-    ]
+    "plugin_outputs": ["paper_exchange_updates"]
   },
   {
     "plugin_name": "plugin_scout",
@@ -155,7 +143,7 @@
       }
     ],
     "plugin_params": {
-      "window_ms": 10000000
+      "window_ms": 60000
     },
     "plugin_outputs": []
   },

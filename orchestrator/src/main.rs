@@ -1,8 +1,8 @@
-mod tui;
-
 use cycle_finance_breakout_system::orchestrator::Orchestrator;
 use cycle_finance_breakout_system::endpoint::StandardEndpoint;
 use cycle_finance_breakout_system::system::{SystemInstance, RawEndpointFn};
+use cycle_finance_breakout_system::tui_interface::{App, ViewMode, ActivePanel, draw_ui};
+
 use crossterm::{
     event::{self, Event, KeyCode, MouseEventKind, MouseButton, EnableMouseCapture, DisableMouseCapture},
     terminal::{disable_raw_mode, enable_raw_mode, Clear, ClearType},
@@ -13,85 +13,6 @@ use ratatui::layout::{Rect, Layout, Direction, Constraint};
 use std::io;
 use std::sync::Arc;
 use std::ffi::c_void;
-
-#[derive(PartialEq)]
-pub enum ViewMode {
-    Main,
-    PluginSelection,
-    ConfirmDelete(String),
-    ContextMenu(String, u16, u16),
-    Shell,
-    ConfigEditor,
-}
-
-#[derive(PartialEq, Clone, Copy, Debug)]
-pub enum ActivePanel {
-    Systems,
-    Hex,
-    LiveFeed,
-    Shell,
-    Logs,
-}
-
-pub struct App<'a> {
-    pub orchestrator: Arc<Orchestrator>,
-    pub selected: usize,
-    pub logs: Vec<String>,
-    pub monitored_data: Option<Vec<u8>>,
-    pub running: bool,
-    pub mode: ViewMode,
-    pub available_plugins: Vec<String>,
-    pub plugin_selected: usize,
-    pub active_tab: usize,
-    pub systems_panel_width: u16,
-    pub is_dragging_split: bool,
-    pub monitor_scroll: u16,
-    pub sys: sysinfo::System,
-    pub input_shell: String,
-    pub shell_history: Vec<String>,
-    pub textarea: Option<tui_textarea::TextArea<'a>>,
-    pub active_panel: ActivePanel,
-    pub hex_scroll: u16,
-    pub live_feed_scroll: u16,
-    pub logs_scroll: u16,
-}
-
-impl<'a> App<'a> {
-    pub fn new(orchestrator: Arc<Orchestrator>) -> Self {
-        let mut sys = sysinfo::System::new_all();
-        sys.refresh_all();
-        Self {
-            orchestrator,
-            selected: 0,
-            logs: Vec::new(),
-            monitored_data: None,
-            running: true,
-            mode: ViewMode::Main,
-            available_plugins: Vec::new(),
-            plugin_selected: 0,
-            active_tab: 0,
-            systems_panel_width: 30,
-            is_dragging_split: false,
-            monitor_scroll: 0,
-            sys,
-            input_shell: String::new(),
-            shell_history: Vec::new(),
-            textarea: None,
-            active_panel: ActivePanel::Systems,
-            hex_scroll: 0,
-            live_feed_scroll: 0,
-            logs_scroll: 0,
-        }
-    }
-
-    pub fn log(&mut self, msg: &str) {
-        let now = chrono::Local::now();
-        self.logs.push(format!("[{}] {}", now.format("%H:%M:%S"), msg));
-        if self.logs.len() > 100 {
-            self.logs.remove(0);
-        }
-    }
-}
 
 /// Eklenti yükleme yardımcı fonksiyonu (C-ABI: init_plugin)
 unsafe fn load_plugin_cabi(app: &mut App<'_>, plugin_name: &str) {
@@ -172,8 +93,17 @@ async fn main() -> anyhow::Result<()> {
         eprintln!("[HFT] Ana thread CPU çekirdeğine sabitlendi: Core {}", pinned_core);
     }
 
+    let (log_tx, _log_rx) = tokio::sync::broadcast::channel::<String>(200);
+
     let orchestrator = Arc::new(Orchestrator::new());
-    let mut app = App::new(orchestrator.clone());
+    let mut app = App::new(orchestrator.clone(), log_tx.clone());
+
+    // Spawn High-Speed Zero-Latency Telemetry Web Console on Port 8080
+    let web_orc = orchestrator.clone();
+    let web_log_tx = log_tx.clone();
+    tokio::spawn(async move {
+        cycle_finance_breakout_system::web_server::start_web_server(web_orc, web_log_tx, 8080).await;
+    });
     
     // --- FLOW ENGINE & CONFIG INITIALIZATION ---
     let config_path = if std::path::Path::new("flow_config.json").exists() {
@@ -269,7 +199,7 @@ async fn main() -> anyhow::Result<()> {
     let mut last_config_check = std::time::Instant::now();
     
     while app.running {
-        terminal.draw(|f| tui::draw_ui(f, &mut app))?;
+        terminal.draw(|f| draw_ui(f, &mut app))?;
         
         // Hot-reload check for flow_config.json
         if last_config_check.elapsed().as_secs() >= 2 {
