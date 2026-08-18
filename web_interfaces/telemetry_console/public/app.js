@@ -16,6 +16,8 @@
     lastSystemsJson: '',
     lastAvailableJson: '',
     logs: [],
+    shellHistory: [],
+    shellHistoryIdx: -1,
     autoscrollLogs: true,
     pauseHexStream: false
   };
@@ -27,9 +29,11 @@
     tabBtnTelemetry: document.getElementById('tab-btn-telemetry'),
     tabBtnHex: document.getElementById('tab-btn-hex'),
     tabBtnLogs: document.getElementById('tab-btn-logs'),
+    tabBtnShell: document.getElementById('tab-btn-shell'),
     pageTelemetry: document.getElementById('page-telemetry'),
     pageHex: document.getElementById('page-hex'),
     pageLogs: document.getElementById('page-logs'),
+    pageShell: document.getElementById('page-shell'),
     valTotalSystems: document.getElementById('val-total-systems'),
     valRunningSystems: document.getElementById('val-running-systems'),
     valCpuUsage: document.getElementById('val-cpu-usage'),
@@ -58,6 +62,9 @@
     btnToggleAutoscroll: document.getElementById('btn-toggle-autoscroll'),
     btnClearLogs: document.getElementById('btn-clear-logs'),
     mainConsoleOutput: document.getElementById('main-console-output'),
+    shellOutputWindow: document.getElementById('shell-output-window'),
+    shellInputField: document.getElementById('shell-input-field'),
+    shellSendBtn: document.getElementById('shell-send-btn'),
     toastContainer: document.getElementById('toast-container')
   };
 
@@ -67,13 +74,15 @@
     setupWebSocket();
     setupGlobalHotkeys();
     setupActions();
+    setupShellInput();
   }
 
   function setupMainTabSwitching() {
     const tabs = [
       { btn: el.tabBtnTelemetry, page: el.pageTelemetry, name: 'telemetry' },
       { btn: el.tabBtnHex, page: el.pageHex, name: 'hex' },
-      { btn: el.tabBtnLogs, page: el.pageLogs, name: 'logs' }
+      { btn: el.tabBtnLogs, page: el.pageLogs, name: 'logs' },
+      { btn: el.tabBtnShell, page: el.pageShell, name: 'shell' }
     ];
 
     tabs.forEach(t => {
@@ -88,15 +97,19 @@
 
   function switchTab(tabName) {
     state.activeTab = tabName;
-    [el.tabBtnTelemetry, el.tabBtnHex, el.tabBtnLogs].forEach(btn => {
+    [el.tabBtnTelemetry, el.tabBtnHex, el.tabBtnLogs, el.tabBtnShell].forEach(btn => {
       if (!btn) return;
       btn.classList.toggle('active', btn.dataset.tab === tabName);
     });
 
-    [el.pageTelemetry, el.pageHex, el.pageLogs].forEach(page => {
+    [el.pageTelemetry, el.pageHex, el.pageLogs, el.pageShell].forEach(page => {
       if (!page) return;
       page.classList.toggle('active', page.id === `page-${tabName}`);
     });
+
+    if (tabName === 'shell' && el.shellInputField) {
+      setTimeout(() => el.shellInputField.focus(), 100);
+    }
   }
 
   // EVENT DELEGATION FOR SYSTEM CARDS
@@ -207,6 +220,8 @@
       renderTelemetry(msg);
     } else if (msg.type === 'log') {
       appendLogMessage(msg.message);
+    } else if (msg.type === 'shell_output') {
+      appendShellOutput(msg.command, msg.output);
     }
   }
 
@@ -319,6 +334,96 @@
         if (el.asciiStringDisplay) el.asciiStringDisplay.textContent = asciiText;
       }
     }
+  }
+
+  function setupShellInput() {
+    if (!el.shellInputField) return;
+
+    el.shellInputField.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        submitShellCommand();
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        navigateShellHistory(-1);
+      } else if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        navigateShellHistory(1);
+      }
+    });
+
+    if (el.shellSendBtn) {
+      el.shellSendBtn.addEventListener('click', submitShellCommand);
+    }
+
+    document.querySelectorAll('.shell-badge-cmd').forEach(badge => {
+      badge.addEventListener('click', () => {
+        const cmd = badge.dataset.cmd;
+        if (cmd === 'clear') {
+          clearShellOutput();
+        } else {
+          el.shellInputField.value = cmd;
+          submitShellCommand();
+        }
+      });
+    });
+  }
+
+  function submitShellCommand() {
+    const cmd = el.shellInputField.value.trim();
+    if (!cmd) return;
+
+    if (cmd.toLowerCase() === 'clear') {
+      clearShellOutput();
+      el.shellInputField.value = '';
+      return;
+    }
+
+    state.shellHistory.push(cmd);
+    state.shellHistoryIdx = state.shellHistory.length;
+
+    sendWsCommand({ type: 'shell_input', command: cmd });
+    el.shellInputField.value = '';
+  }
+
+  function navigateShellHistory(direction) {
+    if (state.shellHistory.length === 0) return;
+    state.shellHistoryIdx += direction;
+    if (state.shellHistoryIdx < 0) state.shellHistoryIdx = 0;
+    if (state.shellHistoryIdx >= state.shellHistory.length) {
+      state.shellHistoryIdx = state.shellHistory.length;
+      el.shellInputField.value = '';
+      return;
+    }
+    el.shellInputField.value = state.shellHistory[state.shellHistoryIdx];
+  }
+
+  function appendShellOutput(cmd, outputText) {
+    if (!el.shellOutputWindow) return;
+
+    const cmdDiv = document.createElement('div');
+    cmdDiv.className = 'shell-line cmd-input-line';
+    cmdDiv.textContent = `> cycle-orc:hft-shell> ${cmd}`;
+    el.shellOutputWindow.appendChild(cmdDiv);
+
+    if (outputText) {
+      const outDiv = document.createElement('div');
+      outDiv.className = 'shell-line cmd-output-line';
+      outDiv.textContent = outputText;
+      el.shellOutputWindow.appendChild(outDiv);
+    }
+
+    el.shellOutputWindow.scrollTop = el.shellOutputWindow.scrollHeight;
+  }
+
+  function clearShellOutput() {
+    if (!el.shellOutputWindow) return;
+    el.shellOutputWindow.innerHTML = `
+      <div class="shell-line sys-intro">
+=== CYCLE-ORC INTERACTIVE HFT SHELL CONSOLE ===
+Tüm orkestratör komutlarını (help, list, start <id>, stop <id>, del <id>, load <name>, status) yazabilirsiniz.
+Komut geçmişinde gezinmek için [Yukarı / Aşağı] ok tuşlarını kullanabilirsiniz.
+--------------------------------------------------------------------------------</div>`;
   }
 
   function loadPlugin(pluginName) {
@@ -440,6 +545,7 @@
       if (key === '1') { switchTab('telemetry'); return; }
       if (key === '2') { switchTab('hex'); return; }
       if (key === '3') { switchTab('logs'); return; }
+      if (key === '4' || key === '`') { switchTab('shell'); return; }
       if (key === 'a' || key === 'l') { e.preventDefault(); openLoadModal(); return; }
 
       if (state.selectedSystemId) {

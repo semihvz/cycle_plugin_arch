@@ -56,6 +56,8 @@ pub enum WebCommand {
     Delete { id: String },
     #[serde(rename = "load")]
     Load { name: String },
+    #[serde(rename = "shell_input")]
+    ShellInput { command: String },
     #[serde(rename = "ping")]
     Ping,
 }
@@ -75,6 +77,8 @@ pub enum WebResponse {
     },
     #[serde(rename = "log")]
     Log { message: String },
+    #[serde(rename = "shell_output")]
+    ShellOutput { command: String, output: String },
 }
 
 fn get_plugin_dir() -> std::path::PathBuf {
@@ -136,6 +140,139 @@ unsafe fn load_plugin_dynamic(orchestrator: &Orchestrator, plugin_name: &str) ->
             }
         }
         Err(e) => Err(format!("{} eklentisi yüklenemedi: {}", plugin_name, e)),
+    }
+}
+
+fn process_shell_command(orchestrator: &Orchestrator, log_tx: &broadcast::Sender<String>, cmd_line: &str) -> String {
+    let parts: Vec<&str> = cmd_line.trim().split_whitespace().collect();
+    if parts.is_empty() {
+        return String::new();
+    }
+
+    let verb = parts[0].to_lowercase();
+    match verb.as_str() {
+        "help" => {
+            let mut out = String::from("=== CYCLE-ORC INTERACTIVE HFT SHELL HELP ===\n");
+            out.push_str("  help                   : Bu yardım menüsünü gösterir\n");
+            out.push_str("  list                   : Yüklü tüm eklentileri ve durumlarını listeler\n");
+            out.push_str("  available              : Diskte derlenmiş tüm eklenti (.so/.dll) dosyalarını gösterir\n");
+            out.push_str("  start <id>             : Belirtilen eklentiyi başlatır\n");
+            out.push_str("  stop <id>              : Belirtilen eklentiyi durdurur\n");
+            out.push_str("  del <id>               : Belirtilen eklentiyi hafızadan kaldırır\n");
+            out.push_str("  load <plugin_name>     : C-ABI ile kütüphaneyi anında dinamik yükler\n");
+            out.push_str("  status                 : Sistem kaynak ve çalışma istatistiklerini gösterir\n");
+            out.push_str("  clear                  : Ekranı temizler\n");
+            out
+        }
+        "list" => {
+            let systems = orchestrator.list_systems();
+            if systems.is_empty() {
+                "Yüklü eklenti bulunamadı.".to_string()
+            } else {
+                let mut out = String::from("=== YÜKLÜ EKLENTİLER ===\n");
+                for (id, name, is_running) in systems {
+                    let sys_obj = orchestrator.get_system(&id);
+                    let valid = sys_obj.as_ref().map(|s| s.context.is_data_valid.load(core::sync::atomic::Ordering::Relaxed)).unwrap_or(false);
+                    let ptr = sys_obj.as_ref().map(|s| format!("{:p}", s.plugin_state)).unwrap_or_default();
+                    out.push_str(&format!(" • ID: {:<22} | Adı: {:<20} | Durum: {:<10} | RAM: {:<14} | Geçerli: {}\n", 
+                        id, 
+                        name,
+                        if is_running { "ÇALIŞIYOR" } else { "DURDURULDU" },
+                        ptr,
+                        valid
+                    ));
+                }
+                out
+            }
+        }
+        "available" => {
+            let plugins = scan_available_plugins();
+            if plugins.is_empty() {
+                "Mevcut eklenti bulunamadı (target/debug).".to_string()
+            } else {
+                let mut out = String::from("=== DISKTEKİ DERLENMİŞ EKLENTİLER ===\n");
+                for p in plugins {
+                    out.push_str(&format!(" • {}\n", p));
+                }
+                out
+            }
+        }
+        "start" => {
+            if parts.len() < 2 {
+                "HATA: Kullanım: start <id>".to_string()
+            } else {
+                let id = parts[1];
+                let mut hft_buf = vec![0u8; 64 * 1024];
+                let payload = if let Ok(content) = std::fs::read_to_string("flow_config.json") {
+                    if let Ok(json_arr) = serde_json::from_str::<serde_json::Value>(&content) {
+                        json_arr.as_array()
+                            .and_then(|arr| arr.iter().find(|p| p.get("plugin_name").and_then(|n| n.as_str()) == Some(id)))
+                            .map(|conf| serde_json::to_vec(conf).unwrap_or_default())
+                            .unwrap_or_default()
+                    } else { Vec::new() }
+                } else { Vec::new() };
+
+                let written = orchestrator.call_endpoint(id, StandardEndpoint::Start, &payload, &mut hft_buf);
+                let _ = log_tx.send(format!("Shell: {} başlatıldı (yanıt: {} byte)", id, written));
+                format!("SUCCESS: {} eklentisi başlatıldı (yanıt: {} byte).", id, written)
+            }
+        }
+        "stop" => {
+            if parts.len() < 2 {
+                "HATA: Kullanım: stop <id>".to_string()
+            } else {
+                let id = parts[1];
+                let mut hft_buf = vec![0u8; 64 * 1024];
+                orchestrator.call_endpoint(id, StandardEndpoint::Stop, &[], &mut hft_buf);
+                let _ = log_tx.send(format!("Shell: {} durduruldu", id));
+                format!("SUCCESS: {} eklentisi durduruldu.", id)
+            }
+        }
+        "del" | "delete" | "remove" => {
+            if parts.len() < 2 {
+                "HATA: Kullanım: del <id>".to_string()
+            } else {
+                let id = parts[1];
+                if orchestrator.unregister_system(id).is_ok() {
+                    let _ = log_tx.send(format!("Shell: {} kaldırıldı", id));
+                    format!("SUCCESS: {} eklentisi hafızadan kaldırıldı.", id)
+                } else {
+                    format!("HATA: {} eklentisi bulunamadı.", id)
+                }
+            }
+        }
+        "load" => {
+            if parts.len() < 2 {
+                "HATA: Kullanım: load <plugin_name>".to_string()
+            } else {
+                let name = parts[1];
+                match unsafe { load_plugin_dynamic(orchestrator, name) } {
+                    Ok(msg) => {
+                        let _ = log_tx.send(format!("Shell: {}", msg));
+                        format!("SUCCESS: {}", msg)
+                    }
+                    Err(err) => format!("HATA: {}", err),
+                }
+            }
+        }
+        "status" => {
+            let mut sys = sysinfo::System::new_all();
+            sys.refresh_all();
+            let cpu = sys.global_cpu_info().cpu_usage();
+            let mem_used = sys.used_memory() / (1024 * 1024);
+            let mem_total = sys.total_memory() / (1024 * 1024);
+            let systems = orchestrator.list_systems();
+            format!("=== SİSTEM İSTATİSTİKLERİ ===\n• Toplam Eklenti : {}\n• Aktif Eklenti  : {}\n• CPU Kullanımı  : {:.1}%\n• RAM Kullanımı  : {} MB / {} MB",
+                systems.len(),
+                systems.iter().filter(|(_, _, r)| *r).count(),
+                cpu,
+                mem_used,
+                mem_total
+            )
+        }
+        _ => {
+            format!("Komut anlaşılamadı: '{}'. Kullanılabilir komutları görmek için 'help' yazın.", cmd_line)
+        }
     }
 }
 
@@ -347,6 +484,16 @@ async fn handle_socket(mut socket: WebSocket, state: AppState) {
                                     Err(err_msg) => {
                                         let _ = state.log_tx.send(format!("HATA: {}", err_msg));
                                     }
+                                }
+                            }
+                            WebCommand::ShellInput { command } => {
+                                let out_str = process_shell_command(&state.orchestrator, &state.log_tx, &command);
+                                let resp = WebResponse::ShellOutput {
+                                    command,
+                                    output: out_str,
+                                };
+                                if let Ok(msg_text) = serde_json::to_string(&resp) {
+                                    let _ = socket.send(Message::Text(msg_text.into())).await;
                                 }
                             }
                             WebCommand::Ping => {}

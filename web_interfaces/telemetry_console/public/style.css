@@ -542,3 +542,122 @@ body {
     color: var(--accent-cyan);
   }
 }
+
+/* INTERACTIVE SHELL STYLING */
+.shell-console-container {
+  height: calc(100vh - 145px);
+  background: var(--bg-surface-1);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+}
+
+.shell-toolbar {
+  padding: 12px 20px;
+  background: var(--bg-surface-2);
+  border-bottom: 1px solid var(--glass-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.shell-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.shell-quick-badges {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.shell-badge-cmd {
+  background: var(--bg-main);
+  border: 1px solid var(--glass-border);
+  color: var(--accent-cyan);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: var(--transition-fast);
+
+  &:hover {
+    background: var(--accent-cyan);
+    color: #000;
+    border-color: var(--accent-cyan);
+  }
+}
+
+.shell-terminal-window {
+  flex: 1;
+  background: #05070d;
+  padding: 20px;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: #e0e6ed;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.shell-line {
+  margin-bottom: 8px;
+}
+
+.shell-line.cmd-input-line {
+  color: var(--accent-emerald);
+  font-weight: 700;
+}
+
+.shell-line.cmd-output-line {
+  color: #d1d5db;
+}
+
+.shell-line.sys-intro {
+  color: var(--accent-cyan);
+}
+
+.shell-prompt-bar {
+  padding: 12px 20px;
+  background: var(--bg-surface-2);
+  border-top: 1px solid var(--glass-border);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.prompt-label {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--accent-emerald);
+  white-space: nowrap;
+}
+
+.shell-input {
+  flex: 1;
+  background: #080b12;
+  border: 1px solid var(--glass-border);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  outline: none;
+  transition: var(--transition-fast);
+
+  &:focus {
+    border-color: var(--accent-cyan);
+    box-shadow: 0 0 10px rgba(0, 242, 254, 0.2);
+  }
+}

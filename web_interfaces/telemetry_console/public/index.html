@@ -37,6 +37,9 @@
       <button class="main-tab-btn" id="tab-btn-logs" data-tab="logs">
         <i class="fa-solid fa-list-ul"></i> 📜 Canlı Loglar <span class="tab-key">[3]</span>
       </button>
+      <button class="main-tab-btn" id="tab-btn-shell" data-tab="shell">
+        <i class="fa-solid fa-terminal"></i> 📟 İnteraktif Shell <span class="tab-key">[4]</span>
+      </button>
     </div>
 
     <!-- LATENCY BADGE & QUICK HOTKEYS -->
@@ -180,6 +183,36 @@
         </div>
         <div class="console-output" id="main-console-output">
           <div class="log-line info">[SİSTEM] Port 8080 konsolu log yayın kanalına bağlandı.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: INTERACTIVE SHELL CONSOLE -->
+    <section class="tab-page" id="page-shell">
+      <div class="shell-console-container">
+        <div class="shell-toolbar">
+          <div class="shell-title-group">
+            <span class="shell-title"><i class="fa-solid fa-terminal" style="color:var(--accent-cyan);"></i> Cycle-ORC HFT Interactive Shell (C-ABI RAM Control)</span>
+          </div>
+          <div class="shell-quick-badges">
+            <span class="shell-badge-cmd" data-cmd="help">help</span>
+            <span class="shell-badge-cmd" data-cmd="list">list</span>
+            <span class="shell-badge-cmd" data-cmd="available">available</span>
+            <span class="shell-badge-cmd" data-cmd="status">status</span>
+            <span class="shell-badge-cmd" data-cmd="clear">clear</span>
+          </div>
+        </div>
+        <div class="shell-terminal-window" id="shell-output-window">
+          <div class="shell-line sys-intro">
+=== CYCLE-ORC INTERACTIVE HFT SHELL CONSOLE ===
+Tüm orkestratör komutlarını (help, list, start &lt;id&gt;, stop &lt;id&gt;, del &lt;id&gt;, load &lt;name&gt;, status) yazabilirsiniz.
+Komut geçmişinde gezinmek için [Yukarı / Aşağı] ok tuşlarını kullanabilirsiniz.
+--------------------------------------------------------------------------------</div>
+        </div>
+        <div class="shell-prompt-bar">
+          <span class="prompt-label"><i class="fa-solid fa-angle-right" style="color:var(--accent-emerald);"></i> cycle-orc:hft-shell&gt;</span>
+          <input type="text" id="shell-input-field" class="shell-input" placeholder="Komut yazın (örn: help, list, start plugin_breakout)..." autocomplete="off" spellcheck="false">
+          <button class="btn btn-primary btn-sm" id="shell-send-btn"><i class="fa-solid fa-paper-plane"></i> Gönder</button>
         </div>
       </div>
     </section>
