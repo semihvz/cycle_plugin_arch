@@ -498,6 +498,95 @@ pub async fn run_interactive_shell_loop(
                             println!("  • Çalışma Dizini        : {}{}{}\n", CYAN, curr_dir.display(), RESET);
                         }
                     }
+                    "calc" => {
+                        if parts.len() < 2 {
+                            println!("{}{}HATA: Kullanım: calc <ifade> (örn: calc 65000 * 0.1 * 20){}\n", RED, BOLD, RESET);
+                        } else {
+                            let expr = parts[1..].join(" ");
+                            let tokens: Vec<&str> = expr.split_whitespace().collect();
+                            let result = if tokens.len() == 3 {
+                                let a: Result<f64, _> = tokens[0].parse();
+                                let b: Result<f64, _> = tokens[2].parse();
+                                match (a, tokens[1], b) {
+                                    (Ok(v1), "+", Ok(v2)) => Ok(v1 + v2),
+                                    (Ok(v1), "-", Ok(v2)) => Ok(v1 - v2),
+                                    (Ok(v1), "*" | "x", Ok(v2)) => Ok(v1 * v2),
+                                    (Ok(v1), "/", Ok(v2)) => if v2 != 0.0 { Ok(v1 / v2) } else { Err("Sıfıra bölme hatası".to_string()) },
+                                    (Ok(v1), "%", Ok(v2)) => Ok(v1 % v2),
+                                    _ => Err("Geçersiz operatör veya sayılar".to_string()),
+                                }
+                            } else if tokens.len() == 5 && (tokens[1] == "*" || tokens[1] == "x") && (tokens[3] == "*" || tokens[3] == "x") {
+                                let a: Result<f64, _> = tokens[0].parse();
+                                let b: Result<f64, _> = tokens[2].parse();
+                                let c: Result<f64, _> = tokens[4].parse();
+                                match (a, b, c) {
+                                    (Ok(v1), Ok(v2), Ok(v3)) => Ok(v1 * v2 * v3),
+                                    _ => Err("Geçersiz sayılar".to_string()),
+                                }
+                            } else {
+                                expr.replace(" ", "").parse::<f64>().map_err(|_| "Örnek kullanım: 'calc 65000 * 0.1' veya 'calc 65000 * 0.1 * 20'".to_string())
+                            };
+
+                            match result {
+                                Ok(res) => println!("{}{}🧮 SONUÇ: {} = {:.4}{}\n", BRIGHT_GREEN, BOLD, expr, res, RESET),
+                                Err(err_msg) => println!("{}{}Hesaplama hatası: {}{}\n", RED, BOLD, err_msg, RESET),
+                            }
+                        }
+                    }
+                    "time" | "clock" => {
+                        let now = std::time::SystemTime::now();
+                        let since_epoch = now.duration_since(std::time::UNIX_EPOCH).unwrap_or_default();
+                        let secs = since_epoch.as_secs();
+                        let nanos = since_epoch.subsec_nanos();
+                        
+                        let hours = (secs / 3600 % 24 + 3) % 24; // UTC+3 Turkey
+                        let mins = secs / 60 % 60;
+                        let seconds = secs % 60;
+                        let millis = nanos / 1_000_000;
+                        let micros = (nanos % 1_000_000) / 1_000;
+                        let remainder_nanos = nanos % 1_000;
+
+                        let time_str = format!("{:02}.{:02}.{:02}.{:03}.{:03}.{:03}", hours, mins, seconds, millis, micros, remainder_nanos);
+                        println!("{}{}⏰ ANLIK NANOSANİYE HASSASİYETLİ SİSTEM SAATİ: {}{}\n", BRIGHT_CYAN, BOLD, time_str, RESET);
+                    }
+                    "ping" => {
+                        let target = parts.get(1).unwrap_or(&"fapi.binance.com");
+                        println!("{}{}📡 {} İLE AĞ GECİKMESİ (HFT PING) ÖLÇÜLÜYOR...{}", BRIGHT_YELLOW, BOLD, target, RESET);
+
+                        let start = std::time::Instant::now();
+                        let shell_cmd = format!("ping -c 3 {}", target);
+                        if let Ok(output) = std::process::Command::new("bash").arg("-c").arg(&shell_cmd).output() {
+                            let elapsed_ms = start.elapsed().as_secs_f64() * 1000.0;
+                            let out_str = String::from_utf8_lossy(&output.stdout);
+                            if output.status.success() {
+                                println!("{}", out_str);
+                                println!("{}{}✓ Ortalama Ağ RTT Gecikmesi: {:.2} ms{}\n", GREEN, BOLD, elapsed_ms / 3.0, RESET);
+                            } else {
+                                println!("{}{}Ping isteği başarısız oldu veya zaman aşımına uğradı.{}\n", RED, BOLD, RESET);
+                            }
+                        }
+                    }
+                    "tree" => {
+                        println!("{}{}=== 🌳 CYCLE ORCHESTRATOR DİZİN VE EKLENTİ AĞACI ==={}", BRIGHT_CYAN, BOLD, RESET);
+                        println!("cycle-orc/");
+                        println!("├── Cargo.toml (Workspace Root)");
+                        println!("├── flow_config.json (DAG Configuration)");
+                        println!("├── binance_market_data.db (SQLite Storage)");
+                        println!("├── paper_exchange.db (Paper Trading Storage)");
+                        println!("├── interactive_shell/ (Standalone Unified Shell)");
+                        println!("│   ├── Cargo.toml");
+                        println!("│   └── src/lib.rs");
+                        println!("├── orchestrator/ (Core Engine & Pinning)");
+                        println!("│   ├── src/main.rs (Direct Boot & Core 0/1 Pinning)");
+                        println!("│   ├── src/interactive_shell.rs");
+                        println!("│   ├── src/tui_interface/ (Preserved TUI Source)");
+                        println!("│   └── src/web_server.rs (Preserved Web Server)");
+                        println!("└── plugins/ (.so Shared Libraries)");
+                        for p in scan_available_plugins() {
+                            println!("    ├── lib{}.so", p);
+                        }
+                        println!();
+                    }
                     "config" => {
                         if let Ok(content) = std::fs::read_to_string("flow_config.json") {
                             println!("{}{}=== FLOW CONFIG (flow_config.json) ==={}", BRIGHT_CYAN, BOLD, RESET);

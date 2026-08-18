@@ -90,6 +90,12 @@ pub fn format_help_menu() -> String {
     out.push_str(&format!("  {}sysinfo{} / {}pc{}           : İşletim sistemi, çekirdek, CPU modeli, RAM ve disk kullanımını gösterir\n", GREEN, RESET, GREEN, RESET));
     out.push_str(&format!("  {}<yerel komutlar>{}         : Tüm Linux/OS komutlarını doğrudan çalıştırır (örn: ls, free -h, df -h, git status, ping)\n", GREEN, RESET));
 
+    out.push_str(&format!("\n{}{}🧮 HESAPLAMA VE FİNANSAL UTILITY:{}\n", BRIGHT_YELLOW, BOLD, RESET));
+    out.push_str(&format!("  {}calc <ifade>{}            : Matematiksel/Finansal hesaplama yapar (örn: calc 65000 * 0.1 * 20)\n", GREEN, RESET));
+    out.push_str(&format!("  {}time{} / {}clock{}           : Nanosaniye hassasiyetli canlı sistem saatini gösterir (HH.MM.SS.mmm.uuu.nnn)\n", GREEN, RESET, GREEN, RESET));
+    out.push_str(&format!("  {}ping [target]{}           : Binance HFT API ağ gecikmesini (RTT ms) ölçer\n", GREEN, RESET));
+    out.push_str(&format!("  {}tree{}                    : Proje eklenti ve modül dizin ağacını görselleştirir\n", GREEN, RESET));
+
     out.push_str(&format!("\n{}{}🛠️ KONTROL VE APİ DÜZEYİ:{}\n", BRIGHT_YELLOW, BOLD, RESET));
     out.push_str(&format!("  {}dump <plugin_id> [max_bytes]{}: Eklentinin TÜM RAM bellek tamponunu (Full Memory Hex Dump & ASCII) döker\n", GREEN, RESET));
     out.push_str(&format!("  {}peek <plugin_id> [len]{}  : Eklentinin ilk RAM bellek özetini inceler\n", GREEN, RESET));
