@@ -1,0 +1,58 @@
+{
+  "strategy_name": "HFT_JSON_Breakout_Scalper",
+  "plugins": [
+    {
+      "id": "gateway",
+      "path": "plugin_binance_gateway",
+      "core": 0
+    },
+    {
+      "id": "paper",
+      "path": "plugin_paper_exchange",
+      "core": 1
+    }
+  ],
+  "pipes": [
+    {
+      "from": "gateway.best_price",
+      "to": "paper.market_data"
+    }
+  ],
+  "rules": [
+    {
+      "name": "breakout_long_order",
+      "when": {
+        "and": [
+          { ">": ["gateway.best_bid", 64000.0] },
+          { "<": ["gateway.spread", 0.1] }
+        ]
+      },
+      "then": [
+        {
+          "action": "buy",
+          "symbol": "BTCUSDT",
+          "qty": 0.35,
+          "price": 64850.0,
+          "leverage": 20.0
+        },
+        {
+          "action": "sell",
+          "symbol": "ETHUSDT",
+          "qty": 2.5,
+          "price": 3120.0,
+          "leverage": 50.0
+        },
+        {
+          "action": "log",
+          "message": "🚀 JSON Engine: Long & Short emirleri başarıyla iletildi!"
+        }
+      ]
+    }
+  ],
+  "commands": [
+    {
+      "action": "sql",
+      "query": "SELECT * FROM mark_prices ORDER BY id DESC LIMIT 3"
+    }
+  ]
+}

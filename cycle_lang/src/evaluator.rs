@@ -1,5 +1,5 @@
 use crate::ast::*;
-use std::collections::HashMap;
+use serde_json::Value as JsonValue;
 
 pub trait OrchestratorHandler {
     fn load_plugin(&mut self, var_name: &str, path: &str) -> Result<(), String>;
@@ -14,178 +14,117 @@ pub trait OrchestratorHandler {
     fn call_plugin(&mut self, plugin: &str, method: &str, args: &[Value]) -> Result<Value, String>;
 }
 
-pub struct Evaluator {
-    env: HashMap<String, Value>,
-    functions: HashMap<String, (Vec<String>, Vec<Statement>)>,
-}
+pub struct JsonStrategyEvaluator;
 
-impl Evaluator {
-    pub fn new() -> Self {
-        Evaluator {
-            env: HashMap::new(),
-            functions: HashMap::new(),
-        }
-    }
+impl JsonStrategyEvaluator {
+    pub fn execute<H: OrchestratorHandler>(spec: &JsonStrategySpec, handler: &mut H) -> Result<(), String> {
+        let name = if !spec.strategy_name.is_empty() {
+            &spec.strategy_name
+        } else if !spec.name.is_empty() {
+            &spec.name
+        } else {
+            "Unnamed_JSON_Strategy"
+        };
 
-    pub fn execute_program<H: OrchestratorHandler>(&mut self, stmts: &[Statement], handler: &mut H) -> Result<(), String> {
-        for stmt in stmts {
-            self.execute_statement(stmt, handler)?;
+        println!("\x1b[96m\x1b[1m[JSON Engine]\x1b[0m STRATEJİ YÜRÜTÜLÜYOR: {}", name);
+
+        // 1. Eklentileri yükle, pin'le ve başlat
+        for p in &spec.plugins {
+            let plugin_id = p.get_name();
+            handler.load_plugin(plugin_id, &p.path)?;
+            if let Some(core_id) = p.core {
+                handler.pin_core(plugin_id, core_id)?;
+            }
+            handler.start_plugin(plugin_id)?;
         }
+
+        // 2. Veri akış boru hatlarını bağla (pipe)
+        for pipe in &spec.pipes {
+            let from_parts: Vec<&str> = pipe.from.split('.').collect();
+            let to_parts: Vec<&str> = pipe.to.split('.').collect();
+
+            let from_p = from_parts.get(0).copied().unwrap_or(&pipe.from);
+            let from_s = from_parts.get(1).copied().unwrap_or("out");
+            let to_p = to_parts.get(0).copied().unwrap_or(&pipe.to);
+            let to_i = to_parts.get(1).copied().unwrap_or("in");
+
+            handler.pipe_stream(from_p, from_s, to_p, to_i)?;
+        }
+
+        // 3. Strateji Kurallarını Değerlendir
+        for rule in &spec.rules {
+            let rule_name = rule.name.as_deref().unwrap_or("Unnamed_Rule");
+            println!("\x1b[93m\x1b[1m[JSON Kuralı Değerlendiriliyor]\x1b[0m {}", rule_name);
+
+            let is_triggered = match &rule.when {
+                Some(when_val) => Self::eval_condition(when_val),
+                None => true,
+            };
+
+            if is_triggered {
+                for action_val in &rule.then {
+                    Self::execute_action(action_val, handler)?;
+                }
+            }
+        }
+
+        // 4. Doğrudan komutları çalıştır
+        for cmd_val in &spec.commands {
+            Self::execute_action(cmd_val, handler)?;
+        }
+
+        println!("\x1b[92m\x1b[1m✓ [JSON Engine]\x1b[0m STRATEJİ YÜRÜTMESİ TAMAMLANDI: {}\n", name);
         Ok(())
     }
 
-    pub fn execute_statement<H: OrchestratorHandler>(&mut self, stmt: &Statement, handler: &mut H) -> Result<(), String> {
-        match stmt {
-            Statement::Let { name, expr } => {
-                let val = self.eval_expr(expr, handler)?;
-                self.env.insert(name.clone(), val);
+    fn eval_condition(val: &JsonValue) -> bool {
+        if let Some(obj) = val.as_object() {
+            if let Some(arr) = obj.get("and").and_then(|v| v.as_array()) {
+                return arr.iter().all(Self::eval_condition);
             }
-            Statement::PluginLoad { var_name, path } => {
-                handler.load_plugin(var_name, path)?;
-                self.env.insert(var_name.clone(), Value::String(path.clone()));
+            if let Some(arr) = obj.get("or").and_then(|v| v.as_array()) {
+                return arr.iter().any(Self::eval_condition);
             }
-            Statement::PluginStart { var_name } => {
-                handler.start_plugin(var_name)?;
+            if let Some(sub) = obj.get("not") {
+                return !Self::eval_condition(sub);
             }
-            Statement::PluginStop { var_name } => {
-                handler.stop_plugin(var_name)?;
-            }
-            Statement::PluginPinCore { var_name, core } => {
-                handler.pin_core(var_name, *core)?;
-            }
-            Statement::Pipe { from_plugin, from_stream, to_plugin, to_inbox } => {
-                handler.pipe_stream(from_plugin, from_stream, to_plugin, to_inbox)?;
-            }
-            Statement::When { condition, body } => {
-                let cond_val = self.eval_expr(condition, handler)?;
-                if self.is_truthy(&cond_val) {
-                    for body_stmt in body {
-                        self.execute_statement(body_stmt, handler)?;
-                    }
+        }
+        true
+    }
+
+    fn execute_action<H: OrchestratorHandler>(val: &JsonValue, handler: &mut H) -> Result<(), String> {
+        if let Some(action_str) = val.get("action").and_then(|v| v.as_str()) {
+            match action_str {
+                "buy" => {
+                    let symbol = val.get("symbol").and_then(|v| v.as_str()).unwrap_or("BTCUSDT");
+                    let qty = val.get("qty").and_then(|v| v.as_f64()).unwrap_or(0.1);
+                    let price = val.get("price").and_then(|v| v.as_f64()).unwrap_or(0.0);
+                    let leverage = val.get("leverage").and_then(|v| v.as_f64()).unwrap_or(20.0);
+                    handler.buy_order(symbol, qty, price, leverage)?;
                 }
-            }
-            Statement::Buy { symbol, qty, price, leverage } => {
-                let sym_str = self.eval_expr(symbol, handler)?.to_string();
-                let q = self.eval_number(qty, handler)?;
-                let p = self.eval_number(price, handler)?;
-                let lev = self.eval_number(leverage, handler)?;
-                handler.buy_order(&sym_str, q, p, lev)?;
-            }
-            Statement::Sell { symbol, qty, price, leverage } => {
-                let sym_str = self.eval_expr(symbol, handler)?.to_string();
-                let q = self.eval_number(qty, handler)?;
-                let p = self.eval_number(price, handler)?;
-                let lev = self.eval_number(leverage, handler)?;
-                handler.sell_order(&sym_str, q, p, lev)?;
-            }
-            Statement::Close { symbol } => {
-                let sym_str = self.eval_expr(symbol, handler)?.to_string();
-                handler.close_position(&sym_str)?;
-            }
-            Statement::Log { message } => {
-                let msg_val = self.eval_expr(message, handler)?;
-                println!("\x1b[96m\x1b[1m[CycleLang LOG]\x1b[0m {}", msg_val);
-            }
-            Statement::Print { expr } => {
-                let val = self.eval_expr(expr, handler)?;
-                println!("{}", val);
-            }
-            Statement::Sql { query } => {
-                let q_str = self.eval_expr(query, handler)?.to_string();
-                let res = handler.run_sql(&q_str)?;
-                println!("\x1b[96m\x1b[1m[SQL Result]\x1b[0m\n{}", res);
-            }
-            Statement::FnDef { name, params, body } => {
-                self.functions.insert(name.clone(), (params.clone(), body.clone()));
-            }
-            Statement::ExprStmt(expr) => {
-                self.eval_expr(expr, handler)?;
+                "sell" => {
+                    let symbol = val.get("symbol").and_then(|v| v.as_str()).unwrap_or("ETHUSDT");
+                    let qty = val.get("qty").and_then(|v| v.as_f64()).unwrap_or(1.0);
+                    let price = val.get("price").and_then(|v| v.as_f64()).unwrap_or(0.0);
+                    let leverage = val.get("leverage").and_then(|v| v.as_f64()).unwrap_or(20.0);
+                    handler.sell_order(symbol, qty, price, leverage)?;
+                }
+                "close" => {
+                    let symbol = val.get("symbol").and_then(|v| v.as_str()).unwrap_or("BTCUSDT");
+                    handler.close_position(symbol)?;
+                }
+                "log" => {
+                    let msg = val.get("message").and_then(|v| v.as_str()).unwrap_or("");
+                    println!("\x1b[96m\x1b[1m[JSON Strategy LOG]\x1b[0m {}", msg);
+                }
+                "sql" => {
+                    let query = val.get("query").and_then(|v| v.as_str()).unwrap_or("SELECT 1");
+                    let res = handler.run_sql(query)?;
+                    println!("\x1b[96m\x1b[1m[SQL Result]\x1b[0m\n{}", res);
+                }
+                _ => {}
             }
         }
         Ok(())
-    }
-
-    fn eval_number<H: OrchestratorHandler>(&mut self, expr: &Expr, handler: &mut H) -> Result<f64, String> {
-        match self.eval_expr(expr, handler)? {
-            Value::Number(n) => Ok(n),
-            other => Err(format!("Sayısal değer bekleniyor, '{}' bulundu", other)),
-        }
-    }
-
-    fn eval_expr<H: OrchestratorHandler>(&mut self, expr: &Expr, handler: &mut H) -> Result<Value, String> {
-        match expr {
-            Expr::Number(n) => Ok(Value::Number(*n)),
-            Expr::StringLit(s) => Ok(Value::String(s.clone())),
-            Expr::Bool(b) => Ok(Value::Bool(*b)),
-            Expr::Var(name) => {
-                self.env.get(name).cloned().ok_or_else(|| format!("Bilinmeyen değişken: '{}'", name))
-            }
-            Expr::BinOp { left, op, right } => {
-                let l_val = self.eval_expr(left, handler)?;
-                let r_val = self.eval_expr(right, handler)?;
-                self.eval_binop(&l_val, op, &r_val)
-            }
-            Expr::PluginCall { plugin, method, args } => {
-                let mut eval_args = Vec::new();
-                for a in args {
-                    eval_args.push(self.eval_expr(a, handler)?);
-                }
-                handler.call_plugin(plugin, method, &eval_args)
-            }
-            Expr::FnCall { name, args } => {
-                let (params, body) = self.functions.get(name)
-                    .cloned()
-                    .ok_or_else(|| format!("Bilinmeyen fonksiyon: '{}'", name))?;
-
-                if args.len() != params.len() {
-                    return Err(format!("Fonksiyon '{}' için {} parametre bekleniyor", name, params.len()));
-                }
-
-                let old_env = self.env.clone();
-                for (p, arg_expr) in params.iter().zip(args.iter()) {
-                    let val = self.eval_expr(arg_expr, handler)?;
-                    self.env.insert(p.clone(), val);
-                }
-
-                for stmt in &body {
-                    self.execute_statement(stmt, handler)?;
-                }
-
-                self.env = old_env;
-                Ok(Value::Nil)
-            }
-        }
-    }
-
-    fn eval_binop(&self, left: &Value, op: &str, right: &Value) -> Result<Value, String> {
-        match (left, op, right) {
-            (Value::Number(l), "+", Value::Number(r)) => Ok(Value::Number(l + r)),
-            (Value::Number(l), "-", Value::Number(r)) => Ok(Value::Number(l - r)),
-            (Value::Number(l), "*", Value::Number(r)) => Ok(Value::Number(l * r)),
-            (Value::Number(l), "/", Value::Number(r)) => {
-                if *r != 0.0 { Ok(Value::Number(l / r)) } else { Err("Sıfıra bölme hatası".to_string()) }
-            }
-            (Value::Number(l), ">", Value::Number(r)) => Ok(Value::Bool(l > r)),
-            (Value::Number(l), "<", Value::Number(r)) => Ok(Value::Bool(l < r)),
-            (Value::Number(l), ">=", Value::Number(r)) => Ok(Value::Bool(l >= r)),
-            (Value::Number(l), "<=", Value::Number(r)) => Ok(Value::Bool(l <= r)),
-            (Value::Number(l), "==", Value::Number(r)) => Ok(Value::Bool((l - r).abs() < f64::EPSILON)),
-            (Value::Number(l), "!=", Value::Number(r)) => Ok(Value::Bool((l - r).abs() >= f64::EPSILON)),
-            (Value::String(l), "+", Value::String(r)) => Ok(Value::String(format!("{}{}", l, r))),
-            (Value::String(l), "+", Value::Number(r)) => Ok(Value::String(format!("{}{}", l, r))),
-            (Value::Number(l), "+", Value::String(r)) => Ok(Value::String(format!("{}{}", l, r))),
-            (Value::Bool(l), "==", Value::Bool(r)) => Ok(Value::Bool(l == r)),
-            (Value::Bool(l), "!=", Value::Bool(r)) => Ok(Value::Bool(l != r)),
-            _ => Err(format!("Geçersiz operasyon: {:?} {} {:?}", left, op, right)),
-        }
-    }
-
-    fn is_truthy(&self, val: &Value) -> bool {
-        match val {
-            Value::Bool(b) => *b,
-            Value::Number(n) => *n != 0.0,
-            Value::String(s) => !s.is_empty(),
-            Value::Nil => false,
-        }
     }
 }
