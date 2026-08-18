@@ -457,6 +457,47 @@ pub async fn run_interactive_shell_loop(
                         println!("  [ohlcv_fetcher] ──────── (1m klines) ───────────► [ms_analyzer]");
                         println!("  [sys_metrics] ────────── (telemetry) ───────────► [orchestrator]\n");
                     }
+                    "cd" => {
+                        let target = parts.get(1).copied().unwrap_or("..");
+                        if let Err(e) = std::env::set_current_dir(target) {
+                            println!("{}{}HATA: Dizine geçilemedi ({}): {}{}\n", RED, BOLD, target, e, RESET);
+                        } else if let Ok(current) = std::env::current_dir() {
+                            println!("{}{}Mevcut Çalışma Dizini Değiştirildi: {}{}\n", GREEN, BOLD, current.display(), RESET);
+                        }
+                    }
+                    "pwd" => {
+                        if let Ok(current) = std::env::current_dir() {
+                            println!("{}{}Mevcut Çalışma Dizini: {}{}\n", BRIGHT_CYAN, BOLD, current.display(), RESET);
+                        }
+                    }
+                    "sysinfo" | "pc" | "hostinfo" => {
+                        let mut sys = sysinfo::System::new_all();
+                        sys.refresh_all();
+
+                        let os_name = sysinfo::System::name().unwrap_or_else(|| "Linux".to_string());
+                        let kernel = sysinfo::System::kernel_version().unwrap_or_else(|| "Unknown".to_string());
+                        let host_name = sysinfo::System::host_name().unwrap_or_else(|| "localhost".to_string());
+                        let cpu_brand = sys.global_cpu_info().brand();
+                        let cpu_cores = sys.cpus().len();
+
+                        let mem_total_mb = sys.total_memory() / (1024 * 1024);
+                        let mem_used_mb = sys.used_memory() / (1024 * 1024);
+                        let mem_free_mb = sys.free_memory() / (1024 * 1024);
+
+                        let swap_total_mb = sys.total_swap() / (1024 * 1024);
+                        let swap_used_mb = sys.used_swap() / (1024 * 1024);
+
+                        println!("{}{}=== 🖥️ İŞLETİM SİSTEMİ VE DONANIM METRİKLERİ (PC HOST INFO) ==={}", BRIGHT_CYAN, BOLD, RESET);
+                        println!("  • Sunucu / Host Adı    : {}{}{}", BRIGHT_YELLOW, host_name, RESET);
+                        println!("  • İşletim Sistemi       : {}{} (Çekirdek: {}){}", WHITE, os_name, kernel, RESET);
+                        println!("  • İşlemci (CPU) Modeli : {}{} ({} Mantıksal Çekirdek){}", BRIGHT_GREEN, cpu_brand, cpu_cores, RESET);
+                        println!("  • Toplam RAM           : {}{} MB / {} MB (Boş: {} MB){}", WHITE, mem_used_mb, mem_total_mb, mem_free_mb, RESET);
+                        println!("  • Takas Alanı (Swap)    : {}{} MB / {} MB{}", WHITE, swap_used_mb, swap_total_mb, RESET);
+                        
+                        if let Ok(curr_dir) = std::env::current_dir() {
+                            println!("  • Çalışma Dizini        : {}{}{}\n", CYAN, curr_dir.display(), RESET);
+                        }
+                    }
                     "config" => {
                         if let Ok(content) = std::fs::read_to_string("flow_config.json") {
                             println!("{}{}=== FLOW CONFIG (flow_config.json) ==={}", BRIGHT_CYAN, BOLD, RESET);
@@ -470,7 +511,32 @@ pub async fn run_interactive_shell_loop(
                         break;
                     }
                     _ => {
-                        println!("{}{}Komut anlaşılamadı: '{}'. Geçerli komutlar için 'help' yazın.{}\n", RED, BOLD, cmd_line, RESET);
+                        let shell = if cfg!(target_os = "windows") { "cmd" } else { "bash" };
+                        let arg_flag = if cfg!(target_os = "windows") { "/C" } else { "-c" };
+
+                        match std::process::Command::new(shell)
+                            .arg(arg_flag)
+                            .arg(cmd_line)
+                            .output()
+                        {
+                            Ok(output) => {
+                                let stdout = String::from_utf8_lossy(&output.stdout);
+                                let stderr = String::from_utf8_lossy(&output.stderr);
+
+                                if !stdout.is_empty() {
+                                    print!("{}", stdout);
+                                }
+                                if !stderr.is_empty() {
+                                    eprint!("{}", stderr);
+                                }
+                                if !output.status.success() && stdout.is_empty() && stderr.is_empty() {
+                                    println!("{}{}Komut çıkış kodu: {}{}\n", YELLOW, BOLD, output.status, RESET);
+                                }
+                            }
+                            Err(e) => {
+                                println!("{}{}Komut çalıştırılamadı ({}): {}{}\n", RED, BOLD, cmd_line, e, RESET);
+                            }
+                        }
                     }
                 }
             }

@@ -84,6 +84,12 @@ pub fn format_help_menu() -> String {
     out.push_str(&format!("  {}bench [iterations]{}     : Zero-copy C-ABI endpoint gecikmesini nanosaniye (ns) düzeyinde ölçer\n", GREEN, RESET));
     out.push_str(&format!("  {}graph{} / {}routes{}         : Flow Engine düğüm yönlendirme grafiğini (DAG) görselleştirir\n", GREEN, RESET, GREEN, RESET));
 
+    out.push_str(&format!("\n{}{}🖥️ İŞLETİM SİSTEMİ VE PC SHELL KOMUTLARI:{}\n", BRIGHT_YELLOW, BOLD, RESET));
+    out.push_str(&format!("  {}cd <path>{}              : Çalışma dizinini değiştirir (örn: cd /home)\n", GREEN, RESET));
+    out.push_str(&format!("  {}pwd{}                    : Mevcut çalışma dizinini görüntüler\n", GREEN, RESET));
+    out.push_str(&format!("  {}sysinfo{} / {}pc{}           : İşletim sistemi, çekirdek, CPU modeli, RAM ve disk kullanımını gösterir\n", GREEN, RESET, GREEN, RESET));
+    out.push_str(&format!("  {}<yerel komutlar>{}         : Tüm Linux/OS komutlarını doğrudan çalıştırır (örn: ls, free -h, df -h, git status, ping)\n", GREEN, RESET));
+
     out.push_str(&format!("\n{}{}🛠️ KONTROL VE APİ DÜZEYİ:{}\n", BRIGHT_YELLOW, BOLD, RESET));
     out.push_str(&format!("  {}dump <plugin_id> [max_bytes]{}: Eklentinin TÜM RAM bellek tamponunu (Full Memory Hex Dump & ASCII) döker\n", GREEN, RESET));
     out.push_str(&format!("  {}peek <plugin_id> [len]{}  : Eklentinin ilk RAM bellek özetini inceler\n", GREEN, RESET));
