@@ -1,4 +1,4 @@
-# 🐍 PYTHONIC CYCLELANG HFT STRATEGY SCRIPT (.py / .cy)
+# 🐍 PYTHONIC CYCLELANG HFT STRATEGY SCRIPT (.py)
 
 # 1. Eklentileri Yükle (Import / Load)
 import plugin_binance_gateway as gateway
@@ -8,22 +8,25 @@ import plugin_paper_exchange as paper
 gateway.pin_core(0)
 paper.pin_core(1)
 
-# 3. Eklentileri Başlat
+# 3. Veri Akış Boru Hattını Bağla
+pipe(gateway.best_price -> paper.market_data)
+
+# 4. Eklentileri Başlat
 gateway.start()
 paper.start()
 
-# 4. Strateji Değişkenleri
+# 5. Strateji Değişkenleri (Değişken tanımlamak için 'let' şart değil)
 target_symbol = "BTCUSDT"
-order_qty = 0.25
+order_qty = 0.5
 leverage_val = 20
 
 print("🚀 Pythonic Strateji Başlatıldı! Hedef: " + target_symbol)
 
-# 5. Sanal Alım (Long) ve Satım (Short) Emirleri
-buy("BTCUSDT", qty=0.25, price=64800, leverage=20)
-sell("ETHUSDT", qty=2.0, price=3150, leverage=50)
+# 6. Sanal Alım (Long) ve Satım (Short) Emirleri
+buy("BTCUSDT", qty=0.5, price=64900, leverage=20)
+sell("ETHUSDT", qty=3.0, price=3100, leverage=50)
 
-# 6. Canlı SQL Veritabanı Sorgusu
+# 7. Canlı SQL Veritabanı Sorgusu
 sql("SELECT * FROM mark_prices ORDER BY id DESC LIMIT 3")
 
 log("✓ Pythonic Strateji Betiği Yürütmesi Başarıyla Tamamlandı.")

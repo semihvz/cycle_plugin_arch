@@ -1,56 +1,87 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct JsonPluginSpec {
-    #[serde(default)]
-    pub id: String,
-    #[serde(default)]
-    pub var: String,
-    pub path: String,
-    #[serde(default)]
-    pub core: Option<usize>,
-}
-
-impl JsonPluginSpec {
-    pub fn get_name(&self) -> &str {
-        if !self.id.is_empty() {
-            &self.id
-        } else if !self.var.is_empty() {
-            &self.var
-        } else {
-            &self.path
-        }
-    }
+pub enum Statement {
+    Let {
+        name: String,
+        expr: Expr,
+    },
+    PluginLoad {
+        var_name: String,
+        path: String,
+    },
+    PluginStart {
+        var_name: String,
+    },
+    PluginStop {
+        var_name: String,
+    },
+    PluginPinCore {
+        var_name: String,
+        core: usize,
+    },
+    Pipe {
+        from_plugin: String,
+        from_stream: String,
+        to_plugin: String,
+        to_inbox: String,
+    },
+    When {
+        condition: Expr,
+        body: Vec<Statement>,
+    },
+    Buy {
+        symbol: Expr,
+        qty: Expr,
+        price: Expr,
+        leverage: Expr,
+    },
+    Sell {
+        symbol: Expr,
+        qty: Expr,
+        price: Expr,
+        leverage: Expr,
+    },
+    Close {
+        symbol: Expr,
+    },
+    Log {
+        message: Expr,
+    },
+    Print {
+        expr: Expr,
+    },
+    Sql {
+        query: Expr,
+    },
+    FnDef {
+        name: String,
+        params: Vec<String>,
+        body: Vec<Statement>,
+    },
+    ExprStmt(Expr),
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct JsonPipeSpec {
-    pub from: String,
-    pub to: String,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct JsonRuleSpec {
-    pub name: Option<String>,
-    pub when: Option<serde_json::Value>,
-    #[serde(default)]
-    pub then: Vec<serde_json::Value>,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct JsonStrategySpec {
-    #[serde(default)]
-    pub strategy_name: String,
-    #[serde(default)]
-    pub name: String,
-    #[serde(default)]
-    pub plugins: Vec<JsonPluginSpec>,
-    #[serde(default)]
-    pub pipes: Vec<JsonPipeSpec>,
-    #[serde(default)]
-    pub rules: Vec<JsonRuleSpec>,
-    #[serde(default)]
-    pub commands: Vec<serde_json::Value>,
+pub enum Expr {
+    Number(f64),
+    StringLit(String),
+    Bool(bool),
+    Var(String),
+    BinOp {
+        left: Box<Expr>,
+        op: String,
+        right: Box<Expr>,
+    },
+    PluginCall {
+        plugin: String,
+        method: String,
+        args: Vec<Expr>,
+    },
+    FnCall {
+        name: String,
+        args: Vec<Expr>,
+    },
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
