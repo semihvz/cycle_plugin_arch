@@ -65,6 +65,12 @@ impl cycle_lang::OrchestratorHandler for ShellOrchestratorHandler {
             .strip_suffix(".dylib")
             .unwrap_or(raw_path);
 
+        // Zaten sistemde yüklüyse tekrar diskten sıfır eklenti yükleme (çiftleme yapma)
+        if self.orchestrator.get_system(clean_path).is_some() || self.orchestrator.get_system(var_name).is_some() {
+            println!("{}{}✓ CycleLang: Eklenti Zaten Yüklü (Mevcut Örnek Kullanılıyor) -> {}{}\n", GREEN, BOLD, var_name, RESET);
+            return Ok(());
+        }
+
         unsafe {
             match load_plugin_dynamic(&self.orchestrator, var_name, clean_path) {
                 Ok(_) => {
