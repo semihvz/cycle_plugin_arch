@@ -15,7 +15,6 @@ members = [
     "plugin_aggtrade_stats",
     "plugin_aggtrade_ohlcv",
     "plugin_sys_metrics",
-    "plugin_binance_ws",
     "interactive_shell"
 ]
 resolver = "2"
