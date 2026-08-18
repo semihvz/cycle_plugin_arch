@@ -1,0 +1,35 @@
+# 🚀 3 SEMBOL İÇİN TÜM WEBSOCKET AKIŞLARINI DİNLEYEN EVRENSEL VERİ ÇEKİCİ BETİK (.cycle)
+
+# 1. Takip Edilecek 3 Hedef Sembolü Tanımla
+symbol_1 = "BTCUSDT"
+symbol_2 = "ETHUSDT"
+symbol_3 = "SOLUSDT"
+
+log("📡 Canlı Veri Çekici Başlatılıyor. Hedef Semboller: " + symbol_1 + ", " + symbol_2 + ", " + symbol_3)
+
+# 2. Evrensel Veri Çekici Eklentilerini Yükle
+import plugin_binance_ws as ticker_stream
+import plugin_binance_ws as trades_stream
+import plugin_binance_ws as markprice_stream
+import plugin_binance_ws as liquidation_stream
+
+# 3. 3 Sembol İçin 4 Ana Akışı Yapılandır
+ticker_stream.subscribe("bookTicker", symbol_1, symbol_2, symbol_3)
+trades_stream.subscribe("aggTrade", symbol_1, symbol_2, symbol_3)
+markprice_stream.subscribe("markPrice@1s", symbol_1, symbol_2, symbol_3)
+liquidation_stream.subscribe("forceOrder", symbol_1, symbol_2, symbol_3)
+
+# 4. Yüksek Hızlı Çekirdek Atamaları (Core Pinning)
+ticker_stream.pin_core(0)
+trades_stream.pin_core(0)
+markprice_stream.pin_core(1)
+liquidation_stream.pin_core(1)
+
+# 5. Tüm Akışları Canlıya Al (Start)
+ticker_stream.start()
+trades_stream.start()
+markprice_stream.start()
+liquidation_stream.start()
+
+print("⚡ 3 Sembol İçin Tüm Akışlar Canlıda Dinleniyor!")
+log("✓ Veri Çekici Sistem Yapılandırması Tamamlandı.")
