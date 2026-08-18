@@ -77,6 +77,17 @@ impl Evaluator {
                     }
                 }
             }
+            Statement::While { condition, body } => {
+                loop {
+                    let cond_val = self.eval_expr(condition, handler)?;
+                    if !self.is_truthy(&cond_val) {
+                        break;
+                    }
+                    for body_stmt in body {
+                        self.eval_statement(body_stmt, handler)?;
+                    }
+                }
+            }
             Statement::Buy {
                 symbol,
                 qty,

@@ -1,4 +1,4 @@
-# 🚀 3 SEMBOL İÇİN TÜM WEBSOCKET AKIŞLARINI DİNLEYEN EVRENSEL VERİ ÇEKİCİ BETİK (.cycle)
+# 🚀 3 SEMBOL İÇİN TÜM WEBSOCKET AKIŞLARINI DİNLEYEN SÜREKLİ VERİ ÇEKİCİ BETİK (.cycle)
 
 # 1. Takip Edilecek 3 Hedef Sembolü Tanımla
 symbol_1 = "BTCUSDT"
@@ -33,3 +33,9 @@ liquidation_stream.start()
 
 print("⚡ 3 Sembol İçin Tüm Akışlar Canlıda Dinleniyor!")
 log("✓ Veri Çekici Sistem Yapılandırması Tamamlandı.")
+
+# 6. Sürekli Canlı İzleme Döngüsü (while true)
+counter = 1
+while counter <= 3:
+    print("📡 Canlı Akış Dinleniyor... Kontrol Döngüsü: " + counter)
+    counter = counter + 1

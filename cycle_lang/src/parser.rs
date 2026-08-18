@@ -44,6 +44,7 @@ impl<'a> Parser<'a> {
             Token::Let => self.parse_let_statement(),
             Token::Pipe => self.parse_pipe_statement(),
             Token::If | Token::When => self.parse_if_statement(),
+            Token::While => self.parse_while_statement(),
             Token::Buy => self.parse_buy_statement(),
             Token::Sell => self.parse_sell_statement(),
             Token::Close => self.parse_close_statement(),
@@ -289,6 +290,37 @@ impl<'a> Parser<'a> {
         }
 
         Ok(Statement::When { condition, body })
+    }
+
+    fn parse_while_statement(&mut self) -> Result<Statement, String> {
+        self.advance(); // skip 'while'
+        if self.current_token == Token::LParen {
+            self.advance();
+        }
+        let condition = self.parse_expression(0)?;
+        if self.current_token == Token::RParen {
+            self.advance();
+        }
+        if self.current_token == Token::Colon {
+            self.advance(); // skip ':'
+        }
+        if self.current_token == Token::LBrace {
+            self.advance(); // optional '{'
+        }
+
+        let mut body = Vec::new();
+        while self.current_token != Token::RBrace && self.current_token != Token::Eof {
+            let stmt = self.parse_statement()?;
+            body.push(stmt);
+            if self.current_token == Token::Semicolon {
+                self.advance();
+            }
+        }
+        if self.current_token == Token::RBrace {
+            self.advance();
+        }
+
+        Ok(Statement::While { condition, body })
     }
 
     fn parse_buy_statement(&mut self) -> Result<Statement, String> {

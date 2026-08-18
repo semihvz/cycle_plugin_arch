@@ -30,6 +30,10 @@ pub enum Statement {
         condition: Expr,
         body: Vec<Statement>,
     },
+    While {
+        condition: Expr,
+        body: Vec<Statement>,
+    },
     Buy {
         symbol: Expr,
         qty: Expr,
