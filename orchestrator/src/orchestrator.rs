@@ -35,7 +35,7 @@ impl Orchestrator {
     #[inline(always)]
     pub fn call_endpoint(&self, system_id: &str, endpoint: StandardEndpoint, payload: &[u8], out_buf: &mut [u8]) -> usize {
         let sys_list = self.systems.read().unwrap();
-        if let Some(sys) = sys_list.iter().find(|s| s.id == system_id) {
+        if let Some(sys) = sys_list.iter().find(|s| s.id == system_id || s.name == system_id) {
             let result = sys.call(endpoint, payload, out_buf);
             // Start/Stop çağrıldığında durumu otomatik güncelle
             match endpoint {

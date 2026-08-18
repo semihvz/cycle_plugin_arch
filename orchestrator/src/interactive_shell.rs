@@ -15,7 +15,7 @@ fn get_plugin_dir() -> std::path::PathBuf {
     dir
 }
 
-unsafe fn load_plugin_dynamic(orchestrator: &Orchestrator, plugin_name: &str) -> Result<String, String> {
+unsafe fn load_plugin_dynamic(orchestrator: &Orchestrator, system_id: &str, plugin_name: &str) -> Result<String, String> {
     let ext = if cfg!(target_os = "windows") { "dll" } 
               else if cfg!(target_os = "macos") { "dylib" } 
               else { "so" };
@@ -34,14 +34,14 @@ unsafe fn load_plugin_dynamic(orchestrator: &Orchestrator, plugin_name: &str) ->
                     let mut state_ptr: *mut c_void = std::ptr::null_mut();
                     let endpoint_fn = init_fn(&mut state_ptr);
                     let sys = SystemInstance::new(
-                        plugin_name.to_string(), 
+                        system_id.to_string(), 
                         plugin_name.to_string(), 
                         state_ptr, 
                         endpoint_fn,
                     );
                     orchestrator.register_system(sys);
                     Box::leak(Box::new(lib));
-                    Ok(format!("{} eklentisi başarıyla yüklendi ve sisteme bağlandı.", plugin_name))
+                    Ok(format!("{} ({}) eklentisi başarıyla yüklendi ve sisteme bağlandı.", system_id, plugin_name))
                 }
                 Err(_) => Err(format!("{} eklentisinde init_plugin sembolü bulunamadı.", plugin_name)),
             }
@@ -66,7 +66,7 @@ impl cycle_lang::OrchestratorHandler for ShellOrchestratorHandler {
             .unwrap_or(raw_path);
 
         unsafe {
-            match load_plugin_dynamic(&self.orchestrator, clean_path) {
+            match load_plugin_dynamic(&self.orchestrator, var_name, clean_path) {
                 Ok(_) => {
                     println!("{}{}✓ CycleLang: Eklenti Yüklendi ({}) -> {}{}\n", GREEN, BOLD, var_name, clean_path, RESET);
                     Ok(())
@@ -329,7 +329,7 @@ pub async fn run_interactive_shell_loop(
                             println!("{}{}HATA: Kullanım: load <plugin_name>{}\n", RED, BOLD, RESET);
                         } else {
                             let name = parts[1];
-                            match unsafe { load_plugin_dynamic(&orchestrator, name) } {
+                            match unsafe { load_plugin_dynamic(&orchestrator, name, name) } {
                                 Ok(msg) => println!("{}{}SUCCESS: {}{}\n", GREEN, BOLD, msg, RESET),
                                 Err(err) => println!("{}{}HATA: {}{}\n", RED, BOLD, err, RESET),
                             }
