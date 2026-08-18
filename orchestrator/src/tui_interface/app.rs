@@ -110,7 +110,7 @@ impl<'a> App<'a> {
 
     pub fn log(&mut self, msg: &str) {
         let now = chrono::Local::now();
-        let formatted = format!("[{}] {}", now.format("%H:%M:%S"), msg);
+        let formatted = format!("[{}] {}", now.format("%H:%M:%S.%3f"), msg);
         self.logs.push(formatted.clone());
         if self.logs.len() > 100 {
             self.logs.remove(0);

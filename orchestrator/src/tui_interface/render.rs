@@ -32,7 +32,7 @@ pub fn draw_ui(f: &mut Frame, app: &mut App<'_>) {
         .divider(" | ");
     f.render_widget(tabs, main_layout[0]);
 
-    // 1. Header (Kaynak Kullanımı)
+    // 1. Header (Kaynak Kullanımı & HFT Milisaniye Saat)
     let pid = sysinfo::Pid::from_u32(std::process::id());
     let (cpu_usage, used_mem) = if let Some(p) = app.sys.process(pid) {
         (p.cpu_usage(), p.memory() / 1024 / 1024)
@@ -40,10 +40,15 @@ pub fn draw_ui(f: &mut Frame, app: &mut App<'_>) {
         (0.0, 0)
     };
 
+    let now = chrono::Local::now();
+    let time_str = now.format("%H:%M:%S.%3f").to_string();
+
     let header_text = vec![
         Line::from(vec![
             Span::styled(" ENTERPRISE ORCHESTRATION CONSOLE ", Style::default().fg(Color::White).add_modifier(Modifier::BOLD)),
-            Span::styled(" | CPU: ", Style::default().fg(Color::DarkGray)),
+            Span::styled(" | 🕒 SAAT: ", Style::default().fg(Color::DarkGray)),
+            Span::styled(format!("{} ", time_str), Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)),
+            Span::styled("| CPU: ", Style::default().fg(Color::DarkGray)),
             Span::styled(format!("{:.1}% ", cpu_usage), Style::default().fg(Color::White)),
             Span::styled("| RAM: ", Style::default().fg(Color::DarkGray)),
             Span::styled(format!("{} MB ", used_mem), Style::default().fg(Color::White)),
