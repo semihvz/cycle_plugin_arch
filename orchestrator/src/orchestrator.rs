@@ -47,6 +47,9 @@ impl Orchestrator {
                 }
                 _ => {}
             }
+            if result > 0 {
+                sys.context.is_data_valid.store(true, core::sync::atomic::Ordering::Relaxed);
+            }
             result
         } else {
             0

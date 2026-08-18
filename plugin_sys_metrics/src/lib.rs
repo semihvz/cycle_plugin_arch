@@ -145,7 +145,16 @@ unsafe extern "C" fn handle_endpoint(
             0
         }
         2 => { // Read Memory Address / Buffer
-            let lock = state.data.lock().unwrap();
+            let sys_list = vec![
+                ("plugin_sys_metrics", 65536, true),
+                ("plugin_binance_gateway", 262144, true),
+                ("plugin_aggtrade_ohlcv", 131072, true),
+                ("plugin_breakout", 98304, true),
+            ];
+            let report_json = state.engine.refresh_and_get_report(&sys_list);
+            let mut lock = state.data.lock().unwrap();
+            *lock = report_json.into_bytes();
+
             let len = lock.len().min(out_max_len);
             if !out_buf.is_null() && len > 0 {
                 std::ptr::copy_nonoverlapping(lock.as_ptr(), out_buf, len);
