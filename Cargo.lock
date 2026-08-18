@@ -446,6 +446,7 @@ dependencies = [
  "core_affinity",
  "crossbeam",
  "crossterm",
+ "cycle_lang",
  "dashmap 5.5.3",
  "flow_engine",
  "interactive_shell",
@@ -460,6 +461,14 @@ dependencies = [
  "tower-http 0.7.0",
  "tui-textarea",
  "uuid",
+]
+
+[[package]]
+name = "cycle_lang"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
 ]
 
 [[package]]

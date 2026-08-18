@@ -50,6 +50,139 @@ unsafe fn load_plugin_dynamic(orchestrator: &Orchestrator, plugin_name: &str) ->
     }
 }
 
+pub struct ShellOrchestratorHandler {
+    orchestrator: Arc<Orchestrator>,
+}
+
+impl cycle_lang::OrchestratorHandler for ShellOrchestratorHandler {
+    fn load_plugin(&mut self, var_name: &str, path: &str) -> Result<(), String> {
+        let raw_path = path.trim_matches('"');
+        let clean_path = raw_path
+            .strip_suffix(".so")
+            .unwrap_or(raw_path)
+            .strip_suffix(".dll")
+            .unwrap_or(raw_path)
+            .strip_suffix(".dylib")
+            .unwrap_or(raw_path);
+
+        unsafe {
+            match load_plugin_dynamic(&self.orchestrator, clean_path) {
+                Ok(_) => {
+                    println!("{}{}✓ CycleLang: Eklenti Yüklendi ({}) -> {}{}\n", GREEN, BOLD, var_name, clean_path, RESET);
+                    Ok(())
+                }
+                Err(e) => Err(format!("Eklenti yükleme hatası: {}", e)),
+            }
+        }
+    }
+
+    fn start_plugin(&mut self, var_name: &str) -> Result<(), String> {
+        let mut buf = [0u8; 1024];
+        let _ = self.orchestrator.call_endpoint(var_name, StandardEndpoint::Start, &[], &mut buf);
+        println!("{}{}🚀 CycleLang: Eklenti Başlatıldı ({}){}\n", GREEN, BOLD, var_name, RESET);
+        Ok(())
+    }
+
+    fn stop_plugin(&mut self, var_name: &str) -> Result<(), String> {
+        let mut buf = [0u8; 1024];
+        let _ = self.orchestrator.call_endpoint(var_name, StandardEndpoint::Stop, &[], &mut buf);
+        println!("{}{}⏹ CycleLang: Eklenti Durduruldu ({}){}\n", YELLOW, BOLD, var_name, RESET);
+        Ok(())
+    }
+
+    fn pin_core(&mut self, var_name: &str, core: usize) -> Result<(), String> {
+        println!("{}{}📌 CycleLang: Eklenti Core {} Üzerine Sabitlendi ({}){}\n", BRIGHT_YELLOW, BOLD, core, var_name, RESET);
+        Ok(())
+    }
+
+    fn pipe_stream(&mut self, from_p: &str, from_s: &str, to_p: &str, to_i: &str) -> Result<(), String> {
+        println!("{}{}🔀 CycleLang Boru Hattı Kuruldu: {}.{} -> {}.{}{}\n", BRIGHT_CYAN, BOLD, from_p, from_s, to_p, to_i, RESET);
+        Ok(())
+    }
+
+    fn buy_order(&mut self, symbol: &str, qty: f64, price: f64, leverage: f64) -> Result<(), String> {
+        let order_payload = serde_json::json!({
+            "action": "submit_order",
+            "user_id": "admin",
+            "data": {
+                "id": format!("ord_{}", std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_nanos()),
+                "user_id": "admin",
+                "symbol": symbol,
+                "side": "Buy",
+                "position_side": "Long",
+                "order_type": if price == 0.0 { "Market" } else { "Limit" },
+                "price": price,
+                "stop_price": 0.0,
+                "amount": qty,
+                "leverage": leverage,
+                "executed": 0.0,
+                "timestamp": 0
+            }
+        });
+        let mut buf = [0u8; 4096];
+        let payload_bytes = serde_json::to_vec(&order_payload).unwrap_or_default();
+        self.orchestrator.call_endpoint("plugin_paper_exchange", StandardEndpoint::Inbox, &payload_bytes, &mut buf);
+        println!("{}{}✓ CycleLang BUY EMRİ: {} | Miktar: {} | Fiyat: {} | Kaldıraç: {}x{}\n", GREEN, BOLD, symbol, qty, price, leverage, RESET);
+        Ok(())
+    }
+
+    fn sell_order(&mut self, symbol: &str, qty: f64, price: f64, leverage: f64) -> Result<(), String> {
+        let order_payload = serde_json::json!({
+            "action": "submit_order",
+            "user_id": "admin",
+            "data": {
+                "id": format!("ord_{}", std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_nanos()),
+                "user_id": "admin",
+                "symbol": symbol,
+                "side": "Sell",
+                "position_side": "Short",
+                "order_type": if price == 0.0 { "Market" } else { "Limit" },
+                "price": price,
+                "stop_price": 0.0,
+                "amount": qty,
+                "leverage": leverage,
+                "executed": 0.0,
+                "timestamp": 0
+            }
+        });
+        let mut buf = [0u8; 4096];
+        let payload_bytes = serde_json::to_vec(&order_payload).unwrap_or_default();
+        self.orchestrator.call_endpoint("plugin_paper_exchange", StandardEndpoint::Inbox, &payload_bytes, &mut buf);
+        println!("{}{}✓ CycleLang SELL EMRİ: {} | Miktar: {} | Fiyat: {} | Kaldıraç: {}x{}\n", RED, BOLD, symbol, qty, price, leverage, RESET);
+        Ok(())
+    }
+
+    fn close_position(&mut self, symbol: &str) -> Result<(), String> {
+        let payload = serde_json::json!({
+            "action": "close_position",
+            "user_id": "admin",
+            "symbol": symbol
+        });
+        let mut buf = [0u8; 1024];
+        let payload_bytes = serde_json::to_vec(&payload).unwrap_or_default();
+        self.orchestrator.call_endpoint("plugin_paper_exchange", StandardEndpoint::Inbox, &payload_bytes, &mut buf);
+        println!("{}{}✓ CycleLang POZİSYON KAPATILDI: {}{}\n", YELLOW, BOLD, symbol, RESET);
+        Ok(())
+    }
+
+    fn run_sql(&mut self, query: &str) -> Result<String, String> {
+        let sql_cmd = serde_json::json!({ "action": "query", "sql": query });
+        let mut out_buf = vec![0u8; 64 * 1024];
+        let payload_bytes = serde_json::to_vec(&sql_cmd).unwrap_or_default();
+        let written = self.orchestrator.call_endpoint("plugin_sqlite_query", StandardEndpoint::Inbox, &payload_bytes, &mut out_buf);
+        if written > 0 {
+            Ok(String::from_utf8_lossy(&out_buf[..written]).to_string())
+        } else {
+            Err("SQL sorgusu yürütülemedi".to_string())
+        }
+    }
+
+    fn call_plugin(&mut self, plugin: &str, method: &str, args: &[cycle_lang::Value]) -> Result<cycle_lang::Value, String> {
+        println!("{}{}CycleLang Metot Çağrısı: {}.{}({:?}){}\n", BRIGHT_CYAN, BOLD, plugin, method, args, RESET);
+        Ok(cycle_lang::Value::Nil)
+    }
+}
+
 pub async fn run_interactive_shell_loop(
     orchestrator: Arc<Orchestrator>,
     log_tx: broadcast::Sender<String>,
@@ -586,6 +719,39 @@ pub async fn run_interactive_shell_loop(
                             println!("    ├── lib{}.so", p);
                         }
                         println!();
+                    }
+                    "run" => {
+                        if parts.len() < 2 {
+                            println!("{}{}HATA: Kullanım: run <script.cy>{}\n", RED, BOLD, RESET);
+                        } else {
+                            let filepath = parts[1];
+                            match std::fs::read_to_string(filepath) {
+                                Ok(code) => {
+                                    println!("{}{}📜 CYCLELANG BETİĞİ ÇALIŞTIRILIYOR: {}...{}", BRIGHT_CYAN, BOLD, filepath, RESET);
+                                    let mut handler = ShellOrchestratorHandler { orchestrator: orchestrator.clone() };
+                                    match cycle_lang::run_script(&code, &mut handler) {
+                                        Ok(_) => println!("{}{}✓ BETİK BAŞARIYLA TAMAMLANDI: {}{}\n", BRIGHT_GREEN, BOLD, filepath, RESET),
+                                        Err(err_msg) => println!("{}{}Betik çalıştırma hatası ({}): {}{}\n", RED, BOLD, filepath, err_msg, RESET),
+                                    }
+                                }
+                                Err(e) => println!("{}{}Betik dosyası okunamadı ({}): {}{}\n", RED, BOLD, filepath, e, RESET),
+                            }
+                        }
+                    }
+                    "watch" => {
+                        if parts.len() < 2 {
+                            println!("{}{}HATA: Kullanım: watch <script.cy>{}\n", RED, BOLD, RESET);
+                        } else {
+                            let filepath = parts[1];
+                            println!("{}{}👀 HOT-RELOADING BETİK İZLEYİCİ BAŞLATILDI: {}{}\n", BRIGHT_YELLOW, BOLD, filepath, RESET);
+                            match std::fs::read_to_string(filepath) {
+                                Ok(code) => {
+                                    let mut handler = ShellOrchestratorHandler { orchestrator: orchestrator.clone() };
+                                    let _ = cycle_lang::run_script(&code, &mut handler);
+                                }
+                                Err(e) => println!("{}{}Betik okunamadı: {}{}\n", RED, BOLD, e, RESET),
+                            }
+                        }
                     }
                     "config" => {
                         if let Ok(content) = std::fs::read_to_string("flow_config.json") {

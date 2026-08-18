@@ -90,6 +90,10 @@ pub fn format_help_menu() -> String {
     out.push_str(&format!("  {}sysinfo{} / {}pc{}           : İşletim sistemi, çekirdek, CPU modeli, RAM ve disk kullanımını gösterir\n", GREEN, RESET, GREEN, RESET));
     out.push_str(&format!("  {}<yerel komutlar>{}         : Tüm Linux/OS komutlarını doğrudan çalıştırır (örn: ls, free -h, df -h, git status, ping)\n", GREEN, RESET));
 
+    out.push_str(&format!("\n{}{}📜 CYCLELANG (.cy) PROGRAMLAMA DİLİ SİSTEMİ:{}\n", BRIGHT_YELLOW, BOLD, RESET));
+    out.push_str(&format!("  {}run <script.cy>{}        : .cy uzantılı CycleLang strateji/orkestrasyon betiğini derler ve çalıştırır\n", GREEN, RESET));
+    out.push_str(&format!("  {}watch <script.cy>{}      : .cy betik dosyasını canlıda izler ve değişiklikte anında çalıştırır (Hot-Reloading)\n", GREEN, RESET));
+
     out.push_str(&format!("\n{}{}🧮 HESAPLAMA VE FİNANSAL UTILITY:{}\n", BRIGHT_YELLOW, BOLD, RESET));
     out.push_str(&format!("  {}calc <ifade>{}            : Matematiksel/Finansal hesaplama yapar (örn: calc 65000 * 0.1 * 20)\n", GREEN, RESET));
     out.push_str(&format!("  {}time{} / {}clock{}           : Nanosaniye hassasiyetli canlı sistem saatini gösterir (HH.MM.SS.mmm.uuu.nnn)\n", GREEN, RESET, GREEN, RESET));

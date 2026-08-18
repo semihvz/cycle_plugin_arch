@@ -24,5 +24,6 @@ core_affinity = "0.8.3"
 crossbeam = "0.8.4"
 flow_engine = { path = "../flow_engine" }
 interactive_shell = { path = "../interactive_shell" }
+cycle_lang = { path = "../cycle_lang" }
 tui-textarea = "0.4.0"
 rustyline = "12.0"

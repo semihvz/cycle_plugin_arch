@@ -15,6 +15,7 @@ members = [
     "plugin_aggtrade_stats",
     "plugin_aggtrade_ohlcv",
     "plugin_sys_metrics",
-    "interactive_shell"
+    "interactive_shell",
+    "cycle_lang"
 ]
 resolver = "2"
