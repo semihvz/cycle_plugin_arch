@@ -40,6 +40,9 @@
       <button class="main-tab-btn" id="tab-btn-shell" data-tab="shell">
         <i class="fa-solid fa-terminal"></i> 📟 İnteraktif Shell <span class="tab-key">[4]</span>
       </button>
+      <button class="main-tab-btn" id="tab-btn-editor" data-tab="editor">
+        <i class="fa-solid fa-diagram-project"></i> 🛠️ Visual JSON Studio <span class="tab-key">[5]</span>
+      </button>
     </div>
 
     <!-- LATENCY BADGE & QUICK HOTKEYS -->
@@ -215,6 +218,11 @@ Komut geçmişinde gezinmek için [Yukarı / Aşağı] ok tuşlarını kullanabi
           <button class="btn btn-primary btn-sm" id="shell-send-btn"><i class="fa-solid fa-paper-plane"></i> Gönder</button>
         </div>
       </div>
+    </section>
+
+    <!-- TAB 5: ISOLATED VISUAL JSON STUDIO IFRAME EMBED -->
+    <section class="tab-page" id="page-editor" style="padding:0; overflow:hidden;">
+      <iframe src="/json_studio/index.html" id="json-studio-iframe" style="width:100%; height:calc(100vh - 60px); border:none;" title="Visual JSON Studio"></iframe>
     </section>
 
   </div>

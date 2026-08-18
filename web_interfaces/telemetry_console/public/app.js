@@ -30,10 +30,12 @@
     tabBtnHex: document.getElementById('tab-btn-hex'),
     tabBtnLogs: document.getElementById('tab-btn-logs'),
     tabBtnShell: document.getElementById('tab-btn-shell'),
+    tabBtnEditor: document.getElementById('tab-btn-editor'),
     pageTelemetry: document.getElementById('page-telemetry'),
     pageHex: document.getElementById('page-hex'),
     pageLogs: document.getElementById('page-logs'),
     pageShell: document.getElementById('page-shell'),
+    pageEditor: document.getElementById('page-editor'),
     valTotalSystems: document.getElementById('val-total-systems'),
     valRunningSystems: document.getElementById('val-running-systems'),
     valCpuUsage: document.getElementById('val-cpu-usage'),
@@ -82,7 +84,8 @@
       { btn: el.tabBtnTelemetry, page: el.pageTelemetry, name: 'telemetry' },
       { btn: el.tabBtnHex, page: el.pageHex, name: 'hex' },
       { btn: el.tabBtnLogs, page: el.pageLogs, name: 'logs' },
-      { btn: el.tabBtnShell, page: el.pageShell, name: 'shell' }
+      { btn: el.tabBtnShell, page: el.pageShell, name: 'shell' },
+      { btn: el.tabBtnEditor, page: el.pageEditor, name: 'editor' }
     ];
 
     tabs.forEach(t => {
@@ -97,12 +100,12 @@
 
   function switchTab(tabName) {
     state.activeTab = tabName;
-    [el.tabBtnTelemetry, el.tabBtnHex, el.tabBtnLogs, el.tabBtnShell].forEach(btn => {
+    [el.tabBtnTelemetry, el.tabBtnHex, el.tabBtnLogs, el.tabBtnShell, el.tabBtnEditor].forEach(btn => {
       if (!btn) return;
       btn.classList.toggle('active', btn.dataset.tab === tabName);
     });
 
-    [el.pageTelemetry, el.pageHex, el.pageLogs, el.pageShell].forEach(page => {
+    [el.pageTelemetry, el.pageHex, el.pageLogs, el.pageShell, el.pageEditor].forEach(page => {
       if (!page) return;
       page.classList.toggle('active', page.id === `page-${tabName}`);
     });
@@ -546,6 +549,7 @@ Komut geçmişinde gezinmek için [Yukarı / Aşağı] ok tuşlarını kullanabi
       if (key === '2') { switchTab('hex'); return; }
       if (key === '3') { switchTab('logs'); return; }
       if (key === '4' || key === '`') { switchTab('shell'); return; }
+      if (key === '5') { switchTab('editor'); return; }
       if (key === 'a' || key === 'l') { e.preventDefault(); openLoadModal(); return; }
 
       if (state.selectedSystemId) {

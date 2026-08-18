@@ -160,11 +160,10 @@
       const res = await fetch('/api/config');
       if (res.ok) {
         const result = await res.json();
-        if (result.success && result.data) {
-          updateDataStore(result.data, false);
-          showToast('flow_config.json yüklendi.', 'info');
-          return;
-        }
+        const data = Array.isArray(result) ? result : (result.data || result);
+        updateDataStore(data, false);
+        showToast('flow_config.json yüklendi.', 'info');
+        return;
       }
     } catch (e) {
       console.log('Sunucu ayarları okunamadı, varsayılan şablon yükleniyor...');
@@ -178,17 +177,18 @@
       return;
     }
     try {
+      const payload = JSON.parse(state.rawText);
       const res = await fetch('/api/config', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ raw: state.rawText })
+        body: JSON.stringify(payload)
       });
       const result = await res.json();
-      if (res.ok && result.success) {
+      if (res.ok && result.status === 'ok') {
         showToast('flow_config.json başarıyla kaydedildi!', 'success');
-        checkServerStatus();
+        updateServerStatusBadge(true, 'flow_config.json Aktif & Kaydedildi');
       } else {
-        showToast('Kaydetme hatası: ' + (result.error || 'Bilinmeyen hata'), 'error');
+        showToast('Kaydetme hatası!', 'error');
       }
     } catch (e) {
       showToast('Sunucuya kaydedilemedi: ' + e.message, 'error');
