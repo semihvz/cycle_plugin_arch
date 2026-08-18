@@ -1,12 +1,11 @@
 /**
- * Cycle-ORC Telemetry Console & Full Visual JSON Studio (Port 8080)
- * High-Speed Zero-Latency WebSocket Controller & Interactive Pipeline Flow Studio
+ * Cycle-ORC Telemetry Console (Port 8080)
+ * High-Speed Zero-Latency WebSocket Controller & Real-Time Orchestrator Dashboard
  */
 
 (function () {
   'use strict';
 
-  // Application State Store
   const state = {
     activeTab: 'telemetry',
     ws: null,
@@ -20,21 +19,9 @@
     shellHistory: [],
     shellHistoryIdx: -1,
     autoscrollLogs: true,
-    pauseHexStream: false,
-    // Visual JSON Studio State
-    jsonData: null,
-    rawText: '',
-    isValidJson: true,
-    history: [],
-    historyIndex: -1,
-    editorViewMode: 'split', // 'split' | 'tree' | 'flow' | 'code'
-    searchQuery: '',
-    collapsedPaths: new Set(),
-    flowPositions: new Map(), // pluginIndex -> { x, y }
-    selectedNodeIdx: null
+    pauseHexStream: false
   };
 
-  // DOM Elements Registry
   const el = {
     serverStatusBadge: document.getElementById('server-status-badge'),
     latencyPill: document.getElementById('latency-pill'),
@@ -43,12 +30,10 @@
     tabBtnHex: document.getElementById('tab-btn-hex'),
     tabBtnLogs: document.getElementById('tab-btn-logs'),
     tabBtnShell: document.getElementById('tab-btn-shell'),
-    tabBtnEditor: document.getElementById('tab-btn-editor'),
     pageTelemetry: document.getElementById('page-telemetry'),
     pageHex: document.getElementById('page-hex'),
     pageLogs: document.getElementById('page-logs'),
     pageShell: document.getElementById('page-shell'),
-    pageEditor: document.getElementById('page-editor'),
     valTotalSystems: document.getElementById('val-total-systems'),
     valRunningSystems: document.getElementById('val-running-systems'),
     valCpuUsage: document.getElementById('val-cpu-usage'),
@@ -80,41 +65,6 @@
     shellOutputWindow: document.getElementById('shell-output-window'),
     shellInputField: document.getElementById('shell-input-field'),
     shellSendBtn: document.getElementById('shell-send-btn'),
-    // Visual JSON Studio Elements
-    btnViewSplit: document.getElementById('btn-view-split'),
-    btnViewTree: document.getElementById('btn-view-tree'),
-    btnViewFlow: document.getElementById('btn-view-flow'),
-    btnViewCode: document.getElementById('btn-view-code'),
-    mainWorkspace: document.getElementById('main-workspace'),
-    paneCode: document.getElementById('pane-code'),
-    paneVisual: document.getElementById('pane-visual'),
-    viewTreeContainer: document.getElementById('view-tree-container'),
-    viewFlowContainer: document.getElementById('view-flow-container'),
-    rawJsonTextarea: document.getElementById('raw-json-textarea'),
-    lineNumbers: document.getElementById('line-numbers'),
-    codeValidStatus: document.getElementById('code-valid-status'),
-    treeContentRoot: document.getElementById('tree-content-root'),
-    flowNodesLayer: document.getElementById('flow-nodes-layer'),
-    flowSvgLayer: document.getElementById('flow-svg-layer'),
-    globalSearchInput: document.getElementById('global-search-input'),
-    clearSearchBtn: document.getElementById('clear-search-btn'),
-    btnUndo: document.getElementById('btn-undo'),
-    btnRedo: document.getElementById('btn-redo'),
-    btnFormat: document.getElementById('btn-format'),
-    btnReload: document.getElementById('btn-reload'),
-    btnSaveWorkspace: document.getElementById('btn-save-workspace'),
-    btnCopyCode: document.getElementById('btn-copy-code'),
-    btnMinifyCode: document.getElementById('btn-minify-code'),
-    btnTemplates: document.getElementById('btn-templates'),
-    templatesMenu: document.getElementById('templates-menu'),
-    jsonBreadcrumbs: document.getElementById('json-breadcrumbs'),
-    statsInfo: document.getElementById('stats-info'),
-    btnExpandAll: document.getElementById('btn-expand-all'),
-    btnCollapseAll: document.getElementById('btn-collapse-all'),
-    btnAddPlugin: document.getElementById('btn-add-plugin'),
-    nodeInspector: document.getElementById('node-inspector'),
-    closeInspectorBtn: document.getElementById('close-inspector-btn'),
-    inspectorBody: document.getElementById('inspector-body'),
     toastContainer: document.getElementById('toast-container')
   };
 
@@ -125,8 +75,6 @@
     setupGlobalHotkeys();
     setupActions();
     setupShellInput();
-    setupVisualStudioHandlers();
-    fetchConfig();
   }
 
   function setupMainTabSwitching() {
@@ -134,8 +82,7 @@
       { btn: el.tabBtnTelemetry, page: el.pageTelemetry, name: 'telemetry' },
       { btn: el.tabBtnHex, page: el.pageHex, name: 'hex' },
       { btn: el.tabBtnLogs, page: el.pageLogs, name: 'logs' },
-      { btn: el.tabBtnShell, page: el.pageShell, name: 'shell' },
-      { btn: el.tabBtnEditor, page: el.pageEditor, name: 'editor' }
+      { btn: el.tabBtnShell, page: el.pageShell, name: 'shell' }
     ];
 
     tabs.forEach(t => {
@@ -150,20 +97,18 @@
 
   function switchTab(tabName) {
     state.activeTab = tabName;
-    [el.tabBtnTelemetry, el.tabBtnHex, el.tabBtnLogs, el.tabBtnShell, el.tabBtnEditor].forEach(btn => {
+    [el.tabBtnTelemetry, el.tabBtnHex, el.tabBtnLogs, el.tabBtnShell].forEach(btn => {
       if (!btn) return;
       btn.classList.toggle('active', btn.dataset.tab === tabName);
     });
 
-    [el.pageTelemetry, el.pageHex, el.pageLogs, el.pageShell, el.pageEditor].forEach(page => {
+    [el.pageTelemetry, el.pageHex, el.pageLogs, el.pageShell].forEach(page => {
       if (!page) return;
       page.classList.toggle('active', page.id === `page-${tabName}`);
     });
 
     if (tabName === 'shell' && el.shellInputField) {
       setTimeout(() => el.shellInputField.focus(), 100);
-    } else if (tabName === 'editor') {
-      fetchConfig();
     }
   }
 
@@ -391,446 +336,6 @@
     }
   }
 
-  /* ==========================================================================
-     FULL FEATURED VISUAL JSON & PIPELINE FLOW STUDIO
-     ========================================================================== */
-
-  function fetchConfig() {
-    fetch('/api/config')
-      .then(res => res.json())
-      .then(data => {
-        updateDataStore(data, true);
-        showToast('flow_config.json başarıyla yüklendi.', 'info');
-      })
-      .catch(err => {
-        console.error('Config fetch error:', err);
-      });
-  }
-
-  function saveConfig() {
-    if (!state.isValidJson) {
-      showToast('Geçersiz JSON formatı! Lütfen hatayı düzeltin.', 'error');
-      return;
-    }
-
-    fetch('/api/config', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(state.jsonData)
-    })
-      .then(res => res.json())
-      .then(resData => {
-        if (resData.status === 'ok') {
-          showToast('💾 flow_config.json başarıyla kaydedildi!', 'success');
-        } else {
-          showToast('Kaydetme hatası!', 'error');
-        }
-      })
-      .catch(err => showToast('Kaydetme isteği başarısız!', 'error'));
-  }
-
-  function updateDataStore(newData, resetHistory = false) {
-    state.jsonData = newData;
-    state.rawText = JSON.stringify(newData, null, 2);
-    state.isValidJson = true;
-
-    if (resetHistory) {
-      state.history = [state.rawText];
-      state.historyIndex = 0;
-    } else {
-      pushHistory(state.rawText);
-    }
-
-    if (el.rawJsonTextarea) el.rawJsonTextarea.value = state.rawText;
-    updateLineNumbers();
-    updateValidationStatus(true);
-    updateStatsInfo();
-    renderAllViews();
-    updateUndoRedoButtons();
-  }
-
-  function pushHistory(text) {
-    if (state.history[state.historyIndex] === text) return;
-    state.history = state.history.slice(0, state.historyIndex + 1);
-    state.history.push(text);
-    state.historyIndex = state.history.length - 1;
-    updateUndoRedoButtons();
-  }
-
-  function undo() {
-    if (state.historyIndex > 0) {
-      state.historyIndex--;
-      applyHistoryState();
-    }
-  }
-
-  function redo() {
-    if (state.historyIndex < state.history.length - 1) {
-      state.historyIndex++;
-      applyHistoryState();
-    }
-  }
-
-  function applyHistoryState() {
-    const text = state.history[state.historyIndex];
-    try {
-      state.jsonData = JSON.parse(text);
-      state.rawText = text;
-      state.isValidJson = true;
-      if (el.rawJsonTextarea) el.rawJsonTextarea.value = text;
-      updateLineNumbers();
-      updateValidationStatus(true);
-      updateStatsInfo();
-      renderAllViews();
-      showToast('Değişiklik uygulandı.', 'info');
-    } catch (e) {}
-    updateUndoRedoButtons();
-  }
-
-  function updateUndoRedoButtons() {
-    if (el.btnUndo) el.btnUndo.disabled = state.historyIndex <= 0;
-    if (el.btnRedo) el.btnRedo.disabled = state.historyIndex >= state.history.length - 1;
-  }
-
-  function setEditorViewMode(mode) {
-    state.editorViewMode = mode;
-    [el.btnViewSplit, el.btnViewTree, el.btnViewFlow, el.btnViewCode].forEach(btn => {
-      if (!btn) return;
-      btn.classList.toggle('active', btn.dataset.view === mode);
-    });
-
-    if (!el.mainWorkspace) return;
-    el.mainWorkspace.className = `main-workspace ${mode}-mode`;
-
-    if (el.viewTreeContainer) el.viewTreeContainer.classList.toggle('active', mode === 'split' || mode === 'tree');
-    if (el.viewFlowContainer) el.viewFlowContainer.classList.toggle('active', mode === 'flow');
-
-    if (mode === 'flow') {
-      setTimeout(renderFlowCanvas, 50);
-    }
-  }
-
-  function updateLineNumbers() {
-    if (!el.rawJsonTextarea || !el.lineNumbers) return;
-    const lines = el.rawJsonTextarea.value.split('\n').length;
-    let numbers = '';
-    for (let i = 1; i <= lines; i++) {
-      numbers += i + '\n';
-    }
-    el.lineNumbers.textContent = numbers;
-  }
-
-  function updateValidationStatus(isValid) {
-    state.isValidJson = isValid;
-    if (!el.codeValidStatus) return;
-    if (isValid) {
-      el.codeValidStatus.className = 'valid-indicator';
-      el.codeValidStatus.innerHTML = `<i class="fa-solid fa-circle-check"></i> Geçerli JSON`;
-    } else {
-      el.codeValidStatus.className = 'valid-indicator invalid';
-      el.codeValidStatus.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> Hatalı Syntax`;
-    }
-  }
-
-  function updateStatsInfo() {
-    if (!el.statsInfo) return;
-    const count = Array.isArray(state.jsonData) ? state.jsonData.length : (state.jsonData ? 1 : 0);
-    el.statsInfo.innerHTML = `<i class="fa-solid fa-cubes"></i> ${count} Düğüm | ${count > 1 ? count - 1 : 0} Akış Bağlantısı`;
-  }
-
-  function renderAllViews() {
-    renderTree();
-    if (state.editorViewMode === 'flow') {
-      renderFlowCanvas();
-    }
-  }
-
-  function renderTree() {
-    if (!el.treeContentRoot) return;
-
-    if (!Array.isArray(state.jsonData) || state.jsonData.length === 0) {
-      el.treeContentRoot.innerHTML = `<div style="color:var(--text-muted); font-size:0.85rem;">Düğüm bulunamadı. Lütfen bir şablon seçin veya eklenti ekleyin.</div>`;
-      return;
-    }
-
-    el.treeContentRoot.innerHTML = state.jsonData.map((node, nodeIdx) => {
-      const pluginName = node.plugin_name || `Düğüm #${nodeIdx + 1}`;
-      const keys = Object.keys(node).filter(k => k !== 'plugin_name');
-
-      const paramsHtml = keys.map(k => {
-        let valStr = typeof node[k] === 'object' ? JSON.stringify(node[k]) : String(node[k]);
-        return `
-          <div class="node-row" style="margin-left: 20px;">
-            <span class="node-key">${k}</span>:
-            <input type="text" class="node-val-input" data-node="${nodeIdx}" data-key="${k}" value="${valStr.replace(/"/g, '&quot;')}">
-          </div>`;
-      }).join('');
-
-      return `
-        <div class="json-node-card" style="margin-bottom: 12px;">
-          <div class="node-header-row">
-            <h5>🧩 ${pluginName}</h5>
-            <button class="btn-micro" data-remove-node="${nodeIdx}"><i class="fa-solid fa-trash"></i> Sil</button>
-          </div>
-          <div class="node-params-grid">
-            ${paramsHtml}
-          </div>
-        </div>`;
-    }).join('');
-
-    // Attach inline value change handlers
-    el.treeContentRoot.querySelectorAll('.node-val-input').forEach(input => {
-      input.addEventListener('change', () => {
-        const nodeIdx = parseInt(input.dataset.node);
-        const key = input.dataset.key;
-        let newRaw = input.value;
-        let parsedVal = newRaw;
-        if (newRaw === 'true') parsedVal = true;
-        else if (newRaw === 'false') parsedVal = false;
-        else if (!isNaN(Number(newRaw)) && newRaw.trim() !== '') parsedVal = Number(newRaw);
-
-        if (state.jsonData[nodeIdx]) {
-          state.jsonData[nodeIdx][key] = parsedVal;
-          state.rawText = JSON.stringify(state.jsonData, null, 2);
-          if (el.rawJsonTextarea) el.rawJsonTextarea.value = state.rawText;
-          pushHistory(state.rawText);
-        }
-      });
-    });
-
-    el.treeContentRoot.querySelectorAll('[data-remove-node]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const idx = parseInt(btn.dataset.removeNode);
-        state.jsonData.splice(idx, 1);
-        updateDataStore(state.jsonData);
-      });
-    });
-  }
-
-  /* FLOW GRAPH CANVAS RENDERER */
-  function renderFlowCanvas() {
-    if (!el.flowNodesLayer || !el.flowSvgLayer) return;
-
-    if (!Array.isArray(state.jsonData) || state.jsonData.length === 0) {
-      el.flowNodesLayer.innerHTML = `<div style="padding:20px; color:var(--text-muted);">Akış grafiği için düğüm bulunamadı.</div>`;
-      el.flowSvgLayer.innerHTML = '';
-      return;
-    }
-
-    let nodeHtml = '';
-    const startX = 60;
-    const startY = 60;
-    const gapX = 320;
-
-    state.jsonData.forEach((plugin, idx) => {
-      if (!state.flowPositions.has(idx)) {
-        state.flowPositions.set(idx, { x: startX + (idx * gapX), y: startY + (idx % 2 * 60) });
-      }
-      const pos = state.flowPositions.get(idx);
-      const isSelected = state.selectedNodeIdx === idx;
-
-      nodeHtml += `
-        <div class="flow-node-card ${isSelected ? 'selected' : ''}" data-node-idx="${idx}" style="left:${pos.x}px; top:${pos.y}px;">
-          <div class="flow-node-header">
-            <span class="flow-node-title"><i class="fa-solid fa-cube"></i> ${plugin.plugin_name || 'Eklenti'}</span>
-            <span class="flow-node-category">Düğüm #${idx + 1}</span>
-          </div>
-          <div class="flow-ports-body">
-            <div class="port-group">
-              <span class="port-title">Girdi / Çıktı Portları</span>
-              <div class="port-item">
-                <span>Data In</span>
-                <span class="port-dot" title="Giriş Portu"></span>
-              </div>
-              <div class="port-item">
-                <span>Data Out</span>
-                <span class="port-dot" title="Çıkış Portu"></span>
-              </div>
-            </div>
-          </div>
-        </div>`;
-    });
-
-    el.flowNodesLayer.innerHTML = nodeHtml;
-    drawFlowConnections();
-
-    // Enable Node Dragging
-    el.flowNodesLayer.querySelectorAll('.flow-node-card').forEach(card => {
-      let isDragging = false;
-      let startMouseX = 0, startMouseY = 0;
-      let initialNodeX = 0, initialNodeY = 0;
-
-      card.addEventListener('mousedown', (e) => {
-        isDragging = true;
-        const idx = parseInt(card.dataset.nodeIdx);
-        state.selectedNodeIdx = idx;
-        const pos = state.flowPositions.get(idx);
-        initialNodeX = pos.x;
-        initialNodeY = pos.y;
-        startMouseX = e.clientX;
-        startMouseY = e.clientY;
-
-        const onMouseMove = (moveEvt) => {
-          if (!isDragging) return;
-          const dx = moveEvt.clientX - startMouseX;
-          const dy = moveEvt.clientY - startMouseY;
-          const newX = Math.max(10, initialNodeX + dx);
-          const newY = Math.max(10, initialNodeY + dy);
-          card.style.left = `${newX}px`;
-          card.style.top = `${newY}px`;
-          state.flowPositions.set(idx, { x: newX, y: newY });
-          drawFlowConnections();
-        };
-
-        const onMouseUp = () => {
-          isDragging = false;
-          window.removeEventListener('mousemove', onMouseMove);
-          window.removeEventListener('mouseup', onMouseUp);
-        };
-
-        window.addEventListener('mousemove', onMouseMove);
-        window.addEventListener('mouseup', onMouseUp);
-      });
-    });
-  }
-
-  function drawFlowConnections() {
-    if (!el.flowSvgLayer || !Array.isArray(state.jsonData)) return;
-
-    let svgHtml = `
-      <defs>
-        <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-          <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--accent-cyan)" />
-        </marker>
-      </defs>`;
-
-    for (let i = 0; i < state.jsonData.length - 1; i++) {
-      const p1 = state.flowPositions.get(i);
-      const p2 = state.flowPositions.get(i + 1);
-      if (!p1 || !p2) continue;
-
-      const x1 = p1.x + 260;
-      const y1 = p1.y + 70;
-      const x2 = p2.x;
-      const y2 = p2.y + 70;
-
-      const cx1 = x1 + (x2 - x1) / 2;
-      const cy1 = y1;
-      const cx2 = x1 + (x2 - x1) / 2;
-      const cy2 = y2;
-
-      const pathData = `M ${x1} ${y1} C ${cx1} ${cy1}, ${cx2} ${cy2}, ${x2} ${y2}`;
-      svgHtml += `<path class="flow-svg-wire" d="${pathData}" marker-end="url(#arrow)" />`;
-    }
-
-    el.flowSvgLayer.innerHTML = svgHtml;
-  }
-
-  function setupVisualStudioHandlers() {
-    if (el.btnViewSplit) el.btnViewSplit.addEventListener('click', () => setEditorViewMode('split'));
-    if (el.btnViewTree) el.btnViewTree.addEventListener('click', () => setEditorViewMode('tree'));
-    if (el.btnViewFlow) el.btnViewFlow.addEventListener('click', () => setEditorViewMode('flow'));
-    if (el.btnViewCode) el.btnViewCode.addEventListener('click', () => setEditorViewMode('code'));
-
-    if (el.btnUndo) el.btnUndo.addEventListener('click', undo);
-    if (el.btnRedo) el.btnRedo.addEventListener('click', redo);
-
-    if (el.btnFormat) {
-      el.btnFormat.addEventListener('click', () => {
-        if (!state.isValidJson) return;
-        state.rawText = JSON.stringify(state.jsonData, null, 2);
-        if (el.rawJsonTextarea) el.rawJsonTextarea.value = state.rawText;
-        updateLineNumbers();
-        pushHistory(state.rawText);
-        showToast('JSON formatlandı (Prettify).', 'info');
-      });
-    }
-
-    if (el.btnReload) el.btnReload.addEventListener('click', fetchConfig);
-    if (el.btnSaveWorkspace) el.btnSaveWorkspace.addEventListener('click', saveConfig);
-
-    if (el.btnCopyCode) {
-      el.btnCopyCode.addEventListener('click', () => {
-        if (el.rawJsonTextarea) {
-          navigator.clipboard.writeText(el.rawJsonTextarea.value);
-          showToast('JSON panoya kopyalandı.', 'success');
-        }
-      });
-    }
-
-    if (el.btnMinifyCode) {
-      el.btnMinifyCode.addEventListener('click', () => {
-        if (!state.isValidJson) return;
-        state.rawText = JSON.stringify(state.jsonData);
-        if (el.rawJsonTextarea) el.rawJsonTextarea.value = state.rawText;
-        updateLineNumbers();
-        pushHistory(state.rawText);
-        showToast('JSON sıkıştırıldı (Minify).', 'info');
-      });
-    }
-
-    // Template Selector
-    if (el.templatesMenu) {
-      el.templatesMenu.querySelectorAll('[data-template]').forEach(item => {
-        item.addEventListener('click', (e) => {
-          e.preventDefault();
-          const tName = item.dataset.template;
-          if (tName === 'default_flow') {
-            updateDataStore([
-              { plugin_name: "plugin_binance_gateway", symbol: "btcusdt", enable: true },
-              { plugin_name: "plugin_aggtrade_ohlcv", timeframe: 60, enable: true },
-              { plugin_name: "plugin_breakout", threshold: 1.5, enable: true },
-              { plugin_name: "plugin_binance_trader", leverage: 10, enable: true }
-            ]);
-          } else if (tName === 'hft_pipeline') {
-            updateDataStore([
-              { plugin_name: "plugin_oi_fetcher", symbol: "ethusdt" },
-              { plugin_name: "plugin_ms_analyzer", threshold_ms: 50 },
-              { plugin_name: "plugin_paper_exchange", balance: 10000 }
-            ]);
-          } else if (tName === 'empty_array') {
-            updateDataStore([]);
-          }
-          showToast(`Şablon yüklendi: ${tName}`, 'success');
-        });
-      });
-    }
-
-    if (el.btnAddPlugin || el.btnEditorAddNode) {
-      const handler = () => {
-        const name = prompt('Eklenti Adı (örn: plugin_breakout):', 'plugin_new');
-        if (name) {
-          if (!Array.isArray(state.jsonData)) state.jsonData = [];
-          state.jsonData.push({
-            plugin_name: name,
-            symbol: 'BTCUSDT',
-            enable: true
-          });
-          updateDataStore(state.jsonData);
-        }
-      };
-      if (el.btnAddPlugin) el.btnAddPlugin.addEventListener('click', handler);
-      if (el.btnEditorAddNode) el.btnEditorAddNode.addEventListener('click', handler);
-    }
-
-    if (el.rawJsonTextarea) {
-      el.rawJsonTextarea.addEventListener('input', () => {
-        updateLineNumbers();
-        const text = el.rawJsonTextarea.value;
-        try {
-          state.jsonData = JSON.parse(text);
-          state.rawText = text;
-          updateValidationStatus(true);
-          updateStatsInfo();
-          renderAllViews();
-          pushHistory(text);
-        } catch (e) {
-          updateValidationStatus(false);
-        }
-      });
-    }
-  }
-
   function setupShellInput() {
     if (!el.shellInputField) return;
 
@@ -1041,24 +546,7 @@ Komut geçmişinde gezinmek için [Yukarı / Aşağı] ok tuşlarını kullanabi
       if (key === '2') { switchTab('hex'); return; }
       if (key === '3') { switchTab('logs'); return; }
       if (key === '4' || key === '`') { switchTab('shell'); return; }
-      if (key === '5') { switchTab('editor'); return; }
       if (key === 'a' || key === 'l') { e.preventDefault(); openLoadModal(); return; }
-
-      if (e.ctrlKey && key === 's') {
-        e.preventDefault();
-        saveConfig();
-        return;
-      }
-      if (e.ctrlKey && key === 'z') {
-        e.preventDefault();
-        undo();
-        return;
-      }
-      if (e.ctrlKey && key === 'y') {
-        e.preventDefault();
-        redo();
-        return;
-      }
 
       if (state.selectedSystemId) {
         if (key === 's') {

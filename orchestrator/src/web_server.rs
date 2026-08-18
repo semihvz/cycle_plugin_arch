@@ -306,7 +306,6 @@ pub async fn start_web_server(
     let app = Router::new()
         .route("/ws", get(ws_handler))
         .route("/api/status", get(status_handler))
-        .route("/api/config", get(get_config_handler).post(save_config_handler))
         .fallback_service(ServeDir::new(static_dir))
         .layer(cors)
         .with_state(state);
@@ -324,40 +323,6 @@ pub async fn start_web_server(
             eprintln!("[HFT WEB] Port {} dinlenemedi: {}", port, e);
         }
     }
-}
-
-async fn get_config_handler() -> Json<serde_json::Value> {
-    let path = if std::path::Path::new("flow_config.json").exists() {
-        "flow_config.json"
-    } else if std::path::Path::new("../flow_config.json").exists() {
-        "../flow_config.json"
-    } else {
-        "flow_config.json"
-    };
-
-    if let Ok(content) = std::fs::read_to_string(path) {
-        if let Ok(json_val) = serde_json::from_str::<serde_json::Value>(&content) {
-            return Json(json_val);
-        }
-    }
-    Json(serde_json::json!([]))
-}
-
-async fn save_config_handler(Json(payload): Json<serde_json::Value>) -> Json<serde_json::Value> {
-    let path = if std::path::Path::new("flow_config.json").exists() {
-        "flow_config.json"
-    } else if std::path::Path::new("../flow_config.json").exists() {
-        "../flow_config.json"
-    } else {
-        "flow_config.json"
-    };
-
-    if let Ok(pretty_json) = serde_json::to_string_pretty(&payload) {
-        if std::fs::write(path, pretty_json).is_ok() {
-            return Json(serde_json::json!({ "status": "ok", "message": "flow_config.json başarıyla kaydedildi" }));
-        }
-    }
-    Json(serde_json::json!({ "status": "error", "message": "flow_config.json kaydedilemedi" }))
 }
 
 async fn status_handler(State(state): State<AppState>) -> Json<serde_json::Value> {
