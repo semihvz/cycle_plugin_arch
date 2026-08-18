@@ -373,6 +373,26 @@ body {
   position: relative;
 }
 
+/* WORKSPACE VIEW MODES */
+.main-workspace.split-mode .pane-code { display: flex; width: 42%; }
+.main-workspace.split-mode .pane-visual { display: flex; flex: 1; }
+.main-workspace.split-mode .pane-resizer { display: block; }
+
+.main-workspace.tree-mode .pane-code { display: none; }
+.main-workspace.tree-mode .pane-resizer { display: none; }
+.main-workspace.tree-mode .pane-visual { display: flex; width: 100%; }
+
+.main-workspace.flow-mode .pane-code { display: none; }
+.main-workspace.flow-mode .pane-resizer { display: none; }
+.main-workspace.flow-mode .pane-visual { display: flex; width: 100%; }
+
+.main-workspace.code-mode .pane-code { display: flex; width: 100%; }
+.main-workspace.code-mode .pane-resizer { display: none; }
+.main-workspace.code-mode .pane-visual { display: none; }
+
+.visual-subview { display: none; flex: 1; flex-direction: column; height: 100%; overflow: hidden; }
+.visual-subview.active { display: flex; }
+
 .pane {
   display: flex;
   flex-direction: column;

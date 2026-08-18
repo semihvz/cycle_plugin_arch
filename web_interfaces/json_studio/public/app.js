@@ -400,6 +400,17 @@
         item.b.classList.add('active');
         state.viewMode = item.mode;
         if (el.mainWorkspace) el.mainWorkspace.className = `main-workspace ${item.mode}-mode`;
+
+        if (el.viewTreeContainer) {
+          el.viewTreeContainer.classList.toggle('active', item.mode === 'split' || item.mode === 'tree');
+        }
+        if (el.viewFlowContainer) {
+          el.viewFlowContainer.classList.toggle('active', item.mode === 'flow');
+        }
+
+        if (item.mode === 'flow') {
+          setTimeout(renderFlowCanvas, 50);
+        }
       });
     });
   }
