@@ -269,6 +269,60 @@ pub async fn run_interactive_shell_loop(
                             }
                         }
                     }
+                    "exportjson" | "dumpjson" | "savejson" | "export_json" => {
+                        if parts.len() < 2 {
+                            println!("{}{}HATA: Kullanım: exportjson <plugin_id> [output_file.json]{}\n", RED, BOLD, RESET);
+                        } else {
+                            let id = parts[1];
+                            let default_filename = format!("{}_output.json", id);
+                            let out_path = parts.get(2).copied().unwrap_or(&default_filename);
+
+                            match orchestrator.monitor_data(id) {
+                                Ok(data) if !data.is_empty() => {
+                                    if let Ok(json_val) = serde_json::from_slice::<serde_json::Value>(&data) {
+                                        match serde_json::to_string_pretty(&json_val) {
+                                            Ok(pretty_json) => {
+                                                if let Err(err) = std::fs::write(out_path, pretty_json.as_bytes()) {
+                                                    println!("{}{}HATA: JSON dosyası yazılamadı ({}): {}{}\n", RED, BOLD, out_path, err, RESET);
+                                                } else {
+                                                    println!("{}{}✓ {} eklentisinin bellek JSON verisi başarıyla kaydedildi: {}{}", GREEN, BOLD, id, out_path, RESET);
+                                                    println!("  • Okunan / Yazılan Boyut: {}{} Bytes ({:.2} KB){}", WHITE, pretty_json.len(), pretty_json.len() as f64 / 1024.0, RESET);
+                                                    if let Some(obj) = json_val.as_object() {
+                                                        let keys: Vec<&String> = obj.keys().take(5).collect();
+                                                        println!("  • Kök Anahtarlar       : {}{:?}{}\n", BRIGHT_YELLOW, keys, RESET);
+                                                    } else if let Some(arr) = json_val.as_array() {
+                                                        println!("  • Dizi Eleman Sayısı    : {}{}{}\n", BRIGHT_YELLOW, arr.len(), RESET);
+                                                    } else {
+                                                        println!();
+                                                    }
+                                                }
+                                            }
+                                            Err(err) => println!("{}{}HATA: JSON serileştirme hatası: {}{}\n", RED, BOLD, err, RESET),
+                                        }
+                                    } else if let Ok(utf8_str) = std::str::from_utf8(&data) {
+                                        if !utf8_str.trim().is_empty() {
+                                            let fallback_json = serde_json::json!({
+                                                "plugin": id,
+                                                "raw_output": utf8_str.trim()
+                                            });
+                                            let json_str = serde_json::to_string_pretty(&fallback_json).unwrap_or_default();
+                                            if let Err(err) = std::fs::write(out_path, json_str.as_bytes()) {
+                                                println!("{}{}HATA: Dosya yazılamadı ({}): {}{}\n", RED, BOLD, out_path, err, RESET);
+                                            } else {
+                                                println!("{}{}✓ {} eklentisinin metin verisi JSON olarak kaydedildi: {}{}\n", GREEN, BOLD, id, out_path, RESET);
+                                            }
+                                        } else {
+                                            println!("{}{}HATA: {} eklentisinin bellek tamponu boş metin döndürdü.{}\n", RED, BOLD, id, RESET);
+                                        }
+                                    } else {
+                                        println!("{}{}HATA: {} eklentisinin bellek tamponundaki veri geçerli bir JSON veya UTF-8 metni değil.{}\n", RED, BOLD, id, RESET);
+                                    }
+                                }
+                                Ok(_) => println!("{}{}UYARI: {} eklentisinin bellek tamponu 0 byte (boş) döndü.{}\n", YELLOW, BOLD, id, RESET),
+                                Err(e) => println!("{}{}HATA: {} eklentisinden bellek verisi okunamadı: {}{}\n", RED, BOLD, id, e, RESET),
+                            }
+                        }
+                    }
                     "peek" => {
                         if parts.len() < 2 {
                             println!("{}{}HATA: Kullanım: peek <plugin_id> [len]{}\n", RED, BOLD, RESET);
@@ -407,6 +461,208 @@ pub async fn run_interactive_shell_loop(
                         let payload_bytes = serde_json::to_vec(&payload).unwrap_or_default();
                         orchestrator.call_endpoint("plugin_paper_exchange", StandardEndpoint::Inbox, &payload_bytes, &mut buf);
                         println!("{}{}✓ POZİSYON KAPATMA SİNYALİ GÖNDERİLDİ: {}{}\n", YELLOW, BOLD, symbol, RESET);
+                    }
+                    "cancel" => {
+                        if parts.len() < 2 {
+                            println!("{}{}HATA: Kullanım: cancel <order_id>{}\n", RED, BOLD, RESET);
+                        } else {
+                            let order_id = parts[1];
+                            let payload = serde_json::json!({
+                                "action": "cancel_order",
+                                "order_id": order_id
+                            });
+                            let mut buf = [0u8; 1024];
+                            let payload_bytes = serde_json::to_vec(&payload).unwrap_or_default();
+                            orchestrator.call_endpoint("plugin_paper_exchange", StandardEndpoint::Inbox, &payload_bytes, &mut buf);
+
+                            let mut out_buf = [0u8; 1024];
+                            let read_bytes = orchestrator.call_endpoint("plugin_paper_exchange", StandardEndpoint::Outbox, &[], &mut out_buf);
+                            if read_bytes > 0 {
+                                if let Ok(json_res) = serde_json::from_slice::<serde_json::Value>(&out_buf[..read_bytes]) {
+                                    let success = json_res.get("success").and_then(|v| v.as_bool()).unwrap_or(false);
+                                    if success {
+                                        println!("{}{}✓ EMİR BAŞARIYLA İPTAL EDİLDİ: {}{}\n", GREEN, BOLD, order_id, RESET);
+                                    } else {
+                                        println!("{}{}⚠️ EMİR BULUNAMADI VEYA ZATEN İPTAL EDİLMİŞ: {}{}\n", YELLOW, BOLD, order_id, RESET);
+                                    }
+                                }
+                            } else {
+                                println!("{}{}✓ EMİR İPTAL İSTEĞİ İLETİLDİ: {}{}\n", YELLOW, BOLD, order_id, RESET);
+                            }
+                        }
+                    }
+                    "cancelall" => {
+                        let symbol_opt = parts.get(1).map(|s| s.to_uppercase());
+                        let payload = serde_json::json!({
+                            "action": "cancel_all_orders",
+                            "symbol": symbol_opt
+                        });
+                        let mut buf = [0u8; 1024];
+                        let payload_bytes = serde_json::to_vec(&payload).unwrap_or_default();
+                        orchestrator.call_endpoint("plugin_paper_exchange", StandardEndpoint::Inbox, &payload_bytes, &mut buf);
+
+                        let mut out_buf = [0u8; 1024];
+                        let read_bytes = orchestrator.call_endpoint("plugin_paper_exchange", StandardEndpoint::Outbox, &[], &mut out_buf);
+                        if read_bytes > 0 {
+                            if let Ok(json_res) = serde_json::from_slice::<serde_json::Value>(&out_buf[..read_bytes]) {
+                                let count = json_res.get("count").and_then(|v| v.as_u64()).unwrap_or(0);
+                                println!("{}{}✓ TOPLAM {} ADET BEKLEYEN EMİR İPTAL EDİLDİ ({}){}\n", GREEN, BOLD, count, symbol_opt.as_deref().unwrap_or("Tümü"), RESET);
+                            }
+                        } else {
+                            println!("{}{}✓ TÜM EMİRLERİ İPTAL İSTEĞİ İLETİLDİ ({}){}\n", YELLOW, BOLD, symbol_opt.as_deref().unwrap_or("Tümü"), RESET);
+                        }
+                    }
+                    "deposit" => {
+                        if parts.len() < 2 {
+                            println!("{}{}HATA: Kullanım: deposit <amount> [user_id]{}\n", RED, BOLD, RESET);
+                        } else {
+                            let amount: f64 = parts[1].parse().unwrap_or(0.0);
+                            let user_id = parts.get(2).copied().unwrap_or("admin");
+                            let payload = serde_json::json!({
+                                "action": "deposit",
+                                "user_id": user_id,
+                                "amount": amount
+                            });
+                            let mut buf = [0u8; 1024];
+                            let payload_bytes = serde_json::to_vec(&payload).unwrap_or_default();
+                            orchestrator.call_endpoint("plugin_paper_exchange", StandardEndpoint::Inbox, &payload_bytes, &mut buf);
+
+                            let mut out_buf = [0u8; 1024];
+                            let read_bytes = orchestrator.call_endpoint("plugin_paper_exchange", StandardEndpoint::Outbox, &[], &mut out_buf);
+                            if read_bytes > 0 {
+                                if let Ok(json_res) = serde_json::from_slice::<serde_json::Value>(&out_buf[..read_bytes]) {
+                                    if let Some(new_bal) = json_res.get("wallet_balance").and_then(|v| v.as_f64()) {
+                                        println!("{}{}✓ BAKIYE EKLENDİ: +{:.2} USDT | Yeni Cüzdan Bakiyesi: {:.2} USDT (Kullanıcı: {}){}\n", GREEN, BOLD, amount, new_bal, user_id, RESET);
+                                    } else {
+                                        println!("{}{}✓ BAKIYE EKLEME İSTEĞİ İLETİLDİ: +{} USDT{}\n", GREEN, BOLD, amount, RESET);
+                                    }
+                                }
+                            } else {
+                                println!("{}{}✓ BAKIYE EKLEME İSTEĞİ İLETİLDİ: +{} USDT{}\n", GREEN, BOLD, amount, RESET);
+                            }
+                        }
+                    }
+                    "setbalance" => {
+                        if parts.len() < 2 {
+                            println!("{}{}HATA: Kullanım: setbalance <amount> [user_id]{}\n", RED, BOLD, RESET);
+                        } else {
+                            let amount: f64 = parts[1].parse().unwrap_or(10000.0);
+                            let user_id = parts.get(2).copied().unwrap_or("admin");
+                            let payload = serde_json::json!({
+                                "action": "set_balance",
+                                "user_id": user_id,
+                                "amount": amount
+                            });
+                            let mut buf = [0u8; 1024];
+                            let payload_bytes = serde_json::to_vec(&payload).unwrap_or_default();
+                            orchestrator.call_endpoint("plugin_paper_exchange", StandardEndpoint::Inbox, &payload_bytes, &mut buf);
+
+                            let mut out_buf = [0u8; 1024];
+                            let read_bytes = orchestrator.call_endpoint("plugin_paper_exchange", StandardEndpoint::Outbox, &[], &mut out_buf);
+                            if read_bytes > 0 {
+                                if let Ok(json_res) = serde_json::from_slice::<serde_json::Value>(&out_buf[..read_bytes]) {
+                                    if let Some(new_bal) = json_res.get("wallet_balance").and_then(|v| v.as_f64()) {
+                                        println!("{}{}✓ BAKIYE AYARLANDI: {:.2} USDT (Kullanıcı: {}){}\n", GREEN, BOLD, new_bal, user_id, RESET);
+                                    } else {
+                                        println!("{}{}✓ BAKIYE AYARLAMA İSTEĞİ İLETİLDİ: {} USDT{}\n", GREEN, BOLD, amount, RESET);
+                                    }
+                                }
+                            } else {
+                                println!("{}{}✓ BAKIYE AYARLAMA İSTEĞİ İLETİLDİ: {} USDT{}\n", GREEN, BOLD, amount, RESET);
+                            }
+                        }
+                    }
+                    "closeall" => {
+                        let user_id = parts.get(1).copied().unwrap_or("admin");
+                        let payload = serde_json::json!({
+                            "action": "close_all_positions",
+                            "user_id": user_id
+                        });
+                        let mut buf = [0u8; 1024];
+                        let payload_bytes = serde_json::to_vec(&payload).unwrap_or_default();
+                        orchestrator.call_endpoint("plugin_paper_exchange", StandardEndpoint::Inbox, &payload_bytes, &mut buf);
+
+                        let mut out_buf = [0u8; 1024];
+                        let read_bytes = orchestrator.call_endpoint("plugin_paper_exchange", StandardEndpoint::Outbox, &[], &mut out_buf);
+                        if read_bytes > 0 {
+                            if let Ok(json_res) = serde_json::from_slice::<serde_json::Value>(&out_buf[..read_bytes]) {
+                                let count = json_res.get("count").and_then(|v| v.as_u64()).unwrap_or(0);
+                                println!("{}{}✓ TOPLAM {} ADET AÇIK POZİSYON İÇİN KAPATMA EMRİ VERİLDİ ({}){}\n", GREEN, BOLD, count, user_id, RESET);
+                            }
+                        } else {
+                            println!("{}{}✓ TÜM POZİSYONLARI KAPATMA SİNYALİ GÖNDERİLDİ{}\n", RED, BOLD, RESET);
+                        }
+                    }
+                    "orders" => {
+                        let symbol_filter = parts.get(1).map(|s| s.to_uppercase());
+                        let payload = serde_json::json!({
+                            "action": "get_orders",
+                            "symbol": symbol_filter
+                        });
+                        let mut buf = [0u8; 1024];
+                        let payload_bytes = serde_json::to_vec(&payload).unwrap_or_default();
+                        orchestrator.call_endpoint("plugin_paper_exchange", StandardEndpoint::Inbox, &payload_bytes, &mut buf);
+                        
+                        let mut out_buf = [0u8; 16384];
+                        let read_bytes = orchestrator.call_endpoint("plugin_paper_exchange", StandardEndpoint::Outbox, &[], &mut out_buf);
+                        if read_bytes > 0 {
+                            if let Ok(json_res) = serde_json::from_slice::<serde_json::Value>(&out_buf[..read_bytes]) {
+                                if let Some(orders) = json_res.get("orders").and_then(|v| v.as_array()) {
+                                    println!("{}{}=== BEKLEYEN AKTİF EMİRLER ({}) ==={}", BRIGHT_CYAN, BOLD, orders.len(), RESET);
+                                    for o in orders {
+                                        println!("  • ID: {} | Sembol: {} | Yön: {} {} | Tip: {} | Fiyat: {} | Stop: {} | Miktar: {}",
+                                            o.get("id").and_then(|v| v.as_str()).unwrap_or(""),
+                                            o.get("symbol").and_then(|v| v.as_str()).unwrap_or(""),
+                                            o.get("side").and_then(|v| v.as_str()).unwrap_or(""),
+                                            o.get("position_side").and_then(|v| v.as_str()).unwrap_or(""),
+                                            o.get("order_type").and_then(|v| v.as_str()).unwrap_or(""),
+                                            o.get("price").and_then(|v| v.as_f64()).unwrap_or(0.0),
+                                            o.get("stop_price").and_then(|v| v.as_f64()).unwrap_or(0.0),
+                                            o.get("amount").and_then(|v| v.as_f64()).unwrap_or(0.0),
+                                        );
+                                    }
+                                    println!();
+                                }
+                            }
+                        } else {
+                            println!("{}{}Bekleyen aktif emir verisi alınamadı.{}\n", YELLOW, BOLD, RESET);
+                        }
+                    }
+                    "history" => {
+                        let limit: u64 = parts.get(1).and_then(|s| s.parse().ok()).unwrap_or(10);
+                        let payload = serde_json::json!({
+                            "action": "get_history",
+                            "limit": limit
+                        });
+                        let mut buf = [0u8; 1024];
+                        let payload_bytes = serde_json::to_vec(&payload).unwrap_or_default();
+                        orchestrator.call_endpoint("plugin_paper_exchange", StandardEndpoint::Inbox, &payload_bytes, &mut buf);
+
+                        let mut out_buf = [0u8; 32768];
+                        let read_bytes = orchestrator.call_endpoint("plugin_paper_exchange", StandardEndpoint::Outbox, &[], &mut out_buf);
+                        if read_bytes > 0 {
+                            if let Ok(json_res) = serde_json::from_slice::<serde_json::Value>(&out_buf[..read_bytes]) {
+                                if let Some(records) = json_res.get("history").and_then(|v| v.as_array()) {
+                                    println!("{}{}=== KAPANMIŞ İŞLEM GEÇMİŞİ (SON {}) ==={}", BRIGHT_CYAN, BOLD, records.len(), RESET);
+                                    for r in records {
+                                        let pnl = r.get("realized_pnl").and_then(|v| v.as_f64()).unwrap_or(0.0);
+                                        let pnl_color = if pnl >= 0.0 { GREEN } else { RED };
+                                        println!("  • ID: {} | Sembol: {} ({}) | Miktar: {} | Giriş: {} | Çıkış: {} | PnL: {}{:.2} USDT{}",
+                                            r.get("id").and_then(|v| v.as_i64()).unwrap_or(0),
+                                            r.get("symbol").and_then(|v| v.as_str()).unwrap_or(""),
+                                            r.get("side").and_then(|v| v.as_str()).unwrap_or(""),
+                                            r.get("amount").and_then(|v| v.as_f64()).unwrap_or(0.0),
+                                            r.get("entry_price").and_then(|v| v.as_f64()).unwrap_or(0.0),
+                                            r.get("close_price").and_then(|v| v.as_f64()).unwrap_or(0.0),
+                                            pnl_color, pnl, RESET
+                                        );
+                                    }
+                                    println!();
+                                }
+                            }
+                        } else {
+                            println!("{}{}İşlem geçmişi verisi alınamadı.{}\n", YELLOW, BOLD, RESET);
+                        }
                     }
                     "sql" | "tables" | "schema" => {
                         let sql_cmd = if verb == "tables" {

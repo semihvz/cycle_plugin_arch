@@ -41,10 +41,99 @@ impl PaperEngine {
         self.positions.insert(user_id.to_string(), DashMap::new());
     }
 
+    pub fn deposit(&self, user_id: &str, amount: f64) -> Result<f64, String> {
+        let mut account = self.accounts.entry(user_id.to_string()).or_insert_with(|| {
+            self.positions.entry(user_id.to_string()).or_insert_with(DashMap::new);
+            Account::new(0.0)
+        });
+        account.wallet_balance += amount;
+        account.margin_balance += amount;
+        self.log_msg(format!("DEPOSIT: {} USDT credited to user {}", amount, user_id));
+        Ok(account.wallet_balance)
+    }
+
+    pub fn set_balance(&self, user_id: &str, amount: f64) -> Result<f64, String> {
+        let mut account = self.accounts.entry(user_id.to_string()).or_insert_with(|| {
+            self.positions.entry(user_id.to_string()).or_insert_with(DashMap::new);
+            Account::new(amount)
+        });
+        account.wallet_balance = amount;
+        account.margin_balance = amount;
+        self.log_msg(format!("SET_BALANCE: User {} wallet balance set to {} USDT", user_id, amount));
+        Ok(account.wallet_balance)
+    }
+
+    pub fn cancel_order(&self, order_id: &str) -> bool {
+        let mut removed = false;
+        for mut entry in self.active_orders.iter_mut() {
+            let symbol_orders = entry.value_mut();
+            let orig_len = symbol_orders.len();
+            symbol_orders.retain(|o| o.id != order_id);
+            if symbol_orders.len() < orig_len {
+                removed = true;
+                self.log_msg(format!("CANCEL_ORDER: Order {} cancelled", order_id));
+                break;
+            }
+        }
+        removed
+    }
+
+    pub fn cancel_all_orders(&self, symbol_opt: Option<&str>) -> usize {
+        let mut count = 0;
+        if let Some(symbol) = symbol_opt {
+            if let Some(mut symbol_orders) = self.active_orders.get_mut(symbol) {
+                count = symbol_orders.len();
+                symbol_orders.clear();
+                self.log_msg(format!("CANCEL_ALL: Cleared {} orders for {}", count, symbol));
+            }
+        } else {
+            for mut entry in self.active_orders.iter_mut() {
+                count += entry.value().len();
+                entry.value_mut().clear();
+            }
+            self.log_msg(format!("CANCEL_ALL: Cleared all {} orders across symbols", count));
+        }
+        count
+    }
+
+    pub fn close_all_positions(&self, user_id: &str) -> Result<usize, String> {
+        let mut to_submit = Vec::new();
+        if let Some(user_pos) = self.positions.get(user_id) {
+            for pos_ref in user_pos.iter() {
+                let pos = pos_ref.value();
+                if pos.amount > 0.0 {
+                    let rev_side = if pos.side == PositionSide::Long { OrderSide::Sell } else { OrderSide::Buy };
+                    let rev_pos = pos.side.clone();
+                    to_submit.push(Order {
+                        id: format!("closeall_{}", std::time::SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_nanos()),
+                        user_id: user_id.to_string(),
+                        symbol: pos.symbol.clone(),
+                        side: rev_side,
+                        position_side: rev_pos,
+                        order_type: OrderType::Market,
+                        price: 0.0,
+                        stop_price: 0.0,
+                        amount: pos.amount,
+                        leverage: pos.leverage,
+                        executed: 0.0,
+                        timestamp: 0,
+                    });
+                }
+            }
+        }
+
+        let count = to_submit.len();
+        for order in to_submit {
+            let _ = self.submit_order(user_id, order);
+        }
+        self.log_msg(format!("CLOSE_ALL: Closed {} positions for {}", count, user_id));
+        Ok(count)
+    }
+
     pub fn submit_order(&self, user_id: &str, mut order: Order) -> Result<(), String> {
-        let account = self.accounts.get(user_id).ok_or("Account not found")?;
+        let wallet_balance = self.accounts.get(user_id).map(|a| a.wallet_balance).ok_or("Account not found")?;
         
-        let now = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_millis() as i64;
+        let now = SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_millis() as i64;
         order.timestamp = now;
         order.user_id = user_id.to_string();
 
@@ -58,15 +147,16 @@ impl PaperEngine {
             self.log_msg(format!("TEST MODU: Manuel girilen fiyat ({}) piyasa fiyatı kabul edildi.", current_last_price));
         }
 
-        // Check margin for order (simplified)
+        // Margin check
         let cost = (order.amount * order.price) / order.leverage;
-        if account.wallet_balance < cost {
-            // return Err("Insufficient margin".into()); // Disabled strict check for paper simplicity
+        if wallet_balance < cost && order.order_type == OrderType::Market && cost > 0.0 {
+            // Optional warning or error
         }
 
         if order.order_type == OrderType::Market {
             if current_last_price > 0.0 {
                 order.price = current_last_price;
+                order.executed = order.amount;
                 self.execute_order(&order, current_last_price)?;
                 let _ = self.storage.insert_order(&order);
                 self.log_msg(format!("Market order executed for {} at {}", order.symbol, current_last_price));
@@ -91,11 +181,22 @@ impl PaperEngine {
     pub fn on_last_price_update(&self, symbol: &str, last_price: f64) {
         self.latest_prices.insert(symbol.to_string(), last_price);
         
+        // Update PnL of active positions on last price if mark price isn't set yet
+        if !self.mark_prices.contains_key(symbol) {
+            for user_ref in self.positions.iter() {
+                for mut pos in user_ref.value().iter_mut() {
+                    if pos.symbol == symbol {
+                        pos.update_pnl(last_price);
+                    }
+                }
+            }
+        }
+
         // Match pending orders
         if let Some(mut symbol_orders) = self.active_orders.get_mut(symbol) {
             let mut executed_orders = Vec::new();
 
-            symbol_orders.retain(|order| {
+            symbol_orders.retain_mut(|order| {
                 let mut should_execute = false;
                 
                 match order.order_type {
@@ -106,7 +207,6 @@ impl PaperEngine {
                         };
                     }
                     OrderType::StopMarket | OrderType::StopLimit => {
-                        // Simplified trigger logic
                         should_execute = match order.side {
                             OrderSide::Buy => last_price >= order.stop_price,
                             OrderSide::Sell => last_price <= order.stop_price,
@@ -118,19 +218,45 @@ impl PaperEngine {
                             OrderSide::Sell => last_price >= order.stop_price,
                         };
                     }
+                    OrderType::TrailingStop => {
+                        // Dynamically update trailing stop price if distance is specified in order.price
+                        let offset = order.price;
+                        if offset > 0.0 {
+                            match order.side {
+                                OrderSide::Sell => {
+                                    if order.stop_price == 0.0 || last_price - offset > order.stop_price {
+                                        order.stop_price = last_price - offset;
+                                    }
+                                    should_execute = last_price <= order.stop_price;
+                                }
+                                OrderSide::Buy => {
+                                    if order.stop_price == 0.0 || last_price + offset < order.stop_price {
+                                        order.stop_price = last_price + offset;
+                                    }
+                                    should_execute = last_price >= order.stop_price;
+                                }
+                            }
+                        } else {
+                            should_execute = match order.side {
+                                OrderSide::Buy => last_price >= order.stop_price,
+                                OrderSide::Sell => last_price <= order.stop_price,
+                            };
+                        }
+                    }
                     _ => {}
                 }
 
                 if should_execute {
+                    order.executed = order.amount;
                     executed_orders.push(order.clone());
-                    false // retain = false -> remove from active
+                    false // remove from active
                 } else {
-                    true // retain = true -> keep
+                    true // keep
                 }
             });
             
             // Execute the triggered orders without holding the dashmap lock
-            for mut executed_order in executed_orders {
+            for executed_order in executed_orders {
                 let exec_price = if executed_order.order_type == OrderType::Limit || executed_order.order_type == OrderType::StopLimit || executed_order.order_type == OrderType::TakeProfitLimit {
                     executed_order.price
                 } else {
@@ -146,7 +272,7 @@ impl PaperEngine {
     fn execute_order(&self, order: &Order, exec_price: f64) -> Result<(), String> {
         let pos_key = format!("{}_{:?}", order.symbol, order.position_side);
         
-        let user_positions = self.positions.get(&order.user_id).unwrap();
+        let user_positions = self.positions.get(&order.user_id).ok_or("User positions map not found")?;
         let mut position = user_positions.entry(pos_key).or_insert_with(|| {
             Position::new(order.symbol.clone(), order.position_side, order.leverage)
         });
@@ -171,22 +297,56 @@ impl PaperEngine {
             }
         } else {
             // Decrease position (close/reduce)
-            position.amount -= order.amount;
-            if position.amount <= 0.000001 { // Handle floating point issues
-                position.amount = 0.0;
-                position.entry_price = 0.0;
-                // Realized PNL would be calculated here in a full engine
+            if position.amount > 0.0 {
+                let closed_amount = order.amount.min(position.amount);
+                
+                // Calculate Realized PnL
+                let realized_pnl = match position.side {
+                    PositionSide::Long => (exec_price - position.entry_price) * closed_amount,
+                    PositionSide::Short => (position.entry_price - exec_price) * closed_amount,
+                };
+
+                position.amount -= closed_amount;
+
+                // Credit/Debit wallet_balance and margin_balance
+                if let Some(mut account) = self.accounts.get_mut(&order.user_id) {
+                    account.wallet_balance += realized_pnl;
+                    account.margin_balance += realized_pnl;
+                }
+
+                // Save closed position record
+                let side_str = format!("{:?}", position.side);
+                let _ = self.storage.insert_closed_position(
+                    &position.symbol,
+                    &side_str,
+                    closed_amount,
+                    position.entry_price,
+                    exec_price,
+                    realized_pnl,
+                    order.timestamp,
+                );
+
+                if position.amount <= 0.000001 {
+                    position.amount = 0.0;
+                    position.entry_price = 0.0;
+                    position.liquidation_price = 0.0;
+                    position.unrealized_pnl = 0.0;
+                }
             }
         }
 
-        let maintenance_margin = 0.005; // 0.5%
-        match position.side {
-            PositionSide::Long => {
-                position.liquidation_price = position.entry_price * (1.0 - (1.0 / position.leverage) + maintenance_margin);
+        if position.amount > 0.0 {
+            let maintenance_margin = 0.005; // 0.5%
+            match position.side {
+                PositionSide::Long => {
+                    position.liquidation_price = position.entry_price * (1.0 - (1.0 / position.leverage) + maintenance_margin);
+                }
+                PositionSide::Short => {
+                    position.liquidation_price = position.entry_price * (1.0 + (1.0 / position.leverage) - maintenance_margin);
+                }
             }
-            PositionSide::Short => {
-                position.liquidation_price = position.entry_price * (1.0 + (1.0 / position.leverage) - maintenance_margin);
-            }
+            let mark = self.mark_prices.get(&order.symbol).map(|v| *v).unwrap_or(exec_price);
+            position.update_pnl(mark);
         }
 
         Ok(())
@@ -195,16 +355,14 @@ impl PaperEngine {
     pub fn on_mark_price_update(&self, symbol: &str, mark_price: f64) {
         self.mark_prices.insert(symbol.to_string(), mark_price);
         
-        let mut liquidated_loss = 0.0;
-        let mut liquidated_user = "".to_string();
-
-        // Update PnL for all positions with this symbol
+        // Update PnL and process liquidations for each user independently
         for user_ref in self.positions.iter() {
             let user_id = user_ref.key();
             let user_positions = user_ref.value();
             
             let mut total_upnl = 0.0;
             let mut to_liquidate = Vec::new();
+            let mut user_liquidated_loss = 0.0;
 
             for mut pos_ref in user_positions.iter_mut() {
                 if pos_ref.symbol == symbol {
@@ -219,8 +377,7 @@ impl PaperEngine {
                         if is_liquidated {
                             to_liquidate.push(pos_ref.key().clone());
                             let loss = (pos_ref.amount * pos_ref.entry_price) / pos_ref.leverage;
-                            liquidated_loss += loss;
-                            liquidated_user = user_id.clone();
+                            user_liquidated_loss += loss;
                             self.log_msg(format!("LIQUIDATED! {} {} position closed at Mark Price: {}", user_id, symbol, mark_price));
                         }
                     }
@@ -231,22 +388,34 @@ impl PaperEngine {
                 }
             }
             
-            for key in to_liquidate {
-                let mut p = user_positions.get_mut(&key).unwrap();
-                p.amount = 0.0;
-                p.unrealized_pnl = 0.0;
-                p.entry_price = 0.0;
-                p.liquidation_price = 0.0;
+            for key in &to_liquidate {
+                if let Some(mut p) = user_positions.get_mut(key) {
+                    let side_str = format!("{:?}", p.side);
+                    let loss_pnl = -((p.amount * p.entry_price) / p.leverage);
+                    let _ = self.storage.insert_closed_position(
+                        &p.symbol,
+                        &side_str,
+                        p.amount,
+                        p.entry_price,
+                        mark_price,
+                        loss_pnl,
+                        SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_millis() as i64,
+                    );
+                    p.amount = 0.0;
+                    p.unrealized_pnl = 0.0;
+                    p.entry_price = 0.0;
+                    p.liquidation_price = 0.0;
+                }
             }
 
-            // Update Account Margin Balance
+            // Update Account Balance per user
             if let Some(mut account) = self.accounts.get_mut(user_id) {
-                if liquidated_loss > 0.0 && liquidated_user == *user_id {
-                    account.wallet_balance -= liquidated_loss;
-                    liquidated_loss = 0.0;
+                if user_liquidated_loss > 0.0 {
+                    account.wallet_balance -= user_liquidated_loss;
                 }
                 account.margin_balance = account.wallet_balance + total_upnl;
             }
         }
     }
 }
+

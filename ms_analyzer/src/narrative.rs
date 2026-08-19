@@ -83,6 +83,70 @@ pub struct MSMPReport {
     pub atr: Decimal,
 }
 
+impl MSMPReport {
+    pub fn format_table(&self, symbol: &str, interval: &str, stream_id: &str, analyzed_bars: usize) -> String {
+        let mut out = String::new();
+        out.push_str("===================================================================================================\n");
+        out.push_str(&format!(
+            "📊 MSMP 2.0 PIYASA YAPISI VE NARRATIF RAPORU | Sembol: {} ({}) | Akış: {} | Bar: {}\n",
+            symbol, interval, stream_id, analyzed_bars
+        ));
+        out.push_str("===================================================================================================\n");
+        out.push_str(&format!(
+            "Anlık Fiyat: {:>10.4}  |  ATR(14): {:>8.4}  |  VWAP: {:>10.4}  |  POC: {:>10.4}\n",
+            self.current_price, self.atr, self.vwap, self.poc
+        ));
+        out.push_str(&format!(
+            "Volatilite Bandı (POC±1.5σ): [{:.4} - {:.4}]  |  BSL/SSL Oranı: {:.2}\n",
+            self.volatility_band.0, self.volatility_band.1, self.bsl_ssl_ratio
+        ));
+        out.push_str("---------------------------------------------------------------------------------------------------\n");
+        out.push_str(&format!(
+            "ATS (Ağırlıklı Trend Skoru): {:>6.2} / 10.0  |  Trend: {:<20}  | Confluence: %{:.1}\n",
+            self.ats, self.trend_label, self.confluence_index
+        ));
+        out.push_str(&format!(
+            "Hurst Üssü (H): {:>8.4}  |  R² (Trend Gücü): {:>6.4}  |  FVG: {} (Aktif Emici: {})\n",
+            self.hurst, self.r_squared, self.fvg_count, self.active_absorber_count
+        ));
+        
+        if let Some(ref vac) = self.vacuum_zone {
+            out.push_str("---------------------------------------------------------------------------------------------------\n");
+            out.push_str(&format!(
+                "🌀 VAKUM BÖLGESİ: Fiyat [{:.4} - {:.4}] | Manyetik Skor: {:.2} | Etiket: {}\n",
+                vac.price_low, vac.price_high, vac.magnetic_score, vac.label
+            ));
+        }
+
+        out.push_str("===================================================================================================\n");
+        out.push_str("🎯 STRATEJİK PİVOT SEVİYE MATRİSİ\n");
+        out.push_str("+----------------+------------+------------------+---------+-----------+---------------+----------------+\n");
+        out.push_str("| PIVOT ID       | FIYAT      | SEVIYE TIPI      | SAVUNMA | DECAY (W) | DELTA UYUMU   | ÖNCELİK SKORU  |\n");
+        out.push_str("+----------------+------------+------------------+---------+-----------+---------------+----------------+\n");
+
+        if self.levels.is_empty() {
+            out.push_str("| (Kayıtlı seviye bulunamadı)                                                                        |\n");
+        } else {
+            for level in self.levels.iter().take(15) {
+                out.push_str(&format!(
+                    "| {:<14} | {:>10.4} | {:<16} | {:^7} | {:^9.2} | {:<13} | {:^14.2} |\n",
+                    level.pivot_id,
+                    level.price,
+                    level.level_type,
+                    level.defense_count,
+                    level.decay_weight,
+                    level.delta_alignment,
+                    level.priority_score
+                ));
+            }
+        }
+        out.push_str("+----------------+------------+------------------+---------+-----------+---------------+----------------+\n");
+
+        out
+    }
+}
+
+
 /// Tüm 7 katmanı orkestre et ve nihai rapor üret.
 ///
 /// Bu fonksiyon 3 pencereden gelen Kline verilerini alır ve

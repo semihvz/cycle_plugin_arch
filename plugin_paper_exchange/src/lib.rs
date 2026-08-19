@@ -11,6 +11,7 @@ use std::sync::{Arc, Mutex};
 use std::sync::atomic::{AtomicBool, Ordering};
 use serde_json::Value;
 
+#[allow(dead_code)]
 struct PluginState {
     is_running: Arc<AtomicBool>,
     engine: Arc<PaperEngine>,
@@ -197,7 +198,7 @@ unsafe extern "C" fn handle_endpoint(
                                             let rev_side = if pos.side == crate::models::PositionSide::Long { crate::models::OrderSide::Sell } else { crate::models::OrderSide::Buy };
                                             let rev_pos = pos.side.clone();
                                             to_submit.push(Order {
-                                                id: format!("pos_{}", std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_nanos()),
+                                                id: format!("pos_{}", std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap_or_default().as_nanos()),
                                                 user_id: user_id.to_string(),
                                                 symbol: symbol.to_string(),
                                                 side: rev_side,
@@ -222,6 +223,56 @@ unsafe extern "C" fn handle_endpoint(
                                     }
                                 } else {
                                     state.engine.log_msg(format!("No open position for {} to close", symbol));
+                                }
+                            } else if action == "cancel_order" {
+                                if let Some(order_id) = msg.get("order_id").and_then(|v| v.as_str()) {
+                                    let ok = state.engine.cancel_order(order_id);
+                                    let mut out = state.outbox.lock().unwrap();
+                                    out.push(serde_json::json!({ "action": "cancel_order_response", "order_id": order_id, "success": ok }));
+                                }
+                            } else if action == "cancel_all_orders" {
+                                let symbol_opt = msg.get("symbol").and_then(|v| v.as_str());
+                                let count = state.engine.cancel_all_orders(symbol_opt);
+                                let mut out = state.outbox.lock().unwrap();
+                                out.push(serde_json::json!({ "action": "cancel_all_orders_response", "count": count }));
+                            } else if action == "deposit" {
+                                let user_id = msg.get("user_id").and_then(|v| v.as_str()).unwrap_or("admin");
+                                let amount = msg.get("amount").and_then(|v| v.as_f64()).unwrap_or(0.0);
+                                if let Ok(new_bal) = state.engine.deposit(user_id, amount) {
+                                    let mut out = state.outbox.lock().unwrap();
+                                    out.push(serde_json::json!({ "action": "deposit_response", "user_id": user_id, "wallet_balance": new_bal }));
+                                }
+                            } else if action == "set_balance" {
+                                let user_id = msg.get("user_id").and_then(|v| v.as_str()).unwrap_or("admin");
+                                let amount = msg.get("amount").and_then(|v| v.as_f64()).unwrap_or(10000.0);
+                                if let Ok(new_bal) = state.engine.set_balance(user_id, amount) {
+                                    let mut out = state.outbox.lock().unwrap();
+                                    out.push(serde_json::json!({ "action": "set_balance_response", "user_id": user_id, "wallet_balance": new_bal }));
+                                }
+                            } else if action == "close_all_positions" {
+                                let user_id = msg.get("user_id").and_then(|v| v.as_str()).unwrap_or("admin");
+                                if let Ok(count) = state.engine.close_all_positions(user_id) {
+                                    let mut out = state.outbox.lock().unwrap();
+                                    out.push(serde_json::json!({ "action": "close_all_positions_response", "count": count }));
+                                }
+                            } else if action == "get_orders" {
+                                let symbol_filter = msg.get("symbol").and_then(|v| v.as_str());
+                                let mut list = Vec::new();
+                                for entry in state.engine.active_orders.iter() {
+                                    let sym = entry.key();
+                                    if symbol_filter.is_none() || symbol_filter == Some(sym.as_str()) {
+                                        for order in entry.value().iter() {
+                                            list.push(order.clone());
+                                        }
+                                    }
+                                }
+                                let mut out = state.outbox.lock().unwrap();
+                                out.push(serde_json::json!({ "action": "get_orders_response", "orders": list }));
+                            } else if action == "get_history" {
+                                let limit = msg.get("limit").and_then(|v| v.as_u64()).unwrap_or(20) as usize;
+                                if let Ok(history) = state.engine.storage.get_closed_positions(limit) {
+                                    let mut out = state.outbox.lock().unwrap();
+                                    out.push(serde_json::json!({ "action": "get_history_response", "history": history }));
                                 }
                             }
                         }

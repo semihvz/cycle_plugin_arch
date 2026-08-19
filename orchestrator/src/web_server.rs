@@ -276,6 +276,55 @@ fn process_shell_command(orchestrator: &Orchestrator, log_tx: &broadcast::Sender
                 mem_total
             )
         }
+        "exportjson" | "dumpjson" | "savejson" | "export_json" => {
+            if parts.len() < 2 {
+                "HATA: Kullanım: exportjson <plugin_id> [output_file.json]".to_string()
+            } else {
+                let id = parts[1];
+                let default_filename = format!("{}_output.json", id);
+                let out_path = parts.get(2).copied().unwrap_or(&default_filename);
+
+                match orchestrator.monitor_data(id) {
+                    Ok(data) if !data.is_empty() => {
+                        if let Ok(json_val) = serde_json::from_slice::<serde_json::Value>(&data) {
+                            match serde_json::to_string_pretty(&json_val) {
+                                Ok(pretty_json) => {
+                                    if let Err(err) = std::fs::write(out_path, pretty_json.as_bytes()) {
+                                        format!("HATA: JSON dosyası yazılamadı ({}): {}", out_path, err)
+                                    } else {
+                                        let msg = format!("SUCCESS: {} eklentisinin bellek JSON verisi kaydedildi: {} ({} bytes)", id, out_path, pretty_json.len());
+                                        let _ = log_tx.send(format!("Shell: {}", msg));
+                                        msg
+                                    }
+                                }
+                                Err(err) => format!("HATA: JSON serileştirme hatası: {}", err),
+                            }
+                        } else if let Ok(utf8_str) = std::str::from_utf8(&data) {
+                            if !utf8_str.trim().is_empty() {
+                                let fallback_json = serde_json::json!({
+                                    "plugin": id,
+                                    "raw_output": utf8_str.trim()
+                                });
+                                let json_str = serde_json::to_string_pretty(&fallback_json).unwrap_or_default();
+                                if let Err(err) = std::fs::write(out_path, json_str.as_bytes()) {
+                                    format!("HATA: Dosya yazılamadı ({}): {}", out_path, err)
+                                } else {
+                                    let msg = format!("SUCCESS: {} eklentisinin metin verisi JSON olarak kaydedildi: {}", id, out_path);
+                                    let _ = log_tx.send(format!("Shell: {}", msg));
+                                    msg
+                                }
+                            } else {
+                                format!("HATA: {} eklentisinin bellek tamponu boş metin döndürdü.", id)
+                            }
+                        } else {
+                            format!("HATA: {} eklentisinin bellek tamponundaki veri geçerli bir JSON veya UTF-8 metni değil.", id)
+                        }
+                    }
+                    Ok(_) => format!("UYARI: {} eklentisinin bellek tamponu 0 byte (boş) döndü.", id),
+                    Err(e) => format!("HATA: {} eklentisinden bellek verisi okunamadı: {}", id, e),
+                }
+            }
+        }
         _ => {
             format!("Komut anlaşılamadı: '{}'. Kullanılabilir komutları görmek için 'help' yazın.", cmd_line)
         }

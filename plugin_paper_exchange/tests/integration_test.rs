@@ -5,7 +5,7 @@ use plugin_paper_exchange::engine::PaperEngine;
 fn test_commands_working() {
     use std::sync::Arc;
     let storage = Arc::new(plugin_paper_exchange::storage::Storage::new(":memory:").unwrap());
-    let mut engine = PaperEngine::new(storage);
+    let engine = PaperEngine::new(storage);
     engine.create_account("admin", 10000.0);
     
     // 1. Send Buy Order (Long)
@@ -54,7 +54,7 @@ fn test_commands_working() {
         order_type: OrderType::Market,
         price: 0.0,
         stop_price: 0.0,
-        amount: 0.1, // we know it's 0.1
+        amount: 0.1,
         leverage: 20.0,
         executed: 0.0,
         timestamp: 0,
@@ -63,9 +63,5 @@ fn test_commands_working() {
     
     let pos_after = engine.positions.get("admin").unwrap();
     let btc_pos_after = pos_after.get("BTCUSDT_Long").unwrap();
-    // Wait, the close order creates a Short position? 
-    // Wait, no. If I submit a sell order with position_side Short, it will create a new position "BTCUSDT_Short" with 0.1 amount!
-    // Binance futures hedging mode works like this.
-    // If it's one-way mode, a Sell order closes the Long position.
-    // Let's see how engine.rs handles closing.
+    assert_eq!(btc_pos_after.amount, 0.0);
 }

@@ -69,6 +69,9 @@ impl FlowEngine {
         let mut temp_buf = vec![0u8; 1024 * 1024];
         let plugins_guard = self.plugins.read().unwrap();
         for plugin in plugins_guard.iter() {
+            if !plugin.enabled {
+                continue;
+            }
             // Pull data from producers
             if !plugin.plugin_outputs.is_empty() {
                 let bytes_read = caller(&plugin.plugin_name, 5, &[], &mut temp_buf); // 5 = RawData
@@ -139,6 +142,23 @@ impl FlowEngine {
                             combined.extend_from_slice(&guard);
                             
                             let _ = caller(&plugin.plugin_name, 6, &combined, &mut temp_buf);
+                        }
+                    }
+                }
+            }
+
+            // Route Outbox messages: read each plugin's outbox and deliver as Inbox to target plugins
+            {
+                let bytes_read = caller(&plugin.plugin_name, 7, &[], &mut temp_buf); // 7 = Outbox
+                if bytes_read > 0 {
+                    if let Ok(messages) = serde_json::from_slice::<serde_json::Value>(&temp_buf[..bytes_read]) {
+                        if let Some(arr) = messages.as_array() {
+                            for msg in arr {
+                                if let Some(target) = msg.get("to").and_then(|t| t.as_str()) {
+                                    let payload_bytes = serde_json::to_vec(msg).unwrap_or_default();
+                                    let _ = caller(target, 6, &payload_bytes, &mut temp_buf); // 6 = Inbox
+                                }
+                            }
                         }
                     }
                 }

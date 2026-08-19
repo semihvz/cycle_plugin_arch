@@ -1537,6 +1537,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "plugin_bookticker_derivatives"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "plugin_breakout"
 version = "0.1.0"
 dependencies = [

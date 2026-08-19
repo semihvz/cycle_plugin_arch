@@ -77,8 +77,15 @@ pub fn format_help_menu() -> String {
     out.push_str(&format!("  {}sql <query>{}            : Doğrudan SQL sorgusu çalıştırır (örn: sql SELECT * FROM mark_prices LIMIT 5)\n", GREEN, RESET));
     out.push_str(&format!("  {}buy <sym> <qty> <price> [lev]{}: Sanal alım (Long) emri girer (örn: buy BTCUSDT 0.1 60000 20)\n", GREEN, RESET));
     out.push_str(&format!("  {}sell <sym> <qty> <price> [lev]{}: Sanal satım (Short) emri girer (örn: sell ETHUSDT 1.5 3000 50)\n", GREEN, RESET));
+    out.push_str(&format!("  {}cancel <order_id>{}       : Bekleyen emri iptal eder\n", GREEN, RESET));
+    out.push_str(&format!("  {}cancelall [symbol]{}     : Tüm bekleyen emirleri veya sembole ait emirleri iptal eder\n", GREEN, RESET));
+    out.push_str(&format!("  {}deposit <amount>{}       : Sanal bakiyeye bakiye ekler (örn: deposit 5000)\n", GREEN, RESET));
+    out.push_str(&format!("  {}setbalance <amount>{}    : Sanal cüzdan bakiyesini doğrudan ayarlar (örn: setbalance 10000)\n", GREEN, RESET));
     out.push_str(&format!("  {}positions{}              : Açık paper trading pozisyonlarını ve PnL durumunu listeler\n", GREEN, RESET));
-    out.push_str(&format!("  {}close <symbol|all>{}       : Açık pozisyonu veya tüm pozisyonları kapatır\n", GREEN, RESET));
+    out.push_str(&format!("  {}orders [symbol]{}        : Bekleyen aktif emri listeler\n", GREEN, RESET));
+    out.push_str(&format!("  {}history [limit]{}         : Kapanmış işlem geçmişini PnL ve giriş/çıkış fiyatlarıyla listeler\n", GREEN, RESET));
+    out.push_str(&format!("  {}close <symbol>{}          : Açık sembol pozisyonunu kapatır\n", GREEN, RESET));
+    out.push_str(&format!("  {}closeall{}               : Tüm açık pozisyonları anında market emriyle kapatır\n", GREEN, RESET));
 
     out.push_str(&format!("\n{}{}⚡ HFT BENCHMARK VE TOPOLOJİ:{}\n", BRIGHT_YELLOW, BOLD, RESET));
     out.push_str(&format!("  {}bench [iterations]{}     : Zero-copy C-ABI endpoint gecikmesini nanosaniye (ns) düzeyinde ölçer\n", GREEN, RESET));
@@ -100,6 +107,7 @@ pub fn format_help_menu() -> String {
 
     out.push_str(&format!("\n{}{}🛠️ KONTROL VE APİ DÜZEYİ:{}\n", BRIGHT_YELLOW, BOLD, RESET));
     out.push_str(&format!("  {}dump <plugin_id> [max_bytes]{}: Eklentinin TÜM RAM bellek tamponunu (Full Memory Hex Dump & ASCII) döker\n", GREEN, RESET));
+    out.push_str(&format!("  {}exportjson <id> [file]{}  : Eklentinin bellekteki JSON çıktısını .json dosyası olarak kaydeder (Takma adlar: dumpjson, savejson)\n", GREEN, RESET));
     out.push_str(&format!("  {}peek <plugin_id> [len]{}  : Eklentinin ilk RAM bellek özetini inceler\n", GREEN, RESET));
     out.push_str(&format!("  {}web <start|stop|status>{} : Port 8080 Web sunucusunu başlatır, durdurur veya durumunu verir\n", GREEN, RESET));
     out.push_str(&format!("  {}config [show|reload]{}   : flow_config.json içeriğini okur veya hot-reload tetikler\n", GREEN, RESET));

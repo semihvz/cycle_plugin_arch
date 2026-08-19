@@ -31,6 +31,9 @@
       <button class="btn-switch active" id="btn-view-split" data-view="split" title="Çift Panelli Görünüm">
         <i class="fa-solid fa-columns"></i> Çift Panel
       </button>
+      <button class="btn-switch" id="btn-view-cards" data-view="cards" title="Görsel Kartsal Editör">
+        <i class="fa-solid fa-table-cells-large"></i> Kartsal Görünüm
+      </button>
       <button class="btn-switch" id="btn-view-tree" data-view="tree" title="Görsel Ağaç Görünümü">
         <i class="fa-solid fa-sitemap"></i> Görsel Ağaç
       </button>
@@ -117,11 +120,24 @@
     <!-- RESIZER DIVIDER -->
     <div class="pane-resizer" id="pane-resizer" title="Sürükleyerek Panelleri Boyutlandırın"></div>
 
-    <!-- RIGHT PANEL: VISUAL VIEWS (TREE OR FLOW CANVAS) -->
+    <!-- RIGHT PANEL: VISUAL VIEWS (CARDS, TREE OR FLOW CANVAS) -->
     <section class="pane pane-visual" id="pane-visual">
-      
+
+      <!-- TAB 0: VISUAL CARDS EDITOR -->
+      <div class="visual-subview active" id="view-cards-container">
+        <div class="pane-header">
+          <span class="pane-title"><i class="fa-solid fa-table-cells-large"></i> Görsel Eklenti Kartları Editörü</span>
+          <div class="pane-actions">
+            <button class="btn-micro" id="btn-add-card-plugin" title="Yeni Eklenti Kartı Ekle"><i class="fa-solid fa-plus"></i> Eklenti Ekle</button>
+          </div>
+        </div>
+        <div class="cards-grid-scroll" id="cards-grid-root">
+          <!-- Dynamic Plugin Cards render here -->
+        </div>
+      </div>
+
       <!-- TAB 1: VISUAL TREE & FORM EDITOR -->
-      <div class="visual-subview active" id="view-tree-container">
+      <div class="visual-subview" id="view-tree-container">
         <div class="pane-header">
           <span class="pane-title"><i class="fa-solid fa-sitemap"></i> Görsel JSON Ağacı & Form Editörü</span>
           <div class="pane-actions">
@@ -138,7 +154,11 @@
         <div class="pane-header">
           <span class="pane-title"><i class="fa-solid fa-network-wired"></i> Eklenti Akış Grafiği (Pipeline Flow Graph)</span>
           <div class="pane-actions">
-            <button class="btn-micro" id="btn-auto-layout" title="Otomatik Yerleştir (Auto Layout)"><i class="fa-solid fa-diagram-nested"></i> Düzenle</button>
+            <button class="btn-micro" id="btn-zoom-in" title="Yakınlaştır (+)"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+            <button class="btn-micro" id="btn-zoom-out" title="Uzaklaştır (-)"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
+            <button class="btn-micro" id="btn-zoom-reset" title="Sıfırla (100%)">100%</button>
+            <button class="btn-micro" id="btn-auto-layout" title="Otomatik Yerleştir (Auto Layout)"><i class="fa-solid fa-diagram-nested"></i> Otomatik Hizala</button>
+            <button class="btn-micro btn-glow" id="btn-add-flow-plugin" title="Tuvale Yeni Eklenti Ekle"><i class="fa-solid fa-plus"></i> Eklenti Ekle</button>
           </div>
         </div>
         <div class="flow-canvas-wrapper" id="flow-canvas-wrapper">
@@ -148,10 +168,24 @@
               <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
                 <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--accent-cyan)" />
               </marker>
+              <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="3" result="blur" />
+                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+              </filter>
             </defs>
           </svg>
           <div class="flow-nodes-layer" id="flow-nodes-layer">
             <!-- Dynamic Flow Nodes rendered here -->
+          </div>
+          <!-- FLOATING CANVAS LEGEND & METRICS BAR -->
+          <div class="canvas-legend-bar" id="canvas-legend-bar">
+            <span class="legend-item"><i class="fa-solid fa-plug-circle-bolt text-cyan"></i> <strong id="metric-active-streams">0</strong> Aktif Akış</span>
+            <span class="legend-divider">|</span>
+            <span class="legend-item"><i class="fa-solid fa-circle-arrow-right text-green"></i> <strong id="metric-producers">0</strong> Üretici Eklenti</span>
+            <span class="legend-divider">|</span>
+            <span class="legend-item"><i class="fa-solid fa-circle-arrow-left text-blue"></i> <strong id="metric-consumers">0</strong> Tüketici Eklenti</span>
+            <span class="legend-divider">|</span>
+            <span class="legend-item text-dim" id="zoom-level-indicator"><i class="fa-solid fa-expand"></i> Yakınlaştırma: %100</span>
           </div>
         </div>
       </div>

@@ -1,9 +1,21 @@
 use rusqlite::{Connection, Result, params};
-use crate::models::{Order, Position};
+use crate::models::Order;
 use std::sync::{Arc, Mutex};
 
 pub struct Storage {
     conn: Arc<Mutex<Connection>>,
+}
+
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct ClosedPositionRecord {
+    pub id: i64,
+    pub symbol: String,
+    pub side: String,
+    pub amount: f64,
+    pub entry_price: f64,
+    pub close_price: f64,
+    pub realized_pnl: f64,
+    pub timestamp: i64,
 }
 
 impl Storage {
@@ -89,5 +101,34 @@ impl Storage {
             ],
         )?;
         Ok(())
+    }
+
+    pub fn get_closed_positions(&self, limit: usize) -> Result<Vec<ClosedPositionRecord>> {
+        let conn = self.conn.lock().unwrap();
+        let mut stmt = conn.prepare(
+            "SELECT id, symbol, side, amount, entry_price, close_price, realized_pnl, timestamp 
+             FROM closed_positions 
+             ORDER BY id DESC LIMIT ?1"
+        )?;
+        let rows = stmt.query_map(params![limit as i64], |row| {
+            Ok(ClosedPositionRecord {
+                id: row.get(0)?,
+                symbol: row.get(1)?,
+                side: row.get(2)?,
+                amount: row.get(3)?,
+                entry_price: row.get(4)?,
+                close_price: row.get(5)?,
+                realized_pnl: row.get(6)?,
+                timestamp: row.get(7)?,
+            })
+        })?;
+
+        let mut list = Vec::new();
+        for r in rows {
+            if let Ok(rec) = r {
+                list.push(rec);
+            }
+        }
+        Ok(list)
     }
 }

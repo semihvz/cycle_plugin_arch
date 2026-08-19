@@ -249,7 +249,19 @@ pub fn draw_ui(f: &mut Frame, app: &mut App<'_>) {
                                 }
                             }
                         }
-                        lines.push(Line::from(""));
+                        
+                        if let Some(obj) = json.as_object() {
+                            for (k, val) in obj {
+                                if let Some(tbl) = val.get("formatted_table").and_then(|v| v.as_str()) {
+                                    lines.push(Line::from(Span::styled(format!("📊 TABLO GÖRÜNÜMÜ (Akış: {}):", k), Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD))));
+                                    for l in tbl.lines() {
+                                        lines.push(Line::from(Span::styled(l.to_string(), Style::default().fg(Color::LightCyan))));
+                                    }
+                                    lines.push(Line::from(""));
+                                }
+                            }
+                        }
+                        
                         lines.push(Line::from(Span::styled("Ham JSON:", Style::default().fg(Color::DarkGray))));
                         let pretty_json = serde_json::to_string_pretty(&json).unwrap_or_default();
                         for l in pretty_json.lines() {

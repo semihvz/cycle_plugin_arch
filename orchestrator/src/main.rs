@@ -164,17 +164,22 @@ async fn main() -> anyhow::Result<()> {
         unsafe { load_plugin_cabi(&mut app, &plugin_name); }
     }
     
-    // Yüklenen tüm pluginleri başlat ve parametrelerini gönder
+    // Yüklenen tüm pluginleri başlat ve parametrelerini gönder (flow_config.json içinde tanımlı ve enabled==true olanlar başlatılır)
     let mut startup_buf = [0u8; 8];
     for (id, _, _) in app.orchestrator.list_systems() {
-        let mut payload_bytes = Vec::new();
         if let Some(ref config) = flow_config {
             if let Some(plugin_conf) = config.iter().find(|p| p.plugin_name == id) {
-                payload_bytes = serde_json::to_vec(&plugin_conf).unwrap_or_default();
+                if plugin_conf.enabled {
+                    let payload_bytes = serde_json::to_vec(&plugin_conf).unwrap_or_default();
+                    app.orchestrator.call_endpoint(&id, StandardEndpoint::Start, &payload_bytes, &mut startup_buf);
+                    app.log(&format!("Otomatik başlatıldı: {}", id));
+                } else {
+                    app.log(&format!("Başlatılmadı (flow_config.json içinde pasif/enabled=false): {}", id));
+                }
+            } else {
+                app.log(&format!("Başlatılmadı (flow_config.json içinde tanımlı değil): {}", id));
             }
         }
-        app.orchestrator.call_endpoint(&id, StandardEndpoint::Start, &payload_bytes, &mut startup_buf);
-        app.log(&format!("Otomatik başlatıldı: {}", id));
     }
     
     app.log("Sistem başlatıldı ve eklentiler otomatik yüklendi. [HFT Modu: CPU Pinning AÇIK]");
