@@ -12,7 +12,7 @@ members = [
     "crates/plugins/producers/ohlcv_fetcher",
     "crates/plugins/producers/oi_fetcher",
 
-    # Analytics
+    # Analytics & Strategies
     "crates/plugins/analytics/plugin_aggtrade_stats",
     "crates/plugins/analytics/plugin_aggtrade_ohlcv",
     "crates/plugins/analytics/plugin_bookticker_derivatives",
@@ -21,11 +21,9 @@ members = [
     "crates/plugins/analytics/plugin_iceberg",
     "crates/plugins/analytics/plugin_absorption",
     "crates/plugins/analytics/plugin_sys_metrics",
-
-    # Strategies
-    "crates/plugins/strategies/ms_analyzer",
-    "crates/plugins/strategies/plugin_breakout",
-    "crates/plugins/strategies/plugin_scout",
+    "crates/plugins/analytics/ms_analyzer",
+    "crates/plugins/analytics/plugin_breakout",
+    "crates/plugins/analytics/plugin_scout",
 
     # Execution
     "crates/plugins/execution/binance_trader",
