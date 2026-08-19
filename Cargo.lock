@@ -1485,6 +1485,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f6b464fbc74e149a392436b17d523f769e057cb6877f6a5c4618bc6f11800548"
 
 [[package]]
+name = "plugin_absorption"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "tokio",
+]
+
+[[package]]
 name = "plugin_aggtrade_ohlcv"
 version = "0.1.0"
 dependencies = [
@@ -1495,6 +1504,15 @@ dependencies = [
 
 [[package]]
 name = "plugin_aggtrade_stats"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "tokio",
+]
+
+[[package]]
+name = "plugin_amihud"
 version = "0.1.0"
 dependencies = [
  "serde",
@@ -1553,6 +1571,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "plugin_iceberg"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "tokio",
+]
+
+[[package]]
 name = "plugin_ms_analyzer"
 version = "0.1.0"
 dependencies = [
@@ -1605,6 +1632,15 @@ dependencies = [
  "tokio-tungstenite 0.26.2",
  "tracing",
  "tracing-subscriber",
+]
+
+[[package]]
+name = "plugin_spoofing"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "tokio",
 ]
 
 [[package]]

@@ -41,8 +41,25 @@ Kullanıcı bir eklentiyi seçtiğinde `libloading::Library::new()` ile kütüph
 - **Event Loop (Olay Döngüsü):** Klavyeden basılan tuşları veya fareden gelen tıklama (MouseCapture) koordinatlarını dinleyerek eklentileri (seçme, başlatma, durdurma, izleme, silme) arayüz üzerinden yönetmeye imkan tanır.
 - Her arayüz yenilenmesinde arka planda `DataMonitor` endpoint'i üzerinden seçili sistemin verilerini okuyarak canlı olarak ekrana basar.
 
-## 5. İletişim ve Veri Akışı
-1. Kullanıcı arayüzden "Başlat"a tıklar.
-2. TUI, Orkestratörün `call_endpoint(id, StandardEndpoint::Start)` fonksiyonunu çağırır.
-3. Orkestratör, bellekteki (DashMap) eklenti nesnesini bulur ve doğrudan onun RAM'indeki fonksiyona bağlanıp işlemi yürütür.
-4. Ağ soketi oluşturulmaz, API kullanılmaz. Bu nedenle işlemler **nanosaniye/mikrosaniye** seviyesinde tamamlanır.
+## 6. Proje Klasör Yapısı (Project Layout)
+
+```text
+cycle-orc/
+├── config/
+│   └── config.json              # Akış ve eklenti yapılandırmaları
+├── data/
+│   ├── binance_market_data.db   # Piyasa verisi (SQLite)
+│   └── paper_exchange.db        # Simülasyon verisi (SQLite)
+├── docs/                        # Mimari ve tasarım dokümanları
+│   ├── CYCLE_LANG_SPECIFICATION.md
+│   ├── FLOW_ENGINE_PLAN.md
+│   ├── HFT_ANALYSIS.md
+│   ├── IMPLEMENTATION_PLAN.md
+│   └── PROJECT_DOCS.md
+└── crates/
+    ├── apps/                    # CLI ve Bağımsız Uygulamalar
+    ├── core/                    # Orkestratör ve Flow Engine Çekirdeği
+    ├── interfaces/              # TUI ve Web Arayüzleri
+    └── plugins/                 # Üretici, Analiz, Strateji ve İnfaz Eklentileri
+```
+

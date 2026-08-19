@@ -19,10 +19,16 @@ venv/
 .idea/
 *.swp
 *.swo
+# Data directory
+data/*
+!data/.gitkeep
+
+# SQLite DB
 *.db
 *.db-journal
 *.db-shm
 *.db-wal
+
 
 # Node
 node_modules/

@@ -1,21 +1,39 @@
 [workspace]
 members = [
-    "orchestrator",
-    "ohlcv_fetcher",
-    "ms_analyzer",
-    "binance_trader",
-    "plugin_breakout",
-    "oi_fetcher",
-    "flow_engine",
-    "plugin_paper_exchange",
-    "binance_gateway",
-    "plugin_scout",
-    "plugin_binance_sqlite",
-    "plugin_sqlite_query",
-    "plugin_aggtrade_stats",
-    "plugin_aggtrade_ohlcv",
-    "plugin_sys_metrics",
-    "plugin_bookticker_derivatives",
-    "interactive_shell"
+    # Apps
+    "crates/apps/interactive_shell",
+
+    # Core
+    "crates/core/orchestrator",
+    "crates/core/flow_engine",
+
+    # Producers
+    "crates/plugins/producers/binance_gateway",
+    "crates/plugins/producers/ohlcv_fetcher",
+    "crates/plugins/producers/oi_fetcher",
+
+    # Analytics
+    "crates/plugins/analytics/plugin_aggtrade_stats",
+    "crates/plugins/analytics/plugin_aggtrade_ohlcv",
+    "crates/plugins/analytics/plugin_bookticker_derivatives",
+    "crates/plugins/analytics/plugin_amihud",
+    "crates/plugins/analytics/plugin_spoofing",
+    "crates/plugins/analytics/plugin_iceberg",
+    "crates/plugins/analytics/plugin_absorption",
+    "crates/plugins/analytics/plugin_sys_metrics",
+
+    # Strategies
+    "crates/plugins/strategies/ms_analyzer",
+    "crates/plugins/strategies/plugin_breakout",
+    "crates/plugins/strategies/plugin_scout",
+
+    # Execution
+    "crates/plugins/execution/binance_trader",
+    "crates/plugins/execution/plugin_paper_exchange",
+
+    # Storage
+    "crates/plugins/storage/plugin_binance_sqlite",
+    "crates/plugins/storage/plugin_sqlite_query",
 ]
 resolver = "2"
+
