@@ -23,11 +23,12 @@ venv/
 data/*
 !data/.gitkeep
 
-# SQLite DB
+# SQLite DB & Config
 *.db
 *.db-journal
 *.db-shm
 *.db-wal
+*.cfg
 
 
 # Node

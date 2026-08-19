@@ -40,24 +40,37 @@ pub unsafe extern "C" fn init_plugin(state_out: *mut *mut c_void) -> unsafe exte
         .build()
         .expect("Tokio runtime olusturulamadi");
 
+    let config_path = if std::path::Path::new("config/trader.cfg").exists() {
+        "config/trader.cfg"
+    } else if std::path::Path::new("../config/trader.cfg").exists() {
+        "../config/trader.cfg"
+    } else if std::path::Path::new("../../config/trader.cfg").exists() {
+        "../../config/trader.cfg"
+    } else if std::path::Path::new("trader.cfg").exists() {
+        "trader.cfg"
+    } else {
+        "config/trader.cfg"
+    };
+
     let mut config_opt = None;
-    if let Ok(content) = fs::read_to_string("trader.cfg") {
+    if let Ok(content) = fs::read_to_string(config_path) {
         if let Ok(cfg) = serde_json::from_str::<Config>(&content) {
             config_opt = Some(cfg);
         }
     } else {
         // Create template
+        let _ = fs::create_dir_all("config");
         let template = Config {
             api_key: "YOUR_API_KEY".to_string(),
             api_secret: "YOUR_API_SECRET".to_string(),
         };
-        let _ = fs::write("trader.cfg", serde_json::to_string_pretty(&template).unwrap_or_default());
+        let _ = fs::write(config_path, serde_json::to_string_pretty(&template).unwrap_or_default());
     }
 
     let status_msg = if config_opt.is_some() {
         "Config yuklendi. Emir gondermeye hazir."
     } else {
-        "Config bulunamadi. trader.cfg olusturuldu, lutfen bilgilerinizi girip yeniden baslatin."
+        "Config bulunamadi. config/trader.cfg olusturuldu, lutfen bilgilerinizi girip yeniden baslatin."
     };
 
     let state = Box::new(PluginState {
@@ -209,7 +222,7 @@ unsafe extern "C" fn handle_endpoint(
                         }
                     } else {
                         let mut guard = state.data.lock().unwrap();
-                        *guard = b"HATA: API Anahtarlari (trader.cfg) yapilandirilmadi!".to_vec();
+                        *guard = b"HATA: API Anahtarlari (config/trader.cfg) yapilandirilmadi!".to_vec();
                     }
                 }
             }
