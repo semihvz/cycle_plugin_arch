@@ -14,7 +14,7 @@ use std::io;
 use std::sync::Arc;
 use std::ffi::c_void;
 
-/// Eklenti yükleme yardımcı fonksiyonu (C-ABI: init_plugin)
+/// Plugin loading helper function (C-ABI: init_plugin)
 unsafe fn load_plugin_cabi(app: &mut App<'_>, plugin_name: &str) {
     let ext = if cfg!(target_os = "windows") { "dll" } 
               else if cfg!(target_os = "macos") { "dylib" } 
@@ -28,7 +28,7 @@ unsafe fn load_plugin_cabi(app: &mut App<'_>, plugin_name: &str) {
     
     match libloading::Library::new(&lib_path) {
         Ok(lib) => {
-            // Yeni HFT C-ABI: init_plugin(state_out) -> RawEndpointFn
+            // New HFT C-ABI: init_plugin(state_out) -> RawEndpointFn
             type PluginInit = unsafe extern "C" fn(state_out: *mut *mut c_void) -> RawEndpointFn;
             match lib.get::<PluginInit>(b"init_plugin") {
                 Ok(init_fn) => {
@@ -41,13 +41,13 @@ unsafe fn load_plugin_cabi(app: &mut App<'_>, plugin_name: &str) {
                         endpoint_fn,
                     );
                     app.orchestrator.register_system(sys);
-                    Box::leak(Box::new(lib)); // Kütüphaneyi bellekte tut
-                    app.log(&format!("{} eklentisi basariyla yuklendi (HFT/C-ABI).", plugin_name));
+                    Box::leak(Box::new(lib)); // Keep library in memory
+                    app.log(&format!("Plugin {} loaded successfully (HFT/C-ABI).", plugin_name));
                 }
-                Err(_) => app.log(&format!("{} eklentisinde init_plugin fonksiyonu bulunamadi.", plugin_name)),
+                Err(_) => app.log(&format!("Function init_plugin not found in plugin {}.", plugin_name)),
             }
         }
-        Err(e) => app.log(&format!("{} eklentisi yuklenemedi (derlediginizden emin olun): {}", plugin_name, e)),
+        Err(e) => app.log(&format!("Failed to load plugin {} (make sure it is compiled): {}", plugin_name, e)),
     }
 }
 
@@ -60,7 +60,7 @@ fn get_plugin_dir() -> std::path::PathBuf {
     dir
 }
 
-/// Eklenti tarama yardımcı fonksiyonu
+/// Plugin scanning helper function
 fn scan_plugins() -> Vec<String> {
     let mut plugins = Vec::new();
     let lib_dir = get_plugin_dir();
@@ -83,8 +83,8 @@ fn scan_plugins() -> Vec<String> {
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     // ═══════════════════════════════════════════════════════
-    // HFT: CPU Çekirdek Sabitleme (Core Pinning)
-    // Ana thread → Çekirdek 0, Router thread → Çekirdek 1
+    // HFT: CPU Core Pinning
+    // Main thread → Core 0, Router thread → Core 1
     // ═══════════════════════════════════════════════════════
     let mut pinned_core = 0;
     if let Some(core_ids) = core_affinity::get_core_ids() {
@@ -98,8 +98,8 @@ async fn main() -> anyhow::Result<()> {
 
     let orchestrator = Arc::new(Orchestrator::new());
     let mut app = App::new(orchestrator.clone(), log_tx.clone());
-    app.log(&format!("[HFT] Ana thread CPU çekirdeğine sabitlendi: Core {}", pinned_core));
-    app.log("Sadece TUI Konsolu Başlatıldı. Web Arayüzü için Ayarlar sekmesinden veya [W] tuşuna basarak başlatabilirsiniz.");
+    app.log(&format!("[HFT] Main thread pinned to CPU core: Core {}", pinned_core));
+    app.log("TUI Console Started. Web Interface can be launched from Settings tab or by pressing [W].");
     
     // --- FLOW ENGINE & CONFIG INITIALIZATION ---
     let config_path = if std::path::Path::new("config/config.json").exists() {
@@ -117,7 +117,7 @@ async fn main() -> anyhow::Result<()> {
     let flow_config = match flow_engine::FlowConfig::load(config_path) {
         Ok(c) => Some(c),
         Err(e) => {
-            app.log(&format!("UYARI: config.json okunamadı: {}", e));
+            app.log(&format!("WARNING: Failed to read config.json: {}", e));
             None
         }
     };
@@ -126,7 +126,7 @@ async fn main() -> anyhow::Result<()> {
     if let Some(ref config) = flow_config {
         let engine = std::sync::Arc::new(flow_engine::FlowEngine::new(config.clone()));
         engine_opt = Some(engine.clone());
-        app.log("Flow Engine config yüklendi. Router thread başlatılıyor...");
+        app.log("Flow Engine config loaded. Starting router thread...");
 
         let orc_clone = orchestrator.clone();
         let engine_clone = engine.clone();
@@ -161,14 +161,14 @@ async fn main() -> anyhow::Result<()> {
         });
     }
     
-    // Tüm pluginleri otomatik tara, yükle
+    // Automatically scan and load all plugins
     app.available_plugins = scan_plugins();
     for plugin_name in app.available_plugins.clone() {
-        app.log(&format!("Otomatik yükleniyor: {}", plugin_name));
+        app.log(&format!("Auto-loading: {}", plugin_name));
         unsafe { load_plugin_cabi(&mut app, &plugin_name); }
     }
     
-    // Yüklenen tüm pluginleri başlat ve parametrelerini gönder (flow_config.json içinde tanımlı ve enabled==true olanlar başlatılır)
+    // Start all loaded plugins and send their parameters (those defined and enabled==true in flow_config.json)
     let mut startup_buf = [0u8; 8];
     for (id, _, _) in app.orchestrator.list_systems() {
         if let Some(ref config) = flow_config {
@@ -176,21 +176,21 @@ async fn main() -> anyhow::Result<()> {
                 if plugin_conf.enabled {
                     let payload_bytes = serde_json::to_vec(&plugin_conf).unwrap_or_default();
                     app.orchestrator.call_endpoint(&id, StandardEndpoint::Start, &payload_bytes, &mut startup_buf);
-                    app.log(&format!("Otomatik başlatıldı: {}", id));
+                    app.log(&format!("Auto-started: {}", id));
                 } else {
-                    app.log(&format!("Başlatılmadı (flow_config.json içinde pasif/enabled=false): {}", id));
+                    app.log(&format!("Not started (disabled/enabled=false in flow_config.json): {}", id));
                 }
             } else {
-                app.log(&format!("Başlatılmadı (flow_config.json içinde tanımlı değil): {}", id));
+                app.log(&format!("Not started (not defined in flow_config.json): {}", id));
             }
         }
     }
     
-    app.log("Sistem başlatıldı ve eklentiler otomatik yüklendi. [HFT Modu: CPU Pinning AÇIK]");
+    app.log("System initialized and plugins automatically loaded. [HFT Mode: CPU Pinning ON]");
 
     let web_server_started = Arc::new(std::sync::atomic::AtomicBool::new(false));
 
-    // İnteraktif Komut Shell Ekranına Doğrudan Bağlan
+    // Connect directly to Interactive Command Shell Screen
     cycle_finance_breakout_system::interactive_shell::run_interactive_shell_loop(
         orchestrator.clone(),
         log_tx,

@@ -1,43 +1,43 @@
-# Binance Futures USDT Tarama Servisi Tasarimi (Rust)
+# Binance Futures USDT Scanner Service Design (Rust)
 
-## 1. Mimari Genel Bakis
-Sistem, Binance Futures USDT paritelerini mikroyapi analizi ile tarar ve en iyi firsati loglar. Rust + `tokio` ile asenkron calisir; islem tamamen I/O-bound oldugu icin tek multi-thread runtime yeterlidir.
+## 1. Architectural Overview
+The system scans Binance Futures USDT pairs using microstructure analysis and logs top trading opportunities. It runs asynchronously using Rust and `tokio`. Since operations are completely I/O-bound, a single multi-threaded runtime is sufficient.
 
-## 2. Katmanlar (src/)
-| Katman | Modul | Sorumluluk |
+## 2. Layers (src/)
+| Layer | Module | Responsibility |
 |---|---|---|
-| Giris | `main.rs` | `tracing` kurulumu, servisi baslatma / durdurma (SIGINT) |
-| Orkestrasyon | `service.rs` | `ScoutService`, `OpportunityLogger`; soket yasam dongusu, analiz dongusu, `Arc<Mutex<MarketState>>` paylasimi |
-| Analiz | `analyzer.rs` | `OrderbookFluxAnalyzer`: aday secimi ve firsat derecelendirmesi (saf mantik) |
-| Veri | `models.rs` | `SymbolState`, `MarketState`, `Opportunity`, `Verdict` |
-| Iletisim | `client.rs` | `BinanceClient`: REST sembol listesi (reqwest), WebSocket (tokio-tungstenite), eksponansiyel backoff + 20s heartbeat |
-| Yardimci | `utils.rs` | `parse_json`, `event_ts`, `now_ts`, `chunked` |
-| Ayarlar | `config.rs` | Baglanti ve analiz parametreleri (sabitler) |
+| Entry | `main.rs` | `tracing` setup, service lifecycle management (SIGINT) |
+| Orchestration | `service.rs` | `ScoutService`, `OpportunityLogger`; socket lifecycle, analysis loop, `Arc<Mutex<MarketState>>` sharing |
+| Analytics | `analyzer.rs` | `OrderbookFluxAnalyzer`: candidate selection and opportunity scoring (pure logic) |
+| Data Models | `models.rs` | `SymbolState`, `MarketState`, `Opportunity`, `Verdict` |
+| Network | `client.rs` | `BinanceClient`: REST symbol exchange info (reqwest), WebSocket (tokio-tungstenite), exponential backoff + 20s heartbeat |
+| Helpers | `utils.rs` | `parse_json`, `event_ts`, `now_ts`, `chunked` |
+| Config | `config.rs` | Connection and analysis parameters (constants) |
 
-Veri paylasimi: soket iscileri `Arc<Mutex<MarketState>>` uzerinden calisir; handler'lar `Box<dyn FnMut(Value) -> Pin<Box<dyn Future>>>` imzasi ile `BinanceClient`'a verilir. Analiz ve model katmanlari I/O'dan bagimsizdir.
+Data sharing: Socket workers operate via `Arc<Mutex<MarketState>>`; handlers are passed to `BinanceClient` with `Box<dyn FnMut(Value) -> Pin<Box<dyn Future>>>` signatures. Analytics and model layers remain independent of I/O.
 
-## 3. Sistem Akis Semasi (Mermaid)
+## 3. System Flowchart (Mermaid)
 ```mermaid
 graph TD
     BF[Binance Futures WS] -->|bookTicker / partialDepth| CL[BinanceClient]
-    CL -->|Pazar olaylari| SV[ScoutService - handleBookTicker / handleDepth]
-    SV -->|SymbolState guncelle| MS[(Arc Mutex MarketState)]
-    AN[OrderbookFluxAnalyzer] -->|metrik oku| MS
-    MS -->|adaylar| DM[Depth Yoneticisi]
-    DM -->|depth akislari| CL
-    AN -->|firsat| OL[OpportunityLogger]
-    OL -->|log| LOG[Uygulama Loglari]
+    CL -->|Market events| SV[ScoutService - handleBookTicker / handleDepth]
+    SV -->|Update SymbolState| MS[(Arc Mutex MarketState)]
+    AN[OrderbookFluxAnalyzer] -->|Read metrics| MS
+    MS -->|Candidates| DM[Depth Manager]
+    DM -->|Depth streams| CL
+    AN -->|Opportunity| OL[OpportunityLogger]
+    OL -->|Log| LOG[Application Logs]
 ```
 
-## 4. Derleme ve Calistirma
+## 4. Build and Run
 ```
 cd scout_rs
 cargo build --release
-./target/release/scout          # veya: nohup ile arka planda
+./target/release/scout          # or in background via nohup
 ```
 
-## 5. Teknik Detaylar
-*   **Hiz**: 100ms derinlik guncellemeleri; `tokio` multi-thread runtime.
-*   **Performans**: `serde_json::Value` isleme, `VecDeque` ile pencereli veri saklama, TLS icin rustls (OpenSSL gerektirmez).
-*   **Guvenilirlik**: WebSocket kopmalarinda eksponansiyel backoff (0.75s -> 10s tavan) ve jitter; 20s heartbeat ping.
-*   **Genisletilebilirlik**: Analiz katmani I/O'dan ayrik oldugundan yeni pazar kaynaklari veya sinyal stratejileri kolayca eklenebilir.
+## 5. Technical Details
+* **Speed**: 100ms depth updates; `tokio` multi-thread runtime.
+* **Performance**: `serde_json::Value` parsing, windowed data retention via `VecDeque`, rustls for TLS (no OpenSSL dependency).
+* **Reliability**: Exponential backoff (0.75s -> 10s ceiling) with jitter for WebSocket reconnects; 20s heartbeat ping.
+* **Extensibility**: Analytics layer decoupled from I/O allows effortless addition of new market sources or signal strategies.

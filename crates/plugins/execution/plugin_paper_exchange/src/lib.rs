@@ -70,13 +70,13 @@ unsafe extern "C" fn handle_endpoint(
         }
         4 => { // DataMonitor (TUI M key view)
             let mut report = String::new();
-            report.push_str("=== PAPER EXCHANGE DURUMU ===\n\n");
+            report.push_str("=== PAPER EXCHANGE STATUS ===\n\n");
             
             if let Some(acc) = state.engine.accounts.get("admin") {
-                report.push_str(&format!("[ Bakiye ]\nCüzdan: {:.2} USDT | Margin: {:.2} USDT\n\n", acc.wallet_balance, acc.margin_balance));
+                report.push_str(&format!("[ Balance ]\nWallet: {:.2} USDT | Margin: {:.2} USDT\n\n", acc.wallet_balance, acc.margin_balance));
             }
             
-            report.push_str("[ Fiyat Bilgileri (Market Data) ]\n");
+            report.push_str("[ Market Data ]\n");
             let mut has_prices = false;
             for price_entry in state.engine.latest_prices.iter() {
                 let sym = price_entry.key();
@@ -86,11 +86,11 @@ unsafe extern "C" fn handle_endpoint(
                 has_prices = true;
             }
             if !has_prices {
-                report.push_str("Henüz fiyat verisi alınmadı.\n");
+                report.push_str("No market data received yet.\n");
             }
             report.push_str("\n");
             
-            report.push_str("[ Açık Pozisyonlar ]\n");
+            report.push_str("[ Open Positions ]\n");
             let mut has_pos = false;
             if let Some(user_pos) = state.engine.positions.get("admin") {
                 for pos in user_pos.iter() {
@@ -98,29 +98,29 @@ unsafe extern "C" fn handle_endpoint(
                     if p.amount > 0.0 {
                         has_pos = true;
                         let side_str = if p.side == PositionSide::Long { "LONG" } else { "SHORT" };
-                        report.push_str(&format!("- {} {} | Miktar: {:.3} | Giriş: {:.2} | Kaldıraç: {:.0}x | Likidasyon: {:.2} | PnL: {:.2} USDT\n", 
+                        report.push_str(&format!("- {} {} | Qty: {:.3} | Entry: {:.2} | Leverage: {:.0}x | Liq Price: {:.2} | PnL: {:.2} USDT\n", 
                             p.symbol, side_str, p.amount, p.entry_price, p.leverage, p.liquidation_price, p.unrealized_pnl));
                     }
                 }
             }
-            if !has_pos { report.push_str("Yok\n"); }
+            if !has_pos { report.push_str("None\n"); }
             report.push_str("\n");
             
-            report.push_str("[ Bekleyen Emirler ]\n");
+            report.push_str("[ Active Pending Orders ]\n");
             let mut has_order = false;
             for orders in state.engine.active_orders.iter() {
                 for o in orders.value().iter() {
                     has_order = true;
                     let type_str = format!("{:?}", o.order_type);
                     let side_str = format!("{:?}", o.side);
-                    report.push_str(&format!("- {} {} {} | Fiyat: {} | Stop: {} | Miktar: {}\n",
+                    report.push_str(&format!("- {} {} {} | Price: {} | Stop: {} | Qty: {}\n",
                         o.symbol, side_str, type_str, o.price, o.stop_price, o.amount));
                 }
             }
-            if !has_order { report.push_str("Yok\n"); }
+            if !has_order { report.push_str("None\n"); }
             report.push_str("\n");
             
-            report.push_str("[ Sistem Logları ]\n");
+            report.push_str("[ System Logs ]\n");
             if let Ok(msgs) = state.engine.system_messages.lock() {
                 for msg in msgs.iter() {
                     report.push_str(&format!("* {}\n", msg));

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,23 +22,23 @@
       </div>
       <div class="brand-titles">
         <h1>Cycle-ORC <span>HFT Telemetry Console</span></h1>
-        <span class="sub-badge" id="server-status-badge"><i class="fa-solid fa-circle-notch fa-spin"></i> Port 8080 Bağlanıyor...</span>
+        <span class="sub-badge" id="server-status-badge"><i class="fa-solid fa-circle-notch fa-spin"></i> Connecting Port 8080...</span>
       </div>
     </div>
 
     <!-- MAIN DASHBOARD TABS -->
     <div class="main-tabs-group">
       <button class="main-tab-btn active" id="tab-btn-telemetry" data-tab="telemetry">
-        <i class="fa-solid fa-microchip"></i> ⚡ Canlı Sistemler <span class="tab-key">[1]</span>
+        <i class="fa-solid fa-microchip"></i> ⚡ Live Systems <span class="tab-key">[1]</span>
       </button>
       <button class="main-tab-btn" id="tab-btn-hex" data-tab="hex">
-        <i class="fa-solid fa-terminal"></i> 📟 Canlı Hex & Bellek <span class="tab-key">[2]</span>
+        <i class="fa-solid fa-terminal"></i> 📟 Live Hex & Memory <span class="tab-key">[2]</span>
       </button>
       <button class="main-tab-btn" id="tab-btn-logs" data-tab="logs">
-        <i class="fa-solid fa-list-ul"></i> 📜 Canlı Loglar <span class="tab-key">[3]</span>
+        <i class="fa-solid fa-list-ul"></i> 📜 Live Logs <span class="tab-key">[3]</span>
       </button>
       <button class="main-tab-btn" id="tab-btn-shell" data-tab="shell">
-        <i class="fa-solid fa-terminal"></i> 📟 İnteraktif Shell <span class="tab-key">[4]</span>
+        <i class="fa-solid fa-terminal"></i> 📟 Interactive Shell <span class="tab-key">[4]</span>
       </button>
       <button class="main-tab-btn" id="tab-btn-editor" data-tab="editor">
         <i class="fa-solid fa-diagram-project"></i> 🛠️ Visual JSON Studio <span class="tab-key">[5]</span>
@@ -48,10 +48,10 @@
     <!-- LATENCY BADGE & QUICK HOTKEYS -->
     <div class="header-right-tools">
       <div class="hotkey-indicators">
-        <span class="hk-chip" title="Seçili Eklentiyi Başlat"><kbd>S</kbd> Başlat</span>
-        <span class="hk-chip" title="Seçili Eklentiyi Durdur"><kbd>X</kbd> Durdur</span>
-        <span class="hk-chip" title="Canlı Veriyi İzle"><kbd>M</kbd> Takip</span>
-        <span class="hk-chip" title="Eklentiyi Kaldır"><kbd>D</kbd> Sil</span>
+        <span class="hk-chip" title="Start Selected Plugin"><kbd>S</kbd> Start</span>
+        <span class="hk-chip" title="Stop Selected Plugin"><kbd>X</kbd> Stop</span>
+        <span class="hk-chip" title="Monitor Live Data"><kbd>M</kbd> Monitor</span>
+        <span class="hk-chip" title="Unload Plugin"><kbd>D</kbd> Delete</span>
       </div>
       <div class="latency-pill" id="latency-pill">
         <i class="fa-solid fa-plug"></i> <span id="ws-latency-val">-- ms</span>
@@ -68,7 +68,7 @@
         <div class="metric-card">
           <div class="metric-icon cyan"><i class="fa-solid fa-cubes"></i></div>
           <div class="metric-data">
-            <span class="metric-label">Tüm Eklentiler</span>
+            <span class="metric-label">Total Plugins</span>
             <span class="metric-value" id="val-total-systems">0</span>
           </div>
         </div>
@@ -76,7 +76,7 @@
         <div class="metric-card">
           <div class="metric-icon emerald"><i class="fa-solid fa-play"></i></div>
           <div class="metric-data">
-            <span class="metric-label">Aktif Çalışan</span>
+            <span class="metric-label">Active Running</span>
             <span class="metric-value" id="val-running-systems">0</span>
           </div>
         </div>
@@ -84,7 +84,7 @@
         <div class="metric-card">
           <div class="metric-icon amber"><i class="fa-solid fa-cpu"></i></div>
           <div class="metric-data">
-            <span class="metric-label">CPU Kullanımı</span>
+            <span class="metric-label">CPU Usage</span>
             <span class="metric-value" id="val-cpu-usage">0.0%</span>
           </div>
         </div>
@@ -92,7 +92,7 @@
         <div class="metric-card">
           <div class="metric-icon pink"><i class="fa-solid fa-memory"></i></div>
           <div class="metric-data">
-            <span class="metric-label">RAM Kullanımı</span>
+            <span class="metric-label">RAM Usage</span>
             <span class="metric-value" id="val-ram-usage">0 MB</span>
           </div>
         </div>
@@ -102,16 +102,16 @@
         <!-- SYSTEMS LIST PANEL -->
         <div class="systems-card-panel">
           <div class="panel-section-title">
-            <span><i class="fa-solid fa-server"></i> Yüklü Eklentiler (RAM Bağlantılı HFT Sistemleri)</span>
+            <span><i class="fa-solid fa-server"></i> Loaded Plugins (RAM Linked HFT Systems)</span>
             <div class="panel-actions-group">
-              <button class="btn btn-secondary btn-sm" id="btn-open-load-modal"><i class="fa-solid fa-plus"></i> Eklenti Yükle</button>
-              <button class="btn-micro" id="btn-refresh-systems"><i class="fa-solid fa-rotate"></i> Yenile</button>
+              <button class="btn btn-secondary btn-sm" id="btn-open-load-modal"><i class="fa-solid fa-plus"></i> Load Plugin</button>
+              <button class="btn-micro" id="btn-refresh-systems"><i class="fa-solid fa-rotate"></i> Refresh</button>
             </div>
           </div>
           <div class="systems-list-wrapper" id="systems-card-list">
             <div class="empty-state">
               <i class="fa-solid fa-ghost"></i>
-              <p>Yüklü eklenti bekleniyor...</p>
+              <p>Waiting for loaded plugins...</p>
             </div>
           </div>
         </div>
@@ -119,28 +119,28 @@
         <!-- QUICK ACTION & LOG MINI PREVIEW -->
         <div class="telemetry-side-panel">
           <div class="panel-section-title">
-            <span><i class="fa-solid fa-bolt"></i> Anlık Odaklı Eklenti & Bellek İzleme</span>
+            <span><i class="fa-solid fa-bolt"></i> Focused Plugin & Memory Monitor</span>
           </div>
           <div class="focused-monitor-box">
             <div class="focus-header">
-              <span class="focus-title" id="focus-system-title">Henüz Eklenti Seçilmedi</span>
+              <span class="focus-title" id="focus-system-title">No Plugin Selected</span>
               <span class="focus-addr" id="focus-system-addr">0x00000000</span>
             </div>
             <div class="focus-stats">
-              <span>Gecikme: <strong style="color:var(--accent-emerald);">0.00 ms (Direct RAM)</strong></span>
-              <span>Buffer Boyutu: <strong id="focus-buffer-len">0 bytes</strong></span>
+              <span>Latency: <strong style="color:var(--accent-emerald);">0.00 ms (Direct RAM)</strong></span>
+              <span>Buffer Size: <strong id="focus-buffer-len">0 bytes</strong></span>
             </div>
             <div class="focus-preview-hex" id="focus-preview-hex">
-              00 00 00 00 00 00 00 00 | Monitör bekliyor...
+              00 00 00 00 00 00 00 00 | Monitor idle...
             </div>
           </div>
 
           <div class="panel-section-title" style="margin-top:20px;">
-            <span><i class="fa-solid fa-list-ul"></i> Son Log Akışı</span>
-            <button class="btn-micro" id="btn-goto-logs">Tümünü Gör</button>
+            <span><i class="fa-solid fa-list-ul"></i> Recent Log Stream</span>
+            <button class="btn-micro" id="btn-goto-logs">View All</button>
           </div>
           <div class="mini-log-box" id="mini-log-box">
-            <div class="log-line text-muted">[SİSTEM] Port 8080 Telemetri konsolu hazır.</div>
+            <div class="log-line text-muted">[SYSTEM] Port 8080 Telemetry console ready.</div>
           </div>
         </div>
       </div>
@@ -150,23 +150,23 @@
     <section class="tab-page" id="page-hex">
       <div class="hex-viewer-container">
         <div class="hex-toolbar">
-          <span class="hex-title"><i class="fa-solid fa-terminal"></i> Canlı Bellek (DataMonitor EndPoint Raw Bytes)</span>
+          <span class="hex-title"><i class="fa-solid fa-terminal"></i> Live Memory (DataMonitor EndPoint Raw Bytes)</span>
           <div class="hex-actions">
-            <span class="hex-selected-name" id="hex-system-name">Seçili: Yok</span>
-            <button class="btn btn-secondary btn-sm" id="btn-pause-hex"><i class="fa-solid fa-pause"></i> Duraklat</button>
-            <button class="btn btn-secondary btn-sm" id="btn-clear-hex"><i class="fa-solid fa-trash"></i> Temizle</button>
+            <span class="hex-selected-name" id="hex-system-name">Selected: None</span>
+            <button class="btn btn-secondary btn-sm" id="btn-pause-hex"><i class="fa-solid fa-pause"></i> Pause</button>
+            <button class="btn btn-secondary btn-sm" id="btn-clear-hex"><i class="fa-solid fa-trash"></i> Clear</button>
           </div>
         </div>
 
         <div class="hex-split-view">
           <!-- RAW HEX MATRIX -->
           <div class="hex-pane">
-            <div class="pane-sub-header">HEX BAYT MATRİSİ (1MB RAM Buffer)</div>
-            <pre class="hex-matrix-display" id="hex-matrix-display">Seçili eklenti verisi bekleniyor... Klavyeden 'M' tuşuna basarak veya eklenti kartından 'Canlı Takip' butonuna basarak izlemeyi başlatabilirsiniz.</pre>
+            <div class="pane-sub-header">HEX BYTE MATRIX (1MB RAM Buffer)</div>
+            <pre class="hex-matrix-display" id="hex-matrix-display">Waiting for selected plugin data... Press 'M' key or click 'Monitor' button on plugin card to start monitoring.</pre>
           </div>
           <!-- STRING ASCII DECODE -->
           <div class="hex-pane">
-            <div class="pane-sub-header">ASCII / METİN METADATA ÇIKTISI</div>
+            <div class="pane-sub-header">ASCII / TEXT METADATA OUTPUT</div>
             <pre class="ascii-string-display" id="ascii-string-display">---------------------------------------------------------</pre>
           </div>
         </div>
@@ -177,15 +177,15 @@
     <section class="tab-page" id="page-logs">
       <div class="logs-console-container">
         <div class="console-toolbar">
-          <span class="console-title"><i class="fa-solid fa-terminal"></i> Orchestrator Canlı Log Konsolu</span>
+          <span class="console-title"><i class="fa-solid fa-terminal"></i> Orchestrator Live Log Console</span>
           <div class="console-actions">
-            <input type="text" id="log-filter-input" placeholder="Loglarda filtrele..." class="console-filter">
-            <button class="btn btn-secondary btn-sm" id="btn-toggle-autoscroll"><i class="fa-solid fa-arrow-down-long"></i> Oto-Kaydır: AÇIK</button>
-            <button class="btn btn-secondary btn-sm" id="btn-clear-logs"><i class="fa-solid fa-broom"></i> Temizle</button>
+            <input type="text" id="log-filter-input" placeholder="Filter logs..." class="console-filter">
+            <button class="btn btn-secondary btn-sm" id="btn-toggle-autoscroll"><i class="fa-solid fa-arrow-down-long"></i> Auto-Scroll: ON</button>
+            <button class="btn btn-secondary btn-sm" id="btn-clear-logs"><i class="fa-solid fa-broom"></i> Clear</button>
           </div>
         </div>
         <div class="console-output" id="main-console-output">
-          <div class="log-line info">[SİSTEM] Port 8080 konsolu log yayın kanalına bağlandı.</div>
+          <div class="log-line info">[SYSTEM] Port 8080 console connected to log broadcast channel.</div>
         </div>
       </div>
     </section>
@@ -208,14 +208,14 @@
         <div class="shell-terminal-window" id="shell-output-window">
           <div class="shell-line sys-intro">
 === CYCLE-ORC INTERACTIVE HFT SHELL CONSOLE ===
-Tüm orkestratör komutlarını (help, list, start &lt;id&gt;, stop &lt;id&gt;, del &lt;id&gt;, load &lt;name&gt;, status) yazabilirsiniz.
-Komut geçmişinde gezinmek için [Yukarı / Aşağı] ok tuşlarını kullanabilirsiniz.
+Type orchestrator commands (help, list, start &lt;id&gt;, stop &lt;id&gt;, del &lt;id&gt;, load &lt;name&gt;, status).
+Use [Up / Down] arrow keys to navigate command history.
 --------------------------------------------------------------------------------</div>
         </div>
         <div class="shell-prompt-bar">
           <span class="prompt-label"><i class="fa-solid fa-angle-right" style="color:var(--accent-emerald);"></i> cycle-orc:hft-shell&gt;</span>
-          <input type="text" id="shell-input-field" class="shell-input" placeholder="Komut yazın (örn: help, list, start plugin_breakout)..." autocomplete="off" spellcheck="false">
-          <button class="btn btn-primary btn-sm" id="shell-send-btn"><i class="fa-solid fa-paper-plane"></i> Gönder</button>
+          <input type="text" id="shell-input-field" class="shell-input" placeholder="Type command (e.g.: help, list, start plugin_breakout)..." autocomplete="off" spellcheck="false">
+          <button class="btn btn-primary btn-sm" id="shell-send-btn"><i class="fa-solid fa-paper-plane"></i> Send</button>
         </div>
       </div>
     </section>
@@ -231,24 +231,24 @@ Komut geçmişinde gezinmek için [Yukarı / Aşağı] ok tuşlarını kullanabi
   <div class="modal-overlay" id="load-plugin-modal" style="display:none;">
     <div class="modal-card">
       <div class="modal-header">
-        <h3><i class="fa-solid fa-plus-circle"></i> Eklenti Yükle (Dinamik C-ABI / RAM)</h3>
+        <h3><i class="fa-solid fa-plus-circle"></i> Load Plugin (Dynamic C-ABI / RAM)</h3>
         <button class="btn-icon" id="close-load-modal-btn"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <div class="modal-body">
         <p class="modal-desc" style="font-size:0.82rem; color:var(--text-muted);">
-          Sistemde (target/debug) derlenmiş olan <code>.so</code> / <code>.dll</code> eklenti kütüphaneleri aşağıda listelenmiştir. Yüklemek istediğiniz eklentiye tıklayın:
+          Compiled <code>.so</code> / <code>.dll</code> plugin libraries in (target/debug) are listed below. Click on the plugin you want to load:
         </p>
         <div class="available-plugins-grid" id="available-plugins-grid">
           <!-- Dynamic available plugin pills render here -->
         </div>
         <div class="form-group" style="margin-top:10px;">
-          <label style="font-size:0.8rem; color:var(--text-muted);">Veya Eklenti Adı Girin:</label>
-          <input type="text" id="manual-plugin-input" placeholder="Örn: plugin_breakout">
+          <label style="font-size:0.8rem; color:var(--text-muted);">Or Enter Plugin Name:</label>
+          <input type="text" id="manual-plugin-input" placeholder="e.g.: plugin_breakout">
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-secondary" id="cancel-load-modal-btn">İptal</button>
-        <button class="btn btn-primary" id="confirm-load-modal-btn"><i class="fa-solid fa-upload"></i> Yükle</button>
+        <button class="btn btn-secondary" id="cancel-load-modal-btn">Cancel</button>
+        <button class="btn btn-primary" id="confirm-load-modal-btn"><i class="fa-solid fa-upload"></i> Load</button>
       </div>
     </div>
   </div>

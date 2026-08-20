@@ -205,7 +205,7 @@ fn process_shell_command(orchestrator: &Orchestrator, log_tx: &broadcast::Sender
         }
         "start" => {
             if parts.len() < 2 {
-                "HATA: Kullanım: start <id>".to_string()
+                "ERROR: Usage: start <id>".to_string()
             } else {
                 let id = parts[1];
                 let mut hft_buf = vec![0u8; 64 * 1024];
@@ -219,37 +219,37 @@ fn process_shell_command(orchestrator: &Orchestrator, log_tx: &broadcast::Sender
                 } else { Vec::new() };
 
                 let written = orchestrator.call_endpoint(id, StandardEndpoint::Start, &payload, &mut hft_buf);
-                let _ = log_tx.send(format!("Shell: {} başlatıldı (yanıt: {} byte)", id, written));
-                format!("SUCCESS: {} eklentisi başlatıldı (yanıt: {} byte).", id, written)
+                let _ = log_tx.send(format!("Shell: {} started (response: {} bytes)", id, written));
+                format!("SUCCESS: Plugin {} started (response: {} bytes).", id, written)
             }
         }
         "stop" => {
             if parts.len() < 2 {
-                "HATA: Kullanım: stop <id>".to_string()
+                "ERROR: Usage: stop <id>".to_string()
             } else {
                 let id = parts[1];
                 let mut hft_buf = vec![0u8; 64 * 1024];
                 orchestrator.call_endpoint(id, StandardEndpoint::Stop, &[], &mut hft_buf);
-                let _ = log_tx.send(format!("Shell: {} durduruldu", id));
-                format!("SUCCESS: {} eklentisi durduruldu.", id)
+                let _ = log_tx.send(format!("Shell: {} stopped", id));
+                format!("SUCCESS: Plugin {} stopped.", id)
             }
         }
         "del" | "delete" | "remove" => {
             if parts.len() < 2 {
-                "HATA: Kullanım: del <id>".to_string()
+                "ERROR: Usage: del <id>".to_string()
             } else {
                 let id = parts[1];
                 if orchestrator.unregister_system(id).is_ok() {
-                    let _ = log_tx.send(format!("Shell: {} kaldırıldı", id));
-                    format!("SUCCESS: {} eklentisi hafızadan kaldırıldı.", id)
+                    let _ = log_tx.send(format!("Shell: {} removed", id));
+                    format!("SUCCESS: Plugin {} removed from memory.", id)
                 } else {
-                    format!("HATA: {} eklentisi bulunamadı.", id)
+                    format!("ERROR: Plugin {} not found.", id)
                 }
             }
         }
         "load" => {
             if parts.len() < 2 {
-                "HATA: Kullanım: load <plugin_name>".to_string()
+                "ERROR: Usage: load <plugin_name>".to_string()
             } else {
                 let name = parts[1];
                 match unsafe { load_plugin_dynamic(orchestrator, name) } {
@@ -257,7 +257,7 @@ fn process_shell_command(orchestrator: &Orchestrator, log_tx: &broadcast::Sender
                         let _ = log_tx.send(format!("Shell: {}", msg));
                         format!("SUCCESS: {}", msg)
                     }
-                    Err(err) => format!("HATA: {}", err),
+                    Err(err) => format!("ERROR: {}", err),
                 }
             }
         }
@@ -268,7 +268,7 @@ fn process_shell_command(orchestrator: &Orchestrator, log_tx: &broadcast::Sender
             let mem_used = sys.used_memory() / (1024 * 1024);
             let mem_total = sys.total_memory() / (1024 * 1024);
             let systems = orchestrator.list_systems();
-            format!("=== SİSTEM İSTATİSTİKLERİ ===\n• Toplam Eklenti : {}\n• Aktif Eklenti  : {}\n• CPU Kullanımı  : {:.1}%\n• RAM Kullanımı  : {} MB / {} MB",
+            format!("=== SYSTEM STATISTICS ===\n• Total Plugins : {}\n• Active Plugins : {}\n• CPU Usage     : {:.1}%\n• RAM Usage     : {} MB / {} MB",
                 systems.len(),
                 systems.iter().filter(|(_, _, r)| *r).count(),
                 cpu,
@@ -278,7 +278,7 @@ fn process_shell_command(orchestrator: &Orchestrator, log_tx: &broadcast::Sender
         }
         "exportjson" | "dumpjson" | "savejson" | "export_json" => {
             if parts.len() < 2 {
-                "HATA: Kullanım: exportjson <plugin_id> [output_file.json]".to_string()
+                "ERROR: Usage: exportjson <plugin_id> [output_file.json]".to_string()
             } else {
                 let id = parts[1];
                 let default_filename = format!("{}_output.json", id);
@@ -290,14 +290,14 @@ fn process_shell_command(orchestrator: &Orchestrator, log_tx: &broadcast::Sender
                             match serde_json::to_string_pretty(&json_val) {
                                 Ok(pretty_json) => {
                                     if let Err(err) = std::fs::write(out_path, pretty_json.as_bytes()) {
-                                        format!("HATA: JSON dosyası yazılamadı ({}): {}", out_path, err)
+                                        format!("ERROR: Failed to write JSON file ({}): {}", out_path, err)
                                     } else {
-                                        let msg = format!("SUCCESS: {} eklentisinin bellek JSON verisi kaydedildi: {} ({} bytes)", id, out_path, pretty_json.len());
+                                        let msg = format!("SUCCESS: Memory JSON data saved for plugin {}: {} ({} bytes)", id, out_path, pretty_json.len());
                                         let _ = log_tx.send(format!("Shell: {}", msg));
                                         msg
                                     }
                                 }
-                                Err(err) => format!("HATA: JSON serileştirme hatası: {}", err),
+                                Err(err) => format!("ERROR: JSON serialization error: {}", err),
                             }
                         } else if let Ok(utf8_str) = std::str::from_utf8(&data) {
                             if !utf8_str.trim().is_empty() {
@@ -307,26 +307,26 @@ fn process_shell_command(orchestrator: &Orchestrator, log_tx: &broadcast::Sender
                                 });
                                 let json_str = serde_json::to_string_pretty(&fallback_json).unwrap_or_default();
                                 if let Err(err) = std::fs::write(out_path, json_str.as_bytes()) {
-                                    format!("HATA: Dosya yazılamadı ({}): {}", out_path, err)
+                                    format!("ERROR: Failed to write file ({}): {}", out_path, err)
                                 } else {
-                                    let msg = format!("SUCCESS: {} eklentisinin metin verisi JSON olarak kaydedildi: {}", id, out_path);
+                                    let msg = format!("SUCCESS: Text data saved as JSON for plugin {}: {}", id, out_path);
                                     let _ = log_tx.send(format!("Shell: {}", msg));
                                     msg
                                 }
                             } else {
-                                format!("HATA: {} eklentisinin bellek tamponu boş metin döndürdü.", id)
+                                format!("ERROR: Memory buffer for plugin {} returned empty text.", id)
                             }
                         } else {
-                            format!("HATA: {} eklentisinin bellek tamponundaki veri geçerli bir JSON veya UTF-8 metni değil.", id)
+                            format!("ERROR: Memory buffer data for plugin {} is not valid JSON or UTF-8 text.", id)
                         }
                     }
-                    Ok(_) => format!("UYARI: {} eklentisinin bellek tamponu 0 byte (boş) döndü.", id),
-                    Err(e) => format!("HATA: {} eklentisinden bellek verisi okunamadı: {}", id, e),
+                    Ok(_) => format!("WARNING: Memory buffer for plugin {} returned 0 bytes (empty).", id),
+                    Err(e) => format!("ERROR: Failed to read memory data from plugin {}: {}", id, e),
                 }
             }
         }
         _ => {
-            format!("Komut anlaşılamadı: '{}'. Kullanılabilir komutları görmek için 'help' yazın.", cmd_line)
+            format!("Command not recognized: '{}'. Type 'help' to view available commands.", cmd_line)
         }
     }
 }
@@ -578,18 +578,18 @@ async fn handle_socket(mut socket: WebSocket, state: AppState) {
                                 };
 
                                 let written = state.orchestrator.call_endpoint(&id, StandardEndpoint::Start, &payload, &mut hft_buf);
-                                let msg = format!("{} Web (Port 8080) üzerinden başlatıldı (yanıt: {} byte)", id, written);
+                                let msg = format!("{} started via Web (Port 8080) (response: {} bytes)", id, written);
                                 let _ = state.log_tx.send(msg);
                             }
                             WebCommand::Stop { id } => {
                                 state.orchestrator.call_endpoint(&id, StandardEndpoint::Stop, &[], &mut hft_buf);
-                                let msg = format!("{} Web (Port 8080) üzerinden durduruldu", id);
+                                let msg = format!("{} stopped via Web (Port 8080)", id);
                                 let _ = state.log_tx.send(msg);
                             }
                             WebCommand::Monitor { id } => {
                                 let mut guard = state.selected_monitor.lock().unwrap();
                                 *guard = Some(id.clone());
-                                let msg = format!("Web İzleme Odaklandı: {}", id);
+                                let msg = format!("Web Monitor Focused: {}", id);
                                 let _ = state.log_tx.send(msg);
                             }
                             WebCommand::Delete { id } => {
@@ -598,7 +598,7 @@ async fn handle_socket(mut socket: WebSocket, state: AppState) {
                                     if guard.as_deref() == Some(&id) {
                                         *guard = None;
                                     }
-                                    let msg = format!("{} Web (Port 8080) üzerinden silindi", id);
+                                    let msg = format!("{} deleted via Web (Port 8080)", id);
                                     let _ = state.log_tx.send(msg);
                                 }
                             }
@@ -608,7 +608,7 @@ async fn handle_socket(mut socket: WebSocket, state: AppState) {
                                         let _ = state.log_tx.send(success_msg);
                                     }
                                     Err(err_msg) => {
-                                        let _ = state.log_tx.send(format!("HATA: {}", err_msg));
+                                        let _ = state.log_tx.send(format!("ERROR: {}", err_msg));
                                     }
                                 }
                             }

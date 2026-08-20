@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cycle-ORC | Görsel JSON ve Akış Editörü</title>
+  <title>Cycle-ORC | Visual JSON & Flow Editor</title>
   <!-- Google Fonts: Inter & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -22,64 +22,64 @@
       </div>
       <div class="brand-titles">
         <h1>Cycle-ORC <span>Visual JSON Studio</span></h1>
-        <span class="sub-badge" id="server-status-badge"><i class="fa-solid fa-circle-notch fa-spin"></i> Sunucuya Bağlanıyor...</span>
+        <span class="sub-badge" id="server-status-badge"><i class="fa-solid fa-circle-notch fa-spin"></i> Connecting to server...</span>
       </div>
     </div>
 
     <!-- VIEW TOGGLE BUTTONS -->
     <div class="view-switch-group">
-      <button class="btn-switch active" id="btn-view-split" data-view="split" title="Çift Panelli Görünüm">
-        <i class="fa-solid fa-columns"></i> Çift Panel
+      <button class="btn-switch active" id="btn-view-split" data-view="split" title="Dual Pane View">
+        <i class="fa-solid fa-columns"></i> Dual Pane
       </button>
-      <button class="btn-switch" id="btn-view-cards" data-view="cards" title="Görsel Kartsal Editör">
-        <i class="fa-solid fa-table-cells-large"></i> Kartsal Görünüm
+      <button class="btn-switch" id="btn-view-cards" data-view="cards" title="Visual Cards Editor">
+        <i class="fa-solid fa-table-cells-large"></i> Cards View
       </button>
-      <button class="btn-switch" id="btn-view-tree" data-view="tree" title="Görsel Ağaç Görünümü">
-        <i class="fa-solid fa-sitemap"></i> Görsel Ağaç
+      <button class="btn-switch" id="btn-view-tree" data-view="tree" title="Visual Tree View">
+        <i class="fa-solid fa-sitemap"></i> Visual Tree
       </button>
-      <button class="btn-switch" id="btn-view-flow" data-view="flow" title="Eklenti Akış Grafiği Canvas">
-        <i class="fa-solid fa-network-wired"></i> Akış Grafiği
+      <button class="btn-switch" id="btn-view-flow" data-view="flow" title="Plugin Flow Graph Canvas">
+        <i class="fa-solid fa-network-wired"></i> Flow Graph
       </button>
-      <button class="btn-switch" id="btn-view-code" data-view="code" title="Sadece Kod Editörü">
-        <i class="fa-solid fa-code"></i> Kod
+      <button class="btn-switch" id="btn-view-code" data-view="code" title="Code Editor Only">
+        <i class="fa-solid fa-code"></i> Code
       </button>
     </div>
 
     <!-- SEARCH & FILTER -->
     <div class="search-box">
       <i class="fa-solid fa-magnifying-glass search-icon"></i>
-      <input type="text" id="global-search-input" placeholder="Düğümlerde veya anahtarlarda ara... (Ctrl+F)">
+      <input type="text" id="global-search-input" placeholder="Search nodes or keys... (Ctrl+F)">
       <button class="clear-search-btn" id="clear-search-btn" style="display:none;"><i class="fa-solid fa-xmark"></i></button>
     </div>
 
     <!-- ACTION BUTTONS -->
     <div class="action-buttons-group">
-      <button class="btn btn-secondary" id="btn-undo" title="Geri Al (Ctrl+Z)" disabled>
+      <button class="btn btn-secondary" id="btn-undo" title="Undo (Ctrl+Z)" disabled>
         <i class="fa-solid fa-rotate-left"></i>
       </button>
-      <button class="btn btn-secondary" id="btn-redo" title="Yeniden Yap (Ctrl+Y)" disabled>
+      <button class="btn btn-secondary" id="btn-redo" title="Redo (Ctrl+Y)" disabled>
         <i class="fa-solid fa-rotate-right"></i>
       </button>
-      <button class="btn btn-secondary" id="btn-format" title="Formatla & Düzenle (Prettify)">
+      <button class="btn btn-secondary" id="btn-format" title="Format & Reorder (Prettify)">
         <i class="fa-solid fa-wand-magic-sparkles"></i> Prettify
       </button>
-      <button class="btn btn-secondary" id="btn-reload" title="Dosyadan Yeniden Yükle">
-        <i class="fa-solid fa-arrows-rotate"></i> Yenile
+      <button class="btn btn-secondary" id="btn-reload" title="Reload from file">
+        <i class="fa-solid fa-arrows-rotate"></i> Reload
       </button>
 
       <div class="dropdown-wrapper">
         <button class="btn btn-secondary dropdown-toggle" id="btn-templates">
-          <i class="fa-solid fa-cubes"></i> Şablonlar <i class="fa-solid fa-chevron-down"></i>
+          <i class="fa-solid fa-cubes"></i> Templates <i class="fa-solid fa-chevron-down"></i>
         </button>
         <div class="dropdown-menu" id="templates-menu">
-          <a href="#" data-template="default_flow"><i class="fa-solid fa-bolt"></i> Varsayılan Akış (flow_config.json)</a>
-          <a href="#" data-template="hft_pipeline"><i class="fa-solid fa-gauge-high"></i> HFT Yüksek Hızlı Pipeline</a>
-          <a href="#" data-template="empty_array"><i class="fa-solid fa-brackets-square"></i> Boş Dizi (Array)</a>
+          <a href="#" data-template="default_flow"><i class="fa-solid fa-bolt"></i> Default Flow (flow_config.json)</a>
+          <a href="#" data-template="hft_pipeline"><i class="fa-solid fa-gauge-high"></i> HFT High Speed Pipeline</a>
+          <a href="#" data-template="empty_array"><i class="fa-solid fa-brackets-square"></i> Empty Array ([])</a>
         </div>
       </div>
 
-      <button class="btn btn-primary btn-glow" id="btn-save-workspace" title="flow_config.json Dosyasına Kaydet (Ctrl+S)">
-        <i class="fa-solid fa-floppy-disk"></i> Kaydet (flow_config.json)
+      <button class="btn btn-primary btn-glow" id="btn-save-workspace" title="Save to flow_config.json file (Ctrl+S)">
+        <i class="fa-solid fa-floppy-disk"></i> Save (flow_config.json)
       </button>
     </div>
   </header>
@@ -91,10 +91,10 @@
     </div>
 
     <div class="canvas-controls">
-      <span class="stats-info" id="stats-info"><i class="fa-solid fa-cubes"></i> 0 Düğüm | 0 Akış</span>
-      <button class="btn-icon" id="btn-expand-all" title="Tüm Düğümleri Genişlet"><i class="fa-solid fa-folder-open"></i></button>
-      <button class="btn-icon" id="btn-collapse-all" title="Tüm Düğümleri Daralt"><i class="fa-solid fa-folder"></i></button>
-      <button class="btn-icon" id="btn-add-plugin" title="Yeni Eklenti Ekle"><i class="fa-solid fa-plus"></i> Eklenti Ekle</button>
+      <span class="stats-info" id="stats-info"><i class="fa-solid fa-cubes"></i> 0 Nodes | 0 Flows</span>
+      <button class="btn-icon" id="btn-expand-all" title="Expand All Nodes"><i class="fa-solid fa-folder-open"></i></button>
+      <button class="btn-icon" id="btn-collapse-all" title="Collapse All Nodes"><i class="fa-solid fa-folder"></i></button>
+      <button class="btn-icon" id="btn-add-plugin" title="Add New Plugin"><i class="fa-solid fa-plus"></i> Add Plugin</button>
     </div>
   </div>
 
@@ -104,21 +104,21 @@
     <!-- LEFT PANEL: CODE EDITOR -->
     <section class="pane pane-code" id="pane-code">
       <div class="pane-header">
-        <span class="pane-title"><i class="fa-solid fa-code"></i> JSON Kod Editörü</span>
+        <span class="pane-title"><i class="fa-solid fa-code"></i> JSON Code Editor</span>
         <div class="pane-actions">
-          <span class="valid-indicator" id="code-valid-status"><i class="fa-solid fa-circle-check"></i> Geçerli JSON</span>
-          <button class="btn-micro" id="btn-copy-code" title="Panoya Kopyala"><i class="fa-solid fa-copy"></i></button>
-          <button class="btn-micro" id="btn-minify-code" title="Sıkıştır (Minify)"><i class="fa-solid fa-compress"></i></button>
+          <span class="valid-indicator" id="code-valid-status"><i class="fa-solid fa-circle-check"></i> Valid JSON</span>
+          <button class="btn-micro" id="btn-copy-code" title="Copy to Clipboard"><i class="fa-solid fa-copy"></i></button>
+          <button class="btn-micro" id="btn-minify-code" title="Minify"><i class="fa-solid fa-compress"></i></button>
         </div>
       </div>
       <div class="editor-container">
         <div class="line-numbers" id="line-numbers">1</div>
-        <textarea id="raw-json-textarea" spellcheck="false" placeholder="flow_config.json veriniz buraya yükleniyor..."></textarea>
+        <textarea id="raw-json-textarea" spellcheck="false" placeholder="Loading flow_config.json data..."></textarea>
       </div>
     </section>
 
     <!-- RESIZER DIVIDER -->
-    <div class="pane-resizer" id="pane-resizer" title="Sürükleyerek Panelleri Boyutlandırın"></div>
+    <div class="pane-resizer" id="pane-resizer" title="Drag to Resize Panes"></div>
 
     <!-- RIGHT PANEL: VISUAL VIEWS (CARDS, TREE OR FLOW CANVAS) -->
     <section class="pane pane-visual" id="pane-visual">
@@ -126,9 +126,9 @@
       <!-- TAB 0: VISUAL CARDS EDITOR -->
       <div class="visual-subview active" id="view-cards-container">
         <div class="pane-header">
-          <span class="pane-title"><i class="fa-solid fa-table-cells-large"></i> Görsel Eklenti Kartları Editörü</span>
+          <span class="pane-title"><i class="fa-solid fa-table-cells-large"></i> Visual Plugin Cards Editor</span>
           <div class="pane-actions">
-            <button class="btn-micro" id="btn-add-card-plugin" title="Yeni Eklenti Kartı Ekle"><i class="fa-solid fa-plus"></i> Eklenti Ekle</button>
+            <button class="btn-micro" id="btn-add-card-plugin" title="Add New Plugin Card"><i class="fa-solid fa-plus"></i> Add Plugin</button>
           </div>
         </div>
         <div class="cards-grid-scroll" id="cards-grid-root">
@@ -139,9 +139,9 @@
       <!-- TAB 1: VISUAL TREE & FORM EDITOR -->
       <div class="visual-subview" id="view-tree-container">
         <div class="pane-header">
-          <span class="pane-title"><i class="fa-solid fa-sitemap"></i> Görsel JSON Ağacı & Form Editörü</span>
+          <span class="pane-title"><i class="fa-solid fa-sitemap"></i> Visual JSON Tree & Form Editor</span>
           <div class="pane-actions">
-            <button class="btn-micro" id="btn-add-root-item" title="Kök Düğüme Eleman Ekle"><i class="fa-solid fa-plus"></i> Eleman Ekle</button>
+            <button class="btn-micro" id="btn-add-root-item" title="Add Element to Root Node"><i class="fa-solid fa-plus"></i> Add Element</button>
           </div>
         </div>
         <div class="tree-content-scroll" id="tree-content-root">
@@ -152,13 +152,13 @@
       <!-- TAB 2: INTERACTIVE FLOW GRAPH CANVAS -->
       <div class="visual-subview" id="view-flow-container">
         <div class="pane-header">
-          <span class="pane-title"><i class="fa-solid fa-network-wired"></i> Eklenti Akış Grafiği (Pipeline Flow Graph)</span>
+          <span class="pane-title"><i class="fa-solid fa-network-wired"></i> Plugin Flow Graph (Pipeline Flow Graph)</span>
           <div class="pane-actions">
-            <button class="btn-micro" id="btn-zoom-in" title="Yakınlaştır (+)"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
-            <button class="btn-micro" id="btn-zoom-out" title="Uzaklaştır (-)"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
-            <button class="btn-micro" id="btn-zoom-reset" title="Sıfırla (100%)">100%</button>
-            <button class="btn-micro" id="btn-auto-layout" title="Otomatik Yerleştir (Auto Layout)"><i class="fa-solid fa-diagram-nested"></i> Otomatik Hizala</button>
-            <button class="btn-micro btn-glow" id="btn-add-flow-plugin" title="Tuvale Yeni Eklenti Ekle"><i class="fa-solid fa-plus"></i> Eklenti Ekle</button>
+            <button class="btn-micro" id="btn-zoom-in" title="Zoom In (+)"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+            <button class="btn-micro" id="btn-zoom-out" title="Zoom Out (-)"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
+            <button class="btn-micro" id="btn-zoom-reset" title="Reset Zoom (100%)">100%</button>
+            <button class="btn-micro" id="btn-auto-layout" title="Auto Layout Canvas"><i class="fa-solid fa-diagram-nested"></i> Auto Align</button>
+            <button class="btn-micro btn-glow" id="btn-add-flow-plugin" title="Add New Plugin to Canvas"><i class="fa-solid fa-plus"></i> Add Plugin</button>
           </div>
         </div>
         <div class="flow-canvas-wrapper" id="flow-canvas-wrapper">
@@ -179,13 +179,13 @@
           </div>
           <!-- FLOATING CANVAS LEGEND & METRICS BAR -->
           <div class="canvas-legend-bar" id="canvas-legend-bar">
-            <span class="legend-item"><i class="fa-solid fa-plug-circle-bolt text-cyan"></i> <strong id="metric-active-streams">0</strong> Aktif Akış</span>
+            <span class="legend-item"><i class="fa-solid fa-plug-circle-bolt text-cyan"></i> <strong id="metric-active-streams">0</strong> Active Streams</span>
             <span class="legend-divider">|</span>
-            <span class="legend-item"><i class="fa-solid fa-circle-arrow-right text-green"></i> <strong id="metric-producers">0</strong> Üretici Eklenti</span>
+            <span class="legend-item"><i class="fa-solid fa-circle-arrow-right text-green"></i> <strong id="metric-producers">0</strong> Producer Plugins</span>
             <span class="legend-divider">|</span>
-            <span class="legend-item"><i class="fa-solid fa-circle-arrow-left text-blue"></i> <strong id="metric-consumers">0</strong> Tüketici Eklenti</span>
+            <span class="legend-item"><i class="fa-solid fa-circle-arrow-left text-blue"></i> <strong id="metric-consumers">0</strong> Consumer Plugins</span>
             <span class="legend-divider">|</span>
-            <span class="legend-item text-dim" id="zoom-level-indicator"><i class="fa-solid fa-expand"></i> Yakınlaştırma: %100</span>
+            <span class="legend-item text-dim" id="zoom-level-indicator"><i class="fa-solid fa-expand"></i> Zoom: 100%</span>
           </div>
         </div>
       </div>
@@ -193,7 +193,7 @@
       <!-- INSPECTOR / SIDE PANEL FOR SELECTED NODE -->
       <aside class="node-inspector" id="node-inspector" style="display:none;">
         <div class="inspector-header">
-          <h3><i class="fa-solid fa-sliders"></i> Düğüm İnceleyici</h3>
+          <h3><i class="fa-solid fa-sliders"></i> Node Inspector</h3>
           <button class="close-inspector-btn" id="close-inspector-btn"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <div class="inspector-body" id="inspector-body">
@@ -209,32 +209,32 @@
   <div class="modal-overlay" id="add-element-modal" style="display:none;">
     <div class="modal-card">
       <div class="modal-header">
-        <h3><i class="fa-solid fa-plus-node"></i> Yeni Eleman Ekle</h3>
+        <h3><i class="fa-solid fa-plus-node"></i> Add New Element</h3>
         <button class="btn-icon" id="close-modal-btn"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <div class="modal-body">
         <div class="form-group" id="group-key-name">
-          <label>Anahtar Adı (Key):</label>
-          <input type="text" id="modal-input-key" placeholder="Örn: plugin_name veya timeout">
+          <label>Key Name:</label>
+          <input type="text" id="modal-input-key" placeholder="e.g.: plugin_name or timeout">
         </div>
         <div class="form-group">
-          <label>Veri Tipi (Type):</label>
+          <label>Data Type:</label>
           <select id="modal-select-type">
-            <option value="string">String (Metin)</option>
-            <option value="number">Number (Sayı)</option>
+            <option value="string">String</option>
+            <option value="number">Number</option>
             <option value="boolean">Boolean (True/False)</option>
-            <option value="object">Object (Nesne {})</option>
-            <option value="array">Array (Dizi [])</option>
+            <option value="object">Object ({})</option>
+            <option value="array">Array ([])</option>
           </select>
         </div>
         <div class="form-group" id="group-initial-value">
-          <label>Başlangıç Değeri (Value):</label>
-          <input type="text" id="modal-input-val" placeholder="Değer giriniz...">
+          <label>Initial Value:</label>
+          <input type="text" id="modal-input-val" placeholder="Enter value...">
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-secondary" id="modal-cancel-btn">İptal</button>
-        <button class="btn btn-primary" id="modal-confirm-btn">Ekle</button>
+        <button class="btn btn-secondary" id="modal-cancel-btn">Cancel</button>
+        <button class="btn btn-primary" id="modal-confirm-btn">Add</button>
       </div>
     </div>
   </div>

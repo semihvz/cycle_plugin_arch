@@ -41,12 +41,12 @@ unsafe fn load_plugin_dynamic(orchestrator: &Orchestrator, system_id: &str, plug
                     );
                     orchestrator.register_system(sys);
                     Box::leak(Box::new(lib));
-                    Ok(format!("{} ({}) eklentisi başarıyla yüklendi ve sisteme bağlandı.", system_id, plugin_name))
+                    Ok(format!("Plugin {} ({}) successfully loaded and registered.", system_id, plugin_name))
                 }
-                Err(_) => Err(format!("{} eklentisinde init_plugin sembolü bulunamadı.", plugin_name)),
+                Err(_) => Err(format!("Symbol init_plugin not found in plugin {}.", plugin_name)),
             }
         }
-        Err(e) => Err(format!("{} eklentisi yüklenemedi: {}", plugin_name, e)),
+        Err(e) => Err(format!("Failed to load plugin {}: {}", plugin_name, e)),
     }
 }
 
@@ -87,9 +87,9 @@ pub async fn run_interactive_shell_loop(
                     "list" => {
                         let systems = orchestrator.list_systems();
                         if systems.is_empty() {
-                            println!("{}{}Yüklü eklenti bulunamadı.{}\n", YELLOW, BOLD, RESET);
+                            println!("{}{}No loaded plugins found.{}\n", YELLOW, BOLD, RESET);
                         } else {
-                            println!("{}{}=== YÜKLÜ EKLENTİLER VE CANLI METRİKLER ==={}", BRIGHT_CYAN, BOLD, RESET);
+                            println!("{}{}=== LOADED PLUGINS AND LIVE METRICS ==={}", BRIGHT_CYAN, BOLD, RESET);
                             for (i, (id, name, is_running)) in systems.iter().enumerate() {
                                 let sys_obj = orchestrator.get_system(id);
                                 let valid = sys_obj.as_ref().map(|s| s.context.is_data_valid.load(core::sync::atomic::Ordering::Relaxed)).unwrap_or(false);
@@ -98,12 +98,12 @@ pub async fn run_interactive_shell_loop(
                                 let cpu_usage = if *is_running { (0.2 + (i as f32 * 0.15) * 10.0).round() / 10.0 } else { 0.0 };
 
                                 let status_badge = if *is_running {
-                                    format!("{}{}🚀 ÇALIŞIYOR  {}", GREEN, BOLD, RESET)
+                                    format!("{}{}🚀 RUNNING    {}", GREEN, BOLD, RESET)
                                 } else {
-                                    format!("{}{}⏹️ DURDURULDU {}", RED, BOLD, RESET)
+                                    format!("{}{}⏹️ STOPPED    {}", RED, BOLD, RESET)
                                 };
 
-                                println!("  • ID: {}{:<22}{} | Durum: {} | RAM: {}{:>5} KB{} | CPU: {}{:>4.1}%{} | C-ABI Geçerli: {}{}{}",
+                                println!("  • ID: {}{:<22}{} | Status: {} | RAM: {}{:>5} KB{} | CPU: {}{:>4.1}%{} | C-ABI Valid: {}{}{}",
                                     BRIGHT_YELLOW, id, RESET,
                                     status_badge,
                                     WHITE, ram_kb, RESET,
@@ -117,9 +117,9 @@ pub async fn run_interactive_shell_loop(
                     "available" => {
                         let plugins = scan_available_plugins();
                         if plugins.is_empty() {
-                            println!("{}{}Diskte yüklenebilir eklenti (.so) bulunamadı (target/debug).{}\n", YELLOW, BOLD, RESET);
+                            println!("{}{}No loadable plugins (.so) found on disk (target/debug).{}\n", YELLOW, BOLD, RESET);
                         } else {
-                            println!("{}{}=== DISKTEKİ DERLENMİŞ YÜKLEMEYE HAZIR EKLENTİLER ==={}", BRIGHT_CYAN, BOLD, RESET);
+                            println!("{}{}=== COMPILED PLUGINS ON DISK READY TO LOAD ==={}", BRIGHT_CYAN, BOLD, RESET);
                             for p in plugins {
                                 println!("  • {}{}{}", BRIGHT_GREEN, p, RESET);
                             }
@@ -128,7 +128,7 @@ pub async fn run_interactive_shell_loop(
                     }
                     "start" => {
                         if parts.len() < 2 {
-                            println!("{}{}HATA: Kullanım: start <id|all>{}\n", RED, BOLD, RESET);
+                            println!("{}{}ERROR: Usage: start <id|all>{}\n", RED, BOLD, RESET);
                         } else {
                             let target = parts[1];
                             let systems = orchestrator.list_systems();
@@ -153,18 +153,18 @@ pub async fn run_interactive_shell_loop(
                             if target.to_lowercase() == "all" {
                                 for (id, _, _) in systems {
                                     let w = start_one(&id);
-                                    println!("{}{}✓ {} eklentisi başlatıldı (yanıt: {} byte){}", GREEN, BOLD, id, w, RESET);
+                                    println!("{}{}✓ Plugin {} started (response: {} bytes){}", GREEN, BOLD, id, w, RESET);
                                 }
                                 println!();
                             } else {
                                 let w = start_one(target);
-                                println!("{}{}✓ {} eklentisi başlatıldı (yanıt: {} byte){}\n", GREEN, BOLD, target, w, RESET);
+                                println!("{}{}✓ Plugin {} started (response: {} bytes){}\n", GREEN, BOLD, target, w, RESET);
                             }
                         }
                     }
                     "stop" => {
                         if parts.len() < 2 {
-                            println!("{}{}HATA: Kullanım: stop <id|all>{}\n", RED, BOLD, RESET);
+                            println!("{}{}ERROR: Usage: stop <id|all>{}\n", RED, BOLD, RESET);
                         } else {
                             let target = parts[1];
                             let systems = orchestrator.list_systems();
@@ -173,35 +173,35 @@ pub async fn run_interactive_shell_loop(
                             if target.to_lowercase() == "all" {
                                 for (id, _, _) in systems {
                                     orchestrator.call_endpoint(&id, StandardEndpoint::Stop, &[], &mut hft_buf);
-                                    println!("{}{}⏹ {} eklentisi durduruldu.{}", YELLOW, BOLD, id, RESET);
+                                    println!("{}{}⏹ Plugin {} stopped.{}", YELLOW, BOLD, id, RESET);
                                 }
                                 println!();
                             } else {
                                 orchestrator.call_endpoint(target, StandardEndpoint::Stop, &[], &mut hft_buf);
-                                println!("{}{}⏹ {} eklentisi durduruldu.{}\n", YELLOW, BOLD, target, RESET);
+                                println!("{}{}⏹ Plugin {} stopped.{}\n", YELLOW, BOLD, target, RESET);
                             }
                         }
                     }
                     "del" | "delete" => {
                         if parts.len() < 2 {
-                            println!("{}{}HATA: Kullanım: del <id>{}\n", RED, BOLD, RESET);
+                            println!("{}{}ERROR: Usage: del <id>{}\n", RED, BOLD, RESET);
                         } else {
                             let id = parts[1];
                             if orchestrator.unregister_system(id).is_ok() {
-                                println!("{}{}✓ {} eklentisi hafızadan kaldırıldı.{}\n", GREEN, BOLD, id, RESET);
+                                println!("{}{}✓ Plugin {} removed from memory.{}\n", GREEN, BOLD, id, RESET);
                             } else {
-                                println!("{}{}HATA: {} eklentisi bulunamadı.{}\n", RED, BOLD, id, RESET);
+                                println!("{}{}ERROR: Plugin {} not found.{}\n", RED, BOLD, id, RESET);
                             }
                         }
                     }
                     "load" => {
                         if parts.len() < 2 {
-                            println!("{}{}HATA: Kullanım: load <plugin_name>{}\n", RED, BOLD, RESET);
+                            println!("{}{}ERROR: Usage: load <plugin_name>{}\n", RED, BOLD, RESET);
                         } else {
                             let name = parts[1];
                             match unsafe { load_plugin_dynamic(&orchestrator, name, name) } {
                                 Ok(msg) => println!("{}{}SUCCESS: {}{}\n", GREEN, BOLD, msg, RESET),
-                                Err(err) => println!("{}{}HATA: {}{}\n", RED, BOLD, err, RESET),
+                                Err(err) => println!("{}{}ERROR: {}{}\n", RED, BOLD, err, RESET),
                             }
                         }
                     }
@@ -213,16 +213,16 @@ pub async fn run_interactive_shell_loop(
                         let mem_total = sys.total_memory() / (1024 * 1024);
                         let systems = orchestrator.list_systems();
 
-                        println!("{}{}=== GENEL SİSTEM İSTATİSTİKLERİ VE KULLANIM ==={}", BRIGHT_CYAN, BOLD, RESET);
-                        println!("  • Toplam Yüklü Eklenti : {}{}{}", WHITE, systems.len(), RESET);
-                        println!("  • Aktif Çalışan Eklenti: {}{}{}", GREEN, systems.iter().filter(|(_, _, r)| *r).count(), RESET);
-                        println!("  • CPU Genel Yükü       : {}{:.1}%{}", YELLOW, cpu, RESET);
-                        println!("  • RAM Bellek Harcaması  : {}{} MB / {} MB{}", WHITE, mem_used, mem_total, RESET);
+                        println!("{}{}=== GENERAL SYSTEM STATISTICS AND USAGE ==={}", BRIGHT_CYAN, BOLD, RESET);
+                        println!("  • Total Loaded Plugins : {}{}{}", WHITE, systems.len(), RESET);
+                        println!("  • Active Running Plugins: {}{}{}", GREEN, systems.iter().filter(|(_, _, r)| *r).count(), RESET);
+                        println!("  • CPU Overall Load     : {}{:.1}%{}", YELLOW, cpu, RESET);
+                        println!("  • RAM Memory Usage     : {}{} MB / {} MB{}", WHITE, mem_used, mem_total, RESET);
                         println!("  • HFT Core Pinning      : {}Core 0 (UI/Shell), Core 1 (FlowEngine Router){}\n", BRIGHT_YELLOW, RESET);
                     }
                     "dump" | "memdump" | "memory" => {
                         if parts.len() < 2 {
-                            println!("{}{}HATA: Kullanım: dump <plugin_id> [max_bytes]{}\n", RED, BOLD, RESET);
+                            println!("{}{}ERROR: Usage: dump <plugin_id> [max_bytes]{}\n", RED, BOLD, RESET);
                         } else {
                             let id = parts[1];
                             let sys_opt = orchestrator.get_system(id);
@@ -237,13 +237,13 @@ pub async fn run_interactive_shell_loop(
                                 let non_zero = full_buf.iter().filter(|&&b| b != 0).count();
                                 let validity_pct = if written > 0 { (non_zero as f64 / written as f64) * 100.0 } else { 0.0 };
 
-                                println!("{}{}=== 🧠 EKLENTİ TAM BELLEK DÖKÜMÜ (FULL MEMORY DUMP): {} ==={}", BRIGHT_CYAN, BOLD, id, RESET);
-                                println!("  • C-ABI Bellek Pointer  : {}{}{}", BRIGHT_YELLOW, ptr_addr, RESET);
-                                println!("  • Okunan Bellek Boyutu  : {}{} Bytes ({:.2} KB){}", WHITE, written, written as f64 / 1024.0, RESET);
-                                println!("  • Doluluk & Veri Oranı  : {}{:.1}% Non-Zero Bytes{}\n", GREEN, validity_pct, RESET);
+                                println!("{}{}=== 🧠 FULL PLUGIN MEMORY DUMP: {} ==={}", BRIGHT_CYAN, BOLD, id, RESET);
+                                println!("  • C-ABI Memory Pointer  : {}{}{}", BRIGHT_YELLOW, ptr_addr, RESET);
+                                println!("  • Read Memory Size     : {}{} Bytes ({:.2} KB){}", WHITE, written, written as f64 / 1024.0, RESET);
+                                println!("  • Data Occupancy Rate  : {}{:.1}% Non-Zero Bytes{}\n", GREEN, validity_pct, RESET);
 
                                 if written == 0 {
-                                    println!("{}{}Bellek tamponu boş veya 0 byte veri döndü.{}\n", YELLOW, BOLD, RESET);
+                                    println!("{}{}Memory buffer is empty or returned 0 bytes of data.{}\n", YELLOW, BOLD, RESET);
                                 } else {
                                     println!("{}OFFSET     00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F  | ASCII          |{}", GRAY, RESET);
                                     println!("-------------------------------------------------------------------------");
@@ -256,23 +256,23 @@ pub async fn run_interactive_shell_loop(
                                     println!("-------------------------------------------------------------------------\n");
 
                                     if let Ok(json_val) = serde_json::from_slice::<serde_json::Value>(&full_buf) {
-                                        println!("{}{}=== BELLEK METİN / JSON TEMSİLİ ==={}", BRIGHT_CYAN, BOLD, RESET);
+                                        println!("{}{}=== MEMORY TEXT / JSON REPRESENTATION ==={}", BRIGHT_CYAN, BOLD, RESET);
                                         println!("{}\n", serde_json::to_string_pretty(&json_val).unwrap_or_default());
                                     } else if let Ok(utf8_str) = std::str::from_utf8(&full_buf) {
                                         if !utf8_str.trim().is_empty() {
-                                            println!("{}{}=== BELLEK METİN TEMSİLİ ==={}", BRIGHT_CYAN, BOLD, RESET);
+                                            println!("{}{}=== MEMORY TEXT REPRESENTATION ==={}", BRIGHT_CYAN, BOLD, RESET);
                                             println!("{}\n", utf8_str);
                                         }
                                     }
                                 }
                             } else {
-                                println!("{}{}HATA: {} adında yüklü bir eklenti bulunamadı.{}\n", RED, BOLD, id, RESET);
+                                println!("{}{}ERROR: Loaded plugin named {} not found.{}\n", RED, BOLD, id, RESET);
                             }
                         }
                     }
                     "exportjson" | "dumpjson" | "savejson" | "export_json" => {
                         if parts.len() < 2 {
-                            println!("{}{}HATA: Kullanım: exportjson <plugin_id> [output_file.json]{}\n", RED, BOLD, RESET);
+                            println!("{}{}ERROR: Usage: exportjson <plugin_id> [output_file.json]{}\n", RED, BOLD, RESET);
                         } else {
                             let id = parts[1];
                             let default_filename = format!("{}_output.json", id);
@@ -284,21 +284,21 @@ pub async fn run_interactive_shell_loop(
                                         match serde_json::to_string_pretty(&json_val) {
                                             Ok(pretty_json) => {
                                                 if let Err(err) = std::fs::write(out_path, pretty_json.as_bytes()) {
-                                                    println!("{}{}HATA: JSON dosyası yazılamadı ({}): {}{}\n", RED, BOLD, out_path, err, RESET);
+                                                    println!("{}{}ERROR: Failed to write JSON file ({}): {}{}\n", RED, BOLD, out_path, err, RESET);
                                                 } else {
-                                                    println!("{}{}✓ {} eklentisinin bellek JSON verisi başarıyla kaydedildi: {}{}", GREEN, BOLD, id, out_path, RESET);
-                                                    println!("  • Okunan / Yazılan Boyut: {}{} Bytes ({:.2} KB){}", WHITE, pretty_json.len(), pretty_json.len() as f64 / 1024.0, RESET);
+                                                    println!("{}{}✓ Memory JSON data for plugin {} successfully saved: {}{}", GREEN, BOLD, id, out_path, RESET);
+                                                    println!("  • Read / Written Size: {}{} Bytes ({:.2} KB){}", WHITE, pretty_json.len(), pretty_json.len() as f64 / 1024.0, RESET);
                                                     if let Some(obj) = json_val.as_object() {
                                                         let keys: Vec<&String> = obj.keys().take(5).collect();
-                                                        println!("  • Kök Anahtarlar       : {}{:?}{}\n", BRIGHT_YELLOW, keys, RESET);
+                                                        println!("  • Root Keys            : {}{:?}{}\n", BRIGHT_YELLOW, keys, RESET);
                                                     } else if let Some(arr) = json_val.as_array() {
-                                                        println!("  • Dizi Eleman Sayısı    : {}{}{}\n", BRIGHT_YELLOW, arr.len(), RESET);
+                                                        println!("  • Array Element Count  : {}{}{}\n", BRIGHT_YELLOW, arr.len(), RESET);
                                                     } else {
                                                         println!();
                                                     }
                                                 }
                                             }
-                                            Err(err) => println!("{}{}HATA: JSON serileştirme hatası: {}{}\n", RED, BOLD, err, RESET),
+                                            Err(err) => println!("{}{}ERROR: JSON serialization error: {}{}\n", RED, BOLD, err, RESET),
                                         }
                                     } else if let Ok(utf8_str) = std::str::from_utf8(&data) {
                                         if !utf8_str.trim().is_empty() {
@@ -308,31 +308,31 @@ pub async fn run_interactive_shell_loop(
                                             });
                                             let json_str = serde_json::to_string_pretty(&fallback_json).unwrap_or_default();
                                             if let Err(err) = std::fs::write(out_path, json_str.as_bytes()) {
-                                                println!("{}{}HATA: Dosya yazılamadı ({}): {}{}\n", RED, BOLD, out_path, err, RESET);
+                                                println!("{}{}ERROR: Failed to write file ({}): {}{}\n", RED, BOLD, out_path, err, RESET);
                                             } else {
-                                                println!("{}{}✓ {} eklentisinin metin verisi JSON olarak kaydedildi: {}{}\n", GREEN, BOLD, id, out_path, RESET);
+                                                println!("{}{}✓ Text data for plugin {} saved as JSON: {}{}\n", GREEN, BOLD, id, out_path, RESET);
                                             }
                                         } else {
-                                            println!("{}{}HATA: {} eklentisinin bellek tamponu boş metin döndürdü.{}\n", RED, BOLD, id, RESET);
+                                            println!("{}{}ERROR: Memory buffer for plugin {} returned empty text.{}\n", RED, BOLD, id, RESET);
                                         }
                                     } else {
-                                        println!("{}{}HATA: {} eklentisinin bellek tamponundaki veri geçerli bir JSON veya UTF-8 metni değil.{}\n", RED, BOLD, id, RESET);
+                                        println!("{}{}ERROR: Data in memory buffer for plugin {} is not valid JSON or UTF-8 text.{}\n", RED, BOLD, id, RESET);
                                     }
                                 }
-                                Ok(_) => println!("{}{}UYARI: {} eklentisinin bellek tamponu 0 byte (boş) döndü.{}\n", YELLOW, BOLD, id, RESET),
-                                Err(e) => println!("{}{}HATA: {} eklentisinden bellek verisi okunamadı: {}{}\n", RED, BOLD, id, e, RESET),
+                                Ok(_) => println!("{}{}WARNING: Memory buffer for plugin {} returned 0 bytes (empty).{}\n", YELLOW, BOLD, id, RESET),
+                                Err(e) => println!("{}{}ERROR: Failed to read memory data from plugin {}: {}{}\n", RED, BOLD, id, e, RESET),
                             }
                         }
                     }
                     "peek" => {
                         if parts.len() < 2 {
-                            println!("{}{}HATA: Kullanım: peek <plugin_id> [len]{}\n", RED, BOLD, RESET);
+                            println!("{}{}ERROR: Usage: peek <plugin_id> [len]{}\n", RED, BOLD, RESET);
                         } else {
                             let id = parts[1];
                             match orchestrator.monitor_data(id) {
                                 Ok(data) => {
                                     let len = parts.get(2).and_then(|s| s.parse::<usize>().ok()).unwrap_or(64).min(data.len());
-                                    println!("{}{}=== {} RAM BELLEK TAMPONU (HEX & ASCII - {} byte) ==={}", BRIGHT_CYAN, BOLD, id, len, RESET);
+                                    println!("{}{}=== {} RAM MEMORY BUFFER (HEX & ASCII - {} bytes) ==={}", BRIGHT_CYAN, BOLD, id, len, RESET);
                                     let slice = &data[..len];
                                     for (offset, chunk) in slice.chunks(16).enumerate() {
                                         let hex: Vec<String> = chunk.iter().map(|b| format!("{:02X}", b)).collect();
@@ -341,13 +341,13 @@ pub async fn run_interactive_shell_loop(
                                     }
                                     println!();
                                 }
-                                Err(e) => println!("{}{}Bellek okuma hatası ({}): {}{}\n", RED, BOLD, id, e, RESET),
+                                Err(e) => println!("{}{}Memory read error ({}): {}{}\n", RED, BOLD, id, e, RESET),
                             }
                         }
                     }
                     "fetch" => {
                         if parts.len() < 2 {
-                            println!("{}{}HATA: Kullanım: fetch <ticker|depth|oi|ohlcv> [symbol] ...{}\n", RED, BOLD, RESET);
+                            println!("{}{}ERROR: Usage: fetch <ticker|depth|oi|ohlcv> [symbol] ...{}\n", RED, BOLD, RESET);
                         } else {
                             let sub = parts[1].to_lowercase();
                             let target_plugin = match sub.as_str() {
@@ -360,23 +360,23 @@ pub async fn run_interactive_shell_loop(
                             match orchestrator.monitor_data(target_plugin) {
                                 Ok(data) if !data.is_empty() => {
                                     if let Ok(json) = serde_json::from_slice::<serde_json::Value>(&data) {
-                                        println!("{}{}=== {} CANLI DATA FEED ==={}", BRIGHT_CYAN, BOLD, target_plugin, RESET);
+                                        println!("{}{}=== {} LIVE DATA FEED ==={}", BRIGHT_CYAN, BOLD, target_plugin, RESET);
                                         println!("{}", serde_json::to_string_pretty(&json).unwrap_or_default());
                                         println!();
                                     } else {
                                         println!("{}\n", String::from_utf8_lossy(&data));
                                     }
                                 }
-                                _ => println!("{}{}İlgili eklentiden canlı veri okunamadı veya eklenti durdurulmuş.{}\n", YELLOW, BOLD, RESET),
+                                _ => println!("{}{}Could not read live data from plugin or plugin is stopped.{}\n", YELLOW, BOLD, RESET),
                             }
                         }
                     }
                     "web" => {
                         if parts.len() < 2 {
                             let is_running = web_server_started.load(std::sync::atomic::Ordering::Relaxed);
-                            println!("  Port 8080 Web Server Durumu: {}{}{}\n", 
-                                if is_running { format!("{}{}🚀 ÇALIŞIYOR (http://localhost:8080){}", GREEN, BOLD, RESET) } 
-                                else { format!("{}{}⏹️ KAPALI{}", RED, BOLD, RESET) },
+                            println!("  Port 8080 Web Server Status: {}{}{}\n", 
+                                if is_running { format!("{}{}🚀 RUNNING (http://localhost:8080){}", GREEN, BOLD, RESET) } 
+                                else { format!("{}{}⏹️ OFF{}", RED, BOLD, RESET) },
                                 "", ""
                             );
                         } else {
@@ -392,22 +392,22 @@ pub async fn run_interactive_shell_loop(
                                     tokio::spawn(async move {
                                         crate::web_server::start_web_server(orch_clone, log_tx_clone, 8080, rx).await;
                                     });
-                                    println!("{}{}🚀 Web Server Port 8080 Başlatıldı: http://localhost:8080{}\n", GREEN, BOLD, RESET);
+                                    println!("{}{}🚀 Web Server Port 8080 Started: http://localhost:8080{}\n", GREEN, BOLD, RESET);
                                 } else {
-                                    println!("{}{}Web Server zaten çalışıyor: http://localhost:8080{}\n", YELLOW, BOLD, RESET);
+                                    println!("{}{}Web Server is already running: http://localhost:8080{}\n", YELLOW, BOLD, RESET);
                                 }
                             } else if action == "stop" {
                                 if let Some(tx) = web_shutdown_tx.take() {
                                     let _ = tx.send(());
                                 }
                                 web_server_started.store(false, std::sync::atomic::Ordering::Relaxed);
-                                println!("{}{}⏹ Web Server (Port 8080) Kapatıldı.{}\n", YELLOW, BOLD, RESET);
+                                println!("{}{}⏹ Web Server (Port 8080) Stopped.{}\n", YELLOW, BOLD, RESET);
                             }
                         }
                     }
                     "buy" | "sell" => {
                         if parts.len() < 3 {
-                            println!("{}{}HATA: Kullanım: {} <symbol> <quantity> [price] [leverage]{}\n", RED, BOLD, verb, RESET);
+                            println!("{}{}ERROR: Usage: {} <symbol> <quantity> [price] [leverage]{}\n", RED, BOLD, verb, RESET);
                         } else {
                             let symbol = parts[1].to_uppercase();
                             let qty: f64 = parts[2].parse().unwrap_or(0.1);
@@ -436,7 +436,7 @@ pub async fn run_interactive_shell_loop(
                             let mut buf = [0u8; 4096];
                             let payload_bytes = serde_json::to_vec(&order_payload).unwrap_or_default();
                             orchestrator.call_endpoint("plugin_paper_exchange", StandardEndpoint::Inbox, &payload_bytes, &mut buf);
-                            println!("{}{}✓ {} EMİR İLETİLDİ: {} | Miktar: {} | Fiyat: {} | Kaldıraç: {}x{}\n", 
+                            println!("{}{}✓ {} ORDER TRANSMITTED: {} | Qty: {} | Price: {} | Leverage: {}x{}\n", 
                                 if verb == "buy" { GREEN } else { RED }, BOLD,
                                 verb.to_uppercase(), symbol, qty, if price == 0.0 { "MARKET".to_string() } else { format!("${:.2}", price) }, leverage, RESET
                             );
@@ -446,10 +446,10 @@ pub async fn run_interactive_shell_loop(
                         match orchestrator.monitor_data("plugin_paper_exchange") {
                             Ok(data) if !data.is_empty() => {
                                 let report = String::from_utf8_lossy(&data);
-                                println!("{}{}=== PAPER EXCHANGE CANLI DURUM & POZİSYONLAR ==={}", BRIGHT_CYAN, BOLD, RESET);
+                                println!("{}{}=== PAPER EXCHANGE LIVE STATUS & POSITIONS ==={}", BRIGHT_CYAN, BOLD, RESET);
                                 println!("{}\n", report);
                             }
-                            _ => println!("{}{}Paper exchange eklentisinden pozisyon verisi okunamadı.{}\n", YELLOW, BOLD, RESET),
+                            _ => println!("{}{}Could not read position data from paper exchange plugin.{}\n", YELLOW, BOLD, RESET),
                         }
                     }
                     "close" => {
@@ -462,11 +462,11 @@ pub async fn run_interactive_shell_loop(
                         let mut buf = [0u8; 1024];
                         let payload_bytes = serde_json::to_vec(&payload).unwrap_or_default();
                         orchestrator.call_endpoint("plugin_paper_exchange", StandardEndpoint::Inbox, &payload_bytes, &mut buf);
-                        println!("{}{}✓ POZİSYON KAPATMA SİNYALİ GÖNDERİLDİ: {}{}\n", YELLOW, BOLD, symbol, RESET);
+                        println!("{}{}✓ POSITION CLOSE SIGNAL TRANSMITTED: {}{}\n", YELLOW, BOLD, symbol, RESET);
                     }
                     "cancel" => {
                         if parts.len() < 2 {
-                            println!("{}{}HATA: Kullanım: cancel <order_id>{}\n", RED, BOLD, RESET);
+                            println!("{}{}ERROR: Usage: cancel <order_id>{}\n", RED, BOLD, RESET);
                         } else {
                             let order_id = parts[1];
                             let payload = serde_json::json!({
@@ -483,13 +483,13 @@ pub async fn run_interactive_shell_loop(
                                 if let Ok(json_res) = serde_json::from_slice::<serde_json::Value>(&out_buf[..read_bytes]) {
                                     let success = json_res.get("success").and_then(|v| v.as_bool()).unwrap_or(false);
                                     if success {
-                                        println!("{}{}✓ EMİR BAŞARIYLA İPTAL EDİLDİ: {}{}\n", GREEN, BOLD, order_id, RESET);
+                                        println!("{}{}✓ ORDER SUCCESSFULLY CANCELLED: {}{}\n", GREEN, BOLD, order_id, RESET);
                                     } else {
-                                        println!("{}{}⚠️ EMİR BULUNAMADI VEYA ZATEN İPTAL EDİLMİŞ: {}{}\n", YELLOW, BOLD, order_id, RESET);
+                                        println!("{}{}⚠️ ORDER NOT FOUND OR ALREADY CANCELLED: {}{}\n", YELLOW, BOLD, order_id, RESET);
                                     }
                                 }
                             } else {
-                                println!("{}{}✓ EMİR İPTAL İSTEĞİ İLETİLDİ: {}{}\n", YELLOW, BOLD, order_id, RESET);
+                                println!("{}{}✓ ORDER CANCEL REQUEST TRANSMITTED: {}{}\n", YELLOW, BOLD, order_id, RESET);
                             }
                         }
                     }
@@ -508,15 +508,15 @@ pub async fn run_interactive_shell_loop(
                         if read_bytes > 0 {
                             if let Ok(json_res) = serde_json::from_slice::<serde_json::Value>(&out_buf[..read_bytes]) {
                                 let count = json_res.get("count").and_then(|v| v.as_u64()).unwrap_or(0);
-                                println!("{}{}✓ TOPLAM {} ADET BEKLEYEN EMİR İPTAL EDİLDİ ({}){}\n", GREEN, BOLD, count, symbol_opt.as_deref().unwrap_or("Tümü"), RESET);
+                                println!("{}{}✓ TOTAL {} PENDING ORDERS CANCELLED ({}){}\n", GREEN, BOLD, count, symbol_opt.as_deref().unwrap_or("All"), RESET);
                             }
                         } else {
-                            println!("{}{}✓ TÜM EMİRLERİ İPTAL İSTEĞİ İLETİLDİ ({}){}\n", YELLOW, BOLD, symbol_opt.as_deref().unwrap_or("Tümü"), RESET);
+                            println!("{}{}✓ CANCEL ALL ORDERS REQUEST TRANSMITTED ({}){}\n", YELLOW, BOLD, symbol_opt.as_deref().unwrap_or("All"), RESET);
                         }
                     }
                     "deposit" => {
                         if parts.len() < 2 {
-                            println!("{}{}HATA: Kullanım: deposit <amount> [user_id]{}\n", RED, BOLD, RESET);
+                            println!("{}{}ERROR: Usage: deposit <amount> [user_id]{}\n", RED, BOLD, RESET);
                         } else {
                             let amount: f64 = parts[1].parse().unwrap_or(0.0);
                             let user_id = parts.get(2).copied().unwrap_or("admin");
@@ -534,19 +534,19 @@ pub async fn run_interactive_shell_loop(
                             if read_bytes > 0 {
                                 if let Ok(json_res) = serde_json::from_slice::<serde_json::Value>(&out_buf[..read_bytes]) {
                                     if let Some(new_bal) = json_res.get("wallet_balance").and_then(|v| v.as_f64()) {
-                                        println!("{}{}✓ BAKIYE EKLENDİ: +{:.2} USDT | Yeni Cüzdan Bakiyesi: {:.2} USDT (Kullanıcı: {}){}\n", GREEN, BOLD, amount, new_bal, user_id, RESET);
+                                        println!("{}{}✓ BALANCE ADDED: +{:.2} USDT | New Wallet Balance: {:.2} USDT (User: {}){}\n", GREEN, BOLD, amount, new_bal, user_id, RESET);
                                     } else {
-                                        println!("{}{}✓ BAKIYE EKLEME İSTEĞİ İLETİLDİ: +{} USDT{}\n", GREEN, BOLD, amount, RESET);
+                                        println!("{}{}✓ DEPOSIT REQUEST TRANSMITTED: +{} USDT{}\n", GREEN, BOLD, amount, RESET);
                                     }
                                 }
                             } else {
-                                println!("{}{}✓ BAKIYE EKLEME İSTEĞİ İLETİLDİ: +{} USDT{}\n", GREEN, BOLD, amount, RESET);
+                                println!("{}{}✓ DEPOSIT REQUEST TRANSMITTED: +{} USDT{}\n", GREEN, BOLD, amount, RESET);
                             }
                         }
                     }
                     "setbalance" => {
                         if parts.len() < 2 {
-                            println!("{}{}HATA: Kullanım: setbalance <amount> [user_id]{}\n", RED, BOLD, RESET);
+                            println!("{}{}ERROR: Usage: setbalance <amount> [user_id]{}\n", RED, BOLD, RESET);
                         } else {
                             let amount: f64 = parts[1].parse().unwrap_or(10000.0);
                             let user_id = parts.get(2).copied().unwrap_or("admin");
@@ -564,13 +564,13 @@ pub async fn run_interactive_shell_loop(
                             if read_bytes > 0 {
                                 if let Ok(json_res) = serde_json::from_slice::<serde_json::Value>(&out_buf[..read_bytes]) {
                                     if let Some(new_bal) = json_res.get("wallet_balance").and_then(|v| v.as_f64()) {
-                                        println!("{}{}✓ BAKIYE AYARLANDI: {:.2} USDT (Kullanıcı: {}){}\n", GREEN, BOLD, new_bal, user_id, RESET);
+                                        println!("{}{}✓ BALANCE SET: {:.2} USDT (User: {}){}\n", GREEN, BOLD, new_bal, user_id, RESET);
                                     } else {
-                                        println!("{}{}✓ BAKIYE AYARLAMA İSTEĞİ İLETİLDİ: {} USDT{}\n", GREEN, BOLD, amount, RESET);
+                                        println!("{}{}✓ SET BALANCE REQUEST TRANSMITTED: {} USDT{}\n", GREEN, BOLD, amount, RESET);
                                     }
                                 }
                             } else {
-                                println!("{}{}✓ BAKIYE AYARLAMA İSTEĞİ İLETİLDİ: {} USDT{}\n", GREEN, BOLD, amount, RESET);
+                                println!("{}{}✓ SET BALANCE REQUEST TRANSMITTED: {} USDT{}\n", GREEN, BOLD, amount, RESET);
                             }
                         }
                     }
@@ -589,10 +589,10 @@ pub async fn run_interactive_shell_loop(
                         if read_bytes > 0 {
                             if let Ok(json_res) = serde_json::from_slice::<serde_json::Value>(&out_buf[..read_bytes]) {
                                 let count = json_res.get("count").and_then(|v| v.as_u64()).unwrap_or(0);
-                                println!("{}{}✓ TOPLAM {} ADET AÇIK POZİSYON İÇİN KAPATMA EMRİ VERİLDİ ({}){}\n", GREEN, BOLD, count, user_id, RESET);
+                                println!("{}{}✓ CLOSE ORDER ISSUED FOR TOTAL {} OPEN POSITIONS ({}){}\n", GREEN, BOLD, count, user_id, RESET);
                             }
                         } else {
-                            println!("{}{}✓ TÜM POZİSYONLARI KAPATMA SİNYALİ GÖNDERİLDİ{}\n", RED, BOLD, RESET);
+                            println!("{}{}✓ CLOSE ALL POSITIONS SIGNAL TRANSMITTED{}\n", RED, BOLD, RESET);
                         }
                     }
                     "orders" => {
@@ -610,9 +610,9 @@ pub async fn run_interactive_shell_loop(
                         if read_bytes > 0 {
                             if let Ok(json_res) = serde_json::from_slice::<serde_json::Value>(&out_buf[..read_bytes]) {
                                 if let Some(orders) = json_res.get("orders").and_then(|v| v.as_array()) {
-                                    println!("{}{}=== BEKLEYEN AKTİF EMİRLER ({}) ==={}", BRIGHT_CYAN, BOLD, orders.len(), RESET);
+                                    println!("{}{}=== ACTIVE PENDING ORDERS ({}) ==={}", BRIGHT_CYAN, BOLD, orders.len(), RESET);
                                     for o in orders {
-                                        println!("  • ID: {} | Sembol: {} | Yön: {} {} | Tip: {} | Fiyat: {} | Stop: {} | Miktar: {}",
+                                        println!("  • ID: {} | Symbol: {} | Side: {} {} | Type: {} | Price: {} | Stop: {} | Qty: {}",
                                             o.get("id").and_then(|v| v.as_str()).unwrap_or(""),
                                             o.get("symbol").and_then(|v| v.as_str()).unwrap_or(""),
                                             o.get("side").and_then(|v| v.as_str()).unwrap_or(""),
@@ -627,7 +627,7 @@ pub async fn run_interactive_shell_loop(
                                 }
                             }
                         } else {
-                            println!("{}{}Bekleyen aktif emir verisi alınamadı.{}\n", YELLOW, BOLD, RESET);
+                            println!("{}{}Failed to retrieve active pending order data.{}\n", YELLOW, BOLD, RESET);
                         }
                     }
                     "history" => {
@@ -645,11 +645,11 @@ pub async fn run_interactive_shell_loop(
                         if read_bytes > 0 {
                             if let Ok(json_res) = serde_json::from_slice::<serde_json::Value>(&out_buf[..read_bytes]) {
                                 if let Some(records) = json_res.get("history").and_then(|v| v.as_array()) {
-                                    println!("{}{}=== KAPANMIŞ İŞLEM GEÇMİŞİ (SON {}) ==={}", BRIGHT_CYAN, BOLD, records.len(), RESET);
+                                    println!("{}{}=== CLOSED TRADE HISTORY (LAST {}) ==={}", BRIGHT_CYAN, BOLD, records.len(), RESET);
                                     for r in records {
                                         let pnl = r.get("realized_pnl").and_then(|v| v.as_f64()).unwrap_or(0.0);
                                         let pnl_color = if pnl >= 0.0 { GREEN } else { RED };
-                                        println!("  • ID: {} | Sembol: {} ({}) | Miktar: {} | Giriş: {} | Çıkış: {} | PnL: {}{:.2} USDT{}",
+                                        println!("  • ID: {} | Symbol: {} ({}) | Qty: {} | Entry: {} | Exit: {} | PnL: {}{:.2} USDT{}",
                                             r.get("id").and_then(|v| v.as_i64()).unwrap_or(0),
                                             r.get("symbol").and_then(|v| v.as_str()).unwrap_or(""),
                                             r.get("side").and_then(|v| v.as_str()).unwrap_or(""),
@@ -663,7 +663,7 @@ pub async fn run_interactive_shell_loop(
                                 }
                             }
                         } else {
-                            println!("{}{}İşlem geçmişi verisi alınamadı.{}\n", YELLOW, BOLD, RESET);
+                            println!("{}{}Failed to retrieve trade history data.{}\n", YELLOW, BOLD, RESET);
                         }
                     }
                     "sql" | "tables" | "schema" => {
@@ -682,15 +682,15 @@ pub async fn run_interactive_shell_loop(
                         let written = orchestrator.call_endpoint("plugin_sqlite_query", StandardEndpoint::Inbox, &payload_bytes, &mut out_buf);
                         if written > 0 {
                             let output_str = String::from_utf8_lossy(&out_buf[..written]);
-                            println!("{}{}=== SQLITE SORGU SONUCU ==={}", BRIGHT_CYAN, BOLD, RESET);
+                            println!("{}{}=== SQLITE QUERY RESULT ==={}", BRIGHT_CYAN, BOLD, RESET);
                             println!("{}\n", output_str);
                         } else {
-                            println!("{}{}Sorgu yürütülemedi veya veritabanı eklentisi yanıt vermedi.{}\n", RED, BOLD, RESET);
+                            println!("{}{}Query failed or database plugin did not respond.{}\n", RED, BOLD, RESET);
                         }
                     }
                     "bench" => {
                         let iterations: usize = parts.get(1).and_then(|s| s.parse().ok()).unwrap_or(1_000_000);
-                        println!("{}{}⚡ C-ABI ZERO-COPY BENCHMARK BAŞLATILIYOR ({} Çağrı)...{}", BRIGHT_YELLOW, BOLD, iterations, RESET);
+                        println!("{}{}⚡ STARTING C-ABI ZERO-COPY BENCHMARK ({} Calls)...{}", BRIGHT_YELLOW, BOLD, iterations, RESET);
 
                         let start = std::time::Instant::now();
                         let mut dummy_buf = [0u8; 8];
@@ -703,14 +703,14 @@ pub async fn run_interactive_shell_loop(
                         let avg_us = avg_ns / 1000.0;
                         let ops_sec = if elapsed.as_secs_f64() > 0.0 { (iterations as f64 / elapsed.as_secs_f64()) as u64 } else { 0 };
 
-                        println!("{}{}=== C-ABI ZERO-COPY BENCHMARK SONUÇLARI ==={}", BRIGHT_CYAN, BOLD, RESET);
-                        println!("  • Toplam İşlem Sayısı : {}{}{}", WHITE, iterations, RESET);
-                        println!("  • Toplam Geçen Süre   : {}{:.2} ms{}", WHITE, elapsed_ms, RESET);
-                        println!("  • Çağrı Başına Gecikme: {}{:.2} ns ({:.5} µs){}", GREEN, avg_ns, avg_us, RESET);
-                        println!("  • Saniye Başına Çağrı : {}{} ops/sec{}\n", BRIGHT_GREEN, ops_sec, RESET);
+                        println!("{}{}=== C-ABI ZERO-COPY BENCHMARK RESULTS ==={}", BRIGHT_CYAN, BOLD, RESET);
+                        println!("  • Total Iterations   : {}{}{}", WHITE, iterations, RESET);
+                        println!("  • Total Elapsed Time : {}{:.2} ms{}", WHITE, elapsed_ms, RESET);
+                        println!("  • Latency Per Call   : {}{:.2} ns ({:.5} µs){}", GREEN, avg_ns, avg_us, RESET);
+                        println!("  • Calls Per Second   : {}{} ops/sec{}\n", BRIGHT_GREEN, ops_sec, RESET);
                     }
                     "graph" | "routes" => {
-                        println!("{}{}=== HFT FLOW ENGINE DÜĞÜM VE YÖNLENDİRME TOPOLOJİSİ (DAG) ==={}", BRIGHT_CYAN, BOLD, RESET);
+                        println!("{}{}=== HFT FLOW ENGINE NODE AND ROUTING TOPOLOGY (DAG) ==={}", BRIGHT_CYAN, BOLD, RESET);
                         println!("  [binance_spot_01] ────── (depth / ticker) ──────► [validator_01]");
                         println!("  [aggtrade_stats_01] ──── (volume / delta) ─────► [validator_01]");
                         println!("  [scout_futures_01] ───── (liquidation) ─────────► [validator_01] ──► [paper_exchange]");
@@ -720,14 +720,14 @@ pub async fn run_interactive_shell_loop(
                     "cd" => {
                         let target = parts.get(1).copied().unwrap_or("..");
                         if let Err(e) = std::env::set_current_dir(target) {
-                            println!("{}{}HATA: Dizine geçilemedi ({}): {}{}\n", RED, BOLD, target, e, RESET);
+                            println!("{}{}ERROR: Failed to change directory ({}): {}{}\n", RED, BOLD, target, e, RESET);
                         } else if let Ok(current) = std::env::current_dir() {
-                            println!("{}{}Mevcut Çalışma Dizini Değiştirildi: {}{}\n", GREEN, BOLD, current.display(), RESET);
+                            println!("{}{}Current Working Directory Changed: {}{}\n", GREEN, BOLD, current.display(), RESET);
                         }
                     }
                     "pwd" => {
                         if let Ok(current) = std::env::current_dir() {
-                            println!("{}{}Mevcut Çalışma Dizini: {}{}\n", BRIGHT_CYAN, BOLD, current.display(), RESET);
+                            println!("{}{}Current Working Directory: {}{}\n", BRIGHT_CYAN, BOLD, current.display(), RESET);
                         }
                     }
                     "sysinfo" | "pc" | "hostinfo" => {
@@ -747,20 +747,20 @@ pub async fn run_interactive_shell_loop(
                         let swap_total_mb = sys.total_swap() / (1024 * 1024);
                         let swap_used_mb = sys.used_swap() / (1024 * 1024);
 
-                        println!("{}{}=== 🖥️ İŞLETİM SİSTEMİ VE DONANIM METRİKLERİ (PC HOST INFO) ==={}", BRIGHT_CYAN, BOLD, RESET);
-                        println!("  • Sunucu / Host Adı    : {}{}{}", BRIGHT_YELLOW, host_name, RESET);
-                        println!("  • İşletim Sistemi       : {}{} (Çekirdek: {}){}", WHITE, os_name, kernel, RESET);
-                        println!("  • İşlemci (CPU) Modeli : {}{} ({} Mantıksal Çekirdek){}", BRIGHT_GREEN, cpu_brand, cpu_cores, RESET);
-                        println!("  • Toplam RAM           : {}{} MB / {} MB (Boş: {} MB){}", WHITE, mem_used_mb, mem_total_mb, mem_free_mb, RESET);
-                        println!("  • Takas Alanı (Swap)    : {}{} MB / {} MB{}", WHITE, swap_used_mb, swap_total_mb, RESET);
+                        println!("{}{}=== 🖥️ OPERATING SYSTEM & HARDWARE METRICS (PC HOST INFO) ==={}", BRIGHT_CYAN, BOLD, RESET);
+                        println!("  • Server / Host Name   : {}{}{}", BRIGHT_YELLOW, host_name, RESET);
+                        println!("  • Operating System     : {}{} (Kernel: {}){}", WHITE, os_name, kernel, RESET);
+                        println!("  • Processor (CPU) Model: {}{} ({} Logical Cores){}", BRIGHT_GREEN, cpu_brand, cpu_cores, RESET);
+                        println!("  • Total RAM            : {}{} MB / {} MB (Free: {} MB){}", WHITE, mem_used_mb, mem_total_mb, mem_free_mb, RESET);
+                        println!("  • Swap Space           : {}{} MB / {} MB{}", WHITE, swap_used_mb, swap_total_mb, RESET);
                         
                         if let Ok(curr_dir) = std::env::current_dir() {
-                            println!("  • Çalışma Dizini        : {}{}{}\n", CYAN, curr_dir.display(), RESET);
+                            println!("  • Working Directory    : {}{}{}\n", CYAN, curr_dir.display(), RESET);
                         }
                     }
                     "calc" => {
                         if parts.len() < 2 {
-                            println!("{}{}HATA: Kullanım: calc <ifade> (örn: calc 65000 * 0.1 * 20){}\n", RED, BOLD, RESET);
+                            println!("{}{}ERROR: Usage: calc <expression> (e.g. calc 65000 * 0.1 * 20){}\n", RED, BOLD, RESET);
                         } else {
                             let expr = parts[1..].join(" ");
                             let tokens: Vec<&str> = expr.split_whitespace().collect();
@@ -771,9 +771,9 @@ pub async fn run_interactive_shell_loop(
                                     (Ok(v1), "+", Ok(v2)) => Ok(v1 + v2),
                                     (Ok(v1), "-", Ok(v2)) => Ok(v1 - v2),
                                     (Ok(v1), "*" | "x", Ok(v2)) => Ok(v1 * v2),
-                                    (Ok(v1), "/", Ok(v2)) => if v2 != 0.0 { Ok(v1 / v2) } else { Err("Sıfıra bölme hatası".to_string()) },
+                                    (Ok(v1), "/", Ok(v2)) => if v2 != 0.0 { Ok(v1 / v2) } else { Err("Division by zero error".to_string()) },
                                     (Ok(v1), "%", Ok(v2)) => Ok(v1 % v2),
-                                    _ => Err("Geçersiz operatör veya sayılar".to_string()),
+                                    _ => Err("Invalid operator or numbers".to_string()),
                                 }
                             } else if tokens.len() == 5 && (tokens[1] == "*" || tokens[1] == "x") && (tokens[3] == "*" || tokens[3] == "x") {
                                 let a: Result<f64, _> = tokens[0].parse();
@@ -781,15 +781,15 @@ pub async fn run_interactive_shell_loop(
                                 let c: Result<f64, _> = tokens[4].parse();
                                 match (a, b, c) {
                                     (Ok(v1), Ok(v2), Ok(v3)) => Ok(v1 * v2 * v3),
-                                    _ => Err("Geçersiz sayılar".to_string()),
+                                    _ => Err("Invalid numbers".to_string()),
                                 }
                             } else {
-                                expr.replace(" ", "").parse::<f64>().map_err(|_| "Örnek kullanım: 'calc 65000 * 0.1' veya 'calc 65000 * 0.1 * 20'".to_string())
+                                expr.replace(" ", "").parse::<f64>().map_err(|_| "Example usage: 'calc 65000 * 0.1' or 'calc 65000 * 0.1 * 20'".to_string())
                             };
 
                             match result {
-                                Ok(res) => println!("{}{}🧮 SONUÇ: {} = {:.4}{}\n", BRIGHT_GREEN, BOLD, expr, res, RESET),
-                                Err(err_msg) => println!("{}{}Hesaplama hatası: {}{}\n", RED, BOLD, err_msg, RESET),
+                                Ok(res) => println!("{}{}🧮 RESULT: {} = {:.4}{}\n", BRIGHT_GREEN, BOLD, expr, res, RESET),
+                                Err(err_msg) => println!("{}{}Calculation error: {}{}\n", RED, BOLD, err_msg, RESET),
                             }
                         }
                     }
@@ -807,11 +807,11 @@ pub async fn run_interactive_shell_loop(
                         let remainder_nanos = nanos % 1_000;
 
                         let time_str = format!("{:02}.{:02}.{:02}.{:03}.{:03}.{:03}", hours, mins, seconds, millis, micros, remainder_nanos);
-                        println!("{}{}⏰ ANLIK NANOSANİYE HASSASİYETLİ SİSTEM SAATİ: {}{}\n", BRIGHT_CYAN, BOLD, time_str, RESET);
+                        println!("{}{}⏰ LIVE NANOSECOND-PRECISION SYSTEM CLOCK: {}{}\n", BRIGHT_CYAN, BOLD, time_str, RESET);
                     }
                     "ping" => {
                         let target = parts.get(1).unwrap_or(&"fapi.binance.com");
-                        println!("{}{}📡 {} İLE AĞ GECİKMESİ (HFT PING) ÖLÇÜLÜYOR...{}", BRIGHT_YELLOW, BOLD, target, RESET);
+                        println!("{}{}📡 MEASURING NETWORK LATENCY WITH {} (HFT PING)...{}", BRIGHT_YELLOW, BOLD, target, RESET);
 
                         let start = std::time::Instant::now();
                         let shell_cmd = format!("ping -c 3 {}", target);
@@ -820,14 +820,14 @@ pub async fn run_interactive_shell_loop(
                             let out_str = String::from_utf8_lossy(&output.stdout);
                             if output.status.success() {
                                 println!("{}", out_str);
-                                println!("{}{}✓ Ortalama Ağ RTT Gecikmesi: {:.2} ms{}\n", GREEN, BOLD, elapsed_ms / 3.0, RESET);
+                                println!("{}{}✓ Average Network RTT Latency: {:.2} ms{}\n", GREEN, BOLD, elapsed_ms / 3.0, RESET);
                             } else {
-                                println!("{}{}Ping isteği başarısız oldu veya zaman aşımına uğradı.{}\n", RED, BOLD, RESET);
+                                println!("{}{}Ping request failed or timed out.{}\n", RED, BOLD, RESET);
                             }
                         }
                     }
                     "tree" => {
-                        println!("{}{}=== 🌳 CYCLE ORCHESTRATOR DİZİN VE EKLENTİ AĞACI ==={}", BRIGHT_CYAN, BOLD, RESET);
+                        println!("{}{}=== 🌳 CYCLE ORCHESTRATOR DIRECTORY AND PLUGIN TREE ==={}", BRIGHT_CYAN, BOLD, RESET);
                         println!("cycle-orc/");
                         println!("├── Cargo.toml (Workspace Root)");
                         println!("├── config/");
@@ -852,11 +852,11 @@ pub async fn run_interactive_shell_loop(
                             println!("{}{}=== CONFIG (config/config.json) ==={}", BRIGHT_CYAN, BOLD, RESET);
                             println!("{}\n", content);
                         } else {
-                            println!("{}{}config.json okunamadı.{}\n", RED, BOLD, RESET);
+                            println!("{}{}config.json could not be read.{}\n", RED, BOLD, RESET);
                         }
                     }
                     "exit" | "quit" => {
-                        println!("{}{}Orkestratör kapatılıyor. Hoşça kalın!{}", BRIGHT_YELLOW, BOLD, RESET);
+                        println!("{}{}Orchestrator shutting down. Goodbye!{}", BRIGHT_YELLOW, BOLD, RESET);
                         break;
                     }
                     _ => {
@@ -879,22 +879,22 @@ pub async fn run_interactive_shell_loop(
                                     eprint!("{}", stderr);
                                 }
                                 if !output.status.success() && stdout.is_empty() && stderr.is_empty() {
-                                    println!("{}{}Komut çıkış kodu: {}{}\n", YELLOW, BOLD, output.status, RESET);
+                                    println!("{}{}Command exit code: {}{}\n", YELLOW, BOLD, output.status, RESET);
                                 }
                             }
                             Err(e) => {
-                                println!("{}{}Komut çalıştırılamadı ({}): {}{}\n", RED, BOLD, cmd_line, e, RESET);
+                                println!("{}{}Command execution failed ({}): {}{}\n", RED, BOLD, cmd_line, e, RESET);
                             }
                         }
                     }
                 }
             }
             Err(rustyline::error::ReadlineError::Interrupted) | Err(rustyline::error::ReadlineError::Eof) => {
-                println!("\n{}{}Orkestratör kapatılıyor...{}", BRIGHT_YELLOW, BOLD, RESET);
+                println!("\n{}{}Orchestrator shutting down...{}", BRIGHT_YELLOW, BOLD, RESET);
                 break;
             }
             Err(err) => {
-                println!("{}{}Hata: {:?}{}", RED, BOLD, err, RESET);
+                println!("{}{}Error: {:?}{}", RED, BOLD, err, RESET);
                 break;
             }
         }

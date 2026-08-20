@@ -269,7 +269,7 @@ impl SpoofDetectorEngine {
 
                                     let event_id = self.event_counter.fetch_add(1, Ordering::Relaxed);
                                     let desc = format!(
-                                        "SAHTE {} EMRI (Spoof Wall): {:.4} fiyatında ${:.0} tutarındaki duvar {} ms içinde %{:.1} doldurulmadan İPTAL EDİLDİ!",
+                                        "SPOOF ORDER (Fake Wall): {} wall at price {:.4} with ${:.0} size was CANCELED within {} ms before {:.1}% was filled!",
                                         wall.side,
                                         wall.price,
                                         wall.initial_usdt,
@@ -357,21 +357,21 @@ impl SpoofDetectorEngine {
         let mut report = String::new();
         report.push_str("============================================================\n");
         report.push_str(&format!(
-            "🕵️ BINANCE FUTURES SPOOFING (SAHTE EMİR) TESPİT PANELİ\n\
-             ├─ Duvar Eşik Değeri: ${} USDT | Max Ömür: {} ms\n",
+            "🕵️ BINANCE FUTURES SPOOFING (FAKE ORDER) DETECTION PANEL\n\
+             ├─ Wall Threshold: ${} USDT | Max Lifespan: {} ms\n",
             min_usdt, max_lifespan
         ));
         report.push_str("============================================================\n");
 
         if sorted_symbols.is_empty() {
-            report.push_str("Henüz tespit edilen sahte emir (spoofing) veya aktif duvar yok.\n");
+            report.push_str("No spoofing (fake orders) or active walls detected yet.\n");
         } else {
             for symbol in &sorted_symbols {
                 if let Some(m) = metrics_guard.get(symbol) {
                     let wall_count = walls_guard.get(symbol).map(|w| w.len()).unwrap_or(0);
                     report.push_str(&format!(
-                        "[{}]  Aktif Duvarlar: {} | Toplam Sahte Emir: {} (Alım/Long Bait: {} | Satım/Short Bait: {})\n\
-                         ├─ Toplam Hayali/Çekilen Likidite (Phantom): ${:.2}\n\n",
+                        "[{}]  Active Walls: {} | Total Spoof Events: {} (Buy/Long Bait: {} | Sell/Short Bait: {})\n\
+                         ├─ Total Phantom/Pulled Liquidity: ${:.2}\n\n",
                         symbol,
                         wall_count,
                         m.total_spoof_events,
@@ -384,24 +384,24 @@ impl SpoofDetectorEngine {
         }
 
         report.push_str("------------------------------------------------------------\n");
-        report.push_str("🚨 SON SPOOFING (SAHTE EMİR) ALARMLARI (Son 5 Event):\n");
+        report.push_str("🚨 RECENT SPOOFING ALERTS (Last 5 Events):\n");
         report.push_str("------------------------------------------------------------\n");
 
         if events_guard.is_empty() {
-            report.push_str("Henüz şüpheli sahte emir iptali tespit edilmedi.\n");
+            report.push_str("No suspicious spoof order cancellations detected yet.\n");
         } else {
             for ev in events_guard.iter().rev().take(5) {
                 let badge = match ev.alert_level.as_str() {
-                    "CRITICAL" => "🛑 [KRİTİK]",
-                    "HIGH" => "🔴 [YÜKSEK]",
-                    "MEDIUM" => "🟠 [ORTA]",
-                    _ => "🟡 [BİLGİ]",
+                    "CRITICAL" => "🛑 [CRITICAL]",
+                    "HIGH" => "🔴 [HIGH]",
+                    "MEDIUM" => "🟠 [MEDIUM]",
+                    _ => "🟡 [INFO]",
                 };
 
                 report.push_str(&format!(
-                    "{} #{} [{}] {} Fiyat: {:.4} | Sahte Hacim: ${:.0} (İptal: %{:.1})\n\
-                     │   ├─ Yaşam Süresi: {} ms | Gerçekleşen: ${:.0} | Skoru: {:.2}\n\
-                     │   └─ Açıklama: {}\n",
+                    "{} #{} [{}] {} Price: {:.4} | Fake Vol: ${:.0} (Canceled: {:.1}%)\n\
+                     │   ├─ Lifespan: {} ms | Executed: ${:.0} | Score: {:.2}\n\
+                     │   └─ Description: {}\n",
                     badge,
                     ev.id,
                     ev.symbol,

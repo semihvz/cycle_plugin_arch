@@ -4,12 +4,12 @@
 # -------------------------------------------------------------
 
 if [ "$EUID" -ne 0 ]; then
-  echo "Lütfen bu betiği root (sudo) yetkisi ile çalıştırın:"
+  echo "Please run this script with root (sudo) privileges:"
   echo "  sudo $0"
   exit 1
 fi
 
-echo "CPU Çekirdekleri Pasife Alınıyor (Sadece CPU 0 ve 1 Aktif Bırakılıyor)..."
+echo "Offlining CPU Cores (Leaving only CPU 0 and 1 active)..."
 
 TOTAL_CPUS=$(nproc --all)
 OFFLINED=0
@@ -17,12 +17,12 @@ OFFLINED=0
 for i in $(seq 2 $((TOTAL_CPUS - 1))); do
   if [ -f "/sys/devices/system/cpu/cpu$i/online" ]; then
     echo 0 > "/sys/devices/system/cpu/cpu$i/online"
-    echo "✓ CPU $i kapatıldı (offline)"
+    echo "✓ CPU $i offlined"
     OFFLINED=$((OFFLINED + 1))
   fi
 done
 
 echo ""
-echo "=== DURUM ==="
-echo "Aktif Çekirdekler: $(cat /sys/devices/system/cpu/online)"
-echo "Kapatılan Çekirdek Sayısı: $OFFLINED"
+echo "=== STATUS ==="
+echo "Active Cores: $(cat /sys/devices/system/cpu/online)"
+echo "Offlined Core Count: $OFFLINED"

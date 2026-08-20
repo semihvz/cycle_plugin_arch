@@ -18,7 +18,7 @@ pub fn print_banner() {
     println!("{}{}╔══════════════════════════════════════════════════════════════════════════════╗{}", BRIGHT_CYAN, BOLD, RESET);
     println!("{}{}║   🚀 CYCLE ORCHESTRATOR - HIGH FREQUENCY UNIFIED COMMAND SHELL               ║{}", BRIGHT_CYAN, BOLD, RESET);
     println!("{}{}╚══════════════════════════════════════════════════════════════════════════════╝{}", BRIGHT_CYAN, BOLD, RESET);
-    println!("{}Komut listesini görmek için '{}{}{}help{}{}' yazın. Çıkmak için '{}{}{}exit{}{}' veya '{}{}{}quit{}{}' yazın.{}\n", 
+    println!("{}Type '{}{}{}help{}{}' to see command list. Type '{}{}{}exit{}{}' or '{}{}{}quit{}{}' to exit.{}\n", 
         GRAY, RESET, BRIGHT_YELLOW, BOLD, RESET, GRAY, RESET, RED, BOLD, RESET, GRAY, RESET, RED, BOLD, RESET, GRAY, RESET);
 }
 
@@ -52,68 +52,66 @@ pub fn scan_available_plugins() -> Vec<String> {
 
 pub fn format_help_menu() -> String {
     let mut out = String::new();
-    out.push_str(&format!("{}{}=== CYCLE ORCHESTRATOR UNIFIED SHELL KOMUT KILAVUZU ==={}\n", BRIGHT_CYAN, BOLD, RESET));
+    out.push_str(&format!("{}{}=== CYCLE ORCHESTRATOR UNIFIED SHELL COMMAND GUIDE ==={}\n", BRIGHT_CYAN, BOLD, RESET));
     
-    out.push_str(&format!("\n{}{}⚙️ SİSTEM VE EKLENTİ YÖNETİMİ:{}\n", BRIGHT_YELLOW, BOLD, RESET));
-    out.push_str(&format!("  {}help{}                   : Bu yardım menüsünü görüntüler\n", GREEN, RESET));
-    out.push_str(&format!("  {}list{}                   : Yüklü tüm eklentileri, durumlarını, RAM (KB) ve CPU (%) kullanımını basar\n", GREEN, RESET));
-    out.push_str(&format!("  {}available{}              : Diskte derlenmiş yüklemeye hazır eklenti (.so) kütüphanelerini listeler\n", GREEN, RESET));
-    out.push_str(&format!("  {}status [plugin_id]{}     : Genel sistem metriklerini veya spesifik eklenti detayını gösterir\n", GREEN, RESET));
-    out.push_str(&format!("  {}metrics{}                : Detaylı CPU, RAM bellek ve isolated core istatistiklerini görüntüler\n", GREEN, RESET));
-    out.push_str(&format!("  {}start <id|all>{}         : Belirtilen eklentiyi veya tüm sistemi başlatır\n", GREEN, RESET));
-    out.push_str(&format!("  {}stop <id|all>{}          : Belirtilen eklentiyi veya tüm sistemi durdurur\n", GREEN, RESET));
-    out.push_str(&format!("  {}load <plugin_name>{}     : C-ABI dynamic library (.so) kütüphanesini anında yükler\n", GREEN, RESET));
-    out.push_str(&format!("  {}del <plugin_id>{}        : Eklentiyi hafızadan tamamen kaldırır\n", GREEN, RESET));
+    out.push_str(&format!("\n{}{}⚙️ SYSTEM AND PLUGIN MANAGEMENT:{}\n", BRIGHT_YELLOW, BOLD, RESET));
+    out.push_str(&format!("  {}help{}                   : Displays this help menu\n", GREEN, RESET));
+    out.push_str(&format!("  {}list{}                   : Displays all loaded plugins, status, RAM (KB) and CPU (%) usage\n", GREEN, RESET));
+    out.push_str(&format!("  {}available{}              : Lists compiled plugin (.so) libraries ready for loading on disk\n", GREEN, RESET));
+    out.push_str(&format!("  {}status [plugin_id]{}     : Shows general system metrics or specific plugin details\n", GREEN, RESET));
+    out.push_str(&format!("  {}metrics{}                : Displays detailed CPU, RAM memory and isolated core statistics\n", GREEN, RESET));
+    out.push_str(&format!("  {}start <id|all>{}         : Starts specified plugin or the entire system\n", GREEN, RESET));
+    out.push_str(&format!("  {}stop <id|all>{}          : Stops specified plugin or the entire system\n", GREEN, RESET));
+    out.push_str(&format!("  {}load <plugin_name>{}     : Dynamically loads C-ABI dynamic library (.so) instantly\n", GREEN, RESET));
+    out.push_str(&format!("  {}del <plugin_id>{}        : Completely unloads plugin from memory\n", GREEN, RESET));
 
-    out.push_str(&format!("\n{}{}📈 CANLI PİYASA TELEMETRİ SORGULARI:{}\n", BRIGHT_YELLOW, BOLD, RESET));
-    out.push_str(&format!("  {}fetch ticker <symbol>{}   : Sembolün canlı en iyi alış/satış (Best Bid/Ask) ve spread verisini sorgular\n", GREEN, RESET));
-    out.push_str(&format!("  {}fetch depth <symbol>{}    : Orderbook (derinlik) canlı snapshot verisini gösterir\n", GREEN, RESET));
-    out.push_str(&format!("  {}fetch oi <symbol>{}       : Açık pozisyon (Open Interest) verisini çekip görüntüler\n", GREEN, RESET));
-    out.push_str(&format!("  {}fetch ohlcv <symbol>{}    : Canlı mum (Open, High, Low, Close, Volume) verilerini listeler\n", GREEN, RESET));
-    out.push_str(&format!("  {}fetch amihud <symbol>{}   : Amihud İllikidite Oranı (likidite/hacim duyarlılığı) analizini görüntüler\n", GREEN, RESET));
+    out.push_str(&format!("\n{}{}📈 LIVE MARKET TELEMETRY QUERIES:{}\n", BRIGHT_YELLOW, BOLD, RESET));
+    out.push_str(&format!("  {}fetch ticker <symbol>{}   : Queries live Best Bid/Ask and spread data for symbol\n", GREEN, RESET));
+    out.push_str(&format!("  {}fetch depth <symbol>{}    : Shows live Orderbook depth snapshot data\n", GREEN, RESET));
+    out.push_str(&format!("  {}fetch oi <symbol>{}       : Fetches and displays Open Interest data\n", GREEN, RESET));
+    out.push_str(&format!("  {}fetch ohlcv <symbol>{}    : Lists live candlestick (Open, High, Low, Close, Volume) data\n", GREEN, RESET));
+    out.push_str(&format!("  {}fetch amihud <symbol>{}   : Displays Amihud Illiquidity Ratio (liquidity/volume sensitivity) analysis\n", GREEN, RESET));
 
-    out.push_str(&format!("\n{}{}💾 VERİTABANI VE PAPER TRADING:{}\n", BRIGHT_YELLOW, BOLD, RESET));
-    out.push_str(&format!("  {}tables{}                 : SQLite veritabanındaki tüm tabloları ve kayıt sayılarını gösterir\n", GREEN, RESET));
-    out.push_str(&format!("  {}schema <table>{}          : Tablo yapısını ve sütun tiplerini görüntüler\n", GREEN, RESET));
-    out.push_str(&format!("  {}sql <query>{}            : Doğrudan SQL sorgusu çalıştırır (örn: sql SELECT * FROM mark_prices LIMIT 5)\n", GREEN, RESET));
-    out.push_str(&format!("  {}buy <sym> <qty> <price> [lev]{}: Sanal alım (Long) emri girer (örn: buy BTCUSDT 0.1 60000 20)\n", GREEN, RESET));
-    out.push_str(&format!("  {}sell <sym> <qty> <price> [lev]{}: Sanal satım (Short) emri girer (örn: sell ETHUSDT 1.5 3000 50)\n", GREEN, RESET));
-    out.push_str(&format!("  {}cancel <order_id>{}       : Bekleyen emri iptal eder\n", GREEN, RESET));
-    out.push_str(&format!("  {}cancelall [symbol]{}     : Tüm bekleyen emirleri veya sembole ait emirleri iptal eder\n", GREEN, RESET));
-    out.push_str(&format!("  {}deposit <amount>{}       : Sanal bakiyeye bakiye ekler (örn: deposit 5000)\n", GREEN, RESET));
-    out.push_str(&format!("  {}setbalance <amount>{}    : Sanal cüzdan bakiyesini doğrudan ayarlar (örn: setbalance 10000)\n", GREEN, RESET));
-    out.push_str(&format!("  {}positions{}              : Açık paper trading pozisyonlarını ve PnL durumunu listeler\n", GREEN, RESET));
-    out.push_str(&format!("  {}orders [symbol]{}        : Bekleyen aktif emri listeler\n", GREEN, RESET));
-    out.push_str(&format!("  {}history [limit]{}         : Kapanmış işlem geçmişini PnL ve giriş/çıkış fiyatlarıyla listeler\n", GREEN, RESET));
-    out.push_str(&format!("  {}close <symbol>{}          : Açık sembol pozisyonunu kapatır\n", GREEN, RESET));
-    out.push_str(&format!("  {}closeall{}               : Tüm açık pozisyonları anında market emriyle kapatır\n", GREEN, RESET));
+    out.push_str(&format!("\n{}{}💾 DATABASE AND PAPER TRADING:{}\n", BRIGHT_YELLOW, BOLD, RESET));
+    out.push_str(&format!("  {}tables{}                 : Displays all tables and record counts in SQLite database\n", GREEN, RESET));
+    out.push_str(&format!("  {}schema <table>{}          : Displays table structure and column types\n", GREEN, RESET));
+    out.push_str(&format!("  {}sql <query>{}            : Executes raw SQL query (e.g. sql SELECT * FROM mark_prices LIMIT 5)\n", GREEN, RESET));
+    out.push_str(&format!("  {}buy <sym> <qty> <price> [lev]{}: Enters paper buy (Long) order (e.g. buy BTCUSDT 0.1 60000 20)\n", GREEN, RESET));
+    out.push_str(&format!("  {}sell <sym> <qty> <price> [lev]{}: Enters paper sell (Short) order (e.g. sell ETHUSDT 1.5 3000 50)\n", GREEN, RESET));
+    out.push_str(&format!("  {}cancel <order_id>{}       : Cancels pending order\n", GREEN, RESET));
+    out.push_str(&format!("  {}cancelall [symbol]{}     : Cancels all pending orders or symbol-specific orders\n", GREEN, RESET));
+    out.push_str(&format!("  {}deposit <amount>{}       : Deposits virtual balance (e.g. deposit 5000)\n", GREEN, RESET));
+    out.push_str(&format!("  {}setbalance <amount>{}    : Directly sets paper wallet balance (e.g. setbalance 10000)\n", GREEN, RESET));
+    out.push_str(&format!("  {}positions{}              : Lists open paper trading positions and PnL status\n", GREEN, RESET));
+    out.push_str(&format!("  {}orders [symbol]{}        : Lists active pending orders\n", GREEN, RESET));
+    out.push_str(&format!("  {}history [limit]{}         : Lists closed trade history with PnL and entry/exit prices\n", GREEN, RESET));
+    out.push_str(&format!("  {}close <symbol>{}          : Closes open symbol position\n", GREEN, RESET));
+    out.push_str(&format!("  {}closeall{}               : Instantly closes all open positions via market order\n", GREEN, RESET));
 
-    out.push_str(&format!("\n{}{}⚡ HFT BENCHMARK VE TOPOLOJİ:{}\n", BRIGHT_YELLOW, BOLD, RESET));
-    out.push_str(&format!("  {}bench [iterations]{}     : Zero-copy C-ABI endpoint gecikmesini nanosaniye (ns) düzeyinde ölçer\n", GREEN, RESET));
-    out.push_str(&format!("  {}graph{} / {}routes{}         : Flow Engine düğüm yönlendirme grafiğini (DAG) görselleştirir\n", GREEN, RESET, GREEN, RESET));
+    out.push_str(&format!("\n{}{}⚡ HFT BENCHMARK AND TOPOLOGY:{}\n", BRIGHT_YELLOW, BOLD, RESET));
+    out.push_str(&format!("  {}bench [iterations]{}     : Measures Zero-copy C-ABI endpoint latency in nanoseconds (ns)\n", GREEN, RESET));
+    out.push_str(&format!("  {}graph{} / {}routes{}         : Visualizes Flow Engine Directed Acyclic Graph (DAG)\n", GREEN, RESET, GREEN, RESET));
 
-    out.push_str(&format!("\n{}{}🖥️ İŞLETİM SİSTEMİ VE PC SHELL KOMUTLARI:{}\n", BRIGHT_YELLOW, BOLD, RESET));
-    out.push_str(&format!("  {}cd <path>{}              : Çalışma dizinini değiştirir (örn: cd /home)\n", GREEN, RESET));
-    out.push_str(&format!("  {}pwd{}                    : Mevcut çalışma dizinini görüntüler\n", GREEN, RESET));
-    out.push_str(&format!("  {}sysinfo{} / {}pc{}           : İşletim sistemi, çekirdek, CPU modeli, RAM ve disk kullanımını gösterir\n", GREEN, RESET, GREEN, RESET));
-    out.push_str(&format!("  {}<yerel komutlar>{}         : Tüm Linux/OS komutlarını doğrudan çalıştırır (örn: ls, free -h, df -h, git status, ping)\n", GREEN, RESET));
+    out.push_str(&format!("\n{}{}🖥️ OPERATING SYSTEM AND PC SHELL COMMANDS:{}\n", BRIGHT_YELLOW, BOLD, RESET));
+    out.push_str(&format!("  {}cd <path>{}              : Changes working directory (e.g. cd /home)\n", GREEN, RESET));
+    out.push_str(&format!("  {}pwd{}                    : Displays current working directory\n", GREEN, RESET));
+    out.push_str(&format!("  {}sysinfo{} / {}pc{}           : Shows OS, kernel, CPU model, RAM and disk usage\n", GREEN, RESET, GREEN, RESET));
+    out.push_str(&format!("  {}<local commands>{}         : Directly executes Linux/OS commands (e.g. ls, free -h, df -h, git status, ping)\n", GREEN, RESET));
 
+    out.push_str(&format!("\n{}{}🧮 CALCULATION AND FINANCIAL UTILITIES:{}\n", BRIGHT_YELLOW, BOLD, RESET));
+    out.push_str(&format!("  {}calc <expression>{}        : Performs mathematical/financial calculations (e.g. calc 65000 * 0.1 * 20)\n", GREEN, RESET));
+    out.push_str(&format!("  {}time{} / {}clock{}           : Displays nanosecond-precision live system clock (HH.MM.SS.mmm.uuu.nnn)\n", GREEN, RESET, GREEN, RESET));
+    out.push_str(&format!("  {}ping [target]{}           : Measures Binance HFT API network latency (RTT ms)\n", GREEN, RESET));
+    out.push_str(&format!("  {}tree{}                    : Visualizes project plugin and module directory tree\n", GREEN, RESET));
 
-
-    out.push_str(&format!("\n{}{}🧮 HESAPLAMA VE FİNANSAL UTILITY:{}\n", BRIGHT_YELLOW, BOLD, RESET));
-    out.push_str(&format!("  {}calc <ifade>{}            : Matematiksel/Finansal hesaplama yapar (örn: calc 65000 * 0.1 * 20)\n", GREEN, RESET));
-    out.push_str(&format!("  {}time{} / {}clock{}           : Nanosaniye hassasiyetli canlı sistem saatini gösterir (HH.MM.SS.mmm.uuu.nnn)\n", GREEN, RESET, GREEN, RESET));
-    out.push_str(&format!("  {}ping [target]{}           : Binance HFT API ağ gecikmesini (RTT ms) ölçer\n", GREEN, RESET));
-    out.push_str(&format!("  {}tree{}                    : Proje eklenti ve modül dizin ağacını görselleştirir\n", GREEN, RESET));
-
-    out.push_str(&format!("\n{}{}🛠️ KONTROL VE APİ DÜZEYİ:{}\n", BRIGHT_YELLOW, BOLD, RESET));
-    out.push_str(&format!("  {}dump <plugin_id> [max_bytes]{}: Eklentinin TÜM RAM bellek tamponunu (Full Memory Hex Dump & ASCII) döker\n", GREEN, RESET));
-    out.push_str(&format!("  {}exportjson <id> [file]{}  : Eklentinin bellekteki JSON çıktısını .json dosyası olarak kaydeder (Takma adlar: dumpjson, savejson)\n", GREEN, RESET));
-    out.push_str(&format!("  {}peek <plugin_id> [len]{}  : Eklentinin ilk RAM bellek özetini inceler\n", GREEN, RESET));
-    out.push_str(&format!("  {}web <start|stop|status>{} : Port 8080 Web sunucusunu başlatır, durdurur veya durumunu verir\n", GREEN, RESET));
-    out.push_str(&format!("  {}config [show|reload]{}   : flow_config.json içeriğini okur veya hot-reload tetikler\n", GREEN, RESET));
-    out.push_str(&format!("  {}clear{}                  : Ekranı temizler\n", GREEN, RESET));
-    out.push_str(&format!("  {}exit{} / {}quit{}            : Orkestratörü kapatır ve kabuktan çıkar\n", RED, RESET, RED, RESET));
+    out.push_str(&format!("\n{}{}🛠️ CONTROL AND API LEVEL:{}\n", BRIGHT_YELLOW, BOLD, RESET));
+    out.push_str(&format!("  {}dump <plugin_id> [max_bytes]{}: Dumps plugin's FULL RAM buffer (Full Memory Hex Dump & ASCII)\n", GREEN, RESET));
+    out.push_str(&format!("  {}exportjson <id> [file]{}  : Saves plugin's memory JSON output as a .json file (Aliases: dumpjson, savejson)\n", GREEN, RESET));
+    out.push_str(&format!("  {}peek <plugin_id> [len]{}  : Inspects plugin's initial RAM memory summary\n", GREEN, RESET));
+    out.push_str(&format!("  {}web <start|stop|status>{} : Starts, stops or returns status of Port 8080 Web server\n", GREEN, RESET));
+    out.push_str(&format!("  {}config [show|reload]{}   : Reads flow_config.json content or triggers hot-reload\n", GREEN, RESET));
+    out.push_str(&format!("  {}clear{}                  : Clears screen\n", GREEN, RESET));
+    out.push_str(&format!("  {}exit{} / {}quit{}            : Stops orchestrator and exits shell\n", RED, RESET, RED, RESET));
 
     out
 }

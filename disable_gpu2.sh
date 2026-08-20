@@ -4,12 +4,12 @@
 # -------------------------------------------------------------
 
 if [ "$EUID" -ne 0 ]; then
-  echo "Lütfen bu betiği root (sudo) yetkisi ile çalıştırın:"
+  echo "Please run this script with root (sudo) privileges:"
   echo "  sudo $0"
   exit 1
 fi
 
-echo "GPU 2 (0000:07:00.0 / card2) Pasife Alınıyor..."
+echo "Disabling GPU 2 (0000:07:00.0 / card2)..."
 
 if [ -e "/sys/bus/pci/drivers/amdgpu/unbind" ]; then
   echo "0000:07:00.0" > /sys/bus/pci/drivers/amdgpu/unbind 2>/dev/null
@@ -20,5 +20,5 @@ if [ -d "/sys/bus/pci/devices/0000:07:00.0" ]; then
 fi
 
 echo ""
-echo "=== AKTİF EKRAN KARTLARI (DRM) ==="
+echo "=== ACTIVE GRAPHICS CARDS (DRM) ==="
 ls -la /sys/class/drm/ | grep card

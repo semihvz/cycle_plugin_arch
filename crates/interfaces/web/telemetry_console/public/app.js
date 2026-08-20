@@ -128,16 +128,16 @@
 
         if (action === 'start') {
           sendWsCommand({ type: 'start', id });
-          showToast(`🚀 ${id} başlatılıyor...`, 'info');
+          showToast(`🚀 Starting ${id}...`, 'info');
         } else if (action === 'stop') {
           sendWsCommand({ type: 'stop', id });
-          showToast(`⏹️ ${id} durduruluyor...`, 'info');
+          showToast(`⏹️ Stopping ${id}...`, 'info');
         } else if (action === 'monitor') {
           selectSystem(id);
         } else if (action === 'delete') {
-          if (confirm(`${id} eklentisini silmek istediğinizden emin misiniz?`)) {
+          if (confirm(`Are you sure you want to delete plugin ${id}?`)) {
             sendWsCommand({ type: 'delete', id });
-            showToast(`🗑️ ${id} silindi.`, 'info');
+            showToast(`🗑️ ${id} deleted.`, 'info');
           }
         }
         return;
@@ -159,15 +159,15 @@
     const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
     const wsUrl = `${protocol}//${host}/ws`;
 
-    updateServerBadge('loading', 'Port 8080 Bağlanıyor...');
+    updateServerBadge('loading', 'Connecting Port 8080...');
 
     try {
       state.ws = new WebSocket(wsUrl);
 
       state.ws.onopen = () => {
         state.wsConnected = true;
-        updateServerBadge('online', 'Port 8080 Canlı Bağlandı (0ms RAM)');
-        showToast('Port 8080 Telemetri WebSocket bağlantısı kuruldu.', 'success');
+        updateServerBadge('online', 'Port 8080 Live Connected (0ms RAM)');
+        showToast('Port 8080 Telemetry WebSocket connection established.', 'success');
         sendWsCommand({ type: 'ping' });
       };
 
@@ -182,16 +182,16 @@
 
       state.ws.onclose = () => {
         state.wsConnected = false;
-        updateServerBadge('offline', 'Bağlantı Kesildi');
+        updateServerBadge('offline', 'Connection Closed');
         setTimeout(setupWebSocket, 2000);
       };
 
       state.ws.onerror = () => {
         state.wsConnected = false;
-        updateServerBadge('offline', 'Hata');
+        updateServerBadge('offline', 'Error');
       };
     } catch (e) {
-      updateServerBadge('offline', 'Bağlanamadı');
+      updateServerBadge('offline', 'Failed to connect');
       setTimeout(setupWebSocket, 3000);
     }
   }
@@ -200,7 +200,7 @@
     if (state.ws && state.ws.readyState === WebSocket.OPEN) {
       state.ws.send(JSON.stringify(cmdObj));
     } else {
-      showToast('WebSocket bağlantısı hazır değil!', 'error');
+      showToast('WebSocket connection is not ready!', 'error');
     }
   }
 
@@ -243,13 +243,13 @@
     if (availableJson !== state.lastAvailableJson && el.availablePluginsGrid) {
       state.lastAvailableJson = availableJson;
       if (state.availablePlugins.length === 0) {
-        el.availablePluginsGrid.innerHTML = `<div style="grid-column:1/-1; color:var(--text-muted); font-size:0.8rem;">Eklenti bulunamadı (target/debug).</div>`;
+        el.availablePluginsGrid.innerHTML = `<div style="grid-column:1/-1; color:var(--text-muted); font-size:0.8rem;">No plugins found (target/debug).</div>`;
       } else {
         el.availablePluginsGrid.innerHTML = state.availablePlugins.map(name => {
           const isLoaded = state.systems.some(s => s.id === name);
           const badgeHtml = isLoaded
-            ? `<span style="color:var(--accent-emerald); font-size:0.7rem;"><i class="fa-solid fa-check"></i> Yüklü</span>`
-            : `<span style="color:var(--accent-cyan); font-size:0.7rem;"><i class="fa-solid fa-plus"></i> Yükle</span>`;
+            ? `<span style="color:var(--accent-emerald); font-size:0.7rem;"><i class="fa-solid fa-check"></i> Loaded</span>`
+            : `<span style="color:var(--accent-cyan); font-size:0.7rem;"><i class="fa-solid fa-plus"></i> Load</span>`;
 
           return `
             <div class="plugin-pill-item" data-name="${name}">
@@ -276,17 +276,17 @@
         el.systemsCardList.innerHTML = `
           <div class="empty-state">
             <i class="fa-solid fa-ghost"></i>
-            <p>Yüklü eklenti bulunamadı. "Eklenti Yükle" butonuna tıklayarak sisteme eklenti bağlayın.</p>
+            <p>No loaded plugins found. Click "Load Plugin" button to link plugins.</p>
           </div>`;
       } else {
         el.systemsCardList.innerHTML = state.systems.map(s => {
           const isSelected = state.selectedSystemId === s.id;
           const statusBadge = s.is_running
-            ? `<span class="badge-status running"><i class="fa-solid fa-play"></i> Çalışıyor</span>`
-            : `<span class="badge-status stopped"><i class="fa-solid fa-stop"></i> Durduruldu</span>`;
+            ? `<span class="badge-status running"><i class="fa-solid fa-play"></i> Running</span>`
+            : `<span class="badge-status stopped"><i class="fa-solid fa-stop"></i> Stopped</span>`;
           const validBadge = s.is_data_valid
-            ? `<span style="color:var(--accent-emerald);">[RAM Geçerli]</span>`
-            : `<span style="color:var(--text-dim);">[Beklemede]</span>`;
+            ? `<span style="color:var(--accent-emerald);">[RAM Valid]</span>`
+            : `<span style="color:var(--text-dim);">[Standby]</span>`;
 
           return `
             <div class="system-card ${isSelected ? 'active-monitored' : ''}" data-id="${s.id}">
@@ -296,24 +296,24 @@
                   ${statusBadge}
                 </div>
                 <div class="sys-sub-row">
-                  <span>Anlık RAM: <strong style="color:var(--accent-cyan);">${s.ram_kb || 16} KB</strong></span>
-                  <span>Anlık CPU: <strong style="color:var(--accent-amber);">${(s.cpu_usage || 0).toFixed(1)}%</strong></span>
-                  <span>RAM Adresi: <strong>${s.memory_addr}</strong></span>
-                  <span>Veri: ${validBadge}</span>
+                  <span>Current RAM: <strong style="color:var(--accent-cyan);">${s.ram_kb || 16} KB</strong></span>
+                  <span>Current CPU: <strong style="color:var(--accent-amber);">${(s.cpu_usage || 0).toFixed(1)}%</strong></span>
+                  <span>RAM Addr: <strong>${s.memory_addr}</strong></span>
+                  <span>Data: ${validBadge}</span>
                 </div>
               </div>
               <div class="sys-controls">
-                <button class="btn btn-secondary btn-sm" data-action="start" data-id="${s.id}" title="Başlat [S]">
-                  <i class="fa-solid fa-play" style="color:var(--accent-emerald);"></i> Başlat
+                <button class="btn btn-secondary btn-sm" data-action="start" data-id="${s.id}" title="Start [S]">
+                  <i class="fa-solid fa-play" style="color:var(--accent-emerald);"></i> Start
                 </button>
-                <button class="btn btn-secondary btn-sm" data-action="stop" data-id="${s.id}" title="Durdur [X]">
-                  <i class="fa-solid fa-stop" style="color:var(--accent-pink);"></i> Durdur
+                <button class="btn btn-secondary btn-sm" data-action="stop" data-id="${s.id}" title="Stop [X]">
+                  <i class="fa-solid fa-stop" style="color:var(--accent-pink);"></i> Stop
                 </button>
-                <button class="btn btn-secondary btn-sm" data-action="monitor" data-id="${s.id}" title="Canlı Takip [M]">
-                  <i class="fa-solid fa-eye" style="color:var(--accent-cyan);"></i> İzle
+                <button class="btn btn-secondary btn-sm" data-action="monitor" data-id="${s.id}" title="Monitor Live [M]">
+                  <i class="fa-solid fa-eye" style="color:var(--accent-cyan);"></i> Monitor
                 </button>
-                <button class="btn btn-secondary btn-sm" data-action="delete" data-id="${s.id}" title="Sil [D]">
-                  <i class="fa-solid fa-trash"></i> Sil
+                <button class="btn btn-secondary btn-sm" data-action="delete" data-id="${s.id}" title="Delete [D]">
+                  <i class="fa-solid fa-trash"></i> Delete
                 </button>
               </div>
             </div>`;
@@ -324,12 +324,12 @@
     if (data.monitored_id) {
       state.selectedSystemId = data.monitored_id;
       if (el.focusSystemTitle) el.focusSystemTitle.textContent = data.monitored_id;
-      if (el.hexSystemName) el.hexSystemName.textContent = `Seçili: ${data.monitored_id}`;
+      if (el.hexSystemName) el.hexSystemName.textContent = `Selected: ${data.monitored_id}`;
     }
 
     if (data.monitored_hex !== undefined) {
-      const hexText = data.monitored_hex || 'Buffer boş (0 byte)';
-      const asciiText = data.monitored_str || 'Metin çıktısı yok';
+      const hexText = data.monitored_hex || 'Buffer empty (0 bytes)';
+      const asciiText = data.monitored_str || 'No text output';
 
       if (el.focusPreviewHex) el.focusPreviewHex.textContent = hexText.slice(0, 300);
       if (el.focusBufferLen) el.focusBufferLen.textContent = `${data.monitored_bytes_len} bytes`;
@@ -426,15 +426,15 @@
     el.shellOutputWindow.innerHTML = `
       <div class="shell-line sys-intro">
 === CYCLE-ORC INTERACTIVE HFT SHELL CONSOLE ===
-Tüm orkestratör komutlarını (help, list, start <id>, stop <id>, del <id>, load <name>, status) yazabilirsiniz.
-Komut geçmişinde gezinmek için [Yukarı / Aşağı] ok tuşlarını kullanabilirsiniz.
+Type orchestrator commands (help, list, start <id>, stop <id>, del <id>, load <name>, status).
+Use [Up / Down] arrow keys to navigate command history.
 --------------------------------------------------------------------------------</div>`;
   }
 
   function loadPlugin(pluginName) {
     if (!pluginName) return;
     sendWsCommand({ type: 'load', name: pluginName });
-    showToast(`🧩 ${pluginName} eklentisi yükleniyor...`, 'info');
+    showToast(`🧩 Loading ${pluginName}...`, 'info');
     closeLoadModal();
   }
 
@@ -450,7 +450,7 @@ Komut geçmişinde gezinmek için [Yukarı / Aşağı] ok tuşlarını kullanabi
   function selectSystem(id) {
     state.selectedSystemId = id;
     sendWsCommand({ type: 'monitor', id });
-    showToast(`İzleme odaklandı: ${id}`, 'info');
+    showToast(`Monitoring focused: ${id}`, 'info');
   }
 
   function appendLogMessage(logLine) {
@@ -469,8 +469,8 @@ Komut geçmişinde gezinmek için [Yukarı / Aşağı] ok tuşlarını kullanabi
     if (el.mainConsoleOutput) {
       const div = document.createElement('div');
       div.className = 'log-line';
-      if (logLine.includes('HATA') || logLine.includes('hata')) div.classList.add('error');
-      else if (logLine.includes('UYARI') || logLine.includes('uyarı')) div.classList.add('warn');
+      if (logLine.includes('ERROR') || logLine.includes('error') || logLine.includes('HATA')) div.classList.add('error');
+      else if (logLine.includes('WARN') || logLine.includes('warn') || logLine.includes('UYARI')) div.classList.add('warn');
       else div.classList.add('info');
 
       div.textContent = logLine;
@@ -499,7 +499,7 @@ Komut geçmişinde gezinmek için [Yukarı / Aşağı] ok tuşlarını kullanabi
       el.confirmLoadModalBtn.addEventListener('click', () => {
         const val = el.manualPluginInput ? el.manualPluginInput.value.trim() : '';
         if (val) loadPlugin(val);
-        else showToast('Lütfen bir eklenti adı girin veya listeden seçin.', 'warn');
+        else showToast('Please enter a plugin name or select from list.', 'warn');
       });
     }
 
@@ -522,21 +522,21 @@ Komut geçmişinde gezinmek için [Yukarı / Aşağı] ok tuşlarını kullanabi
     if (el.btnToggleAutoscroll) {
       el.btnToggleAutoscroll.addEventListener('click', () => {
         state.autoscrollLogs = !state.autoscrollLogs;
-        el.btnToggleAutoscroll.innerHTML = `<i class="fa-solid fa-arrow-down-long"></i> Oto-Kaydır: ${state.autoscrollLogs ? 'AÇIK' : 'KAPALI'}`;
+        el.btnToggleAutoscroll.innerHTML = `<i class="fa-solid fa-arrow-down-long"></i> Auto-Scroll: ${state.autoscrollLogs ? 'ON' : 'OFF'}`;
       });
     }
 
     if (el.btnPauseHex) {
       el.btnPauseHex.addEventListener('click', () => {
         state.pauseHexStream = !state.pauseHexStream;
-        el.btnPauseHex.innerHTML = `<i class="fa-solid fa-${state.pauseHexStream ? 'play' : 'pause'}"></i> ${state.pauseHexStream ? 'Devam Et' : 'Duraklat'}`;
+        el.btnPauseHex.innerHTML = `<i class="fa-solid fa-${state.pauseHexStream ? 'play' : 'pause'}"></i> ${state.pauseHexStream ? 'Resume' : 'Pause'}`;
       });
     }
 
     if (el.btnClearHex) {
       el.btnClearHex.addEventListener('click', () => {
-        if (el.hexMatrixDisplay) el.hexMatrixDisplay.textContent = 'Temizlendi.';
-        if (el.asciiStringDisplay) el.asciiStringDisplay.textContent = 'Temizlendi.';
+        if (el.hexMatrixDisplay) el.hexMatrixDisplay.textContent = 'Cleared.';
+        if (el.asciiStringDisplay) el.asciiStringDisplay.textContent = 'Cleared.';
       });
     }
   }

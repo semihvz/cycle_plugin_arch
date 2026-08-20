@@ -51,7 +51,7 @@ pub fn draw_ui(f: &mut Frame, app: &mut App<'_>) {
     let header_text = vec![
         Line::from(vec![
             Span::styled(" ENTERPRISE ORCHESTRATION CONSOLE ", Style::default().fg(Color::White).add_modifier(Modifier::BOLD)),
-            Span::styled(" | 🕒 SAAT: ", Style::default().fg(Color::DarkGray)),
+            Span::styled(" | 🕒 TIME: ", Style::default().fg(Color::DarkGray)),
             Span::styled(format!("{} ", time_str), Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)),
             Span::styled("| CPU: ", Style::default().fg(Color::DarkGray)),
             Span::styled(format!("{:.1}% ", cpu_usage), Style::default().fg(Color::White)),
@@ -93,7 +93,7 @@ pub fn draw_ui(f: &mut Frame, app: &mut App<'_>) {
                 (Color::Reset, "  ")
             };
             
-            let status = if *running { "AKTİF" } else { "PASİF" };
+            let status = if *running { "ACTIVE" } else { "INACTIVE" };
             let status_color = if *running { Color::LightGreen } else { Color::LightRed };
             let id_color = if *running { Color::White } else { Color::DarkGray };
             
@@ -138,10 +138,10 @@ pub fn draw_ui(f: &mut Frame, app: &mut App<'_>) {
         // Data Inspector (Hex)
         let hex_content = if let Some(data) = &app.monitored_data {
             if data.is_empty() {
-                vec![Line::from(Span::styled("Veri yok.", Style::default().fg(Color::DarkGray)))]
+                vec![Line::from(Span::styled("No data.", Style::default().fg(Color::DarkGray)))]
             } else {
                 let mut lines = Vec::new();
-                lines.push(Line::from(Span::styled(format!("Boyut: {} bytes", data.len()), Style::default().fg(Color::Gray))));
+                lines.push(Line::from(Span::styled(format!("Size: {} bytes", data.len()), Style::default().fg(Color::Gray))));
                 lines.push(Line::from(""));
                 for chunk in data.chunks(16) {
                     let hex: Vec<String> = chunk.iter().map(|b| format!("{:02x}", b)).collect();
@@ -154,7 +154,7 @@ pub fn draw_ui(f: &mut Frame, app: &mut App<'_>) {
                 lines
             }
         } else {
-            vec![Line::from(Span::styled("İzlemek için sistem seçip 'm' tuşuna basın.", Style::default().fg(Color::DarkGray)))]
+            vec![Line::from(Span::styled("Select system and press 'm' to monitor.", Style::default().fg(Color::DarkGray)))]
         };
         
         let inspector = Paragraph::new(hex_content)
@@ -170,16 +170,15 @@ pub fn draw_ui(f: &mut Frame, app: &mut App<'_>) {
         // Data Inspector (Text)
         let text_content = if let Some(data) = &app.monitored_data {
             if data.is_empty() {
-                vec![Line::from(Span::styled("Veri yok.", Style::default().fg(Color::DarkGray)))]
+                vec![Line::from(Span::styled("No data.", Style::default().fg(Color::DarkGray)))]
             } else {
                 if let Ok(json) = serde_json::from_slice::<serde_json::Value>(data) {
-                    // JSON ise güzelce formatla ve ekran gecikmesini hesapla
                     let mut lines = Vec::new();
-                    let current_time = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_millis() as i64;
+                    let _current_time = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_millis() as i64;
                     
                     if let Some(obj) = json.as_object() {
                         let symbol = obj.get("symbol").and_then(|v| v.as_str()).unwrap_or("UNKNOWN");
-                        lines.push(Line::from(Span::styled(format!("🚀 {} Canlı Veri", symbol), Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD))));
+                        lines.push(Line::from(Span::styled(format!("🚀 {} Live Data", symbol), Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD))));
                         lines.push(Line::from(""));
                         
                         if obj.contains_key("best_bid") {
@@ -190,22 +189,22 @@ pub fn draw_ui(f: &mut Frame, app: &mut App<'_>) {
                             let spread = obj.get("spread").and_then(|v| v.as_str()).unwrap_or("");
                             
                             lines.push(Line::from(vec![
-                                Span::raw("Alış : "), Span::styled(format!("{} (Miktar: {})", bid, bid_qty), Style::default().fg(Color::Green)),
+                                Span::raw("Bid   : "), Span::styled(format!("{} (Qty: {})", bid, bid_qty), Style::default().fg(Color::Green)),
                             ]));
                             lines.push(Line::from(vec![
-                                Span::raw("Satış: "), Span::styled(format!("{} (Miktar: {})", ask, ask_qty), Style::default().fg(Color::Red)),
+                                Span::raw("Ask   : "), Span::styled(format!("{} (Qty: {})", ask, ask_qty), Style::default().fg(Color::Red)),
                             ]));
-                            lines.push(Line::from(vec![Span::raw("Fark : "), Span::styled(spread.to_string(), Style::default().fg(Color::Cyan))]));
+                            lines.push(Line::from(vec![Span::raw("Spread: "), Span::styled(spread.to_string(), Style::default().fg(Color::Cyan))]));
                         } else if obj.contains_key("price") {
                             let price = obj.get("price").and_then(|v| v.as_str()).unwrap_or("");
                             let quantity = obj.get("quantity").and_then(|v| v.as_str()).unwrap_or("");
                             let is_buyer_maker = obj.get("is_buyer_maker").and_then(|v| v.as_bool()).unwrap_or(false);
                             
                             let color = if is_buyer_maker { Color::Red } else { Color::Green };
-                            let side = if is_buyer_maker { "SATIM" } else { "ALIM " };
+                            let side = if is_buyer_maker { "SELL" } else { "BUY " };
                             
                             lines.push(Line::from(vec![
-                                Span::raw("İşlem : "), Span::styled(format!("{} @ {} (Miktar: {})", side, price, quantity), Style::default().fg(color)),
+                                Span::raw("Trade : "), Span::styled(format!("{} @ {} (Qty: {})", side, price, quantity), Style::default().fg(color)),
                             ]));
                         } else if obj.contains_key("mark_price") {
                             let mark_price = obj.get("mark_price").and_then(|v| v.as_str()).unwrap_or("");
@@ -213,27 +212,27 @@ pub fn draw_ui(f: &mut Frame, app: &mut App<'_>) {
                             let funding_rate = obj.get("funding_rate").and_then(|v| v.as_str()).unwrap_or("");
                             
                             lines.push(Line::from(vec![
-                                Span::raw("Mark Fiyatı : "), Span::styled(mark_price.to_string(), Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)),
+                                Span::raw("Mark Price   : "), Span::styled(mark_price.to_string(), Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)),
                             ]));
                             lines.push(Line::from(vec![
-                                Span::raw("Endeks Fiyat: "), Span::styled(index_price.to_string(), Style::default().fg(Color::Cyan)),
+                                Span::raw("Index Price  : "), Span::styled(index_price.to_string(), Style::default().fg(Color::Cyan)),
                             ]));
                             lines.push(Line::from(vec![
-                                Span::raw("Fonlama Oranı: "), Span::styled(funding_rate.to_string(), Style::default().fg(Color::LightMagenta)),
+                                Span::raw("Funding Rate : "), Span::styled(funding_rate.to_string(), Style::default().fg(Color::LightMagenta)),
                             ]));
                         } else if obj.contains_key("type") && obj.get("type").and_then(|v| v.as_str()) == Some("ohlcv") {
                             let symbol = obj.get("symbol").and_then(|v| v.as_str()).unwrap_or("");
                             let interval = obj.get("interval").and_then(|v| v.as_str()).unwrap_or("");
                             
                             lines.push(Line::from(vec![
-                                Span::raw("Veri Tipi: "), Span::styled("OHLCV Mumları", Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)),
+                                Span::raw("Data Type: "), Span::styled("OHLCV Candles", Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)),
                             ]));
                             lines.push(Line::from(vec![
-                                Span::raw("Parametre: "), Span::styled(format!("{} - {}", symbol, interval), Style::default().fg(Color::Cyan)),
+                                Span::raw("Params   : "), Span::styled(format!("{} - {}", symbol, interval), Style::default().fg(Color::Cyan)),
                             ]));
                             
                             if let Some(arr) = obj.get("data").and_then(|v| v.as_array()) {
-                                lines.push(Line::from(format!("{} adet mum çekildi.", arr.len())));
+                                lines.push(Line::from(format!("{} candles fetched.", arr.len())));
                                 for (i, kline) in arr.iter().enumerate().take(5) {
                                     if let Some(k) = kline.as_array() {
                                         let open = k[1].as_str().unwrap_or("");
@@ -253,7 +252,7 @@ pub fn draw_ui(f: &mut Frame, app: &mut App<'_>) {
                         if let Some(obj) = json.as_object() {
                             for (k, val) in obj {
                                 if let Some(tbl) = val.get("formatted_table").and_then(|v| v.as_str()) {
-                                    lines.push(Line::from(Span::styled(format!("📊 TABLO GÖRÜNÜMÜ (Akış: {}):", k), Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD))));
+                                    lines.push(Line::from(Span::styled(format!("📊 TABLE VIEW (Stream: {}):", k), Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD))));
                                     for l in tbl.lines() {
                                         lines.push(Line::from(Span::styled(l.to_string(), Style::default().fg(Color::LightCyan))));
                                     }
@@ -262,7 +261,7 @@ pub fn draw_ui(f: &mut Frame, app: &mut App<'_>) {
                             }
                         }
                         
-                        lines.push(Line::from(Span::styled("Ham JSON:", Style::default().fg(Color::DarkGray))));
+                        lines.push(Line::from(Span::styled("Raw JSON:", Style::default().fg(Color::DarkGray))));
                         let pretty_json = serde_json::to_string_pretty(&json).unwrap_or_default();
                         for l in pretty_json.lines() {
                             lines.push(Line::from(Span::styled(l.to_string(), Style::default().fg(Color::DarkGray))));
@@ -275,7 +274,7 @@ pub fn draw_ui(f: &mut Frame, app: &mut App<'_>) {
                 }
             }
         } else {
-            vec![Line::from(Span::styled("Bekleniyor...", Style::default().fg(Color::DarkGray)))]
+            vec![Line::from(Span::styled("Waiting...", Style::default().fg(Color::DarkGray)))]
         };
         
         let text_inspector = Paragraph::new(text_content)
@@ -312,7 +311,7 @@ pub fn draw_ui(f: &mut Frame, app: &mut App<'_>) {
         ]));
         
         shell_lines.push(Line::from(""));
-        shell_lines.push(Line::from(Span::styled(" 'i' ile Shell'e geç. Shell'deyken ESC ile çık.", Style::default().fg(Color::DarkGray))));
+        shell_lines.push(Line::from(Span::styled(" Press 'i' to enter Shell. Press ESC to exit Shell.", Style::default().fg(Color::DarkGray))));
 
         let p = Paragraph::new(shell_lines)
             .block(Block::default()
@@ -346,58 +345,58 @@ pub fn draw_ui(f: &mut Frame, app: &mut App<'_>) {
         f.render_widget(log_list, main_layout[3]);
         
     } else if app.active_tab == 1 {
-        // TAM EKRAN LOGLAR
+        // FULLSCREEN LOGS
         let log_items: Vec<ListItem> = app.logs.iter().map(|msg| {
             ListItem::new(Line::from(Span::styled(msg, Style::default().fg(Color::LightCyan))))
         }).collect();
         let log_list = List::new(log_items)
             .block(Block::default()
-                .title(Span::styled(" 📜 Detaylı Loglar ", Style::default().fg(Color::LightMagenta).add_modifier(Modifier::BOLD)))
+                .title(Span::styled(" 📜 Detailed Logs ", Style::default().fg(Color::LightMagenta).add_modifier(Modifier::BOLD)))
                 .borders(Borders::ALL)
                 .border_type(BorderType::Rounded)
                 .border_style(Style::default().fg(Color::DarkGray))
                 .padding(Padding::horizontal(2)));
         f.render_widget(log_list, main_layout[2]);
     } else {
-        // AYARLAR
+        // SETTINGS
         let web_status_span = if app.web_server_started {
-            Span::styled(" 🚀 ÇALIŞIYOR (http://localhost:8080) ", Style::default().fg(Color::Black).bg(Color::LightGreen).add_modifier(Modifier::BOLD))
+            Span::styled(" 🚀 RUNNING (http://localhost:8080) ", Style::default().fg(Color::Black).bg(Color::LightGreen).add_modifier(Modifier::BOLD))
         } else {
-            Span::styled(" ⏹️ KAPALI (OFF) ", Style::default().fg(Color::White).bg(Color::Red).add_modifier(Modifier::BOLD))
+            Span::styled(" ⏹️ OFF ", Style::default().fg(Color::White).bg(Color::Red).add_modifier(Modifier::BOLD))
         };
 
         let text = vec![
-            Line::from(Span::styled("⚙ Ayarlar & Sistem Web Sunucusu Kontrolü", Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD))),
+            Line::from(Span::styled("⚙ Settings & System Web Server Control", Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD))),
             Line::from(""),
             Line::from(vec![
-                Span::styled("Port 8080 Web Sunucu Durumu: ", Style::default().fg(Color::White).add_modifier(Modifier::BOLD)),
+                Span::styled("Port 8080 Web Server Status: ", Style::default().fg(Color::White).add_modifier(Modifier::BOLD)),
                 web_status_span,
             ]),
             Line::from(""),
             Line::from(vec![
                 Span::styled(" [W] ", Style::default().fg(Color::Black).bg(Color::Yellow).add_modifier(Modifier::BOLD)),
                 Span::styled(
-                    if app.web_server_started { " ⏹️ WEB ARAYÜZÜNÜ DURDUR (Port 8080 Kapat)" } else { " 🚀 WEB ARAYÜZÜNÜ BAŞLAT (Port 8080 Aç)" },
+                    if app.web_server_started { " ⏹️ STOP WEB INTERFACE (Close Port 8080)" } else { " 🚀 START WEB INTERFACE (Open Port 8080)" },
                     Style::default().fg(if app.web_server_started { Color::LightRed } else { Color::Cyan }).add_modifier(Modifier::BOLD)
                 ),
             ]),
             Line::from(""),
             Line::from(vec![
                 Span::styled(" [E] ", Style::default().fg(Color::Black).bg(Color::Cyan).add_modifier(Modifier::BOLD)),
-                Span::styled(" Web Arayüzünü Tarayıcıda Aç (http://localhost:8080)", Style::default().fg(Color::LightCyan)),
+                Span::styled(" Open Web Interface in Browser (http://localhost:8080)", Style::default().fg(Color::LightCyan)),
             ]),
             Line::from(vec![
                 Span::styled(" [T] ", Style::default().fg(Color::Black).bg(Color::Green).add_modifier(Modifier::BOLD)),
-                Span::styled(" Terminal İçi Metin Editörü (tui-textarea)", Style::default().fg(Color::Green)),
+                Span::styled(" Terminal Text Editor (tui-textarea)", Style::default().fg(Color::Green)),
             ]),
             Line::from(""),
-            Line::from(Span::styled("Sistem başlatıldığında varsayılan olarak SADECE bu TUI ekranı çalışır.", Style::default().fg(Color::White))),
-            Line::from(Span::styled("[W] tuşuna basarak Port 8080 Web Sunucusunu dilediğiniz an BAŞLATABİLİR veya KAPATABİLİRSİNİZ.", Style::default().fg(Color::LightYellow))),
+            Line::from(Span::styled("By default, ONLY this TUI screen runs when the system starts.", Style::default().fg(Color::White))),
+            Line::from(Span::styled("You can START or STOP the Port 8080 Web Server at any time by pressing [W].", Style::default().fg(Color::LightYellow))),
             Line::from(""),
-            Line::from(Span::styled("Sistem çalışırken ayarları değiştirdiğinizde Hot-Reload ile motor anında güncellenir.", Style::default().fg(Color::DarkGray))),
+            Line::from(Span::styled("When settings are modified while running, the engine updates instantly via Hot-Reload.", Style::default().fg(Color::DarkGray))),
         ];
         let p = Paragraph::new(text)
-            .block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).title(" ⚙ Ayarlar "))
+            .block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).title(" ⚙ Settings "))
             .alignment(Alignment::Center);
         f.render_widget(p, main_layout[2]);
     }
@@ -428,9 +427,9 @@ pub fn draw_ui(f: &mut Frame, app: &mut App<'_>) {
                 height: 1,
             };
             let help_text = Paragraph::new(Line::from(vec![
-                Span::styled(" [Ctrl+S] Kaydet ve Uygula ", Style::default().fg(Color::Black).bg(Color::Green).add_modifier(Modifier::BOLD)),
+                Span::styled(" [Ctrl+S] Save and Apply ", Style::default().fg(Color::Black).bg(Color::Green).add_modifier(Modifier::BOLD)),
                 Span::raw("   "),
-                Span::styled(" [ESC] İptal ", Style::default().fg(Color::White).bg(Color::Red).add_modifier(Modifier::BOLD)),
+                Span::styled(" [ESC] Cancel ", Style::default().fg(Color::White).bg(Color::Red).add_modifier(Modifier::BOLD)),
             ])).alignment(Alignment::Center);
             
             f.render_widget(help_text, help_area);
@@ -439,17 +438,17 @@ pub fn draw_ui(f: &mut Frame, app: &mut App<'_>) {
 
     let help_line = Line::from(vec![
         Span::styled("   ", Style::default()), // offset x=3
-        Span::styled(" [+ Yeni Eklenti Yükle] ", Style::default().fg(Color::White).bg(Color::Rgb(150, 150, 40)).add_modifier(Modifier::BOLD)),
+        Span::styled(" [+ Load New Plugin] ", Style::default().fg(Color::White).bg(Color::Rgb(150, 150, 40)).add_modifier(Modifier::BOLD)),
         Span::styled("  ", Style::default()),
-        Span::styled(" [Q] Çıkış ", Style::default().fg(Color::White).bg(Color::DarkGray).add_modifier(Modifier::BOLD)),
-        Span::styled("    (Tam GUI Kontrolü)", Style::default().fg(Color::DarkGray)),
+        Span::styled(" [Q] Exit ", Style::default().fg(Color::White).bg(Color::DarkGray).add_modifier(Modifier::BOLD)),
+        Span::styled("    (Full GUI Control)", Style::default().fg(Color::DarkGray)),
     ]);
     let help = Paragraph::new(help_line)
         .block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).border_style(Style::default().fg(Color::DarkGray)))
         .alignment(Alignment::Left);
     f.render_widget(help, main_layout[4]);
 
-    // Popup (Eklenti Seçimi)
+    // Popup (Plugin Selection)
     if app.mode == ViewMode::PluginSelection {
         let popup_area = centered_rect(40, 60, size);
         f.render_widget(Clear, popup_area);
@@ -461,45 +460,40 @@ pub fn draw_ui(f: &mut Frame, app: &mut App<'_>) {
             ])).style(Style::default().bg(bg).fg(Color::White))
         }).collect();
         let list = List::new(items)
-            .block(Block::default().title(Span::styled(" 📦 Eklenti Yükle (Sol Tık) ", Style::default().fg(Color::LightYellow).add_modifier(Modifier::BOLD)))
+            .block(Block::default().title(Span::styled(" 📦 Load Plugin (Left Click) ", Style::default().fg(Color::LightYellow).add_modifier(Modifier::BOLD)))
                 .borders(Borders::ALL).border_type(BorderType::Thick).border_style(Style::default().fg(Color::LightYellow)).padding(Padding::new(2, 2, 1, 1)));
         f.render_widget(list, popup_area);
     }
     
-    // Onay Penceresi (Confirm Delete Modal)
+    // Confirm Delete Modal
     if let ViewMode::ConfirmDelete(ref sys_id) = app.mode {
         let modal_area = centered_rect(30, 20, size);
         f.render_widget(Clear, modal_area);
         let text = vec![
             Line::from(Span::styled(format!("'{}'", sys_id), Style::default().fg(Color::LightRed).add_modifier(Modifier::BOLD))),
-            Line::from("Sistemini silmek istediğinize"),
-            Line::from("emin misiniz?"),
+            Line::from("Are you sure you want to delete"),
+            Line::from("this system?"),
             Line::from(""),
             Line::from(vec![
-                Span::styled("  [ EVET ]  ", Style::default().fg(Color::White).bg(Color::Red).add_modifier(Modifier::BOLD)),
+                Span::styled("  [ YES ]  ", Style::default().fg(Color::White).bg(Color::Red).add_modifier(Modifier::BOLD)),
                 Span::raw("    "),
-                Span::styled("  [ HAYIR ]  ", Style::default().fg(Color::White).bg(Color::DarkGray).add_modifier(Modifier::BOLD)),
+                Span::styled("  [ NO ]  ", Style::default().fg(Color::White).bg(Color::DarkGray).add_modifier(Modifier::BOLD)),
             ]),
         ];
         let p = Paragraph::new(text)
-            .block(Block::default().title(" ⚠️ Dikkat ").borders(Borders::ALL).border_type(BorderType::Thick).border_style(Style::default().fg(Color::Red)).padding(Padding::vertical(1)))
+            .block(Block::default().title(" ⚠️ Warning ").borders(Borders::ALL).border_type(BorderType::Thick).border_style(Style::default().fg(Color::Red)).padding(Padding::vertical(1)))
             .alignment(Alignment::Center);
         f.render_widget(p, modal_area);
     }
     
-
-
-    
-    // Sağ Tık İçerik Menüsü (Context Menu)
+    // Context Menu
     if let ViewMode::ContextMenu(ref id, cx, cy) = app.mode {
-        // Small popup at cx, cy
         let area = Rect {
             x: cx,
             y: cy,
             width: 25,
             height: 6,
         };
-        // Ensure it doesn't overflow screen
         let area = Rect {
             x: area.x.min(size.width.saturating_sub(25)),
             y: area.y.min(size.height.saturating_sub(6)),
@@ -509,9 +503,9 @@ pub fn draw_ui(f: &mut Frame, app: &mut App<'_>) {
         f.render_widget(Clear, area);
         let text = vec![
             Line::from(Span::styled(format!(" ⚙ {}", id), Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD))),
-            Line::from(Span::styled("  ▶ Başlat ", Style::default().fg(Color::White))),
-            Line::from(Span::styled("  ■ Durdur ", Style::default().fg(Color::White))),
-            Line::from(Span::styled("  ✖ Sil ", Style::default().fg(Color::White))),
+            Line::from(Span::styled("  ▶ Start ", Style::default().fg(Color::White))),
+            Line::from(Span::styled("  ■ Stop ", Style::default().fg(Color::White))),
+            Line::from(Span::styled("  ✖ Delete ", Style::default().fg(Color::White))),
         ];
         let p = Paragraph::new(text)
             .block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).border_style(Style::default().fg(Color::DarkGray)).style(Style::default().bg(Color::Rgb(40,40,40))));

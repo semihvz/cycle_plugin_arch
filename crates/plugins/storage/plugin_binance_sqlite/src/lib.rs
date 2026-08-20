@@ -99,19 +99,19 @@ unsafe extern "C" fn handle_endpoint(
         }
         4 => { // DataMonitor (TUI View)
             let mut report = String::new();
-            report.push_str("=== BINANCE SQLITE RECORDER DURUMU ===\n\n");
+            report.push_str("=== BINANCE SQLITE RECORDER STATUS ===\n\n");
 
             let running = state.is_running.load(Ordering::Relaxed);
-            report.push_str(&format!("Durum: {}\n", if running { "ÇALIŞIYOR (RUNNING)" } else { "DURDURULDU (STOPPED)" }));
+            report.push_str(&format!("Status: {}\n", if running { "RUNNING" } else { "STOPPED" }));
 
             let current_db_path = state.db_path.lock().unwrap().clone();
-            report.push_str(&format!("Veritabanı Dosyası: {}\n", current_db_path));
+            report.push_str(&format!("Database File: {}\n", current_db_path));
 
             let storage_guard = state.storage.lock().unwrap();
             if let Some(storage) = storage_guard.as_ref() {
                 let bytes = storage.get_file_size_bytes();
                 let mb = bytes as f64 / (1024.0 * 1024.0);
-                report.push_str(&format!("DB Boyutu: {:.2} MB ({} bytes)\n\n", mb, bytes));
+                report.push_str(&format!("DB Size: {:.2} MB ({} bytes)\n\n", mb, bytes));
 
                 let stats = &storage.stats;
                 let mark_cnt = stats.mark_price_count.load(Ordering::Relaxed);
@@ -122,16 +122,16 @@ unsafe extern "C" fn handle_endpoint(
                 let total = mark_cnt + best_cnt + trade_cnt + liq_cnt + depth_cnt;
                 let last_ts = stats.last_insert_time_ms.load(Ordering::Relaxed);
 
-                report.push_str("[ Kayıt İstatistikleri ]\n");
-                report.push_str(&format!("- Mark Price Kayıtları: {}\n", mark_cnt));
-                report.push_str(&format!("- Best Price Kayıtları: {}\n", best_cnt));
-                report.push_str(&format!("- Trade Kayıtları: {}\n", trade_cnt));
-                report.push_str(&format!("- Likidasyon Kayıtları: {}\n", liq_cnt));
-                report.push_str(&format!("- Depth (Derinlik) Kayıtları: {}\n", depth_cnt));
-                report.push_str(&format!("- Toplam Yazılan Kayıt: {}\n", total));
-                report.push_str(&format!("- Son Kayıt Zamanı (ms): {}\n", last_ts));
+                report.push_str("[ Storage Statistics ]\n");
+                report.push_str(&format!("- Mark Price Records: {}\n", mark_cnt));
+                report.push_str(&format!("- Best Price Records: {}\n", best_cnt));
+                report.push_str(&format!("- Trade Records: {}\n", trade_cnt));
+                report.push_str(&format!("- Liquidation Records: {}\n", liq_cnt));
+                report.push_str(&format!("- Depth Records: {}\n", depth_cnt));
+                report.push_str(&format!("- Total Records Written: {}\n", total));
+                report.push_str(&format!("- Last Record Time (ms): {}\n", last_ts));
             } else {
-                report.push_str("\nVeritabanı henüz başlatılmadı.\n");
+                report.push_str("\nDatabase not initialized yet.\n");
             }
             report.push_str("======================================\n");
 

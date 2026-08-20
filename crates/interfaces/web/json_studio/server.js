@@ -119,7 +119,7 @@ app.get('/api/status', (req, res) => {
 app.get('/api/config', (req, res) => {
   try {
     if (!fs.existsSync(CONFIG_FILE)) {
-      return res.status(404).json({ error: 'flow_config.json dosyası bulunamadı.' });
+      return res.status(404).json({ error: 'flow_config.json file not found.' });
     }
     const rawText = fs.readFileSync(CONFIG_FILE, 'utf-8');
     const jsonParsed = JSON.parse(rawText);
@@ -130,7 +130,7 @@ app.get('/api/config', (req, res) => {
       filepath: CONFIG_FILE
     });
   } catch (err) {
-    res.status(500).json({ error: 'Config okuma veya JSON ayrıştırma hatası: ' + err.message });
+    res.status(500).json({ error: 'Config read or JSON parsing error: ' + err.message });
   }
 });
 
@@ -147,7 +147,7 @@ app.post('/api/config', (req, res) => {
     } else if (data !== undefined) {
       contentToWrite = JSON.stringify(data, null, 2);
     } else {
-      return res.status(400).json({ error: 'Yazılacak veri ("data" veya "raw") sağlanmadı.' });
+      return res.status(400).json({ error: 'Data to write ("data" or "raw") was not provided.' });
     }
 
     // Create backup file first if original exists
@@ -160,11 +160,11 @@ app.post('/api/config', (req, res) => {
 
     res.json({
       success: true,
-      message: 'flow_config.json başarıyla güncellendi ve yedeklendi.',
+      message: 'flow_config.json updated and backed up successfully.',
       filepath: CONFIG_FILE
     });
   } catch (err) {
-    res.status(400).json({ error: 'Kaydetme hatası (Geçersiz JSON formatı): ' + err.message });
+    res.status(400).json({ error: 'Save error (Invalid JSON format): ' + err.message });
   }
 });
 
@@ -185,7 +185,7 @@ app.post('/api/validate', (req, res) => {
     if (!Array.isArray(data)) {
       return res.json({
         valid: false,
-        issues: [{ severity: 'error', message: 'flow_config.json bir dizi (Array) olmalıdır.' }]
+        issues: [{ severity: 'error', message: 'flow_config.json must be an Array.' }]
       });
     }
 
@@ -203,21 +203,21 @@ app.post('/api/validate', (req, res) => {
     data.forEach((plugin, pIdx) => {
       const pName = plugin.plugin_name || `Plugin #${pIdx + 1}`;
       if (!plugin.plugin_name) {
-        issues.push({ severity: 'error', plugin: pName, message: `Plugin #${pIdx + 1} 'plugin_name' alanına sahip değil.` });
+        issues.push({ severity: 'error', plugin: pName, message: `Plugin #${pIdx + 1} does not have a 'plugin_name' field.` });
       }
 
       if (Array.isArray(plugin.plugin_inputs)) {
         plugin.plugin_inputs.forEach((inp, iIdx) => {
           if (!inp.source) {
-            issues.push({ severity: 'warning', plugin: pName, message: `Girdi #${iIdx + 1} için 'source' plugin adı belirtilmemiş.` });
+            issues.push({ severity: 'warning', plugin: pName, message: `'source' plugin name not specified for input #${iIdx + 1}.` });
           }
           if (!inp.stream_id) {
-            issues.push({ severity: 'error', plugin: pName, message: `Girdi #${iIdx + 1} için 'stream_id' belirtilmemiş.` });
+            issues.push({ severity: 'error', plugin: pName, message: `'stream_id' not specified for input #${iIdx + 1}.` });
           } else if (!producedStreams.has(inp.stream_id)) {
             issues.push({
               severity: 'warning',
               plugin: pName,
-              message: `'${inp.stream_id}' isimli akış kaynağı sistemdeki hiçbir eklentinin çıktısında üretilmiyor (Askıda akış).`
+              message: `Stream source '${inp.stream_id}' is not produced by any plugin output in the system (dangling stream).`
             });
           }
         });
@@ -230,14 +230,14 @@ app.post('/api/validate', (req, res) => {
       produced_streams: Array.from(producedStreams.entries()).map(([stream, producer]) => ({ stream, producer }))
     });
   } catch (err) {
-    res.status(400).json({ valid: false, issues: [{ severity: 'error', message: 'Doğrulama hatası: ' + err.message }] });
+    res.status(400).json({ valid: false, issues: [{ severity: 'error', message: 'Validation error: ' + err.message }] });
   }
 });
 
 app.listen(PORT, () => {
   console.log(`=======================================================`);
-  console.log(` 🚀 Cycle-ORC Görsel JSON & Akış Editörü Başlatıldı!`);
-  console.log(` 📍 Yerel Web Arayüzü: http://localhost:${PORT}`);
-  console.log(` 📄 Hedef Konfigürasyon: ${CONFIG_FILE}`);
+  console.log(` 🚀 Cycle-ORC Visual JSON & Flow Editor Started!`);
+  console.log(` 📍 Local Web Interface: http://localhost:${PORT}`);
+  console.log(` 📄 Target Configuration: ${CONFIG_FILE}`);
   console.log(`=======================================================`);
 });

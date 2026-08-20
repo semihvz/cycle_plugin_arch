@@ -1,64 +1,64 @@
-# HFT (Ultra Düşük Gecikmeli) Mimari Geçiş Planı
+# HFT (Ultra-Low Latency) Architecture Transition Plan
 
-Ana sistemi (Orkestratör) standart bir yönetim aracından çıkarıp, mikrosaniye/nanosaniye seviyesinde rekabet edebilecek **Gerçek Zamanlı bir HFT Motoruna** dönüştürmek için kapsamlı bir mimari değişiklik yapılmıştır.
+A comprehensive architectural overhaul has been implemented to transform the core system (Orchestrator) from a conventional management shell into a **Real-Time HFT Engine** capable of competing at microsecond/nanosecond speed scales.
 
-> ⚠️ **Kritik Değişiklik Uyarısı (Breaking Change)**
-> Bu geçiş, orkestratörün çekirdek `System` arayüzünü (Trait) ve bellek yönetimini tamamen değiştirmiştir. Bundan sonra yazılacak olan tüm yeni eklentilerin (pluginlerin), bu yeni "Sıfır Kopyalama" (Zero-copy) ve "V-Table'sız" (C-ABI) kurallarına göre geliştirilmesi gerekmektedir.
+> ⚠️ **Breaking Change Notice**
+> This transition has completely refactored the core `System` trait interface and memory management of the orchestrator. All newly authored plugins must strictly conform to these new "Zero-Copy" and "V-Table-Free" (C-ABI) specifications.
 
-## ❓ Karar Verilen Konular
-- ✅ Yeni eklentiler (pluginler) oluştururken artık Rust `dyn System` trait'i yerine, doğrudan C-ABI stili `extern "C"` metodlar dışa aktarılacak. Bu HFT için en iyi yoldur.
-- ✅ CPU Sabitleme (Pinning) işlemi için 2 çekirdek kısıtı uygulanacak. Ana döngü Çekirdek 0'a sabitlenmiştir.
+## ❓ Approved Decisions
+- ✅ When authoring new plugins, instead of the Rust `dyn System` trait, native C-ABI style `extern "C"` functions are exposed. This is the optimal path for ultra-low latency HFT.
+- ✅ CPU core pinning constraints are applied. The main execution thread is pinned to CPU Core 0.
 
-## 🛠 Yapılan Değişiklikler
+## 🛠 Architectural Changes Implemented
 
-Aşağıdaki bileşenler HFT mimarisine (Lock-free, Zero-copy, No V-Table, CPU Pinning) uygun şekilde tamamen yeniden yazılmıştır:
+The following components have been rewritten to adhere to ultra-low latency HFT standards (Lock-free, Zero-copy, No V-Table, CPU Pinning):
 
 ---
 
-### Orkestratör Çekirdek Yapıları
+### Orchestrator Core Structures
 
 #### [MODIFY] memory.rs
-- **Kaldırılanlar:** `Arc<RwLock<Vec<u8>>>` mekanizması.
-- **Eklenenler:** 
-  - Gelen ve giden mesajlar (Inbox/Outbox) için `crossbeam::queue::ArrayQueue` tabanlı **Lock-Free Ring Buffer**. Thread'ler kilitlenmeden okuma/yazma yapabilecek.
+- **Removed:** `Arc<RwLock<Vec<u8>>>` mutex/rwlock mechanism.
+- **Added:** 
+  - `crossbeam::queue::ArrayQueue` based **Lock-Free Ring Buffer** for incoming and outgoing messages (Inbox/Outbox). Threads execute reads and writes concurrently without lock contention.
 
 #### [MODIFY] system.rs
-- **Kaldırılanlar:** `dyn System` tabanlı dinamik dağıtım (V-Table gecikmesi).
-- **Eklenenler:**
-  - `SystemInstance` isimli yeni bir struct. Eklentinin RAM'deki referans adresleri (`*mut c_void`) ve fonksiyonları (`extern "C" fn(payload: *const u8, len: usize)`) ham fonksiyon pointer'ları (Raw Function Pointers) olarak saklanmaktadır. Böylece `call()` atıldığı an araya sanal fonksiyon tablosu girmeden direkt CPU komutu çalıştırılır.
-  - Eklenti içi veriler (Payload) kopyalama gerektiren `Vec<u8>` yerine `&[u8]` pointer referanslarına çevrilmiştir (Zero-copy).
-  - Durum bilgileri (`is_running`, `is_data_valid`) `Arc<RwLock<bool>>` yerine `Arc<AtomicBool>` ile lock-free takip edilmektedir.
+- **Removed:** `dyn System` dynamic dispatch (V-Table lookup latency).
+- **Added:**
+  - `SystemInstance` structure storing raw memory pointers (`*mut c_void`) and raw function pointers (`extern "C" fn(payload: *const u8, len: usize)`). When an endpoint call is made, CPU instructions execute directly without virtual table lookup.
+  - Inter-plugin payloads are passed as zero-copy reference slices (`&[u8]`) instead of allocating heap memory (`Vec<u8>`).
+  - State flags (`is_running`, `is_data_valid`) are tracked lock-free via `Arc<AtomicBool>` instead of `Arc<RwLock<bool>>`.
 
 #### [MODIFY] endpoint.rs
-- **Eklenenler:** `#[repr(u32)]` ile C-ABI uyumlu bellek düzeni (FFI uyumlu enum). Her endpoint sabit bir tamsayı değerine sahiptir.
+- **Added:** `#[repr(u32)]` for C-ABI FFI memory layout compatibility. Each endpoint is assigned a fixed integer discriminant.
 
 #### [MODIFY] orchestrator.rs
-- **Kaldırılanlar:** Sisteme ağır yük bindiren `DashMap` kullanımı.
-- **Eklenenler:**
-  - Eklentiler `Vec<Arc<SystemInstance>>` içinde saklanmaktadır.
-  - Rota (Routing) çağrıları optimize edilmiştir; `payload` aktarımı sıfır kopyalama (Zero-copy) ile `&[u8]` referans dilimi olarak yapılmaktadır.
+- **Removed:** Heavy `DashMap` concurrency bottlenecks.
+- **Added:**
+  - Systems stored efficiently inside `Vec<Arc<SystemInstance>>`.
+  - Routing calls optimized for zero-copy payload forwarding via `&[u8]` slice references.
 
 #### [MODIFY] main.rs
-- **Kaldırılanlar:** İşletim sisteminin thread scheduling (zamanlama) insiyatifine bırakılan iş akışları. Eski `create_plugin` (Box<dyn System>) eklenti yükleme sistemi.
-- **Eklenenler:** 
-  - `core_affinity` kütüphanesi ile ana thread CPU Çekirdek 0'a sabitlenmiştir (CPU Pinning). L1/L2 önbellek silinmeleri (Cache Misses) engellenmiştir.
-  - Yeni `init_plugin` C-ABI eklenti yükleme sistemi (`extern "C" fn(state_out) -> RawEndpointFn`).
-  - 1MB pre-allocated `hft_buf` buffer'ı ile sıcak yolda sıfır heap allokasyonu sağlanmıştır.
+- **Removed:** OS-dependent thread scheduling logic and legacy `create_plugin` (`Box<dyn System>`) dynamic dispatch.
+- **Added:** 
+  - Pinned main thread to CPU Core 0 using `core_affinity` to prevent L1/L2 CPU cache misses.
+  - New `init_plugin` C-ABI loader pattern (`extern "C" fn(state_out) -> RawEndpointFn`).
+  - 1MB pre-allocated `hft_buf` buffer ensuring zero heap allocations on the hot path.
 
 ---
 
-## 🧪 Doğrulama Sonuçları (Verification Results)
-1. ✅ **Derleme:** `cargo check` ve `cargo build` komutlarıyla HFT paketleri (`crossbeam`, `core_affinity`) başarıyla entegre edildi. Sıfır hata, sıfır uyarı.
-2. ✅ **Commit ve Push:** Tüm değişiklikler GitHub'a başarıyla pushlandı.
+## 🧪 Verification Results
+1. ✅ **Compilation:** Successfully compiled via `cargo check` and `cargo build` with HFT dependencies (`crossbeam`, `core_affinity`). Zero errors, zero warnings.
+2. ✅ **Version Control:** Changes committed and pushed to GitHub.
 
-## 📊 Önce / Sonra Karşılaştırması
+## 📊 Before / After Architecture Comparison
 
-| Bileşen | Eski (Darboğaz) | Yeni (HFT) |
+| Component | Legacy Architecture (Bottleneck) | New Architecture (Ultra-HFT) |
 |---|---|---|
-| **memory.rs** | `Arc<RwLock<Vec<u8>>>` (Lock) | `crossbeam::ArrayQueue` (Lock-free Ring Buffer) |
+| **memory.rs** | `Arc<RwLock<Vec<u8>>>` (Lock Contention) | `crossbeam::ArrayQueue` (Lock-free Ring Buffer) |
 | **system.rs** | `Box<dyn System>` + V-Table | `SystemInstance` + `extern "C"` raw fn pointers |
-| **endpoint.rs** | Rust enum | `#[repr(u32)]` C-ABI enum |
-| **orchestrator.rs** | `DashMap` (ağır Lock) | `Vec<Arc<SystemInstance>>` + zero-copy `&[u8]` |
-| **main.rs (Eklenti)** | `create_plugin` → `Box<dyn System>` | `init_plugin` → C-ABI fonksiyon pointer |
-| **main.rs (CPU)** | İşletim sistemi thread scheduling | `core_affinity` ile CPU Core 0'a sabitleme |
-| **main.rs (Bellek)** | Her çağrıda yeni `Vec<u8>` allokasyonu | 1MB pre-allocated `hft_buf` |
+| **endpoint.rs** | Rust Enum | `#[repr(u32)]` C-ABI Enum |
+| **orchestrator.rs** | `DashMap` (Lock Overhead) | `Vec<Arc<SystemInstance>>` + zero-copy `&[u8]` |
+| **main.rs (Plugin Loader)** | `create_plugin` → `Box<dyn System>` | `init_plugin` → C-ABI raw function pointer |
+| **main.rs (CPU Pinning)** | OS Thread Scheduling | Pinned to CPU Core 0 via `core_affinity` |
+| **main.rs (Memory)** | Dynamic `Vec<u8>` heap allocations | 1MB pre-allocated static `hft_buf` |

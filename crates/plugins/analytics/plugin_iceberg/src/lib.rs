@@ -251,11 +251,11 @@ impl IcebergEngine {
 
                         let event_id = self.event_counter.fetch_add(1, Ordering::Relaxed);
                         let desc = format!(
-                            "BUZDAĞI EMİR (Iceberg Order): {} {:.4} fiyatında görünen ${:.0} emre karşılık ${:.0} tutarında işlem yedi ve {} kez YENİLENDİ! Tahmini Gizli Büyüklük: ${:.0}",
+                            "ICEBERG ORDER: {} executed ${:.0} vs visible ${:.0} at price {:.4} and REFILLED {} times! Estimated Hidden Vol: ${:.0}",
                             iceberg_side,
-                            level.price,
-                            level.initial_visible_usdt,
                             level.executed_usdt,
+                            level.initial_visible_usdt,
+                            level.price,
                             level.refill_count,
                             estimated_hidden_usdt
                         );
@@ -334,21 +334,21 @@ impl IcebergEngine {
         let mut report = String::new();
         report.push_str("============================================================\n");
         report.push_str(&format!(
-            "🧊 BINANCE FUTURES ICEBERG (BUZDAĞI EMİR) TESPİT PANELİ\n\
-             ├─ Min Hacim Eşiği: ${} USDT | Min Kat: {:.1}x | Pencere: {} ms\n",
+            "🧊 BINANCE FUTURES ICEBERG ORDER DETECTION PANEL\n\
+             ├─ Min Vol Threshold: ${} USDT | Min Ratio: {:.1}x | Window: {} ms\n",
             min_usdt, min_ratio, window_ms
         ));
         report.push_str("============================================================\n");
 
         if sorted_symbols.is_empty() {
-            report.push_str("Henüz tespit edilen buzdağı emir (iceberg) yok.\n");
+            report.push_str("No iceberg orders detected yet.\n");
         } else {
             for symbol in &sorted_symbols {
                 if let Some(m) = metrics_guard.get(symbol) {
                     let active_count = levels_guard.get(symbol).map(|lvls| lvls.values().filter(|l| l.is_alerted).count()).unwrap_or(0);
                     report.push_str(&format!(
-                        "[{}]  Aktif Gizli Emirlik Kademe: {} | Toplam Buzdağı: {} (Alım/Biriktirme: {} | Satım/Dağıtım: {})\n\
-                         ├─ Tespit Edilen Toplam Gizli Hacim: ${:.2}\n\n",
+                        "[{}]  Active Hidden Levels: {} | Total Icebergs: {} (Buy/Accumulation: {} | Sell/Distribution: {})\n\
+                         ├─ Total Hidden Vol Detected: ${:.2}\n\n",
                         symbol,
                         active_count,
                         m.total_iceberg_events,
@@ -361,31 +361,31 @@ impl IcebergEngine {
         }
 
         report.push_str("------------------------------------------------------------\n");
-        report.push_str("🧊 SON ICEBERG (BUZDAĞI GİZLİ EMİR) ALARMLARI (Son 5 Event):\n");
+        report.push_str("🧊 RECENT ICEBERG ORDER ALERTS (Last 5 Events):\n");
         report.push_str("------------------------------------------------------------\n");
 
         if events_guard.is_empty() {
-            report.push_str("Henüz gizli kurumsal buzdağı emri tespit edilmedi.\n");
+            report.push_str("No institutional hidden iceberg orders detected yet.\n");
         } else {
             for ev in events_guard.iter().rev().take(5) {
                 let badge = match ev.alert_level.as_str() {
-                    "CRITICAL" => "🛑 [KRİTİK]",
-                    "HIGH" => "🔴 [YÜKSEK]",
-                    "MEDIUM" => "🟠 [ORTA]",
-                    _ => "🟡 [BİLGİ]",
+                    "CRITICAL" => "🛑 [CRITICAL]",
+                    "HIGH" => "🔴 [HIGH]",
+                    "MEDIUM" => "🟠 [MEDIUM]",
+                    _ => "🟡 [INFO]",
                 };
 
                 let side_label = if ev.side == "BUY_ICEBERG" {
-                    "🟢 ALIM/BİRİKTİRME (Buy Iceberg)"
+                    "🟢 BUY/ACCUMULATION (Buy Iceberg)"
                 } else {
-                    "🔴 SATIŞ/DAĞITIM (Sell Iceberg)"
+                    "🔴 SELL/DISTRIBUTION (Sell Iceberg)"
                 };
 
                 report.push_str(&format!(
-                    "{} #{} [{}] {} Fiyat: {:.4} | Yenilenme: {} Kez\n\
-                     │   ├─ Görünen Hacim: ${:.0} -> Yenen İşlem: ${:.0} (Katı: {:.1}x)\n\
-                     │   ├─ Tahmini Toplam Gizli Hacim: ${:.0} | Skoru: {:.2}\n\
-                     │   └─ Açıklama: {}\n",
+                    "{} #{} [{}] {} Price: {:.4} | Refills: {} Times\n\
+                     │   ├─ Visible Vol: ${:.0} -> Executed: ${:.0} (Ratio: {:.1}x)\n\
+                     │   ├─ Estimated Total Hidden Vol: ${:.0} | Score: {:.2}\n\
+                     │   └─ Description: {}\n",
                     badge,
                     ev.id,
                     ev.symbol,

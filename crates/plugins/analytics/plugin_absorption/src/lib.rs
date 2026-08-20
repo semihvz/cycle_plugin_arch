@@ -254,10 +254,10 @@ impl AbsorptionEngine {
 
                             let event_id = self.event_counter.fetch_add(1, Ordering::Relaxed);
                             let desc = format!(
-                                "EMİLİM VE TEYİTLİ GERÇEK DUVAR (Genuine Wall Absorption): {} {:.4} fiyatındaki duvara ${:.0} tutarında agresif işlem vurmasına rağmen duvar YIKILMADI ve emildi!",
-                                side,
+                                "GENUINE WALL ABSORPTION: Aggressive trades hit the wall at price {:.4} with ${:.0} volume, but the wall WAS NOT BROKEN and was absorbed! ({})",
                                 wall.price,
-                                wall.executed_usdt
+                                wall.executed_usdt,
+                                side
                             );
 
                             let event = AbsorptionEvent {
@@ -348,21 +348,21 @@ impl AbsorptionEngine {
         let mut report = String::new();
         report.push_str("============================================================\n");
         report.push_str(&format!(
-            "🛡️ BINANCE FUTURES EMİLİM (ABSORPTION) VE DUVAR TEYİT PANELİ\n\
-             ├─ Min Emilim Hacmi: ${} USDT | Min Duvar Büyüklüğü: ${} USDT\n",
+            "🛡️ BINANCE FUTURES ABSORPTION & WALL CONFIRMATION PANEL\n\
+             ├─ Min Absorption Vol: ${} USDT | Min Wall Size: ${} USDT\n",
             min_abs_usdt, min_wall_usdt
         ));
         report.push_str("============================================================\n");
 
         if sorted_symbols.is_empty() {
-            report.push_str("Henüz emilim (absorption) veya teyitli gerçek duvar bulunamadı.\n");
+            report.push_str("No absorption or confirmed genuine walls detected yet.\n");
         } else {
             for symbol in &sorted_symbols {
                 if let Some(m) = metrics_guard.get(symbol) {
                     let active_count = walls_guard.get(symbol).map(|w| w.len()).unwrap_or(0);
                     report.push_str(&format!(
-                        "[{}]  Takip Edilen Duvarlar: {} (Teyitli Gerçek: {}) | Toplam Emilim: {} (Boğa Emilimi: {} | Ayı Emilimi: {})\n\
-                         ├─ Toplam Emilen Hacim: ${:.2}\n\n",
+                        "[{}]  Tracked Walls: {} (Confirmed Genuine: {}) | Total Absorption: {} (Bullish: {} | Bearish: {})\n\
+                         ├─ Total Absorbed Vol: ${:.2}\n\n",
                         symbol,
                         active_count,
                         m.confirmed_walls_count,
@@ -376,31 +376,31 @@ impl AbsorptionEngine {
         }
 
         report.push_str("------------------------------------------------------------\n");
-        report.push_str("🛡️ SON TEYİTLİ EMİLİM VE DUVAR ALARMLARI (Son 5 Event):\n");
+        report.push_str("🛡️ RECENT CONFIRMED ABSORPTION & WALL ALERTS (Last 5 Events):\n");
         report.push_str("------------------------------------------------------------\n");
 
         if events_guard.is_empty() {
-            report.push_str("Henüz teyitli duvar emilimi gerçekleşmedi.\n");
+            report.push_str("No confirmed wall absorption events recorded yet.\n");
         } else {
             for ev in events_guard.iter().rev().take(5) {
                 let badge = match ev.alert_level.as_str() {
-                    "CRITICAL" => "🛑 [KRİTİK]",
-                    "HIGH" => "🔴 [YÜKSEK]",
-                    "MEDIUM" => "🟠 [ORTA]",
-                    _ => "🟡 [BİLGİ]",
+                    "CRITICAL" => "🛑 [CRITICAL]",
+                    "HIGH" => "🔴 [HIGH]",
+                    "MEDIUM" => "🟠 [MEDIUM]",
+                    _ => "🟡 [INFO]",
                 };
 
                 let side_label = if ev.side == "BID_ABSORPTION" {
-                    "🟢 BOĞA EMİLİMİ (Alım Desteği Teyit Edildi)"
+                    "🟢 BULLISH ABSORPTION (Buy Support Confirmed)"
                 } else {
-                    "🔴 AYI EMİLİMİ (Satış Direnci Teyit Edildi)"
+                    "🔴 BEARISH ABSORPTION (Sell Resistance Confirmed)"
                 };
 
                 report.push_str(&format!(
-                    "{} #{} [{}] {} Fiyat: {:.4}\n\
-                     │   ├─ Emilen Agresif Hacim: ${:.0} | Durumu: {}\n\
-                     │   ├─ Emilim Skoru: {:.2}\n\
-                     │   └─ Açıklama: {}\n",
+                    "{} #{} [{}] {} Price: {:.4}\n\
+                     │   ├─ Absorbed Aggressive Vol: ${:.0} | Status: {}\n\
+                     │   ├─ Absorption Score: {:.2}\n\
+                     │   └─ Description: {}\n",
                     badge,
                     ev.id,
                     ev.symbol,
