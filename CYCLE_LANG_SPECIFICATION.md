@@ -1,31 +1,31 @@
 # 🚀 CYCLELANG / CYCLESCRIPT (HFT DOMAIN-SPECIFIC PROGRAMMING LANGUAGE)
-## Gelişmiş Mimari, Sözdizimi Spesifikasyonu ve Uygulama Planı
+## Advanced Architecture, Syntax Specification, and Implementation Plan
 
 ---
 
-## 1. 📌 Giriş ve Mimari Vizyon
+## 1. 📌 Introduction and Architectural Vision
 
-**CycleLang (`.cy`)**, Cycle Orchestrator High-Frequency Trading (HFT) altyapısı üzerinde çalışan, **Domain-Specific Programming Language (DSL)** olarak tasarlanmış yüksek performanslı bir strateji ve eklenti orkestrasyon dilidir.
+**CycleLang (`.cy`)** is a high-performance strategy and plugin orchestration domain-specific programming language (DSL) designed to run on top of the Cycle Orchestrator High-Frequency Trading (HFT) infrastructure.
 
-### Temel Mimari İlkeler:
-1. **Mikro-Modüler Eklenti Mimarisi:** `.so` kütüphaneleri (C-ABI) saf performans, bellek tamponlaması ve borsa bağlantılarını (kas gücünü) sağlar.
-2. **Orkestrasyon ve İlişki Katmanı (`.cy`):** Akış mantığını, eklentiler arası veri iletim hatlarını (piping), strateji tetikleyicilerini (triggers) ve risk kurallarını (aklı) yönetir.
-3. **Sıfır Gecikme Bozulması (Zero Latency Overhead):** `.cy` betikleri derlenerek bytecode veya doğrudan C-ABI çağrılarına dönüştürülür; HFT çekirdeğindeki (Core 1) mikro-saniye işlemlerini engellemez.
-4. **Canlı Sıcak Yükleme (Hot-Reloading):** Sistemi yeniden başlatmadan veya kesintiye uğratmadan `.cy` betikleri canlı akış esnasında anında güncellenebilir.
+### Core Architectural Principles:
+1. **Micro-Modular Plugin Architecture:** `.so` dynamic libraries (C-ABI) provide raw performance, memory buffering, and exchange connections (muscle power).
+2. **Orchestration and Wiring Layer (`.cy`):** Manages stream flow logic, inter-plugin data pipelines, strategy triggers, and risk management rules (brain power).
+3. **Zero Latency Overhead:** `.cy` scripts are compiled into bytecode or direct C-ABI calls, ensuring no microsecond blocking on the HFT core thread (Core 1).
+4. **Live Hot-Reloading:** `.cy` scripts can be updated instantly on live data feeds without restarting or interrupting the system.
 
 ---
 
-## 2. 📜 Programlama Dili Sözdizimi (Language Syntax Specification)
+## 2. 📜 Language Syntax Specification
 
-### A. Değişkenler ve Veri Tipleri
+### A. Variables and Data Types
 ```cyclescript
-// Temel Veri Tipleri
+// Primitive Data Types
 let symbol: string = "BTCUSDT"
 let leverage: int = 20
 let risk_pct: float = 1.5
 let is_active: bool = true
 
-// Sözlük / JSON Tipi
+// Dictionary / JSON Type
 let config = {
     "target_symbol": symbol,
     "max_slippage": 0.02,
@@ -33,16 +33,16 @@ let config = {
 }
 ```
 
-### B. Eklenti Yükleme ve Yaşam Döngüsü (`plugin`)
+### B. Plugin Loading and Lifecycle (`plugin`)
 ```cyclescript
-// 1. Dinamik C-ABI Eklentilerini Hafızaya Yükle
+// 1. Load Dynamic C-ABI Plugins into Memory
 let gateway  = plugin.load("libplugin_binance_gateway.so")
 let stats    = plugin.load("libplugin_aggtrade_stats.so")
 let breakout = plugin.load("libplugin_breakout.so")
 let paper    = plugin.load("libplugin_paper_exchange.so")
 let db       = plugin.load("libplugin_sqlite_query.so")
 
-// 2. Eklentileri Yapılandır ve Başlat
+// 2. Configure and Start Plugins
 gateway.set_config({ "ws_url": "wss://fstream.binance.com/ws" })
 gateway.pin_core(0) // Background Networking -> Core 0
 breakout.pin_core(1) // Ultra-Low Latency Calculation -> Core 1
@@ -53,8 +53,8 @@ breakout.start()
 paper.start()
 ```
 
-### C. Eklentiler Arası Veri Boru Hattı (`pipe`)
-Eklentilerin çıktı tamponlarını sıfır kopya (zero-copy) ile diğer eklentilerin girdi tamponlarına bağlar:
+### C. Inter-Plugin Data Pipelines (`pipe`)
+Connects output memory buffers of producer plugins directly to input buffers of consumer plugins with zero-copy:
 
 ```cyclescript
 pipe HFT_Data_Flow {
@@ -65,47 +65,47 @@ pipe HFT_Data_Flow {
 }
 ```
 
-### D. Canlı Akış Dinleyicileri ve Tetikleyiciler (`when`, `on_event`)
+### D. Live Stream Listeners & Triggers (`when`, `on_event`)
 ```cyclescript
-// Koşullu Olay Tetikleyici (Event Trigger)
+// Conditional Event Trigger
 when (stats.delta_1m > 100.0 && gateway.spread < 0.05) {
     let price = gateway.best_ask
     let qty = calc_position_size(price, leverage)
     
     paper.buy(symbol, qty: qty, price: market, leverage: leverage)
-    log("🚀 HFT BREAKOUT ALIM TETİKLENDİ | Miktar: " + qty)
+    log("🚀 HFT BREAKOUT BUY TRIGGERED | Qty: " + qty)
 }
 
-// Risk ve Pozisyon Kontrol Dinleyicisi
+// Risk & Position Control Listener
 on_event(paper, "position_update") { |pos|
     if (pos.unrealized_pnl_pct >= 2.0) {
         paper.close(pos.symbol)
-        log("🎯 TAKE PROFIT HEDEFİ ULAŞILDI: Pozisyon Kapatıldı.")
+        log("🎯 TAKE PROFIT TARGET REACHED: Position Closed.")
     } else if (pos.unrealized_pnl_pct <= -0.5) {
         paper.close(pos.symbol)
-        log("⏹ STOP LOSS TETİKLENDİ: Pozisyon Kapatıldı.")
+        log("⏹ STOP LOSS TRIGGERED: Position Closed.")
     }
 }
 ```
 
-### E. Fonksiyon ve Kullanıcı Tanımlı Mantık (`fn`)
+### E. Functions & Custom Logic (`fn`)
 ```cyclescript
 fn calc_position_size(entry_price: float, lev: int) -> float {
     let account = paper.get_balance()
-    let margin = account.available_margin * 0.1 // Bakiyenin %10'u
+    let margin = account.available_margin * 0.1 // 10% of balance
     return (margin * lev) / entry_price
 }
 ```
 
 ---
 
-## 3. ⚙️ Derleyici ve Yürütme Motoru Mimarisi
+## 3. ⚙️ Compiler and Execution Engine Architecture
 
 ```mermaid
 graph TD
-    A[".cy Script Dosyası (breakout.cy)"] --> B["Lexer & Parser (pest/nom AST)"]
+    A[".cy Script File (breakout.cy)"] --> B["Lexer & Parser (pest/nom AST)"]
     B --> C["Abstract Syntax Tree (AST)"]
-    C --> D{"Çalıştırma Modu"}
+    C --> D{"Execution Mode"}
     D -->|"Interpreted / Live"| E["Cycle VM (Bytecode Engine)"]
     D -->|"Native JIT"| F["C-ABI Transpiler (.so Compiler)"]
     E --> G["C-ABI Shared Memory Ring Buffer"]
@@ -113,46 +113,46 @@ graph TD
     G --> H["FlowEngine (Core 1 Pinning)"]
 ```
 
-1. **Parser & Lexer:** Rust `pest` veya `nom` crate'i ile `.cy` metin dosyası AST ağacına dönüştürülür.
-2. **Cycle Virtual Machine (VM):** AST ağacı hafif bir bytecode formatına dönüştürülüp hafızada yürütülür.
-3. **C-ABI JIT Transpiler (İleri Aşama):** `.cy` betiği otomatik olarak C/Rust koduna dönüştürülüp `gcc`/`rustc` ile doğrudan `.so` eklentisine derlenebilir.
+1. **Parser & Lexer:** Uses Rust `pest` or `nom` crate to parse `.cy` text files into AST nodes.
+2. **Cycle Virtual Machine (VM):** Converts AST nodes to compact bytecode executed in memory.
+3. **C-ABI JIT Transpiler (Future Stage):** Transpiles `.cy` scripts directly to C/Rust code compiled to `.so` shared objects via `gcc`/`rustc`.
 
 ---
 
-## 4. 💻 Shell Entegrasyonu (İnteraktif Kabuk Komutları)
+## 4. 💻 Shell Integration (Interactive Shell Commands)
 
-Geliştirdiğimiz `interactive_shell` kabuğuna şu yeni komutlar entegre edilecektir:
+The following commands will be integrated into the `interactive_shell`:
 
-| Komut | Açıklama |
+| Command | Description |
 | :--- | :--- |
-| **`run <script.cy>`** | Belirtilen `.cy` betiğini okur, doğrular ve çalıştırır. |
-| **`watch <script.cy>`** | Betik dosyasında değişiklik yapıldığında canlıda anında günceller (Hot-Reloading). |
-| **`compile <script.cy> -o <out.so>`** | Betiği doğrudan yerel C-ABI `.so` eklentisine derler. |
-| **`scripts`** | Hafızada aktif çalışan `.cy` betiklerini ve durumlarını listeler. |
-| **`stop script <id>`** | Çalışan betiği ve tetikleyicilerini durdurur. |
+| **`run <script.cy>`** | Parses, validates, and executes the specified `.cy` script. |
+| **`watch <script.cy>`** | Watches script file changes and updates execution live (Hot-Reloading). |
+| **`compile <script.cy> -o <out.so>`** | Compiles the script directly to a native C-ABI `.so` plugin. |
+| **`scripts`** | Lists active `.cy` scripts running in memory and their statuses. |
+| **`stop script <id>`** | Stops the specified script execution and its triggers. |
 
 ---
 
-## 5. 🗺️ Adım Adım Geliştirme Yol Haritası (Implementation Roadmap)
+## 5. 🗺️ Step-by-Step Implementation Roadmap
 
-### 🔹 Aşama 1: Lexer & AST Parser Altyapısının Kurulması
-* `cycle_lang` adında yeni bir crate oluşturulması (`interactive_shell` dizini altında veya bağımsız).
-* `pest` grameri ile `.cy` sözdizimi tanımlarının (Değişkenler, `plugin.load`, `set`, `start`) oluşturulması.
+### 🔹 Stage 1: Lexer & AST Parser Infrastructure
+* Create a new crate named `cycle_lang` (under `crates/core` or `apps`).
+* Define `.cy` syntax grammar (`pest` parser for variables, `plugin.load`, `set`, `start`).
 
-### 🔹 Aşama 2: Bytecode Yürütücü (Interpreter & Orchestrator Binding)
-* AST çıktısını alan ve `Orchestrator` üzerindeki `call_endpoint` / `load_plugin` metotlarını çağıran bytecode motorunun yazılması.
-* `run script.cy` komutunun kabuğa eklenmesi.
+### 🔹 Stage 2: Bytecode Interpreter & Orchestrator Binding
+* Build bytecode interpreter that takes AST output and invokes `Orchestrator` methods (`call_endpoint` / `load_plugin`).
+* Add `run script.cy` command to the interactive shell.
 
-### 🔹 Aşama 3: Veri Boru Hattı (`pipe`) ve Etkinlik Dinleyicileri (`when`, `on_event`)
-* Eklentiler arasındaki veri akışını dinamik olarak yönlendiren `pipe` motorunun tamamlanması.
-* WebSocket veya SQLite verileri geldikçe `when` bloklarını nanosaniyede değerlendiren olay döngüsünün kurulması.
+### 🔹 Stage 3: Data Pipelines (`pipe`) and Event Listeners (`when`, `on_event`)
+* Complete the `pipe` engine for dynamic zero-copy data routing between plugins.
+* Implement event loop evaluating `when` blocks in nanoseconds as WebSocket/SQLite data arrives.
 
-### 🔹 Aşama 4: Hot-Reloading ve Yerel `.so` Derleyicisi (JIT)
-* Betik dosyası kaydedildiği an canlı sistemi durdurmadan re-parse eden `watch` modülünün yazılması.
-* `.cy` dosyalarını C/Rust `.so` eklentisine dönüştüren `compile` modülünün eklenmesi.
+### 🔹 Stage 4: Hot-Reloading and Native `.so` Compiler (JIT)
+* Build `watch` module to re-parse updated script files live without stopping the system.
+* Add `compile` module to transpile `.cy` scripts to C/Rust `.so` libraries.
 
 ---
 
-## 📌 Sonuç
+## 📌 Conclusion
 
-Bu spesifikasyon, **Cycle Orchestrator** altyapısını basit bir sistemden **kendi programlama diline sahip yüksek frekanslı bir ticaret platformuna** dönüştürecektir. Eklentiler modüler mikro-hizmetler olarak kalırken, tüm mantık ve ilişki ağı `.cy` betikleriyle saniyeler içinde esnekçe yönetilecektir.
+This specification transforms **Cycle Orchestrator** from a core runtime shell into a **full-fledged high-frequency trading platform with its own domain-specific programming language**. Plugins remain modular C-ABI micro-services while execution logic is flexibly orchestrated via `.cy` scripts.

@@ -1,17 +1,17 @@
-# Node-Tabanlı Veri Akış ve Yönlendirme (Data Router) Mimarisi
+# Node-Based Data Flow & Data Router Engine Architecture
 
-Kullanıcı gereksinimleri doğrultusunda, eklentiler arası haberleşmeyi "ana orkestratörden (TUI/Sistem Yönetimi)" ayırarak, **tamamen bağımsız ve konfigürasyon (ayar dosyası) odaklı yeni bir Çekirdek Sistem (Data Router / Flow Engine)** tasarlanmıştır.
+In accordance with system requirements, a **fully independent and configuration-driven Core System (Data Router / Flow Engine)** has been designed to decouple inter-plugin communication from the main Orchestrator (TUI/System Management).
 
-## 1. Temel Felsefe: Eklentiler = Fonksiyonlar (Düğümler)
-Her eklenti (plugin) girdisi (Input) ve çıktısı (Output) olan bağımsız bir fonksiyon / kara kutu olarak tasarlanacaktır. 
-Eklenti kimden veri aldığını veya kime veri gönderdiğini bilmez; sadece kendisine verilen **Girdi Tamponunu (Input Buffer)** okur ve kendi **Çıktı Tamponuna (Output Buffer)** yazar.
+## 1. Core Philosophy: Plugins = Functions (Nodes)
+Every plugin is designed as an independent function / black box with inputs and outputs.
+A plugin does not know where data comes from or where data goes; it simply reads its assigned **Input Buffer** and writes to its **Output Buffer**.
 
-## 2. Konfigürasyon Dosyası ile Dinamik Bağlantı (Routing)
-Hangi eklentinin çıktısının, hangi eklentinin girdisine bağlanacağı koda gömülmeyecektir (Hardcoded olmayacak). Bu yapı, kullanıcı tarafından bir `flow_config.toml` (veya json/yaml) dosyası ile belirlenecektir.
+## 2. Dynamic Routing via Configuration File
+Connecting outputs of producer plugins to inputs of consumer plugins is not hardcoded. This structure is defined by the user in a `flow_config.json` (or TOML/YAML) file.
 
-**Örnek `flow_config.toml` Yapısı:**
+**Sample Configuration Structure (`flow_config.toml`):**
 ```toml
-# VERİ ÜRETİCİLERİ (Kaynaklar)
+# DATA PRODUCERS (Sources)
 [[plugin]]
 name = "all_markprices"
 type = "producer"
@@ -22,42 +22,42 @@ name = "all_aggtrades"
 type = "producer"
 outputs = ["stream_trades"]
 
-# VERİ TÜKETİCİLERİ / ANALİZÖRLER
+# DATA PROCESSORS / ANALYZERS
 [[plugin]]
 name = "ms_analyzer"
 type = "processor"
 inputs = { markprice = "stream_markprice", trades = "stream_trades" }
 outputs = ["stream_ms_signals"]
 
-# KARAR VERİCİ / İŞLEM (Tüketici)
+# DECISION MAKERS / EXECUTION (Consumers)
 [[plugin]]
 name = "plugin_breakout"
 type = "consumer"
 inputs = { signals = "stream_ms_signals" }
 ```
-Bu dosya sayesinde eklentileri bir lego gibi birbirine bağlayabilecek ve sistemi kod değiştirmeden yeniden kurgulayabileceksiniz.
+With this configuration, plugins connect together like LEGO bricks, allowing full system re-architecting without modifying any code.
 
-## 3. Gecikmesiz RAM Transferi (Zero-Copy Shared Memory)
-Verileri bir eklentiden diğerine kopyalamak yerine **Paylaşılan Bellek (Shared Memory / Pointers)** mimarisi kullanılacaktır.
-* Data Router sistemi, config dosyasını okuduğunda `stream_markprice` isimli bir bellek adresi (örneğin 1MB'lık tahsis edilmiş hafıza bloğu - Pointer) oluşturur.
-* Bu hafıza adresinin **Yazma Yetkisini (Write Pointer)** `all_markprices` eklentisine, **Okuma Yetkisini (Read Pointer)** ise `ms_analyzer` eklentisine verir.
-* `all_markprices` yeni bir fiyat aldığında bunu belleğe yazar yazmaz, `ms_analyzer` anında (0 milisaniye kopya gecikmesiyle) bu veriyi okuyabilir.
+## 3. Zero-Copy Shared Memory Transfer (RAM)
+Instead of copying bytes from one plugin to another, a **Shared Memory (Pointers)** architecture is used.
+* When the Data Router initializes the config, it allocates a shared memory buffer (e.g. 1MB allocated memory block pointer) named `stream_markprice`.
+* It grants **Write Permission (Write Pointer)** to `all_markprices` and **Read Permission (Read Pointer)** to `ms_analyzer`.
+* As soon as `all_markprices` writes a new price update, `ms_analyzer` reads it instantaneously with zero-copy microsecond latency.
 
-## 4. İletişim Tipleri
-1. **Sürekli Akış (Streaming / Pub-Sub):** Yukarıda anlatılan "Paylaşılan Bellek" üzerinden saniyede binlerce kez güncellenen fiyat vb. verilerin aktarımı.
-2. **İstek - Cevap (RPC):** Nadir gerçekleşen "Bana geçmiş 10 dakikanın OHLCV verisini ver" gibi doğrudan hedefli talepler. Data Router, bu istekleri de config'de belirtilen rotalara göre hedefe iletip, cevabı anında RAM üzerinden talep edene döndürür.
+## 4. Communication Types
+1. **Continuous Streaming (Pub-Sub):** Real-time price and orderbook streaming updated thousands of times per second via shared memory.
+2. **Request - Response (RPC):** Direct targeted requests like "Fetch the last 10 minutes of OHLCV data". The Data Router forwards these requests along defined routes and returns the result instantly over RAM.
 
-## 5. Sağlık ve Doğrulama Mekanizması (Health Check & Watchdog)
-Veri akışının sağlıklı olup olmadığını denetleyen bağımsız bir denetçi (Watchdog) Data Router içinde çalışacaktır:
-* **Heartbeat & Timestamp:** Her paylaşılan bellek bloğunun başında bir `last_updated_timestamp` (Son güncellenme milisaniyesi) bulunur.
-* **Sürekli Kontrol:** Data Router her 500ms'de bir tüm stream'leri kontrol eder. Eğer `stream_markprice` 2 saniyedir güncellenmiyorsa (ve piyasa açıkken bunun güncellenmesi gerekiyorsa), sistem orkestratöre ve kullanıcıya "MarkPrice akışı durdu!" uyarısı gönderir.
-* **Veri Doğrulaması:** Tanımlı formata uyulup uyulmadığını tespit etmek için header kontrolü (CheckSum / Veri Boyutu) yaparak hatalı (corrupted) bellek yazımlarını anında tespit eder ve hatalı eklentiyi izole eder.
+## 5. Health & Monitoring Mechanism (Health Check & Watchdog)
+An independent Watchdog runs inside the Data Router to ensure data flow health:
+* **Heartbeat & Timestamp:** Each shared memory block begins with a `last_updated_timestamp` (last update in milliseconds).
+* **Continuous Monitoring:** The Data Router inspects all streams every 500ms. If `stream_markprice` has not updated for 2 seconds (when market is open), the system emits a alert to the Orchestrator and user ("MarkPrice stream stalled!").
+* **Data Validation:** Performs header and checksum checks to verify data structure integrity, instantly detecting corrupted memory writes and isolating malfunctioning plugins.
 
 ---
 
 ## User Review Required
 
 > [!IMPORTANT]
-> Bu tasarım, mevcut Orkestratör'den tamamen ayrı, adeta bir "Endüstriyel Veri Veri Yolu (Data Bus / Fabric)" gibi çalışacak yeni bir çekirdek katmanı tanımlar. 
+> This design defines a separate core layer acting as an "Industrial Data Bus / Fabric" alongside the Orchestrator.
 > 
-> "Config üzerinden eklentilerin girdi ve çıktılarını birleştiren, gecikmesiz (zero-copy) veri taşıyan ve sağlığı izleyen" bu mimari plan, isteklerinizle tam örtüşüyorsa lütfen onaylayın. Onayladığınız takdirde bu sistemi kodlamaya ve uygulamaya başlayabiliriz.
+> This architectural plan enables zero-copy data routing and health monitoring driven entirely by configuration files.

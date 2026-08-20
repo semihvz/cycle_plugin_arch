@@ -1,4 +1,4 @@
-# Cycle-Orc Geniş Çaplı Proje Dökümantasyonu
+# Cycle-Orc Comprehensive Project Documentation
 
 ## 1. Proje Dizini (Tree)
 
@@ -92,11 +92,11 @@ cycle-orc/
             lib.rs
 ```
 
-## 2. Dosya Analizleri
+## 2. File Analysis
 
 ### Dosya: `test_scan2.rs`
 
-#### Kaynak Kod
+#### Source Code
 ```rust
 use std::path::PathBuf;
 fn main() {
@@ -114,24 +114,24 @@ fn main() {
 
 ```
 
-#### Akış Diyagramı (Mermaid)
+#### Flowchart (Mermaid)
 ```mermaid
 graph TD
     main(main Function)
 ```
 
-#### Ayrıntılı Açıklama
-Bu dosya (`test_scan2.rs`), aşağıdaki temel bileşenleri içerir:
+#### Detailed Description
+This file (`test_scan2.rs`), contains the following core components:
 
-- **Fonksiyonlar (Functions):** main
+- **Functions:** main
 
-Genel olarak modülün veya sistemin belirli bir parçasının iş mantığını yürütür.
+Executes the business logic for the specific module or system component.
 
 ---
 
 ### Dosya: `test_ws.rs`
 
-#### Kaynak Kod
+#### Source Code
 ```rust
 use tokio_tungstenite::connect_async;
 use futures_util::StreamExt;
@@ -163,24 +163,24 @@ async fn main() {
 
 ```
 
-#### Akış Diyagramı (Mermaid)
+#### Flowchart (Mermaid)
 ```mermaid
 graph TD
     main(main Function)
 ```
 
-#### Ayrıntılı Açıklama
-Bu dosya (`test_ws.rs`), aşağıdaki temel bileşenleri içerir:
+#### Detailed Description
+This file (`test_ws.rs`), contains the following core components:
 
-- **Fonksiyonlar (Functions):** main
+- **Functions:** main
 
-Genel olarak modülün veya sistemin belirli bir parçasının iş mantığını yürütür.
+Executes the business logic for the specific module or system component.
 
 ---
 
 ### Dosya: `plugin_breakout/src/lib.rs`
 
-#### Kaynak Kod
+#### Source Code
 ```rust
 use std::ffi::c_void;
 use std::sync::{Arc, Mutex};
@@ -549,7 +549,7 @@ mod tests {
 
 ```
 
-#### Akış Diyagramı (Mermaid)
+#### Flowchart (Mermaid)
 ```mermaid
 graph TD
     BreakoutInput[BreakoutInput Struct]
@@ -565,19 +565,19 @@ graph TD
     BreakoutInput --> test_breakout_report
 ```
 
-#### Ayrıntılı Açıklama
-Bu dosya (`lib.rs`), aşağıdaki temel bileşenleri içerir:
+#### Detailed Description
+This file (`lib.rs`), contains the following core components:
 
-- **Veri Yapıları (Structs):** BreakoutInput, BreakoutOutput, PluginState
-- **Fonksiyonlar (Functions):** calculate_breakout, init_plugin, handle_endpoint, test_breakout_report
+- **Data Structures (Structs):** BreakoutInput, BreakoutOutput, PluginState
+- **Functions:** calculate_breakout, init_plugin, handle_endpoint, test_breakout_report
 
-Genel olarak modülün veya sistemin belirli bir parçasının iş mantığını yürütür.
+Executes the business logic for the specific module or system component.
 
 ---
 
 ### Dosya: `plugin_breakout/src/bin.rs`
 
-#### Kaynak Kod
+#### Source Code
 ```rust
 fn main() {
     println!("Test");
@@ -585,24 +585,24 @@ fn main() {
 
 ```
 
-#### Akış Diyagramı (Mermaid)
+#### Flowchart (Mermaid)
 ```mermaid
 graph TD
     main(main Function)
 ```
 
-#### Ayrıntılı Açıklama
-Bu dosya (`bin.rs`), aşağıdaki temel bileşenleri içerir:
+#### Detailed Description
+This file (`bin.rs`), contains the following core components:
 
-- **Fonksiyonlar (Functions):** main
+- **Functions:** main
 
-Genel olarak modülün veya sistemin belirli bir parçasının iş mantığını yürütür.
+Executes the business logic for the specific module or system component.
 
 ---
 
 ### Dosya: `binance_gateway/src/lib.rs`
 
-#### Kaynak Kod
+#### Source Code
 ```rust
 use std::ffi::c_void;
 use std::sync::atomic::{AtomicBool, Ordering};
@@ -863,7 +863,7 @@ async fn stream_gateway(
 
 ```
 
-#### Akış Diyagramı (Mermaid)
+#### Flowchart (Mermaid)
 ```mermaid
 graph TD
     PluginState[PluginState Struct]
@@ -875,19 +875,19 @@ graph TD
     PluginState --> stream_gateway
 ```
 
-#### Ayrıntılı Açıklama
-Bu dosya (`lib.rs`), aşağıdaki temel bileşenleri içerir:
+#### Detailed Description
+This file (`lib.rs`), contains the following core components:
 
-- **Veri Yapıları (Structs):** PluginState
-- **Fonksiyonlar (Functions):** init_plugin, handle_endpoint, stream_gateway
+- **Data Structures (Structs):** PluginState
+- **Functions:** init_plugin, handle_endpoint, stream_gateway
 
-Genel olarak modülün veya sistemin belirli bir parçasının iş mantığını yürütür.
+Executes the business logic for the specific module or system component.
 
 ---
 
 ### Dosya: `plugin_paper_exchange/src/engine.rs`
 
-#### Kaynak Kod
+#### Source Code
 ```rust
 use std::sync::Arc;
 use dashmap::DashMap;
@@ -1144,7 +1144,7 @@ impl PaperEngine {
 
 ```
 
-#### Akış Diyagramı (Mermaid)
+#### Flowchart (Mermaid)
 ```mermaid
 graph TD
     PaperEngine[PaperEngine Struct]
@@ -1164,19 +1164,19 @@ graph TD
     PaperEngine --> on_mark_price_update
 ```
 
-#### Ayrıntılı Açıklama
-Bu dosya (`engine.rs`), aşağıdaki temel bileşenleri içerir:
+#### Detailed Description
+This file (`engine.rs`), contains the following core components:
 
-- **Veri Yapıları (Structs):** PaperEngine
-- **Fonksiyonlar (Functions):** new, log_msg, create_account, submit_order, on_last_price_update, execute_order, on_mark_price_update
+- **Data Structures (Structs):** PaperEngine
+- **Functions:** new, log_msg, create_account, submit_order, on_last_price_update, execute_order, on_mark_price_update
 
-Genel olarak modülün veya sistemin belirli bir parçasının iş mantığını yürütür.
+Executes the business logic for the specific module or system component.
 
 ---
 
 ### Dosya: `plugin_paper_exchange/src/storage.rs`
 
-#### Kaynak Kod
+#### Source Code
 ```rust
 use rusqlite::{Connection, Result, params};
 use crate::models::{Order, Position};
@@ -1274,7 +1274,7 @@ impl Storage {
 
 ```
 
-#### Akış Diyagramı (Mermaid)
+#### Flowchart (Mermaid)
 ```mermaid
 graph TD
     Storage[Storage Struct]
@@ -1286,19 +1286,19 @@ graph TD
     Storage --> insert_closed_position
 ```
 
-#### Ayrıntılı Açıklama
-Bu dosya (`storage.rs`), aşağıdaki temel bileşenleri içerir:
+#### Detailed Description
+This file (`storage.rs`), contains the following core components:
 
-- **Veri Yapıları (Structs):** Storage
-- **Fonksiyonlar (Functions):** new, insert_order, insert_closed_position
+- **Data Structures (Structs):** Storage
+- **Functions:** new, insert_order, insert_closed_position
 
-Genel olarak modülün veya sistemin belirli bir parçasının iş mantığını yürütür.
+Executes the business logic for the specific module or system component.
 
 ---
 
 ### Dosya: `plugin_paper_exchange/src/lib.rs`
 
-#### Kaynak Kod
+#### Source Code
 ```rust
 pub mod models;
 pub mod storage;
@@ -1554,7 +1554,7 @@ unsafe extern "C" fn handle_endpoint(
 
 ```
 
-#### Akış Diyagramı (Mermaid)
+#### Flowchart (Mermaid)
 ```mermaid
 graph TD
     PluginState[PluginState Struct]
@@ -1564,19 +1564,19 @@ graph TD
     PluginState --> handle_endpoint
 ```
 
-#### Ayrıntılı Açıklama
-Bu dosya (`lib.rs`), aşağıdaki temel bileşenleri içerir:
+#### Detailed Description
+This file (`lib.rs`), contains the following core components:
 
-- **Veri Yapıları (Structs):** PluginState
-- **Fonksiyonlar (Functions):** init_plugin, handle_endpoint
+- **Data Structures (Structs):** PluginState
+- **Functions:** init_plugin, handle_endpoint
 
-Genel olarak modülün veya sistemin belirli bir parçasının iş mantığını yürütür.
+Executes the business logic for the specific module or system component.
 
 ---
 
 ### Dosya: `plugin_paper_exchange/src/models.rs`
 
-#### Kaynak Kod
+#### Source Code
 ```rust
 use serde::{Deserialize, Serialize};
 
@@ -1680,7 +1680,7 @@ impl Account {
 
 ```
 
-#### Akış Diyagramı (Mermaid)
+#### Flowchart (Mermaid)
 ```mermaid
 graph TD
     Order[Order Struct]
@@ -1696,19 +1696,19 @@ graph TD
     Order --> new
 ```
 
-#### Ayrıntılı Açıklama
-Bu dosya (`models.rs`), aşağıdaki temel bileşenleri içerir:
+#### Detailed Description
+This file (`models.rs`), contains the following core components:
 
-- **Veri Yapıları (Structs):** Order, Position, Account
-- **Fonksiyonlar (Functions):** default_leverage, new, update_pnl, new
+- **Data Structures (Structs):** Order, Position, Account
+- **Functions:** default_leverage, new, update_pnl, new
 
-Genel olarak modülün veya sistemin belirli bir parçasının iş mantığını yürütür.
+Executes the business logic for the specific module or system component.
 
 ---
 
 ### Dosya: `plugin_paper_exchange/tests/integration_test.rs`
 
-#### Kaynak Kod
+#### Source Code
 ```rust
 use plugin_paper_exchange::models::{Order, OrderSide, OrderType, PositionSide};
 use plugin_paper_exchange::engine::PaperEngine;
@@ -1784,24 +1784,24 @@ fn test_commands_working() {
 
 ```
 
-#### Akış Diyagramı (Mermaid)
+#### Flowchart (Mermaid)
 ```mermaid
 graph TD
     test_commands_working(test_commands_working Function)
 ```
 
-#### Ayrıntılı Açıklama
-Bu dosya (`integration_test.rs`), aşağıdaki temel bileşenleri içerir:
+#### Detailed Description
+This file (`integration_test.rs`), contains the following core components:
 
-- **Fonksiyonlar (Functions):** test_commands_working
+- **Functions:** test_commands_working
 
-Genel olarak modülün veya sistemin belirli bir parçasının iş mantığını yürütür.
+Executes the business logic for the specific module or system component.
 
 ---
 
 ### Dosya: `binance_trader/src/lib.rs`
 
-#### Kaynak Kod
+#### Source Code
 ```rust
 use std::ffi::c_void;
 use std::sync::{Arc, Mutex};
@@ -2041,7 +2041,7 @@ unsafe extern "C" fn handle_endpoint(
 
 ```
 
-#### Akış Diyagramı (Mermaid)
+#### Flowchart (Mermaid)
 ```mermaid
 graph TD
     PluginOps[PluginOps Struct]
@@ -2053,19 +2053,19 @@ graph TD
     PluginOps --> handle_endpoint
 ```
 
-#### Ayrıntılı Açıklama
-Bu dosya (`lib.rs`), aşağıdaki temel bileşenleri içerir:
+#### Detailed Description
+This file (`lib.rs`), contains the following core components:
 
-- **Veri Yapıları (Structs):** PluginOps, Config, PluginState
-- **Fonksiyonlar (Functions):** init_plugin, handle_endpoint
+- **Data Structures (Structs):** PluginOps, Config, PluginState
+- **Functions:** init_plugin, handle_endpoint
 
-Genel olarak modülün veya sistemin belirli bir parçasının iş mantığını yürütür.
+Executes the business logic for the specific module or system component.
 
 ---
 
 ### Dosya: `orchestrator/src/system.rs`
 
-#### Kaynak Kod
+#### Source Code
 ```rust
 use crate::endpoint::StandardEndpoint;
 use std::ffi::c_void;
@@ -2148,7 +2148,7 @@ impl SystemInstance {
 
 ```
 
-#### Akış Diyagramı (Mermaid)
+#### Flowchart (Mermaid)
 ```mermaid
 graph TD
     SystemContext[SystemContext Struct]
@@ -2162,19 +2162,19 @@ graph TD
     SystemContext --> call
 ```
 
-#### Ayrıntılı Açıklama
-Bu dosya (`system.rs`), aşağıdaki temel bileşenleri içerir:
+#### Detailed Description
+This file (`system.rs`), contains the following core components:
 
-- **Veri Yapıları (Structs):** SystemContext, SystemInstance, can
-- **Fonksiyonlar (Functions):** new, new, call
+- **Data Structures (Structs):** SystemContext, SystemInstance, can
+- **Functions:** new, new, call
 
-Genel olarak modülün veya sistemin belirli bir parçasının iş mantığını yürütür.
+Executes the business logic for the specific module or system component.
 
 ---
 
 ### Dosya: `orchestrator/src/tui.rs`
 
-#### Kaynak Kod
+#### Source Code
 ```rust
 use ratatui::{
     layout::{Constraint, Direction, Layout, Rect, Alignment},
@@ -2668,25 +2668,25 @@ fn centered_rect(percent_x: u16, percent_y: u16, r: Rect) -> Rect {
 
 ```
 
-#### Akış Diyagramı (Mermaid)
+#### Flowchart (Mermaid)
 ```mermaid
 graph TD
     draw_ui(draw_ui Function)
     centered_rect(centered_rect Function)
 ```
 
-#### Ayrıntılı Açıklama
-Bu dosya (`tui.rs`), aşağıdaki temel bileşenleri içerir:
+#### Detailed Description
+This file (`tui.rs`), contains the following core components:
 
-- **Fonksiyonlar (Functions):** draw_ui, centered_rect
+- **Functions:** draw_ui, centered_rect
 
-Genel olarak modülün veya sistemin belirli bir parçasının iş mantığını yürütür.
+Executes the business logic for the specific module or system component.
 
 ---
 
 ### Dosya: `orchestrator/src/memory.rs`
 
-#### Kaynak Kod
+#### Source Code
 ```rust
 use crossbeam::queue::ArrayQueue;
 use std::sync::Arc;
@@ -2723,7 +2723,7 @@ impl LockFreeBuffer {
 
 ```
 
-#### Akış Diyagramı (Mermaid)
+#### Flowchart (Mermaid)
 ```mermaid
 graph TD
     LockFreeBuffer[LockFreeBuffer Struct]
@@ -2737,19 +2737,19 @@ graph TD
     LockFreeBuffer --> is_empty
 ```
 
-#### Ayrıntılı Açıklama
-Bu dosya (`memory.rs`), aşağıdaki temel bileşenleri içerir:
+#### Detailed Description
+This file (`memory.rs`), contains the following core components:
 
-- **Veri Yapıları (Structs):** LockFreeBuffer
-- **Fonksiyonlar (Functions):** new, push, pop, is_empty
+- **Data Structures (Structs):** LockFreeBuffer
+- **Functions:** new, push, pop, is_empty
 
-Genel olarak modülün veya sistemin belirli bir parçasının iş mantığını yürütür.
+Executes the business logic for the specific module or system component.
 
 ---
 
 ### Dosya: `orchestrator/src/endpoint.rs`
 
-#### Kaynak Kod
+#### Source Code
 ```rust
 use std::fmt;
 
@@ -2801,25 +2801,25 @@ impl StandardEndpoint {
 
 ```
 
-#### Akış Diyagramı (Mermaid)
+#### Flowchart (Mermaid)
 ```mermaid
 graph TD
     fmt(fmt Function)
     all(all Function)
 ```
 
-#### Ayrıntılı Açıklama
-Bu dosya (`endpoint.rs`), aşağıdaki temel bileşenleri içerir:
+#### Detailed Description
+This file (`endpoint.rs`), contains the following core components:
 
-- **Fonksiyonlar (Functions):** fmt, all
+- **Functions:** fmt, all
 
-Genel olarak modülün veya sistemin belirli bir parçasının iş mantığını yürütür.
+Executes the business logic for the specific module or system component.
 
 ---
 
 ### Dosya: `orchestrator/src/main.rs`
 
-#### Kaynak Kod
+#### Source Code
 ```rust
 mod tui;
 
@@ -3542,7 +3542,7 @@ async fn main() -> anyhow::Result<()> {
 
 ```
 
-#### Akış Diyagramı (Mermaid)
+#### Flowchart (Mermaid)
 ```mermaid
 graph TD
     App[App Struct]
@@ -3560,19 +3560,19 @@ graph TD
     App --> main
 ```
 
-#### Ayrıntılı Açıklama
-Bu dosya (`main.rs`), aşağıdaki temel bileşenleri içerir:
+#### Detailed Description
+This file (`main.rs`), contains the following core components:
 
-- **Veri Yapıları (Structs):** App
-- **Fonksiyonlar (Functions):** new, log, load_plugin_cabi, get_plugin_dir, scan_plugins, main
+- **Data Structures (Structs):** App
+- **Functions:** new, log, load_plugin_cabi, get_plugin_dir, scan_plugins, main
 
-Genel olarak modülün veya sistemin belirli bir parçasının iş mantığını yürütür.
+Executes the business logic for the specific module or system component.
 
 ---
 
 ### Dosya: `orchestrator/src/lib.rs`
 
-#### Kaynak Kod
+#### Source Code
 ```rust
 pub mod endpoint;
 pub mod memory;
@@ -3581,23 +3581,23 @@ pub mod system;
 
 ```
 
-#### Akış Diyagramı (Mermaid)
+#### Flowchart (Mermaid)
 ```mermaid
 graph TD
     A[Module] --> B[No major structs/funcs]
 ```
 
-#### Ayrıntılı Açıklama
-Bu dosya (`lib.rs`), aşağıdaki temel bileşenleri içerir:
+#### Detailed Description
+This file (`lib.rs`), contains the following core components:
 
 
-Genel olarak modülün veya sistemin belirli bir parçasının iş mantığını yürütür.
+Executes the business logic for the specific module or system component.
 
 ---
 
 ### Dosya: `orchestrator/src/orchestrator.rs`
 
-#### Kaynak Kod
+#### Source Code
 ```rust
 use crate::endpoint::StandardEndpoint;
 use crate::system::SystemInstance;
@@ -3679,7 +3679,7 @@ impl Orchestrator {
 
 ```
 
-#### Akış Diyagramı (Mermaid)
+#### Flowchart (Mermaid)
 ```mermaid
 graph TD
     Orchestrator[Orchestrator Struct]
@@ -3699,19 +3699,19 @@ graph TD
     Orchestrator --> get_system
 ```
 
-#### Ayrıntılı Açıklama
-Bu dosya (`orchestrator.rs`), aşağıdaki temel bileşenleri içerir:
+#### Detailed Description
+This file (`orchestrator.rs`), contains the following core components:
 
-- **Veri Yapıları (Structs):** Orchestrator
-- **Fonksiyonlar (Functions):** new, register_system, unregister_system, call_endpoint, list_systems, monitor_data, get_system
+- **Data Structures (Structs):** Orchestrator
+- **Functions:** new, register_system, unregister_system, call_endpoint, list_systems, monitor_data, get_system
 
-Genel olarak modülün veya sistemin belirli bir parçasının iş mantığını yürütür.
+Executes the business logic for the specific module or system component.
 
 ---
 
 ### Dosya: `flow_engine/src/config.rs`
 
-#### Kaynak Kod
+#### Source Code
 ```rust
 use serde::{Deserialize, Serialize};
 use std::fs;
@@ -3750,7 +3750,7 @@ impl FlowConfig {
 
 ```
 
-#### Akış Diyagramı (Mermaid)
+#### Flowchart (Mermaid)
 ```mermaid
 graph TD
     FlowConfig[FlowConfig Struct]
@@ -3760,19 +3760,19 @@ graph TD
     FlowConfig --> load
 ```
 
-#### Ayrıntılı Açıklama
-Bu dosya (`config.rs`), aşağıdaki temel bileşenleri içerir:
+#### Detailed Description
+This file (`config.rs`), contains the following core components:
 
-- **Veri Yapıları (Structs):** FlowConfig, PluginInput, PluginConfig
-- **Fonksiyonlar (Functions):** load
+- **Data Structures (Structs):** FlowConfig, PluginInput, PluginConfig
+- **Functions:** load
 
-Genel olarak modülün veya sistemin belirli bir parçasının iş mantığını yürütür.
+Executes the business logic for the specific module or system component.
 
 ---
 
 ### Dosya: `flow_engine/src/memory.rs`
 
-#### Kaynak Kod
+#### Source Code
 ```rust
 use std::sync::{Arc, RwLock};
 use std::collections::HashMap;
@@ -3827,7 +3827,7 @@ impl MemoryRouter {
 
 ```
 
-#### Akış Diyagramı (Mermaid)
+#### Flowchart (Mermaid)
 ```mermaid
 graph TD
     DataStream[DataStream Struct]
@@ -3842,19 +3842,19 @@ graph TD
     DataStream --> get_stream
 ```
 
-#### Ayrıntılı Açıklama
-Bu dosya (`memory.rs`), aşağıdaki temel bileşenleri içerir:
+#### Detailed Description
+This file (`memory.rs`), contains the following core components:
 
-- **Veri Yapıları (Structs):** DataStream, MemoryRouter
-- **Fonksiyonlar (Functions):** new, new, get_or_create_stream, get_stream
+- **Data Structures (Structs):** DataStream, MemoryRouter
+- **Functions:** new, new, get_or_create_stream, get_stream
 
-Genel olarak modülün veya sistemin belirli bir parçasının iş mantığını yürütür.
+Executes the business logic for the specific module or system component.
 
 ---
 
 ### Dosya: `flow_engine/src/engine.rs`
 
-#### Kaynak Kod
+#### Source Code
 ```rust
 use crate::config::PluginConfig;
 use crate::memory::MemoryRouter;
@@ -4007,7 +4007,7 @@ impl FlowEngine {
 
 ```
 
-#### Akış Diyagramı (Mermaid)
+#### Flowchart (Mermaid)
 ```mermaid
 graph TD
     FlowEngine[FlowEngine Struct]
@@ -4021,19 +4021,19 @@ graph TD
     FlowEngine --> run_loop
 ```
 
-#### Ayrıntılı Açıklama
-Bu dosya (`engine.rs`), aşağıdaki temel bileşenleri içerir:
+#### Detailed Description
+This file (`engine.rs`), contains the following core components:
 
-- **Veri Yapıları (Structs):** FlowEngine
-- **Fonksiyonlar (Functions):** new, update_config, health_check, run_loop
+- **Data Structures (Structs):** FlowEngine
+- **Functions:** new, update_config, health_check, run_loop
 
-Genel olarak modülün veya sistemin belirli bir parçasının iş mantığını yürütür.
+Executes the business logic for the specific module or system component.
 
 ---
 
 ### Dosya: `flow_engine/src/lib.rs`
 
-#### Kaynak Kod
+#### Source Code
 ```rust
 pub mod config;
 pub mod memory;
@@ -4045,23 +4045,23 @@ pub use engine::*;
 
 ```
 
-#### Akış Diyagramı (Mermaid)
+#### Flowchart (Mermaid)
 ```mermaid
 graph TD
     A[Module] --> B[No major structs/funcs]
 ```
 
-#### Ayrıntılı Açıklama
-Bu dosya (`lib.rs`), aşağıdaki temel bileşenleri içerir:
+#### Detailed Description
+This file (`lib.rs`), contains the following core components:
 
 
-Genel olarak modülün veya sistemin belirli bir parçasının iş mantığını yürütür.
+Executes the business logic for the specific module or system component.
 
 ---
 
 ### Dosya: `ohlcv_fetcher/src/lib.rs`
 
-#### Kaynak Kod
+#### Source Code
 ```rust
 use std::ffi::c_void;
 use std::sync::{Arc, Mutex};
@@ -4219,7 +4219,7 @@ unsafe extern "C" fn handle_endpoint(
 
 ```
 
-#### Akış Diyagramı (Mermaid)
+#### Flowchart (Mermaid)
 ```mermaid
 graph TD
     PluginOps[PluginOps Struct]
@@ -4231,19 +4231,19 @@ graph TD
     PluginOps --> handle_endpoint
 ```
 
-#### Ayrıntılı Açıklama
-Bu dosya (`lib.rs`), aşağıdaki temel bileşenleri içerir:
+#### Detailed Description
+This file (`lib.rs`), contains the following core components:
 
-- **Veri Yapıları (Structs):** PluginOps, FetchConfig, PluginState
-- **Fonksiyonlar (Functions):** init_plugin, handle_endpoint
+- **Data Structures (Structs):** PluginOps, FetchConfig, PluginState
+- **Functions:** init_plugin, handle_endpoint
 
-Genel olarak modülün veya sistemin belirli bir parçasının iş mantığını yürütür.
+Executes the business logic for the specific module or system component.
 
 ---
 
 ### Dosya: `ms_analyzer/ohlcv-engine/src/client.rs`
 
-#### Kaynak Kod
+#### Source Code
 ```rust
 // ============================================================================
 // BinanceClient — OHLCV veri istemcisi
@@ -4346,7 +4346,7 @@ impl BinanceClient {
 
 ```
 
-#### Akış Diyagramı (Mermaid)
+#### Flowchart (Mermaid)
 ```mermaid
 graph TD
     BinanceClient[BinanceClient Struct]
@@ -4358,19 +4358,19 @@ graph TD
     BinanceClient --> parse_response
 ```
 
-#### Ayrıntılı Açıklama
-Bu dosya (`client.rs`), aşağıdaki temel bileşenleri içerir:
+#### Detailed Description
+This file (`client.rs`), contains the following core components:
 
-- **Veri Yapıları (Structs):** BinanceClient
-- **Fonksiyonlar (Functions):** new, fetch_klines, parse_response
+- **Data Structures (Structs):** BinanceClient
+- **Functions:** new, fetch_klines, parse_response
 
-Genel olarak modülün veya sistemin belirli bir parçasının iş mantığını yürütür.
+Executes the business logic for the specific module or system component.
 
 ---
 
 ### Dosya: `ms_analyzer/ohlcv-engine/src/lib.rs`
 
-#### Kaynak Kod
+#### Source Code
 ```rust
 // ============================================================================
 // ohlcv-engine (yerel, bağımsız sürüm)
@@ -4400,24 +4400,24 @@ pub struct Kline {
 
 ```
 
-#### Akış Diyagramı (Mermaid)
+#### Flowchart (Mermaid)
 ```mermaid
 graph TD
     Kline[Kline Struct]
 ```
 
-#### Ayrıntılı Açıklama
-Bu dosya (`lib.rs`), aşağıdaki temel bileşenleri içerir:
+#### Detailed Description
+This file (`lib.rs`), contains the following core components:
 
-- **Veri Yapıları (Structs):** Kline
+- **Data Structures (Structs):** Kline
 
-Genel olarak modülün veya sistemin belirli bir parçasının iş mantığını yürütür.
+Executes the business logic for the specific module or system component.
 
 ---
 
 ### Dosya: `ms_analyzer/src/levels.rs`
 
-#### Kaynak Kod
+#### Source Code
 ```rust
 // ============================================================================
 // MSMP 2.0 — KATMAN 4: STRATEJİK SEVİYE ENVANTERİ
@@ -4616,7 +4616,7 @@ pub fn analyze_levels(pivots: &[PivotPoint], klines: &[Kline]) -> Vec<StrategicL
 
 ```
 
-#### Akış Diyagramı (Mermaid)
+#### Flowchart (Mermaid)
 ```mermaid
 graph TD
     StrategicLevel[StrategicLevel Struct]
@@ -4632,19 +4632,19 @@ graph TD
     StrategicLevel --> analyze_levels
 ```
 
-#### Ayrıntılı Açıklama
-Bu dosya (`levels.rs`), aşağıdaki temel bileşenleri içerir:
+#### Detailed Description
+This file (`levels.rs`), contains the following core components:
 
-- **Veri Yapıları (Structs):** StrategicLevel
-- **Fonksiyonlar (Functions):** apply_decay, count_defenses, check_sweep_and_bo, classify_levels, analyze_levels
+- **Data Structures (Structs):** StrategicLevel
+- **Functions:** apply_decay, count_defenses, check_sweep_and_bo, classify_levels, analyze_levels
 
-Genel olarak modülün veya sistemin belirli bir parçasının iş mantığını yürütür.
+Executes the business logic for the specific module or system component.
 
 ---
 
 ### Dosya: `ms_analyzer/src/liquidity.rs`
 
-#### Kaynak Kod
+#### Source Code
 ```rust
 // ============================================================================
 // MSMP 2.0 — KATMAN 5: LİKİDİTE POOL (VWAP Sapması & Volume Profile)
@@ -4920,7 +4920,7 @@ pub fn analyze_liquidity(klines: &[Kline]) -> LiquidityAnalysis {
 
 ```
 
-#### Akış Diyagramı (Mermaid)
+#### Flowchart (Mermaid)
 ```mermaid
 graph TD
     VolumeNode[VolumeNode Struct]
@@ -4937,19 +4937,19 @@ graph TD
     VolumeNode --> analyze_liquidity
 ```
 
-#### Ayrıntılı Açıklama
-Bu dosya (`liquidity.rs`), aşağıdaki temel bileşenleri içerir:
+#### Detailed Description
+This file (`liquidity.rs`), contains the following core components:
 
-- **Veri Yapıları (Structs):** VolumeNode, LiquidityAnalysis
-- **Fonksiyonlar (Functions):** vwap, vwap_std_dev, volume_profile, detect_bsl_ssl, analyze_liquidity
+- **Data Structures (Structs):** VolumeNode, LiquidityAnalysis
+- **Functions:** vwap, vwap_std_dev, volume_profile, detect_bsl_ssl, analyze_liquidity
 
-Genel olarak modülün veya sistemin belirli bir parçasının iş mantığını yürütür.
+Executes the business logic for the specific module or system component.
 
 ---
 
 ### Dosya: `ms_analyzer/src/imbalance.rs`
 
-#### Kaynak Kod
+#### Source Code
 ```rust
 // ============================================================================
 // MSMP 2.0 — KATMAN 6: DENGESİZLİK (FVG + DELTA DOĞRULAMASI)
@@ -5097,7 +5097,7 @@ pub fn detect_fvg(klines: &[Kline]) -> Vec<Fvg> {
 
 ```
 
-#### Akış Diyagramı (Mermaid)
+#### Flowchart (Mermaid)
 ```mermaid
 graph TD
     Fvg[Fvg Struct]
@@ -5109,19 +5109,19 @@ graph TD
     Fvg --> detect_fvg
 ```
 
-#### Ayrıntılı Açıklama
-Bu dosya (`imbalance.rs`), aşağıdaki temel bileşenleri içerir:
+#### Detailed Description
+This file (`imbalance.rs`), contains the following core components:
 
-- **Veri Yapıları (Structs):** Fvg
-- **Fonksiyonlar (Functions):** candle_delta, cumulative_delta, detect_fvg
+- **Data Structures (Structs):** Fvg
+- **Functions:** candle_delta, cumulative_delta, detect_fvg
 
-Genel olarak modülün veya sistemin belirli bir parçasının iş mantığını yürütür.
+Executes the business logic for the specific module or system component.
 
 ---
 
 ### Dosya: `ms_analyzer/src/session.rs`
 
-#### Kaynak Kod
+#### Source Code
 ```rust
 // ============================================================================
 // MSMP 2.0 — KATMAN 1: ZAMAN PENCERESİ (Session-Based & Ağırlıklı)
@@ -5219,7 +5219,7 @@ pub fn confluence_index(core_score: Decimal, amp_score: Decimal, acute_score: De
 
 ```
 
-#### Akış Diyagramı (Mermaid)
+#### Flowchart (Mermaid)
 ```mermaid
 graph TD
     weight(weight Function)
@@ -5232,18 +5232,18 @@ graph TD
     confluence_index(confluence_index Function)
 ```
 
-#### Ayrıntılı Açıklama
-Bu dosya (`session.rs`), aşağıdaki temel bileşenleri içerir:
+#### Detailed Description
+This file (`session.rs`), contains the following core components:
 
-- **Fonksiyonlar (Functions):** weight, active_hours, utc_hour_from_timestamp, is_active_session, session_weight, filter_by_window, weighted_merge, confluence_index
+- **Functions:** weight, active_hours, utc_hour_from_timestamp, is_active_session, session_weight, filter_by_window, weighted_merge, confluence_index
 
-Genel olarak modülün veya sistemin belirli bir parçasının iş mantığını yürütür.
+Executes the business logic for the specific module or system component.
 
 ---
 
 ### Dosya: `ms_analyzer/src/pivot.rs`
 
-#### Kaynak Kod
+#### Source Code
 ```rust
 // ============================================================================
 // MSMP 2.0 — KATMAN 2: PİVOT ÇIKARIMI (Dinamik Eşik & Likidite Üretimi)
@@ -5452,7 +5452,7 @@ pub fn detect_liquidity_zones(pivots: &[PivotPoint], atr: Decimal) -> Vec<Liquid
 
 ```
 
-#### Akış Diyagramı (Mermaid)
+#### Flowchart (Mermaid)
 ```mermaid
 graph TD
     PivotPoint[PivotPoint Struct]
@@ -5465,19 +5465,19 @@ graph TD
     PivotPoint --> detect_liquidity_zones
 ```
 
-#### Ayrıntılı Açıklama
-Bu dosya (`pivot.rs`), aşağıdaki temel bileşenleri içerir:
+#### Detailed Description
+This file (`pivot.rs`), contains the following core components:
 
-- **Veri Yapıları (Structs):** PivotPoint, LiquidityZone
-- **Fonksiyonlar (Functions):** atr_14, extract_pivots, detect_liquidity_zones
+- **Data Structures (Structs):** PivotPoint, LiquidityZone
+- **Functions:** atr_14, extract_pivots, detect_liquidity_zones
 
-Genel olarak modülün veya sistemin belirli bir parçasının iş mantığını yürütür.
+Executes the business logic for the specific module or system component.
 
 ---
 
 ### Dosya: `ms_analyzer/src/lib.rs`
 
-#### Kaynak Kod
+#### Source Code
 ```rust
 use std::ffi::c_void;
 use std::sync::{Arc, Mutex};
@@ -5687,7 +5687,7 @@ unsafe extern "C" fn handle_endpoint(
 
 ```
 
-#### Akış Diyagramı (Mermaid)
+#### Flowchart (Mermaid)
 ```mermaid
 graph TD
     PluginOps[PluginOps Struct]
@@ -5698,19 +5698,19 @@ graph TD
     PluginOps --> handle_endpoint
 ```
 
-#### Ayrıntılı Açıklama
-Bu dosya (`lib.rs`), aşağıdaki temel bileşenleri içerir:
+#### Detailed Description
+This file (`lib.rs`), contains the following core components:
 
-- **Veri Yapıları (Structs):** PluginOps, PluginState
-- **Fonksiyonlar (Functions):** init_plugin, handle_endpoint
+- **Data Structures (Structs):** PluginOps, PluginState
+- **Functions:** init_plugin, handle_endpoint
 
-Genel olarak modülün veya sistemin belirli bir parçasının iş mantığını yürütür.
+Executes the business logic for the specific module or system component.
 
 ---
 
 ### Dosya: `ms_analyzer/src/trend.rs`
 
-#### Kaynak Kod
+#### Source Code
 ```rust
 // ============================================================================
 // MSMP 2.0 — KATMAN 3: TREND YAPISI (Regresyon + Hurst Üssü)
@@ -5964,7 +5964,7 @@ pub fn analyze_trend(klines: &[Kline], atr: Decimal) -> TrendAnalysis {
 
 ```
 
-#### Akış Diyagramı (Mermaid)
+#### Flowchart (Mermaid)
 ```mermaid
 graph TD
     TrendAnalysis[TrendAnalysis Struct]
@@ -5980,19 +5980,19 @@ graph TD
     TrendAnalysis --> analyze_trend
 ```
 
-#### Ayrıntılı Açıklama
-Bu dosya (`trend.rs`), aşağıdaki temel bileşenleri içerir:
+#### Detailed Description
+This file (`trend.rs`), contains the following core components:
 
-- **Veri Yapıları (Structs):** TrendAnalysis
-- **Fonksiyonlar (Functions):** f, linear_regression, linear_regression_xy, hurst_exponent, analyze_trend
+- **Data Structures (Structs):** TrendAnalysis
+- **Functions:** f, linear_regression, linear_regression_xy, hurst_exponent, analyze_trend
 
-Genel olarak modülün veya sistemin belirli bir parçasının iş mantığını yürütür.
+Executes the business logic for the specific module or system component.
 
 ---
 
 ### Dosya: `ms_analyzer/src/narrative.rs`
 
-#### Kaynak Kod
+#### Source Code
 ```rust
 // ============================================================================
 // MSMP 2.0 — KATMAN 7: BÜTÜNSEL NARATİF (Matematiksel Çıktı Formatı)
@@ -6269,7 +6269,7 @@ fn find_vacuum_zone(
 
 ```
 
-#### Akış Diyagramı (Mermaid)
+#### Flowchart (Mermaid)
 ```mermaid
 graph TD
     VacuumZone[VacuumZone Struct]
@@ -6281,19 +6281,19 @@ graph TD
     VacuumZone --> find_vacuum_zone
 ```
 
-#### Ayrıntılı Açıklama
-Bu dosya (`narrative.rs`), aşağıdaki temel bileşenleri içerir:
+#### Detailed Description
+This file (`narrative.rs`), contains the following core components:
 
-- **Veri Yapıları (Structs):** VacuumZone, LevelEntry, MSMPReport
-- **Fonksiyonlar (Functions):** generate_report, find_vacuum_zone
+- **Data Structures (Structs):** VacuumZone, LevelEntry, MSMPReport
+- **Functions:** generate_report, find_vacuum_zone
 
-Genel olarak modülün veya sistemin belirli bir parçasının iş mantığını yürütür.
+Executes the business logic for the specific module or system component.
 
 ---
 
 ### Dosya: `ms_analyzer/infra/src/lib.rs`
 
-#### Kaynak Kod
+#### Source Code
 ```rust
 // ============================================================================
 // infra (yerel, bağımsız sürüm)
@@ -6307,23 +6307,23 @@ pub mod util;
 
 ```
 
-#### Akış Diyagramı (Mermaid)
+#### Flowchart (Mermaid)
 ```mermaid
 graph TD
     A[Module] --> B[No major structs/funcs]
 ```
 
-#### Ayrıntılı Açıklama
-Bu dosya (`lib.rs`), aşağıdaki temel bileşenleri içerir:
+#### Detailed Description
+This file (`lib.rs`), contains the following core components:
 
 
-Genel olarak modülün veya sistemin belirli bir parçasının iş mantığını yürütür.
+Executes the business logic for the specific module or system component.
 
 ---
 
 ### Dosya: `ms_analyzer/infra/src/util.rs`
 
-#### Kaynak Kod
+#### Source Code
 ```rust
 // ============================================================================
 // util — tek örnek koruması ve port bağlama
@@ -6375,7 +6375,7 @@ pub async fn bind_or_exit(addr: SocketAddr, name: &str) -> TcpListener {
 
 ```
 
-#### Akış Diyagramı (Mermaid)
+#### Flowchart (Mermaid)
 ```mermaid
 graph TD
     single_instance(single_instance Function)
@@ -6383,18 +6383,18 @@ graph TD
     bind_or_exit(bind_or_exit Function)
 ```
 
-#### Ayrıntılı Açıklama
-Bu dosya (`util.rs`), aşağıdaki temel bileşenleri içerir:
+#### Detailed Description
+This file (`util.rs`), contains the following core components:
 
-- **Fonksiyonlar (Functions):** single_instance, process_alive, bind_or_exit
+- **Functions:** single_instance, process_alive, bind_or_exit
 
-Genel olarak modülün veya sistemin belirli bir parçasının iş mantığını yürütür.
+Executes the business logic for the specific module or system component.
 
 ---
 
 ### Dosya: `oi_fetcher/src/lib.rs`
 
-#### Kaynak Kod
+#### Source Code
 ```rust
 use std::ffi::c_void;
 use std::sync::{Arc, Mutex};
@@ -6536,7 +6536,7 @@ unsafe extern "C" fn handle_endpoint(
 
 ```
 
-#### Akış Diyagramı (Mermaid)
+#### Flowchart (Mermaid)
 ```mermaid
 graph TD
     PluginOps[PluginOps Struct]
@@ -6547,13 +6547,13 @@ graph TD
     PluginOps --> handle_endpoint
 ```
 
-#### Ayrıntılı Açıklama
-Bu dosya (`lib.rs`), aşağıdaki temel bileşenleri içerir:
+#### Detailed Description
+This file (`lib.rs`), contains the following core components:
 
-- **Veri Yapıları (Structs):** PluginOps, PluginState
-- **Fonksiyonlar (Functions):** init_plugin, handle_endpoint
+- **Data Structures (Structs):** PluginOps, PluginState
+- **Functions:** init_plugin, handle_endpoint
 
-Genel olarak modülün veya sistemin belirli bir parçasının iş mantığını yürütür.
+Executes the business logic for the specific module or system component.
 
 ---
 
