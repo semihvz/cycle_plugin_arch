@@ -53,7 +53,7 @@ unsafe extern "C" fn handle_endpoint(
                 return 0;
             }
             
-            let mut symbols = vec!["BTCUSDT".to_string(), "ETHUSDT".to_string(), "ACEUSDT".to_string(), "MUBARAKUSDT".to_string()];
+            let mut symbols = vec!["BTCUSDT".to_string(), "ETHUSDT".to_string()];
             
             if payload_len > 0 {
                 let slice = std::slice::from_raw_parts(payload, payload_len);

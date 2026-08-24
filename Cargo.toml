@@ -24,6 +24,7 @@ members = [
     "crates/plugins/analytics/ms_analyzer",
     "crates/plugins/analytics/plugin_breakout",
     "crates/plugins/analytics/plugin_scout",
+    "crates/plugins/analytics/plugin_atr",
 
     # Execution
     "crates/plugins/execution/binance_trader",
@@ -32,6 +33,9 @@ members = [
     # Storage
     "crates/plugins/storage/plugin_binance_sqlite",
     "crates/plugins/storage/plugin_sqlite_query",
+
+    # Notifications
+    "crates/plugins/notifications/plugin_wp_bot",
 ]
 resolver = "2"
 

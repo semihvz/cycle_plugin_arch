@@ -1521,6 +1521,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "plugin_atr"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "tokio",
+]
+
+[[package]]
 name = "plugin_binance_gateway"
 version = "0.1.0"
 dependencies = [
