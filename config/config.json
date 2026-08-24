@@ -225,13 +225,6 @@
     "plugin_outputs": []
   },
   {
-    "plugin_name": "plugin_binance_ws",
-    "enabled": true,
-    "plugin_inputs": [],
-    "plugin_params": {},
-    "plugin_outputs": []
-  },
-  {
     "plugin_name": "plugin_amihud",
     "enabled": false,
     "plugin_inputs": [
