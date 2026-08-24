@@ -35,7 +35,7 @@ members = [
     "crates/plugins/storage/plugin_sqlite_query",
 
     # Notifications
-    "crates/plugins/notifications/plugin_wp_bot",
+    "crates/plugins/notifications/plugin_telegram_bot",
 ]
 resolver = "2"
 

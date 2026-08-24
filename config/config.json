@@ -372,17 +372,16 @@
     ]
   },
   {
-    "plugin_name": "plugin_wp_bot",
+    "plugin_name": "plugin_telegram_bot",
     "enabled": true,
     "plugin_inputs": [],
     "plugin_params": {
-      "api_mode": "bridge_http",
-      "target_phone": "+905000000000",
+      "api_mode": "telegram_api",
       "webhook_port": 8085,
       "auto_reply_enabled": true
     },
     "plugin_outputs": [
-      "stream_wp_commands"
+      "stream_telegram_commands"
     ]
   }
 ]

@@ -1673,7 +1673,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "plugin_wp_bot"
+name = "plugin_telegram_bot"
 version = "0.1.0"
 dependencies = [
  "reqwest 0.11.27",
