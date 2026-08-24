@@ -81,6 +81,16 @@ function loadSection(sectionId) {
                 console.warn('KaTeX render error:', err);
             }
         }
+
+        // Render Mermaid flowcharts if available
+        if (window.mermaid) {
+            try {
+                mermaid.initialize({ startOnLoad: false, theme: 'dark' });
+                mermaid.run({ nodes: wrapper.querySelectorAll('.mermaid') });
+            } catch (err) {
+                console.warn('Mermaid render error:', err);
+            }
+        }
     }
 
     // Scroll to top
