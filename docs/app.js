@@ -1,4 +1,4 @@
-/* Cycle Orchestrator Architecture Documentation App Logic */
+/* Cycle Orchestrator Architecture & Research Models App Logic */
 
 document.addEventListener('DOMContentLoaded', () => {
     initNavigation();
@@ -64,14 +64,33 @@ function loadSection(sectionId) {
     const wrapper = document.getElementById('contentWrapper');
     if (wrapper) {
         wrapper.innerHTML = sec.content;
+
+        // Render KaTeX LaTeX math if available
+        if (window.renderMathInElement) {
+            try {
+                window.renderMathInElement(wrapper, {
+                    delimiters: [
+                        { left: '$$', right: '$$', display: true },
+                        { left: '$', right: '$', display: false },
+                        { left: '\\(', right: '\\)', display: false },
+                        { left: '\\[', right: '\\]', display: true }
+                    ],
+                    throwOnError: false
+                });
+            } catch (err) {
+                console.warn('KaTeX render error:', err);
+            }
+        }
     }
 
     // Scroll to top
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
-    // If DAG simulator section, initialize canvas
+    // Initializations for interactive sections
     if (sectionId === 'dag-simulator') {
         setTimeout(initDagCanvas, 100);
+    } else if (sectionId === 'market-breakout-model') {
+        setTimeout(calculateBreakoutModel, 100);
     }
 }
 
@@ -163,6 +182,52 @@ function showToast(msg) {
     setTimeout(() => {
         toast.remove();
     }, 3000);
+}
+
+// Interactive Breakout Model Calculator
+function calculateBreakoutModel() {
+    const p = parseFloat(document.getElementById('calcPrice')?.value || 99.70);
+    const l = parseFloat(document.getElementById('calcLevel')?.value || 100.00);
+    const atr = parseFloat(document.getElementById('calcAtr')?.value || 0.80);
+    const buyVol = parseFloat(document.getElementById('calcBuyVol')?.value || 450);
+    const sellVol = parseFloat(document.getElementById('calcSellVol')?.value || 120);
+    const initLiq = parseFloat(document.getElementById('calcInitLiq')?.value || 1000);
+    const currLiq = parseFloat(document.getElementById('calcCurrLiq')?.value || 250);
+    const shortLiq = parseFloat(document.getElementById('calcShortLiq')?.value || 350000);
+
+    // 1. Activation Distance D
+    const distance = Math.abs(p - l) / (atr || 1);
+
+    // 2. Delta Ratio
+    const totalVol = buyVol + sellVol;
+    const deltaRatio = totalVol > 0 ? (buyVol - sellVol) / totalVol : 0;
+
+    // 3. Liquidity Depletion
+    const depletion = initLiq > 0 ? Math.max(0, (initLiq - currLiq) / initLiq) : 0;
+
+    // 4. Sigmoid Probability Calculations
+    const z1 = -0.5 + (2.8 * deltaRatio) + (3.2 * depletion) - (1.2 * distance) + (shortLiq * 0.000002);
+    const probBreakout = 1 / (1 + Math.exp(-z1));
+
+    const z2 = -0.8 + (2.2 * deltaRatio) + (2.5 * depletion) + (shortLiq * 0.0000015);
+    const probSustained = 1 / (1 + Math.exp(-z2));
+
+    // Update DOM
+    if (document.getElementById('resDistance')) {
+        document.getElementById('resDistance').textContent = distance.toFixed(3);
+    }
+    if (document.getElementById('resDeltaRatio')) {
+        document.getElementById('resDeltaRatio').textContent = (deltaRatio >= 0 ? '+' : '') + deltaRatio.toFixed(3);
+    }
+    if (document.getElementById('resDepletion')) {
+        document.getElementById('resDepletion').textContent = (depletion * 100).toFixed(1) + '%';
+    }
+    if (document.getElementById('resProbBreakout')) {
+        document.getElementById('resProbBreakout').textContent = (probBreakout * 100).toFixed(1) + '%';
+    }
+    if (document.getElementById('resProbSustained')) {
+        document.getElementById('resProbSustained').textContent = (probSustained * 100).toFixed(1) + '%';
+    }
 }
 
 // DAG Canvas Interactive Simulator

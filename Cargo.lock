@@ -1673,6 +1673,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "plugin_wp_bot"
+version = "0.1.0"
+dependencies = [
+ "reqwest 0.11.27",
+ "serde",
+ "serde_json",
+ "tokio",
+]
+
+[[package]]
 name = "potential_utf"
 version = "0.1.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"

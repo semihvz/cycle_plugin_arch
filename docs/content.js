@@ -1,4 +1,4 @@
-/* Cycle Orchestrator Architecture Documentation Dataset */
+/* Cycle Orchestrator Architecture & Research Models Dataset */
 const docContent = {
     "sections": [
         {
@@ -125,6 +125,328 @@ const docContent = {
                                 </tr>
                             </tbody>
                         </table>
+                    </div>
+                </div>
+            `
+        },
+        {
+            "id": "market-breakout-model",
+            "title": "Market Structure Kırılım & Mikro-Yapı Modeli",
+            "icon": "📊",
+            "category": "Piyasa Modelleri",
+            "summary": "Market structure seviyelerinde kırılım gerçekleşmesinin gerçek zamanlı trade flow, order book, likidite ve liquidation dinamikleriyle matematiksel modellenmesi.",
+            "content": `
+                <div class="hero-card">
+                    <h1 class="hero-title">Market Structure Kırılım & Gerçek Zamanlı Piyasa Dinamikleri Modeli</h1>
+                    <p class="hero-desc">
+                        Destek ve direnç gibi market structure seviyelerinin kırılımını yalnızca fiyat hareketi üzerinden değerlendirmek yerine, 
+                        seviyeye yaklaşma sürecindeki gerçek zamanlı piyasa dinamikleri (trade flow, order-book imbalance, likidite emilimi, fiyat etkisi ve liquidation) ile açıklayan olasılıksal matematiksel model.
+                    </p>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-value">P(Breakout|State)</div>
+                            <div class="stat-label">Koşullu Gerçekleşme Olasılığı</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">W_{pre}</div>
+                            <div class="stat-label">Event-Relative Gözlem Penceresi</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">Likidite & Delta</div>
+                            <div class="stat-label">Mikro-Yapı Metrikleri</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">State Machine</div>
+                            <div class="stat-label">Durum Bağımlı Pozisyon Yönetimi</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 1 & 2: Core Concept & State Lifecycle -->
+                <div class="doc-section">
+                    <div class="section-header">
+                        <span class="section-icon">🔄</span>
+                        <h2 class="section-title">1. Temel Hipotez ve Model Yaşam Döngüsü</h2>
+                    </div>
+                    <p class="hero-desc">
+                        Modelin temel varsayımı: <strong>"Market structure gelecekteki fiyat hareketinin potansiyelini tanımlar; market microstructure ise bu potansiyelin gerçekleşme sürecini gösterir."</strong>
+                    </p>
+                    <div class="feature-card" style="margin-bottom: 20px; text-align: center; background: rgba(0, 243, 255, 0.03); border-color: var(--accent-cyan);">
+                        <div style="font-size: 20px; font-weight: 700; color: var(--accent-cyan); font-family: var(--font-mono);">
+                            Potential &nbsp;➔&nbsp; Realization &nbsp;➔&nbsp; Sustainability
+                        </div>
+                    </div>
+
+                    <div class="code-wrapper">
+                        <div class="code-header">
+                            <span>Model State Flowchart (Yaşam Döngüsü)</span>
+                        </div>
+                        <pre><code>Market Structure ➔ Level ➔ Potential ➔ Level Activation ➔ Pre-Breakout State
+                                                                ↓
+                                                           Breakout?
+                                                          ↙        ↘
+                                                    No (Wait)     Yes (Realization)
+                                                                       ↓
+                                                                 Sustainability
+                                                                       ↓
+                                                               Position Decision
+                                                                       ↓
+                                                                    Outcome ➔ New State</code></pre>
+                    </div>
+                </div>
+
+                <!-- Section 3 & 4: Activation & Event Window -->
+                <div class="doc-section">
+                    <div class="section-header">
+                        <span class="section-icon">🎯</span>
+                        <h2 class="section-title">2. Seviye Belirleme, Aktivasyon (Level Activation) & Event-Relative Pencere</h2>
+                    </div>
+                    <p class="hero-desc">
+                        Fiyat $L$ seviyesinden uzaktayken analiz yapılması gereksizdir. 1 dakikalık $ATR_{1m}$ kullanılarak aktivasyon mesafesi $D$ tanımlanır:
+                    </p>
+
+                    <div class="grid-2">
+                        <div class="feature-card">
+                            <div class="feature-header">
+                                <span class="feature-title">Aktivasyon Mesafesi Formülü</span>
+                            </div>
+                            <div class="feature-body">
+                                <div style="font-size: 16px; margin: 12px 0;">
+                                    $$D = \\frac{|P - L|}{ATR_{1m}}$$
+                                </div>
+                                <p>Eğer <strong>$D < k$</strong> ise seviye aktifleşir.</p>
+                                <p><strong>Örnek:</strong> $L = 100$, $ATR_{1m} = 0.80$, $k = 0.5$ ise:</p>
+                                <p>$$\\text{ActivationDistance} = 0.40 \\implies P_{\\text{activation}} = 99.60$$</p>
+                            </div>
+                        </div>
+
+                        <div class="feature-card">
+                            <div class="feature-header">
+                                <span class="feature-title">Event-Relative Pre-Breakout Penceresi</span>
+                            </div>
+                            <div class="feature-body">
+                                <p>Sabit zaman aralıkları (örneğin "son 10 saniye") yerine piyasa olayının kendi süresi kullanılır:</p>
+                                <div style="font-size: 16px; margin: 12px 0;">
+                                    $$W_{\\text{pre}} = t_{\\text{breakout}} - t_{\\text{activation}}$$
+                                </div>
+                                <p>Fiyat 99.60'ta olayı başlatıp 100.10'da kırılımı doğrularsa pencere hareketin kendi doğal süresidir (ör. 18 saniye).</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 6 - 9: Microstructure Metrics -->
+                <div class="doc-section">
+                    <div class="section-header">
+                        <span class="section-icon">⚡</span>
+                        <h2 class="section-title">3. Pre-Breakout Piyasa Dinamikleri (Microstructure Metrics)</h2>
+                    </div>
+                    <div class="grid-2">
+                        <div class="feature-card">
+                            <div class="feature-header">
+                                <span class="feature-title">Trade Flow & Net Delta</span>
+                            </div>
+                            <div class="feature-body">
+                                <p><strong>Net Delta:</strong></p>
+                                <p>$$\\text{Delta} = \\text{BuyVolume} - \\text{SellVolume}$$</p>
+                                <p><strong>Delta Oranı:</strong></p>
+                                <p>$$\\text{DeltaRatio} = \\frac{\\text{BuyVolume} - \\text{SellVolume}}{\\text{BuyVolume} + \\text{SellVolume}}$$</p>
+                            </div>
+                        </div>
+
+                        <div class="feature-card">
+                            <div class="feature-header">
+                                <span class="feature-title">Order Book Likidite Tüketimi</span>
+                            </div>
+                            <div class="feature-body">
+                                <p>Seviyedeki emir defteri likiditesinin tükenme oranı:</p>
+                                <div style="font-size: 15px; margin: 10px 0;">
+                                    $$\\text{LiquidityDepletion} = \\frac{\\text{InitialLiquidity} - \\text{FinalLiquidity}}{\\text{InitialLiquidity}}$$
+                                </div>
+                                <p>Yüksek oran, seviyedeki takoz emirlerin emildiğini gösterir.</p>
+                            </div>
+                        </div>
+
+                        <div class="feature-card">
+                            <div class="feature-header">
+                                <span class="feature-title">Fiyat Etkisi (Price Impact) & Emilim (Absorption)</span>
+                            </div>
+                            <div class="feature-body">
+                                <p>$$\\text{Impact} = \\frac{\\Delta P / P}{\\text{NormalizedVolume}}$$</p>
+                                <ul>
+                                    <li><strong>Durum A:</strong> Büyük Alış Hacmi + Yüksek Fiyat Etkisi $\\implies$ Etkili Kırılım.</li>
+                                    <li><strong>Durum B:</strong> Büyük Alış Hacmi + Düşük Fiyat Etkisi $\\implies$ <strong>Absorption (Satıcı Emilimi)</strong>.</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="feature-card">
+                            <div class="feature-header">
+                                <span class="feature-title">Liquidation Dynamics & Cascade</span>
+                            </div>
+                            <div class="feature-body">
+                                <p>Perpetual vadeli işlem kaskad geri beslemesi:</p>
+                                <p>$$\\text{Price} \\uparrow \\implies \\text{ShortLiquidation} \\uparrow \\implies \\text{ForcedBuy} \\uparrow \\implies \\text{Price} \\uparrow$$</p>
+                                <p>Kırılımın normal alıcılar mı yoksa zorunlu tasfiyelerle mi gerçekleştiğini ayırır.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 10 - 13: Probabilities & Position Sizing -->
+                <div class="doc-section">
+                    <div class="section-header">
+                        <span class="section-icon">📈</span>
+                        <h2 class="section-title">4. Durum Bazlı Olasılık Tahmini ve Pozisyon Yönetimi</h2>
+                    </div>
+                    <p class="hero-desc">
+                        Sistem deterministik AL/SAT yerine koşullu olasılık modelleri hesaplar:
+                    </p>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Formül / Büyüklük</th>
+                                    <th>Matematiksel İfade</th>
+                                    <th>Açıklama</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Durum Vektörü ($S_t$)</strong></td>
+                                    <td>$$S_t = \\{\\text{Structure}, \\text{Level}, \\text{Flow}, \\text{OrderBook}, \\text{Liquidity}, \\text{Liquidation}, \\text{Volatility}\\}$$</td>
+                                    <td>Tüm mikro yapı değişkenlerinin anlık özet vektörü.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Kırılım Olasılığı</strong></td>
+                                    <td>$$P(\\text{Breakout} \\mid S_t)$$</td>
+                                    <td>Mevcut $S_t$ durumunda $P > L + \\epsilon$ gerçekleşme olasılığı.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Sürdürülebilirlik Olasılığı</strong></td>
+                                    <td>$$P(\\text{SustainedBreakout} \\mid S_t)$$</td>
+                                    <td>Kırılım sonrası akışın devam etme ve retest başarısı olasılığı.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Risk Tabanlı Pozisyon Büyüklüğü</strong></td>
+                                    <td>$$Q = \\frac{\\text{RiskCapital}}{\\text{InvalidationDistance}}$$</td>
+                                    <td>Statik değil, $S_t$ durumuna göre dinamik ölçeklenen büyüklük.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Section 15 - 17: Research Hypotheses & Experimental Design -->
+                <div class="doc-section">
+                    <div class="section-header">
+                        <span class="section-icon">🧪</span>
+                        <h2 class="section-title">5. Araştırma Hipotezleri & Deney Tasarımı</h2>
+                    </div>
+                    <div class="grid-2">
+                        <div class="feature-card">
+                            <div class="feature-header">
+                                <span class="feature-title">Araştırma Hipotezleri (H1 - H6)</span>
+                            </div>
+                            <div class="feature-body">
+                                <ul>
+                                    <li><strong>H1:</strong> Seviyeye yaklaşırken oluşan order-flow imbalance kırılım bilgisini taşır.</li>
+                                    <li><strong>H2:</strong> Trade flow ile price impact ilişkisi kırılım kalitesini ayırır.</li>
+                                    <li><strong>H3:</strong> Liquidity depletion, kırılımın gerçekleşme olasılığıyla ilişkilidir.</li>
+                                    <li><strong>H4:</strong> Liquidation aktivitesi kırılımın yönünü ve sürdürülebilirliğini tahmin eder.</li>
+                                    <li><strong>H5:</strong> Event-relative window, sabit zaman pencerelerine göre üstün nitelik sağlar.</li>
+                                    <li><strong>H6:</strong> Breakout realization ile Breakout sustainability istatistiksel olarak ayrılabilir.</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="feature-card">
+                            <div class="feature-header">
+                                <span class="feature-title">Deneysel Karşılaştırma Modelleri (Model A - F)</span>
+                            </div>
+                            <div class="feature-body">
+                                <p><strong>Model A:</strong> Market Structure</p>
+                                <p><strong>Model B:</strong> Market Structure + OHLCV</p>
+                                <p><strong>Model C:</strong> Market Structure + Trade Flow</p>
+                                <p><strong>Model D:</strong> Market Structure + Trade Flow + Order Book</p>
+                                <p><strong>Model E:</strong> Model D + Liquidation</p>
+                                <p><strong>Model F:</strong> Model E + Event-Relative Window</p>
+                                <div style="margin-top: 10px; font-weight: 700; color: var(--accent-green);">
+                                    Ana Araştırma Sorusu: $$\text{Does } F > A?$$
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interactive Calculator Tool -->
+                <div class="doc-section">
+                    <div class="section-header">
+                        <span class="section-icon">🧮</span>
+                        <h2 class="section-title">6. Interaktif Kırılım Olasılığı & Likidite Hesaplayıcı</h2>
+                    </div>
+                    <p class="hero-desc">
+                        Aşağıdaki canlı hesaplayıcı ile anlık fiyat, ATR, alış/satış hacimleri ve likidite verilerini girerek modelin ürettiği $P(\text{Breakout} \mid S_t)$ ve $P(\text{SustainedBreakout} \mid S_t)$ olasılıklarını simüle edebilirsiniz.
+                    </p>
+
+                    <div class="simulator-container">
+                        <div class="grid-3" style="margin-bottom: 20px;">
+                            <div>
+                                <label style="font-size: 12px; color: var(--text-dim);">Fiyat (P):</label>
+                                <input type="number" id="calcPrice" value="99.70" step="0.05" oninput="calculateBreakoutModel()" style="width:100%; padding:8px; background:#0e1626; border:1px solid var(--border-color); color:#fff; border-radius:6px;">
+                            </div>
+                            <div>
+                                <label style="font-size: 12px; color: var(--text-dim);">Direnç Seviyesi (L):</label>
+                                <input type="number" id="calcLevel" value="100.00" step="0.1" oninput="calculateBreakoutModel()" style="width:100%; padding:8px; background:#0e1626; border:1px solid var(--border-color); color:#fff; border-radius:6px;">
+                            </div>
+                            <div>
+                                <label style="font-size: 12px; color: var(--text-dim);">ATR (1m):</label>
+                                <input type="number" id="calcAtr" value="0.80" step="0.05" oninput="calculateBreakoutModel()" style="width:100%; padding:8px; background:#0e1626; border:1px solid var(--border-color); color:#fff; border-radius:6px;">
+                            </div>
+                            <div>
+                                <label style="font-size: 12px; color: var(--text-dim);">Buy Volume (BTC):</label>
+                                <input type="number" id="calcBuyVol" value="450" step="10" oninput="calculateBreakoutModel()" style="width:100%; padding:8px; background:#0e1626; border:1px solid var(--border-color); color:#fff; border-radius:6px;">
+                            </div>
+                            <div>
+                                <label style="font-size: 12px; color: var(--text-dim);">Sell Volume (BTC):</label>
+                                <input type="number" id="calcSellVol" value="120" step="10" oninput="calculateBreakoutModel()" style="width:100%; padding:8px; background:#0e1626; border:1px solid var(--border-color); color:#fff; border-radius:6px;">
+                            </div>
+                            <div>
+                                <label style="font-size: 12px; color: var(--text-dim);">Initial Ask Depth:</label>
+                                <input type="number" id="calcInitLiq" value="1000" step="50" oninput="calculateBreakoutModel()" style="width:100%; padding:8px; background:#0e1626; border:1px solid var(--border-color); color:#fff; border-radius:6px;">
+                            </div>
+                            <div>
+                                <label style="font-size: 12px; color: var(--text-dim);">Current Ask Depth:</label>
+                                <input type="number" id="calcCurrLiq" value="250" step="50" oninput="calculateBreakoutModel()" style="width:100%; padding:8px; background:#0e1626; border:1px solid var(--border-color); color:#fff; border-radius:6px;">
+                            </div>
+                            <div>
+                                <label style="font-size: 12px; color: var(--text-dim);">Short Liq Vol ($):</label>
+                                <input type="number" id="calcShortLiq" value="350000" step="25000" oninput="calculateBreakoutModel()" style="width:100%; padding:8px; background:#0e1626; border:1px solid var(--border-color); color:#fff; border-radius:6px;">
+                            </div>
+                        </div>
+
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-value" id="resDistance">0.375</div>
+                                <div class="stat-label">Aktivasyon Mesafesi (D)</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="resDeltaRatio">+0.579</div>
+                                <div class="stat-label">Delta Ratio</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="resDepletion">75.0%</div>
+                                <div class="stat-label">Liquidity Depletion</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="resProbBreakout" style="color: var(--accent-cyan);">84.2%</div>
+                                <div class="stat-label">P(Breakout|St)</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="resProbSustained" style="color: var(--accent-green);">76.5%</div>
+                                <div class="stat-label">P(SustainedBreakout|St)</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             `
@@ -395,7 +717,7 @@ const docContent = {
                             </div>
                             <div class="feature-body">
                                 <p><strong>Byte 0 - 31:</strong> ASCII Stream ID (Sağ taraf 0x00 null-padding)</p>
-                                <p><strong>Byte 32+:</strong> JSON veya SMessage Ikili Veri Bloğu (Orderbook, Trade, Signal)</p>
+                                <p><strong>Byte 32+:</strong> JSON veya Binary Veri Bloğu (Orderbook, Trade, Signal)</p>
                             </div>
                         </div>
 
