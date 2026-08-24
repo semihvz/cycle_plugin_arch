@@ -20,7 +20,7 @@
   },
   {
     "plugin_name": "plugin_bookticker_derivatives",
-    "enabled": true,
+    "enabled": false,
     "plugin_inputs": [
       {
         "source": "plugin_binance_gateway",

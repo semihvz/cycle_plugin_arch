@@ -63,6 +63,7 @@ impl Orchestrator {
             let running = sys.context.is_running.load(core::sync::atomic::Ordering::Relaxed);
             result.push((sys.id.clone(), sys.name.clone(), running));
         }
+        result.sort_by_key(|(id, _, running)| (!running, id.clone()));
         result
     }
 
