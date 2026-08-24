@@ -124,7 +124,7 @@
   },
   {
     "plugin_name": "plugin_binance_sqlite",
-    "enabled": true,
+    "enabled": false,
     "plugin_inputs": [
       {
         "source": "plugin_binance_gateway",
@@ -164,7 +164,7 @@
   },
   {
     "plugin_name": "plugin_sqlite_query",
-    "enabled": true,
+    "enabled": false,
     "plugin_inputs": [],
     "plugin_params": {
       "db_path": "data/binance_market_data.db"
@@ -205,7 +205,7 @@
   },
   {
     "plugin_name": "plugin_sys_metrics",
-    "enabled": true,
+    "enabled": false,
     "plugin_inputs": [],
     "plugin_params": {},
     "plugin_outputs": []
