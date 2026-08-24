@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cycle Orchestrator - Sistem Mimarisi Dokümantasyonu</title>
+    <meta name="description" content="Cycle Orchestrator HFT ve Sıfır-Gecikmeli Paylaşımlı Hafıza Eklenti Mimarisi Teknik Dokümantasyonu">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar" id="sidebar">
+            <div class="brand">
+                <div class="logo">
+                    <span class="logo-icon">⚡</span>
+                    <div class="logo-text">
+                        <span class="title">CYCLE-ORC</span>
+                        <span class="subtitle">Architecture Docs</span>
+                    </div>
+                </div>
+                <div class="badge">v2.4-HFT</div>
+            </div>
+
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="searchInput" placeholder="Mimari, trait veya endpoint ara..." autocomplete="off">
+                <kbd class="shortcut">/</kbd>
+            </div>
+
+            <nav class="nav-menu" id="navMenu">
+                <!-- Navigation links generated dynamically -->
+            </nav>
+
+            <div class="system-status">
+                <div class="status-indicator">
+                    <span class="pulse-dot"></span>
+                    <span class="status-text">Core Engine: <strong>READY</strong></span>
+                </div>
+                <div class="metric-row">
+                    <span>RAM Latency:</span>
+                    <span class="metric-val">&lt; 15 ns</span>
+                </div>
+                <div class="metric-row">
+                    <span>Zero-Copy ABI:</span>
+                    <span class="metric-val">C-ABI Standard</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="top-header">
+                <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+                <div class="breadcrumb" id="breadcrumb">Sistem Mimarisi / Genel Bakış</div>
+                <div class="header-actions">
+                    <button class="theme-toggle-btn" id="simModeBtn">⚡ Interaktif DAG Simülatörü</button>
+                </div>
+            </header>
+
+            <div class="content-wrapper" id="contentWrapper">
+                <!-- Main dynamic content will be rendered here -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script src="content.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
