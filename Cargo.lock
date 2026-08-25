@@ -1512,6 +1512,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "plugin_all_bars_backtest"
+version = "0.1.0"
+dependencies = [
+ "reqwest 0.11.27",
+ "serde",
+ "serde_json",
+ "tokio",
+]
+
+[[package]]
 name = "plugin_amihud"
 version = "0.1.0"
 dependencies = [
@@ -1524,6 +1534,17 @@ dependencies = [
 name = "plugin_atr"
 version = "0.1.0"
 dependencies = [
+ "serde",
+ "serde_json",
+ "tokio",
+]
+
+[[package]]
+name = "plugin_back"
+version = "0.1.0"
+dependencies = [
+ "reqwest 0.11.27",
+ "rusqlite",
  "serde",
  "serde_json",
  "tokio",
@@ -1564,6 +1585,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "plugin_bollinger_backtest"
+version = "0.1.0"
+dependencies = [
+ "reqwest 0.11.27",
+ "serde",
+ "serde_json",
+ "tokio",
+]
+
+[[package]]
 name = "plugin_bookticker_derivatives"
 version = "0.1.0"
 dependencies = [
@@ -1595,6 +1626,16 @@ dependencies = [
  "rust_decimal",
  "serde",
  "serde_json",
+]
+
+[[package]]
+name = "plugin_ml_analyzer"
+version = "0.1.0"
+dependencies = [
+ "reqwest 0.11.27",
+ "serde",
+ "serde_json",
+ "tokio",
 ]
 
 [[package]]
@@ -1695,6 +1736,17 @@ dependencies = [
  "serde",
  "serde_json",
  "sysinfo",
+ "tokio",
+]
+
+[[package]]
+name = "plugin_tacusdt_1h"
+version = "0.1.0"
+dependencies = [
+ "reqwest 0.11.27",
+ "rusqlite",
+ "serde",
+ "serde_json",
  "tokio",
 ]
 

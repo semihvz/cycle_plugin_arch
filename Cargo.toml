@@ -28,6 +28,11 @@ members = [
     "crates/plugins/analytics/plugin_price_impact",
     "crates/plugins/analytics/plugin_level_proximity",
     "crates/plugins/analytics/plugin_rsi",
+    "crates/plugins/analytics/plugin_bollinger_backtest",
+    "crates/plugins/analytics/plugin_all_bars_backtest",
+    "crates/plugins/analytics/plugin_back",
+    "crates/plugins/analytics/plugin_ml_analyzer",
+    "crates/plugins/analytics/plugin_tacusdt_1h",
 
     # Execution
     "crates/plugins/execution/binance_trader",

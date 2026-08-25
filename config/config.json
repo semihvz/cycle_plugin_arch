@@ -502,5 +502,135 @@
     "plugin_outputs": [
       "stream_rsi_metrics"
     ]
+  },
+  {
+    "plugin_name": "plugin_bollinger_backtest",
+    "enabled": true,
+    "plugin_inputs": [
+      {
+        "source": "plugin_ohlcv_fetcher",
+        "stream_id": "tacusdt_1h_bollinger",
+        "params": {
+          "symbol": "TACUSDT",
+          "interval": "1h",
+          "limit": 720,
+          "mode": "sub",
+          "sub_interval_secs": 60
+        }
+      }
+    ],
+    "plugin_params": {
+      "period": 20,
+      "multiplier": 2.0,
+      "risk_reward_ratio": 2.0,
+      "symbol": "TACUSDT",
+      "interval": "1h"
+    },
+    "plugin_outputs": [
+      "stream_bollinger_backtest"
+    ]
+  },
+  {
+    "plugin_name": "plugin_all_bars_backtest",
+    "enabled": true,
+    "plugin_inputs": [
+      {
+        "source": "plugin_ohlcv_fetcher",
+        "stream_id": "tacusdt_all_bars",
+        "params": {
+          "symbol": "TACUSDT",
+          "interval": "1h",
+          "limit": 1500,
+          "mode": "sub",
+          "sub_interval_secs": 60
+        }
+      }
+    ],
+    "plugin_params": {
+      "lookback_lowest": 100,
+      "atr_multiplier": 2.0,
+      "position_size_usdt": 50.0,
+      "symbol": "TACUSDT",
+      "interval": "1h"
+    },
+    "plugin_outputs": [
+      "stream_all_bars_backtest"
+    ]
+  },
+  {
+    "plugin_name": "plugin_back",
+    "enabled": true,
+    "plugin_inputs": [
+      {
+        "source": "plugin_ohlcv_fetcher",
+        "stream_id": "tacusdt_ml_suite_stream",
+        "params": {
+          "symbol": "TACUSDT",
+          "interval": "15m",
+          "limit": 1500,
+          "mode": "sub",
+          "sub_interval_secs": 60
+        }
+      }
+    ],
+    "plugin_params": {
+      "symbol": "TACUSDT",
+      "interval": "15m",
+      "position_size_usdt": 50.0,
+      "ml_probability_threshold": 0.50
+    },
+    "plugin_outputs": [
+      "stream_tacusdt_ml_suite"
+    ]
+  },
+  {
+    "plugin_name": "plugin_ml_analyzer",
+    "enabled": true,
+    "plugin_inputs": [
+      {
+        "source": "plugin_ohlcv_fetcher",
+        "stream_id": "ai_scanner_stream",
+        "params": {
+          "symbol": "TACUSDT",
+          "interval": "15m",
+          "limit": 150,
+          "mode": "sub",
+          "sub_interval_secs": 15
+        }
+      }
+    ],
+    "plugin_params": {
+      "symbols": ["TACUSDT", "VELVETUSDT", "BTCUSDT"],
+      "interval": "15m",
+      "min_win_probability": 0.50
+    },
+    "plugin_outputs": [
+      "stream_ai_trade_signals"
+    ]
+  },
+  {
+    "plugin_name": "plugin_tacusdt_1h",
+    "enabled": true,
+    "plugin_inputs": [
+      {
+        "source": "plugin_ohlcv_fetcher",
+        "stream_id": "tacusdt_1h_all_time_stream",
+        "params": {
+          "symbol": "TACUSDT",
+          "interval": "1h",
+          "limit": 1500,
+          "mode": "sub",
+          "sub_interval_secs": 60
+        }
+      }
+    ],
+    "plugin_params": {
+      "symbol": "TACUSDT",
+      "interval": "1h",
+      "position_size_usdt": 50.0
+    },
+    "plugin_outputs": [
+      "stream_tacusdt_1h_collector"
+    ]
   }
 ]

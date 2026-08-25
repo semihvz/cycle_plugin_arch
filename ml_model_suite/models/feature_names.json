@@ -1,0 +1,13 @@
+[
+  "trend_100b_pct",
+  "trend_50b_pct",
+  "trend_20b_pct",
+  "stoch_pos_pct",
+  "norm_atr_pct",
+  "volatility_range_pct",
+  "volume_ratio",
+  "entry_hour",
+  "dist_to_100low_pct",
+  "last_bar_body_ratio",
+  "last_bar_is_bullish"
+]
