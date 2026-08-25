@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>lib.rs - Rust Analiz Dokümanı</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --border: #334155;
+            --code-bg: #090d16;
+            --verbal-bg: #131f37;
+            --analogy-bg: #1e1b4b;
+            --analogy-border: #818cf8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .back-link {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .back-link:hover { text-decoration: underline; }
+        h1 { font-size: 2rem; color: var(--accent); margin-bottom: 0.5rem; }
+        .file-path { font-family: 'Fira Code', monospace; color: var(--text-muted); font-size: 0.95rem; }
+        
+        .structs-container { margin: 1.5rem 0; }
+        .badge {
+            display: inline-block;
+            background: #0284c7;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-family: 'Fira Code', monospace;
+        }
+        .badge-struct { background: #7c3aed; }
+        
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .card h3 { color: var(--accent); margin-bottom: 0.5rem; font-size: 1.3rem; }
+        .card h4 { margin: 1.2rem 0 0.5rem 0; color: var(--text-muted); font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        .easy-analogy {
+            background: var(--analogy-bg);
+            border-left: 4px solid var(--analogy-border);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1rem;
+            color: #c7d2fe;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .verbal-explanation {
+            background: var(--verbal-bg);
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1.2rem;
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            margin-bottom: 1rem;
+        }
+        
+        .mermaid {
+            background: var(--code-bg);
+            padding: 1.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+        }
+        
+        details {
+            margin-top: 2rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Ana İndekse Dön</a>
+        <header>
+            <h1>lib.rs</h1>
+            <p class="file-path">crates/plugins/producers/oi_fetcher/src/lib.rs</p>
+            <div class="structs-container">
+                <strong>Tanımlı Türler / Yapılar:</strong> <span class="badge badge-struct">PluginOps</span> <span class="badge badge-struct">PluginState</span> 
+            </div>
+        </header>
+
+        <section>
+            <h2>Fonksiyon Analizleri & Basit Anlatımlar</h2>
+            
+        <div class="card">
+            <h3><span class="badge">fn</span> init_plugin</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>state_out: *mut *mut c_void</code> | <strong>Dönüş Tipi:</strong> <code>unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>state_out: *mut *mut c_void</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. İşlemi tamamlayarak <code>unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON init_plugin(state_out: *mut *mut c_void) -&gt; unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize:
+    let runtime = tokio::runtime::Builder::new_multi_thread()
+    .worker_threads(1)
+    .enable_all()
+    .build()
+    .expect(&quot;Tokio runtime olusturulamadi&quot;);
+    let state = Box::new(PluginState {
+    runtime,
+    is_running: Arc::new(AtomicBool::new(false)),
+    data: Arc::new(Mutex::new(b&quot;Hazir. Istek bekleniyor.&quot;.to_vec())),
+    outbox: Arc::new(Mutex::new(Vec::new())),
+    });
+    unsafe { *state_out = Box::into_raw(state) as *mut c_void; }
+    handle_endpoint</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: init_plugin"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> handle_endpoint</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>plugin_state: *mut c_void,
+    endpoint_id: u32,
+    payload: *const u8,
+    payload_len: usize,
+    out_buf: *mut u8,
+    out_max_len: usize,</code> | <strong>Dönüş Tipi:</strong> <code>usize</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>plugin_state: *mut c_void,
+    endpoint_id: u32,
+    payload: *const u8,
+    payload_len: usize,
+    out_buf: *mut u8,
+    out_max_len: usize,</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>usize</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Farklı durum senaryolarına göre akışı uygun kola yönlendirir.<br>4. İşlemi tamamlayarak <code>usize</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON handle_endpoint(plugin_state: *mut c_void,
+    endpoint_id: u32,
+    payload: *const u8,
+    payload_len: usize,
+    out_buf: *mut u8,
+    out_max_len: usize,) -&gt; usize:
+    let state = &amp;*(plugin_state as *const PluginState);
+    DURUM KONTROLÜ (endpoint_id):
+        0 =&gt; { // Start
+        state.is_running.store(true, Ordering::Relaxed);
+        0
+    1 =&gt; { // Stop
+    state.is_running.store(false, Ordering::Relaxed);
+    0
+    2 =&gt; { // IsWorking
+    EĞER state.is_running.load(Ordering::Relaxed) İSE:
+    3 =&gt; { // DataValid
+    1
+    4 =&gt; { // DataMonitor
+    let guard = state.data.lock().unwrap();
+    let len = guard.len().min(out_max_len);
+    std::ptr::copy_nonoverlapping(guard.as_ptr(), out_buf, len);
+    len
+    6 =&gt; { // Inbox
+    EĞER payload_len &gt; 0 İSE:
+        let slice = std::slice::from_raw_parts(payload, payload_len);
+        EĞER let Ok(msg) = serde_json::from_slice::&lt;serde_json::Value&gt;(slice) İSE:
+            EĞER msg[&quot;action&quot;].as_str() == Some(&quot;fetch_oi&quot;) İSE:
+                let symbol = msg[&quot;symbol&quot;].as_str().unwrap_or(&quot;BTCUSDT&quot;).to_string();
+                let interval = msg[&quot;interval&quot;].as_str().unwrap_or(&quot;5m&quot;).to_string();
+                let limit = msg[&quot;limit&quot;].as_i64().unwrap_or(30);
+                let from = msg[&quot;from&quot;].as_str().unwrap_or(&quot;&quot;).to_string();
+                let context = msg[&quot;context&quot;].clone();
+                let outbox = state.outbox.clone();
+                let data = state.data.clone();
+                {
+                let mut guard = data.lock().unwrap();
+                *guard = format!(&quot;Istek isleniyor: {} {} {}&quot;, symbol, interval, limit).into_bytes();
+            state.runtime.spawn(async move {
+            // OI verisini çekerken &#x27;period&#x27; parametresi kullanılıyor.
+            let url = format!(&quot;https://fapi.binance.com/futures/data/openInterestHist?symbol={}&amp;period={}&amp;limit={}&quot;, symbol, interval, limit);
+            EĞER let Ok(resp) = reqwest::get(&amp;url).await İSE:
+                EĞER let Ok(oi_data) = resp.json::&lt;serde_json::Value&gt;().await İSE:
+                    let mut response_msg = serde_json::json!({
+                    &quot;to&quot;: from,
+                    &quot;action&quot;: &quot;fetch_oi_response&quot;,
+                    &quot;symbol&quot;: symbol,
+                    &quot;interval&quot;: interval,
+                    &quot;data&quot;: oi_data,
+                    &quot;type&quot;: &quot;oi&quot;
+                    });
+                    EĞER !context.is_null() İSE:
+                        response_msg[&quot;context&quot;] = context;
+                    let mut q = outbox.lock().unwrap();
+                    q.push(response_msg);
+                    let mut guard = data.lock().unwrap();
+                    *guard = format!(&quot;OI verisi cekildi, kuyruga eklendi: {} {} {}&quot;, symbol, interval, limit).into_bytes();
+            });
+    0
+    7 =&gt; { // Outbox
+    let mut q = state.outbox.lock().unwrap();
+    EĞER !q.is_empty() İSE:
+        let json_array = serde_json::Value::Array(q.clone());
+        q.clear();
+        let bytes = serde_json::to_vec(&amp;json_array).unwrap_or_default();
+        let len = bytes.len().min(out_max_len);
+        std::ptr::copy_nonoverlapping(bytes.as_ptr(), out_buf, len);
+        len
+        } else {
+        0
+    _ =&gt; 0,</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: handle_endpoint"])
+    Start --> Cond1{"state.is_running.load(Ordering::Relaxed)?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"payload_len &gt; 0?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"let Ok(msg) = serde_json::from_slice::&lt;serde_json::Value&gt;(slice)?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        </section>
+
+        <details>
+            <summary>Orijinal Rust Kaynak Kodunu Göster</summary>
+            <pre><code>use std::ffi::c_void;
+use std::sync::{Arc, Mutex};
+use std::sync::atomic::{AtomicBool, Ordering};
+
+#[repr(C)]
+pub struct PluginOps {
+    pub name: *const std::ffi::c_char,
+    pub start: unsafe extern &quot;C&quot; fn(*mut c_void),
+    pub stop: unsafe extern &quot;C&quot; fn(*mut c_void),
+    pub update: unsafe extern &quot;C&quot; fn(*mut c_void, *mut u8, usize) -&gt; usize,
+    pub call_endpoint: unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize,
+}
+
+struct PluginState {
+    runtime: tokio::runtime::Runtime,
+    is_running: Arc&lt;AtomicBool&gt;,
+    data: Arc&lt;Mutex&lt;Vec&lt;u8&gt;&gt;&gt;,
+    outbox: Arc&lt;Mutex&lt;Vec&lt;serde_json::Value&gt;&gt;&gt;,
+}
+
+#[no_mangle]
+pub unsafe extern &quot;C&quot; fn init_plugin(state_out: *mut *mut c_void) -&gt; unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize {
+    let runtime = tokio::runtime::Builder::new_multi_thread()
+        .worker_threads(1)
+        .enable_all()
+        .build()
+        .expect(&quot;Tokio runtime olusturulamadi&quot;);
+
+    let state = Box::new(PluginState {
+        runtime,
+        is_running: Arc::new(AtomicBool::new(false)),
+        data: Arc::new(Mutex::new(b&quot;Hazir. Istek bekleniyor.&quot;.to_vec())),
+        outbox: Arc::new(Mutex::new(Vec::new())),
+    });
+
+    unsafe { *state_out = Box::into_raw(state) as *mut c_void; }
+
+    handle_endpoint
+}
+
+unsafe extern &quot;C&quot; fn handle_endpoint(
+    plugin_state: *mut c_void,
+    endpoint_id: u32,
+    payload: *const u8,
+    payload_len: usize,
+    out_buf: *mut u8,
+    out_max_len: usize,
+) -&gt; usize {
+    let state = &amp;*(plugin_state as *const PluginState);
+
+    match endpoint_id {
+        0 =&gt; { // Start
+            state.is_running.store(true, Ordering::Relaxed);
+            0
+        }
+        1 =&gt; { // Stop
+            state.is_running.store(false, Ordering::Relaxed);
+            0
+        }
+        2 =&gt; { // IsWorking
+            if state.is_running.load(Ordering::Relaxed) { 1 } else { 0 }
+        }
+        3 =&gt; { // DataValid
+            1
+        }
+        4 =&gt; { // DataMonitor
+            let guard = state.data.lock().unwrap();
+            let len = guard.len().min(out_max_len);
+            std::ptr::copy_nonoverlapping(guard.as_ptr(), out_buf, len);
+            len
+        }
+        6 =&gt; { // Inbox
+            if payload_len &gt; 0 {
+                let slice = std::slice::from_raw_parts(payload, payload_len);
+                if let Ok(msg) = serde_json::from_slice::&lt;serde_json::Value&gt;(slice) {
+                    if msg[&quot;action&quot;].as_str() == Some(&quot;fetch_oi&quot;) {
+                        let symbol = msg[&quot;symbol&quot;].as_str().unwrap_or(&quot;BTCUSDT&quot;).to_string();
+                        let interval = msg[&quot;interval&quot;].as_str().unwrap_or(&quot;5m&quot;).to_string();
+                        let limit = msg[&quot;limit&quot;].as_i64().unwrap_or(30);
+                        let from = msg[&quot;from&quot;].as_str().unwrap_or(&quot;&quot;).to_string();
+                        let context = msg[&quot;context&quot;].clone();
+                        
+                        let outbox = state.outbox.clone();
+                        let data = state.data.clone();
+                        
+                        {
+                            let mut guard = data.lock().unwrap();
+                            *guard = format!(&quot;Istek isleniyor: {} {} {}&quot;, symbol, interval, limit).into_bytes();
+                        }
+                        
+                        state.runtime.spawn(async move {
+                            // OI verisini çekerken &#x27;period&#x27; parametresi kullanılıyor.
+                            let url = format!(&quot;https://fapi.binance.com/futures/data/openInterestHist?symbol={}&amp;period={}&amp;limit={}&quot;, symbol, interval, limit);
+                            if let Ok(resp) = reqwest::get(&amp;url).await {
+                                if let Ok(oi_data) = resp.json::&lt;serde_json::Value&gt;().await {
+                                    let mut response_msg = serde_json::json!({
+                                        &quot;to&quot;: from,
+                                        &quot;action&quot;: &quot;fetch_oi_response&quot;,
+                                        &quot;symbol&quot;: symbol,
+                                        &quot;interval&quot;: interval,
+                                        &quot;data&quot;: oi_data,
+                                        &quot;type&quot;: &quot;oi&quot;
+                                    });
+                                    
+                                    if !context.is_null() {
+                                        response_msg[&quot;context&quot;] = context;
+                                    }
+                                    
+                                    let mut q = outbox.lock().unwrap();
+                                    q.push(response_msg);
+                                    
+                                    let mut guard = data.lock().unwrap();
+                                    *guard = format!(&quot;OI verisi cekildi, kuyruga eklendi: {} {} {}&quot;, symbol, interval, limit).into_bytes();
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+            0
+        }
+        7 =&gt; { // Outbox
+            let mut q = state.outbox.lock().unwrap();
+            if !q.is_empty() {
+                let json_array = serde_json::Value::Array(q.clone());
+                q.clear();
+                let bytes = serde_json::to_vec(&amp;json_array).unwrap_or_default();
+                let len = bytes.len().min(out_max_len);
+                std::ptr::copy_nonoverlapping(bytes.as_ptr(), out_buf, len);
+                len
+            } else {
+                0
+            }
+        }
+        _ =&gt; 0,
+    }
+}
+</code></pre>
+        </details>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            flowchart: { curve: 'basis' }
+        });
+    </script>
+</body>
+</html>

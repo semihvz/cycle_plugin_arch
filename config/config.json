@@ -456,5 +456,51 @@
     "plugin_outputs": [
       "stream_level_proximity_alerts"
     ]
+  },
+  {
+    "plugin_name": "plugin_rsi",
+    "enabled": true,
+    "plugin_inputs": [
+      {
+        "source": "plugin_ohlcv_fetcher",
+        "stream_id": "btc_1m",
+        "params": {
+          "symbol": "BTCUSDT",
+          "interval": "1m",
+          "limit": 1440,
+          "mode": "sub",
+          "sub_interval_secs": 1
+        }
+      },
+      {
+        "source": "plugin_ohlcv_fetcher",
+        "stream_id": "eth_1m",
+        "params": {
+          "symbol": "ETHUSDT",
+          "interval": "1m",
+          "limit": 1440,
+          "mode": "sub",
+          "sub_interval_secs": 1
+        }
+      },
+      {
+        "source": "plugin_ohlcv_fetcher",
+        "stream_id": "tac_1m",
+        "params": {
+          "symbol": "TACUSDT",
+          "interval": "1m",
+          "limit": 1440,
+          "mode": "sub",
+          "sub_interval_secs": 1
+        }
+      }
+    ],
+    "plugin_params": {
+      "period": 14,
+      "lookback_bars": 1440
+    },
+    "plugin_outputs": [
+      "stream_rsi_metrics"
+    ]
   }
 ]

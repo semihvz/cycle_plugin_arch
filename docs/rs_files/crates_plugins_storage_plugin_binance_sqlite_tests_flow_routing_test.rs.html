@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>flow_routing_test.rs - Rust Analiz Dokümanı</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --border: #334155;
+            --code-bg: #090d16;
+            --verbal-bg: #131f37;
+            --analogy-bg: #1e1b4b;
+            --analogy-border: #818cf8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .back-link {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .back-link:hover { text-decoration: underline; }
+        h1 { font-size: 2rem; color: var(--accent); margin-bottom: 0.5rem; }
+        .file-path { font-family: 'Fira Code', monospace; color: var(--text-muted); font-size: 0.95rem; }
+        
+        .structs-container { margin: 1.5rem 0; }
+        .badge {
+            display: inline-block;
+            background: #0284c7;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-family: 'Fira Code', monospace;
+        }
+        .badge-struct { background: #7c3aed; }
+        
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .card h3 { color: var(--accent); margin-bottom: 0.5rem; font-size: 1.3rem; }
+        .card h4 { margin: 1.2rem 0 0.5rem 0; color: var(--text-muted); font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        .easy-analogy {
+            background: var(--analogy-bg);
+            border-left: 4px solid var(--analogy-border);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1rem;
+            color: #c7d2fe;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .verbal-explanation {
+            background: var(--verbal-bg);
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1.2rem;
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            margin-bottom: 1rem;
+        }
+        
+        .mermaid {
+            background: var(--code-bg);
+            padding: 1.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+        }
+        
+        details {
+            margin-top: 2rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Ana İndekse Dön</a>
+        <header>
+            <h1>flow_routing_test.rs</h1>
+            <p class="file-path">crates/plugins/storage/plugin_binance_sqlite/tests/flow_routing_test.rs</p>
+            <div class="structs-container">
+                <strong>Tanımlı Türler / Yapılar:</strong> Yok
+            </div>
+        </header>
+
+        <section>
+            <h2>Fonksiyon Analizleri & Basit Anlatımlar</h2>
+            
+        <div class="card">
+            <h3><span class="badge">fn</span> test_cabi_and_flow_routing_to_sqlite</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>Yok</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Gün içinde yapılan tüm alışverişleri ve harcamaları gün sonunda kaybolmaması için büyük ana kasa defterine kaydetme işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> İşlenmiş verileri veya emir kayıtlarını veritabanına (SQLite/Disk) kalıcı olarak yazar.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON test_cabi_and_flow_routing_to_sqlite() -&gt; ():
+    let db_path = &quot;test_flow_market_data.db&quot;;
+    let _ = std::fs::remove_file(db_path);
+    unsafe {
+    let mut state_ptr: *mut c_void = std::ptr::null_mut();
+    let handle_endpoint = init_plugin(&amp;mut state_ptr);
+    // 1. Start plugin with custom DB path
+    let start_config = json!({
+    &quot;plugin_params&quot;: {
+    &quot;db_path&quot;: db_path
+    });
+    let config_bytes = serde_json::to_vec(&amp;start_config).unwrap();
+    let mut out_buf = [0u8; 1024];
+    let ret = handle_endpoint(state_ptr, 0, config_bytes.as_ptr(), config_bytes.len(), out_buf.as_mut_ptr(), out_buf.len());
+    assert_eq!(ret, 0);
+    // Verify IsWorking (Endpoint 2)
+    let is_working = handle_endpoint(state_ptr, 2, std::ptr::null(), 0, out_buf.as_mut_ptr(), out_buf.len());
+    assert_eq!(is_working, 1);
+    // 2. Simulate stream_markprice from FlowEngine (32-byte header + JSON payload)
+    let markprice_data = json!({
+    &quot;BTCUSDT&quot;: {
+    &quot;mark_price&quot;: &quot;68500.25&quot;,
+    &quot;index_price&quot;: &quot;68505.00&quot;,
+    &quot;funding_rate&quot;: &quot;0.00015&quot;,
+    &quot;next_funding_time&quot;: 1700000000000i64,
+    &quot;event_time&quot;: 1699999999000i64,
+    &quot;local_recv_time_ms&quot;: 1700000000500i64
+    });
+    let payload_bytes = make_flow_payload(&quot;stream_markprice&quot;, &amp;markprice_data);
+    handle_endpoint(state_ptr, 6, payload_bytes.as_ptr(), payload_bytes.len(), out_buf.as_mut_ptr(), out_buf.len());
+    // 3. Simulate stream_bestprice
+    let bestprice_data = json!({
+    &quot;BTCUSDT&quot;: {
+    &quot;best_bid&quot;: &quot;68500.00&quot;,
+    &quot;best_bid_qty&quot;: &quot;3.5&quot;,
+    &quot;best_ask&quot;: &quot;68500.50&quot;,
+    &quot;best_ask_qty&quot;: &quot;1.2&quot;,
+    &quot;event_time&quot;: 1699999999000i64,
+    &quot;local_recv_time_ms&quot;: 1700000000501i64
+    });
+    let payload_bytes = make_flow_payload(&quot;stream_bestprice&quot;, &amp;bestprice_data);
+    handle_endpoint(state_ptr, 6, payload_bytes.as_ptr(), payload_bytes.len(), out_buf.as_mut_ptr(), out_buf.len());
+    // 4. Simulate stream_trades
+    let trades_data = json!({
+    &quot;BTCUSDT&quot;: {
+    &quot;trade_id&quot;: 888999,
+    &quot;price&quot;: &quot;68500.25&quot;,
+    &quot;quantity&quot;: &quot;0.5&quot;,
+    &quot;buyer_is_maker&quot;: false,
+    &quot;event_time&quot;: 1699999999000i64,
+    &quot;local_recv_time_ms&quot;: 1700000000502i64
+    });
+    let payload_bytes = make_flow_payload(&quot;stream_trades&quot;, &amp;trades_data);
+    handle_endpoint(state_ptr, 6, payload_bytes.as_ptr(), payload_bytes.len(), out_buf.as_mut_ptr(), out_buf.len());
+    // 4b. Simulate stream_aggtrades
+    let aggtrades_data = json!({
+    &quot;ETHUSDT&quot;: {
+    &quot;trade_id&quot;: 88899910,
+    &quot;price&quot;: &quot;3550.00&quot;,
+    &quot;quantity&quot;: &quot;2.5&quot;,
+    &quot;buyer_is_maker&quot;: true,
+    &quot;event_time&quot;: 1699999999000i64,
+    &quot;local_recv_time_ms&quot;: 1700000000502i64
+    });
+    let payload_bytes_agg = make_flow_payload(&quot;stream_aggtrades&quot;, &amp;aggtrades_data);
+    handle_endpoint(state_ptr, 6, payload_bytes_agg.as_ptr(), payload_bytes_agg.len(), out_buf.as_mut_ptr(), out_buf.len());
+    // 5. Simulate stream_liquidations
+    let liq_data = json!([
+    {
+    &quot;symbol&quot;: &quot;BTCUSDT&quot;,
+    &quot;side&quot;: &quot;BUY&quot;,
+    &quot;type&quot;: &quot;LIMIT&quot;,
+    &quot;price&quot;: &quot;69000.00&quot;,
+    &quot;average_price&quot;: &quot;68995.00&quot;,
+    &quot;original_qty&quot;: &quot;2.0&quot;,
+    &quot;filled_qty&quot;: &quot;2.0&quot;,
+    &quot;event_time&quot;: 1699999999000i64,
+    &quot;local_recv_time_ms&quot;: 1700000000503i64
+    ]);
+    let payload_bytes = make_flow_payload(&quot;stream_liquidations&quot;, &amp;liq_data);
+    handle_endpoint(state_ptr, 6, payload_bytes.as_ptr(), payload_bytes.len(), out_buf.as_mut_ptr(), out_buf.len());
+    // 6. Simulate stream_depth
+    let depth_data = json!({
+    &quot;BTCUSDT&quot;: {
+    &quot;bids&quot;: [[&quot;68500.00&quot;, &quot;3.5&quot;]],
+    &quot;asks&quot;: [[&quot;68500.50&quot;, &quot;1.2&quot;]],
+    &quot;last_update_id&quot;: 555666777,
+    &quot;event_time&quot;: 1699999999000i64,
+    &quot;local_recv_time_ms&quot;: 1700000000504i64
+    });
+    let payload_bytes = make_flow_payload(&quot;stream_depth&quot;, &amp;depth_data);
+    handle_endpoint(state_ptr, 6, payload_bytes.as_ptr(), payload_bytes.len(), out_buf.as_mut_ptr(), out_buf.len());
+    // 7. Inspect DataMonitor report (Endpoint 4)
+    let mut monitor_buf = vec![0u8; 4096];
+    let report_len = handle_endpoint(state_ptr, 4, std::ptr::null(), 0, monitor_buf.as_mut_ptr(), monitor_buf.len());
+    assert!(report_len &gt; 0);
+    let report_str = std::str::from_utf8(&amp;monitor_buf[..report_len]).unwrap();
+    println!(&quot;DataMonitor output:\n{}&quot;, report_str);
+    assert!(report_str.contains(&quot;BINANCE SQLITE RECORDER STATUS&quot;));
+    assert!(report_str.contains(&quot;Mark Price Records: 1&quot;));
+    assert!(report_str.contains(&quot;Best Price Records: 1&quot;));
+    assert!(report_str.contains(&quot;Trade Records: 2&quot;));
+    assert!(report_str.contains(&quot;Liquidation Records: 1&quot;));
+    assert!(report_str.contains(&quot;Depth Records: 1&quot;));
+    // 8. Stop plugin (Endpoint 1)
+    handle_endpoint(state_ptr, 1, std::ptr::null(), 0, out_buf.as_mut_ptr(), out_buf.len());
+    let is_working_after = handle_endpoint(state_ptr, 2, std::ptr::null(), 0, out_buf.as_mut_ptr(), out_buf.len());
+    assert_eq!(is_working_after, 0);
+    // 9. Query SQLite file directly to verify data persistence
+    let conn = Connection::open(db_path).expect(&quot;Could not open test DB&quot;);
+    let mark_count: i64 = conn.query_row(&quot;SELECT COUNT(*) FROM mark_prices&quot;, [], |r| r.get(0)).unwrap();
+    let best_count: i64 = conn.query_row(&quot;SELECT COUNT(*) FROM best_prices&quot;, [], |r| r.get(0)).unwrap();
+    let trade_count: i64 = conn.query_row(&quot;SELECT COUNT(*) FROM trades&quot;, [], |r| r.get(0)).unwrap();
+    let liq_count: i64 = conn.query_row(&quot;SELECT COUNT(*) FROM liquidations&quot;, [], |r| r.get(0)).unwrap();
+    let depth_count: i64 = conn.query_row(&quot;SELECT COUNT(*) FROM depth&quot;, [], |r| r.get(0)).unwrap();
+    assert_eq!(mark_count, 1);
+    assert_eq!(best_count, 1);
+    assert_eq!(trade_count, 2);
+    assert_eq!(liq_count, 1);
+    assert_eq!(depth_count, 1);
+    let (symbol, mark_p): (String, f64) = conn.query_row(
+    &quot;SELECT symbol, mark_price FROM mark_prices LIMIT 1&quot;,
+    [],
+    |r| Ok((r.get(0)?, r.get(1)?))
+    ).unwrap();
+    assert_eq!(symbol, &quot;BTCUSDT&quot;);
+    assert_eq!(mark_p, 68500.25);
+    let _ = std::fs::remove_file(db_path);</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: test_cabi_and_flow_routing_to_sqlite"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> make_flow_payload</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>stream_id: &amp;str, json_val: &amp;serde_json::Value</code> | <strong>Dönüş Tipi:</strong> <code>Vec&lt;u8&gt;</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Gün içinde yapılan tüm alışverişleri ve harcamaları gün sonunda kaybolmaması için büyük ana kasa defterine kaydetme işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> İşlenmiş verileri veya emir kayıtlarını veritabanına (SQLite/Disk) kalıcı olarak yazar.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON make_flow_payload(stream_id: &amp;str, json_val: &amp;serde_json::Value) -&gt; Vec&lt;u8&gt;:
+    let mut header = [0u8; 32];
+    let bytes = stream_id.as_bytes();
+    let len = bytes.len().min(32);
+    header[..len].copy_from_slice(&amp;bytes[..len]);
+    let data_bytes = serde_json::to_vec(json_val).unwrap();
+    let mut payload = Vec::with_capacity(32 + data_bytes.len());
+    payload.extend_from_slice(&amp;header);
+    payload.extend_from_slice(&amp;data_bytes);
+    payload</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: make_flow_payload"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        </section>
+
+        <details>
+            <summary>Orijinal Rust Kaynak Kodunu Göster</summary>
+            <pre><code>use plugin_binance_sqlite::init_plugin;
+use rusqlite::Connection;
+use serde_json::json;
+use std::ffi::c_void;
+
+#[test]
+fn test_cabi_and_flow_routing_to_sqlite() {
+    let db_path = &quot;test_flow_market_data.db&quot;;
+    let _ = std::fs::remove_file(db_path);
+
+    unsafe {
+        let mut state_ptr: *mut c_void = std::ptr::null_mut();
+        let handle_endpoint = init_plugin(&amp;mut state_ptr);
+
+        // 1. Start plugin with custom DB path
+        let start_config = json!({
+            &quot;plugin_params&quot;: {
+                &quot;db_path&quot;: db_path
+            }
+        });
+        let config_bytes = serde_json::to_vec(&amp;start_config).unwrap();
+        let mut out_buf = [0u8; 1024];
+
+        let ret = handle_endpoint(state_ptr, 0, config_bytes.as_ptr(), config_bytes.len(), out_buf.as_mut_ptr(), out_buf.len());
+        assert_eq!(ret, 0);
+
+        // Verify IsWorking (Endpoint 2)
+        let is_working = handle_endpoint(state_ptr, 2, std::ptr::null(), 0, out_buf.as_mut_ptr(), out_buf.len());
+        assert_eq!(is_working, 1);
+
+        // 2. Simulate stream_markprice from FlowEngine (32-byte header + JSON payload)
+        let markprice_data = json!({
+            &quot;BTCUSDT&quot;: {
+                &quot;mark_price&quot;: &quot;68500.25&quot;,
+                &quot;index_price&quot;: &quot;68505.00&quot;,
+                &quot;funding_rate&quot;: &quot;0.00015&quot;,
+                &quot;next_funding_time&quot;: 1700000000000i64,
+                &quot;event_time&quot;: 1699999999000i64,
+                &quot;local_recv_time_ms&quot;: 1700000000500i64
+            }
+        });
+        let payload_bytes = make_flow_payload(&quot;stream_markprice&quot;, &amp;markprice_data);
+        handle_endpoint(state_ptr, 6, payload_bytes.as_ptr(), payload_bytes.len(), out_buf.as_mut_ptr(), out_buf.len());
+
+        // 3. Simulate stream_bestprice
+        let bestprice_data = json!({
+            &quot;BTCUSDT&quot;: {
+                &quot;best_bid&quot;: &quot;68500.00&quot;,
+                &quot;best_bid_qty&quot;: &quot;3.5&quot;,
+                &quot;best_ask&quot;: &quot;68500.50&quot;,
+                &quot;best_ask_qty&quot;: &quot;1.2&quot;,
+                &quot;event_time&quot;: 1699999999000i64,
+                &quot;local_recv_time_ms&quot;: 1700000000501i64
+            }
+        });
+        let payload_bytes = make_flow_payload(&quot;stream_bestprice&quot;, &amp;bestprice_data);
+        handle_endpoint(state_ptr, 6, payload_bytes.as_ptr(), payload_bytes.len(), out_buf.as_mut_ptr(), out_buf.len());
+
+        // 4. Simulate stream_trades
+        let trades_data = json!({
+            &quot;BTCUSDT&quot;: {
+                &quot;trade_id&quot;: 888999,
+                &quot;price&quot;: &quot;68500.25&quot;,
+                &quot;quantity&quot;: &quot;0.5&quot;,
+                &quot;buyer_is_maker&quot;: false,
+                &quot;event_time&quot;: 1699999999000i64,
+                &quot;local_recv_time_ms&quot;: 1700000000502i64
+            }
+        });
+        let payload_bytes = make_flow_payload(&quot;stream_trades&quot;, &amp;trades_data);
+        handle_endpoint(state_ptr, 6, payload_bytes.as_ptr(), payload_bytes.len(), out_buf.as_mut_ptr(), out_buf.len());
+
+        // 4b. Simulate stream_aggtrades
+        let aggtrades_data = json!({
+            &quot;ETHUSDT&quot;: {
+                &quot;trade_id&quot;: 88899910,
+                &quot;price&quot;: &quot;3550.00&quot;,
+                &quot;quantity&quot;: &quot;2.5&quot;,
+                &quot;buyer_is_maker&quot;: true,
+                &quot;event_time&quot;: 1699999999000i64,
+                &quot;local_recv_time_ms&quot;: 1700000000502i64
+            }
+        });
+        let payload_bytes_agg = make_flow_payload(&quot;stream_aggtrades&quot;, &amp;aggtrades_data);
+        handle_endpoint(state_ptr, 6, payload_bytes_agg.as_ptr(), payload_bytes_agg.len(), out_buf.as_mut_ptr(), out_buf.len());
+
+        // 5. Simulate stream_liquidations
+        let liq_data = json!([
+            {
+                &quot;symbol&quot;: &quot;BTCUSDT&quot;,
+                &quot;side&quot;: &quot;BUY&quot;,
+                &quot;type&quot;: &quot;LIMIT&quot;,
+                &quot;price&quot;: &quot;69000.00&quot;,
+                &quot;average_price&quot;: &quot;68995.00&quot;,
+                &quot;original_qty&quot;: &quot;2.0&quot;,
+                &quot;filled_qty&quot;: &quot;2.0&quot;,
+                &quot;event_time&quot;: 1699999999000i64,
+                &quot;local_recv_time_ms&quot;: 1700000000503i64
+            }
+        ]);
+        let payload_bytes = make_flow_payload(&quot;stream_liquidations&quot;, &amp;liq_data);
+        handle_endpoint(state_ptr, 6, payload_bytes.as_ptr(), payload_bytes.len(), out_buf.as_mut_ptr(), out_buf.len());
+
+        // 6. Simulate stream_depth
+        let depth_data = json!({
+            &quot;BTCUSDT&quot;: {
+                &quot;bids&quot;: [[&quot;68500.00&quot;, &quot;3.5&quot;]],
+                &quot;asks&quot;: [[&quot;68500.50&quot;, &quot;1.2&quot;]],
+                &quot;last_update_id&quot;: 555666777,
+                &quot;event_time&quot;: 1699999999000i64,
+                &quot;local_recv_time_ms&quot;: 1700000000504i64
+            }
+        });
+        let payload_bytes = make_flow_payload(&quot;stream_depth&quot;, &amp;depth_data);
+        handle_endpoint(state_ptr, 6, payload_bytes.as_ptr(), payload_bytes.len(), out_buf.as_mut_ptr(), out_buf.len());
+
+        // 7. Inspect DataMonitor report (Endpoint 4)
+        let mut monitor_buf = vec![0u8; 4096];
+        let report_len = handle_endpoint(state_ptr, 4, std::ptr::null(), 0, monitor_buf.as_mut_ptr(), monitor_buf.len());
+        assert!(report_len &gt; 0);
+        let report_str = std::str::from_utf8(&amp;monitor_buf[..report_len]).unwrap();
+        println!(&quot;DataMonitor output:\n{}&quot;, report_str);
+        assert!(report_str.contains(&quot;BINANCE SQLITE RECORDER STATUS&quot;));
+        assert!(report_str.contains(&quot;Mark Price Records: 1&quot;));
+        assert!(report_str.contains(&quot;Best Price Records: 1&quot;));
+        assert!(report_str.contains(&quot;Trade Records: 2&quot;));
+        assert!(report_str.contains(&quot;Liquidation Records: 1&quot;));
+        assert!(report_str.contains(&quot;Depth Records: 1&quot;));
+
+        // 8. Stop plugin (Endpoint 1)
+        handle_endpoint(state_ptr, 1, std::ptr::null(), 0, out_buf.as_mut_ptr(), out_buf.len());
+        let is_working_after = handle_endpoint(state_ptr, 2, std::ptr::null(), 0, out_buf.as_mut_ptr(), out_buf.len());
+        assert_eq!(is_working_after, 0);
+    }
+
+    // 9. Query SQLite file directly to verify data persistence
+    let conn = Connection::open(db_path).expect(&quot;Could not open test DB&quot;);
+    
+    let mark_count: i64 = conn.query_row(&quot;SELECT COUNT(*) FROM mark_prices&quot;, [], |r| r.get(0)).unwrap();
+    let best_count: i64 = conn.query_row(&quot;SELECT COUNT(*) FROM best_prices&quot;, [], |r| r.get(0)).unwrap();
+    let trade_count: i64 = conn.query_row(&quot;SELECT COUNT(*) FROM trades&quot;, [], |r| r.get(0)).unwrap();
+    let liq_count: i64 = conn.query_row(&quot;SELECT COUNT(*) FROM liquidations&quot;, [], |r| r.get(0)).unwrap();
+    let depth_count: i64 = conn.query_row(&quot;SELECT COUNT(*) FROM depth&quot;, [], |r| r.get(0)).unwrap();
+
+    assert_eq!(mark_count, 1);
+    assert_eq!(best_count, 1);
+    assert_eq!(trade_count, 2);
+    assert_eq!(liq_count, 1);
+    assert_eq!(depth_count, 1);
+
+    let (symbol, mark_p): (String, f64) = conn.query_row(
+        &quot;SELECT symbol, mark_price FROM mark_prices LIMIT 1&quot;,
+        [],
+        |r| Ok((r.get(0)?, r.get(1)?))
+    ).unwrap();
+    assert_eq!(symbol, &quot;BTCUSDT&quot;);
+    assert_eq!(mark_p, 68500.25);
+
+    let _ = std::fs::remove_file(db_path);
+}
+
+fn make_flow_payload(stream_id: &amp;str, json_val: &amp;serde_json::Value) -&gt; Vec&lt;u8&gt; {
+    let mut header = [0u8; 32];
+    let bytes = stream_id.as_bytes();
+    let len = bytes.len().min(32);
+    header[..len].copy_from_slice(&amp;bytes[..len]);
+
+    let data_bytes = serde_json::to_vec(json_val).unwrap();
+    let mut payload = Vec::with_capacity(32 + data_bytes.len());
+    payload.extend_from_slice(&amp;header);
+    payload.extend_from_slice(&amp;data_bytes);
+    payload
+}
+</code></pre>
+        </details>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            flowchart: { curve: 'basis' }
+        });
+    </script>
+</body>
+</html>

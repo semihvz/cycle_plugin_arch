@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>imbalance.rs - Rust Analiz Dokümanı</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --border: #334155;
+            --code-bg: #090d16;
+            --verbal-bg: #131f37;
+            --analogy-bg: #1e1b4b;
+            --analogy-border: #818cf8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .back-link {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .back-link:hover { text-decoration: underline; }
+        h1 { font-size: 2rem; color: var(--accent); margin-bottom: 0.5rem; }
+        .file-path { font-family: 'Fira Code', monospace; color: var(--text-muted); font-size: 0.95rem; }
+        
+        .structs-container { margin: 1.5rem 0; }
+        .badge {
+            display: inline-block;
+            background: #0284c7;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-family: 'Fira Code', monospace;
+        }
+        .badge-struct { background: #7c3aed; }
+        
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .card h3 { color: var(--accent); margin-bottom: 0.5rem; font-size: 1.3rem; }
+        .card h4 { margin: 1.2rem 0 0.5rem 0; color: var(--text-muted); font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        .easy-analogy {
+            background: var(--analogy-bg);
+            border-left: 4px solid var(--analogy-border);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1rem;
+            color: #c7d2fe;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .verbal-explanation {
+            background: var(--verbal-bg);
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1.2rem;
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            margin-bottom: 1rem;
+        }
+        
+        .mermaid {
+            background: var(--code-bg);
+            padding: 1.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+        }
+        
+        details {
+            margin-top: 2rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Ana İndekse Dön</a>
+        <header>
+            <h1>imbalance.rs</h1>
+            <p class="file-path">crates/plugins/analytics/ms_analyzer/src/imbalance.rs</p>
+            <div class="structs-container">
+                <strong>Tanımlı Türler / Yapılar:</strong> <span class="badge badge-struct">Fvg</span> <span class="badge badge-struct">FvgDirection</span> <span class="badge badge-struct">FvgLabel</span> 
+            </div>
+        </header>
+
+        <section>
+            <h2>Fonksiyon Analizleri & Basit Anlatımlar</h2>
+            
+        <div class="card">
+            <h3><span class="badge">fn</span> candle_delta</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>kline: &amp;Kline</code> | <strong>Dönüş Tipi:</strong> <code>Decimal</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>kline: &amp;Kline</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>Decimal</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. İşlemi tamamlayarak <code>Decimal</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON candle_delta(kline: &amp;Kline) -&gt; Decimal:
+    let buy_vol = kline.taker_buy_base_asset_volume;
+    let sell_vol = kline.volume - buy_vol;
+    buy_vol - sell_vol</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: candle_delta"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> cumulative_delta</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>klines: &amp;[Kline]</code> | <strong>Dönüş Tipi:</strong> <code>Vec&lt;Decimal&gt;</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>klines: &amp;[Kline]</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>Vec&lt;Decimal&gt;</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. İşlemi tamamlayarak <code>Vec&lt;Decimal&gt;</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON cumulative_delta(klines: &amp;[Kline]) -&gt; Vec&lt;Decimal&gt;:
+    let mut cum = Decimal::ZERO;
+    klines
+    .iter()
+    .map(|k| {
+    cum += candle_delta(k);
+    cum
+    })
+    .collect()</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: cumulative_delta"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> detect_fvg</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>klines: &amp;[Kline]</code> | <strong>Dönüş Tipi:</strong> <code>Vec&lt;Fvg&gt;</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>klines: &amp;[Kline]</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>Vec&lt;Fvg&gt;</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Listeyi veya veri kümesini sırayla döngüye alarak tarar.<br>4. İşlemi tamamlayarak <code>Vec&lt;Fvg&gt;</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON detect_fvg(klines: &amp;[Kline]) -&gt; Vec&lt;Fvg&gt;:
+    let mut fvgs = Vec::new();
+    EĞER klines.len() &lt; 3 İSE:
+        DÖNDÜR fvgs
+    HER i in 1..(klines.len() - 1) İÇİN DÖNGÜ:
+        let prev = &amp;klines[i - 1];
+        let curr = &amp;klines[i];
+        let next = &amp;klines[i + 1];
+        // 3 mumun toplam delta&#x27;sı
+        let region_delta =
+        candle_delta(prev) + candle_delta(curr) + candle_delta(next);
+        // ── Bullish FVG ──
+        // Mum 1 (prev) high&#x27;ı &lt; Mum 3 (next) low&#x27;u → yukarı boşluk
+        EĞER prev.high &lt; next.low İSE:
+            let gap_high = next.low;
+            let gap_low = prev.high;
+            let label = if region_delta &gt; Decimal::ZERO {
+            FvgLabel::ActiveAbsorber
+            } else {
+            FvgLabel::PassiveGap
+            };
+            fvgs.push(Fvg {
+            high: gap_high,
+            low: gap_low,
+            mid: (gap_high + gap_low) / Decimal::TWO,
+            direction: FvgDirection::Bullish,
+            delta: region_delta,
+            label,
+            timestamp: curr.open_time,
+            index: i,
+            });
+        // ── Bearish FVG ──
+        // Mum 1 (prev) low&#x27;u &gt; Mum 3 (next) high&#x27;ı → aşağı boşluk
+        EĞER prev.low &gt; next.high İSE:
+            let gap_high = prev.low;
+            let gap_low = next.high;
+            let label = if region_delta &lt; Decimal::ZERO {
+            FvgLabel::ActiveAbsorber
+            } else {
+            FvgLabel::PassiveGap
+            };
+            fvgs.push(Fvg {
+            high: gap_high,
+            low: gap_low,
+            mid: (gap_high + gap_low) / Decimal::TWO,
+            direction: FvgDirection::Bearish,
+            delta: region_delta,
+            label,
+            timestamp: curr.open_time,
+            index: i,
+            });
+    fvgs</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: detect_fvg"])
+    Start --> Cond1{"klines.len() &lt; 3?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"prev.high &lt; next.low?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"region_delta &gt; Decimal::ZERO?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> Loop4["Döngü: i in 1..(klines.len() - 1)"]
+    Loop4 --> EndNode(["Döndür: fvgs"])
+            </div>
+        </div>
+        
+        </section>
+
+        <details>
+            <summary>Orijinal Rust Kaynak Kodunu Göster</summary>
+            <pre><code>// ============================================================================
+// MSMP 2.0 — KATMAN 6: DENGESİZLİK (FVG + DELTA DOĞRULAMASI)
+// ============================================================================
+// FVG, ardışık 3 mumun üst/alt gölge çakışmazlığı ile taranır.
+// Öncelik, o bölgedeki Kümülatif Delta ile doğrulanır:
+//   Delta(+) ve FVG yukarı → &quot;Aktif Emici (Active Absorber)&quot; (en yüksek çekim)
+//   Delta(-/0) ve FVG aşağı → &quot;Pasif Geçiş (Passive Gap)&quot; (sadece dolgu)
+// Delta = taker_buy_base_asset_volume - (volume - taker_buy_base_asset_volume)
+// ============================================================================
+
+use ohlcv_engine::Kline;
+use rust_decimal::Decimal;
+use rust_decimal::prelude::*;
+use serde::Serialize;
+
+#[derive(Debug, Clone, Serialize)]
+pub enum FvgDirection {
+    Bullish,
+    Bearish,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub enum FvgLabel {
+    /// En yüksek çekim gücü — Delta doğrulanmış
+    ActiveAbsorber,
+    /// Sadece doldurulması beklenir — önceliği düşük
+    PassiveGap,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct Fvg {
+    /// FVG bölgesinin üst sınırı
+    pub high: Decimal,
+    /// FVG bölgesinin alt sınırı
+    pub low: Decimal,
+    /// Bölge orta noktası
+    pub mid: Decimal,
+    pub direction: FvgDirection,
+    /// 3 mumun toplam delta değeri
+    pub delta: Decimal,
+    /// Delta doğrulama sonucu
+    pub label: FvgLabel,
+    pub timestamp: u64,
+    pub index: usize,
+}
+
+/// Tek bir mumun Delta değeri
+/// Delta = Alıcı hacmi - Satıcı hacmi
+/// buy_volume = taker_buy_base_asset_volume (aggresor alıcılar)
+/// sell_volume = volume - taker_buy_base_asset_volume (aggresor satıcılar)
+pub fn candle_delta(kline: &amp;Kline) -&gt; Decimal {
+    let buy_vol = kline.taker_buy_base_asset_volume;
+    let sell_vol = kline.volume - buy_vol;
+    buy_vol - sell_vol
+}
+
+/// Kümülatif Delta serisi
+pub fn cumulative_delta(klines: &amp;[Kline]) -&gt; Vec&lt;Decimal&gt; {
+    let mut cum = Decimal::ZERO;
+    klines
+        .iter()
+        .map(|k| {
+            cum += candle_delta(k);
+            cum
+        })
+        .collect()
+}
+
+/// FVG tespiti + Cumulative Delta doğrulaması
+///
+/// Bullish FVG: Mum 1&#x27;in high&#x27;ı &lt; Mum 3&#x27;ün low&#x27;u (yukarı fiyat boşluğu)
+/// Bearish FVG: Mum 1&#x27;in low&#x27;u &gt; Mum 3&#x27;ün high&#x27;ı (aşağı fiyat boşluğu)
+///
+/// Delta doğrulama:
+///   Bullish FVG + Delta(+) → Active Absorber
+///   Bearish FVG + Delta(-) → Active Absorber
+///   Aksi → Passive Gap
+pub fn detect_fvg(klines: &amp;[Kline]) -&gt; Vec&lt;Fvg&gt; {
+    let mut fvgs = Vec::new();
+    if klines.len() &lt; 3 {
+        return fvgs;
+    }
+
+    for i in 1..(klines.len() - 1) {
+        let prev = &amp;klines[i - 1];
+        let curr = &amp;klines[i];
+        let next = &amp;klines[i + 1];
+
+        // 3 mumun toplam delta&#x27;sı
+        let region_delta =
+            candle_delta(prev) + candle_delta(curr) + candle_delta(next);
+
+        // ── Bullish FVG ──
+        // Mum 1 (prev) high&#x27;ı &lt; Mum 3 (next) low&#x27;u → yukarı boşluk
+        if prev.high &lt; next.low {
+            let gap_high = next.low;
+            let gap_low = prev.high;
+
+            let label = if region_delta &gt; Decimal::ZERO {
+                FvgLabel::ActiveAbsorber
+            } else {
+                FvgLabel::PassiveGap
+            };
+
+            fvgs.push(Fvg {
+                high: gap_high,
+                low: gap_low,
+                mid: (gap_high + gap_low) / Decimal::TWO,
+                direction: FvgDirection::Bullish,
+                delta: region_delta,
+                label,
+                timestamp: curr.open_time,
+                index: i,
+            });
+        }
+
+        // ── Bearish FVG ──
+        // Mum 1 (prev) low&#x27;u &gt; Mum 3 (next) high&#x27;ı → aşağı boşluk
+        if prev.low &gt; next.high {
+            let gap_high = prev.low;
+            let gap_low = next.high;
+
+            let label = if region_delta &lt; Decimal::ZERO {
+                FvgLabel::ActiveAbsorber
+            } else {
+                FvgLabel::PassiveGap
+            };
+
+            fvgs.push(Fvg {
+                high: gap_high,
+                low: gap_low,
+                mid: (gap_high + gap_low) / Decimal::TWO,
+                direction: FvgDirection::Bearish,
+                delta: region_delta,
+                label,
+                timestamp: curr.open_time,
+                index: i,
+            });
+        }
+    }
+
+    fvgs
+}
+</code></pre>
+        </details>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            flowchart: { curve: 'basis' }
+        });
+    </script>
+</body>
+</html>

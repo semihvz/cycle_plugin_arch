@@ -1,0 +1,1537 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>web_server.rs - Rust Analiz Dokümanı</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --border: #334155;
+            --code-bg: #090d16;
+            --verbal-bg: #131f37;
+            --analogy-bg: #1e1b4b;
+            --analogy-border: #818cf8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .back-link {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .back-link:hover { text-decoration: underline; }
+        h1 { font-size: 2rem; color: var(--accent); margin-bottom: 0.5rem; }
+        .file-path { font-family: 'Fira Code', monospace; color: var(--text-muted); font-size: 0.95rem; }
+        
+        .structs-container { margin: 1.5rem 0; }
+        .badge {
+            display: inline-block;
+            background: #0284c7;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-family: 'Fira Code', monospace;
+        }
+        .badge-struct { background: #7c3aed; }
+        
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .card h3 { color: var(--accent); margin-bottom: 0.5rem; font-size: 1.3rem; }
+        .card h4 { margin: 1.2rem 0 0.5rem 0; color: var(--text-muted); font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        .easy-analogy {
+            background: var(--analogy-bg);
+            border-left: 4px solid var(--analogy-border);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1rem;
+            color: #c7d2fe;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .verbal-explanation {
+            background: var(--verbal-bg);
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1.2rem;
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            margin-bottom: 1rem;
+        }
+        
+        .mermaid {
+            background: var(--code-bg);
+            padding: 1.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+        }
+        
+        details {
+            margin-top: 2rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Ana İndekse Dön</a>
+        <header>
+            <h1>web_server.rs</h1>
+            <p class="file-path">crates/core/orchestrator/src/web_server.rs</p>
+            <div class="structs-container">
+                <strong>Tanımlı Türler / Yapılar:</strong> <span class="badge badge-struct">AppState</span> <span class="badge badge-struct">SystemInfo</span> <span class="badge badge-struct">TelemetryData</span> <span class="badge badge-struct">WebCommand</span> <span class="badge badge-struct">WebResponse</span> 
+            </div>
+        </header>
+
+        <section>
+            <h2>Fonksiyon Analizleri & Basit Anlatımlar</h2>
+            
+        <div class="card">
+            <h3><span class="badge">fn</span> get_plugin_dir</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>Yok</code> | <strong>Dönüş Tipi:</strong> <code>std::path::PathBuf</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan hiçbir girdi almadan verisini alır, kendi kurallarına göre işler ve sonucunda <code>std::path::PathBuf</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. İşlemi tamamlayarak <code>std::path::PathBuf</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON get_plugin_dir() -&gt; std::path::PathBuf:
+    let mut dir = std::env::current_exe().unwrap_or_else(|_| std::path::PathBuf::from(&quot;.&quot;));
+    dir.pop();
+    EĞER dir.ends_with(&quot;deps&quot;) İSE:
+        dir.pop();
+    dir</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: get_plugin_dir"])
+    Start --> Cond1{"dir.ends_with('deps')?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> scan_available_plugins</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>Yok</code> | <strong>Dönüş Tipi:</strong> <code>Vec&lt;String&gt;</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan hiçbir girdi almadan verisini alır, kendi kurallarına göre işler ve sonucunda <code>Vec&lt;String&gt;</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Listeyi veya veri kümesini sırayla döngüye alarak tarar.<br>4. İşlemi tamamlayarak <code>Vec&lt;String&gt;</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON scan_available_plugins() -&gt; Vec&lt;String&gt;:
+    let mut plugins = Vec::new();
+    let lib_dir = get_plugin_dir();
+    let prefix = if cfg!(target_os = &quot;windows&quot;) { &quot;&quot; } else { &quot;lib&quot; };
+    EĞER let Ok(entries) = std::fs::read_dir(&amp;lib_dir) İSE:
+        HER entry in entries.flatten() İÇİN DÖNGÜ:
+            let name = entry.file_name().to_string_lossy().into_owned();
+            EĞER name.starts_with(&amp;format!(&quot; İSE:
+                let ext_len = if name.ends_with(&quot;.so&quot;) { 3 } else if name.ends_with(&quot;.dll&quot;) { 4 } else { 6 };
+                let plugin_name = &amp;name[prefix.len()..name.len()-ext_len];
+                plugins.push(plugin_name.to_string());
+    plugins.sort();
+    plugins.dedup();
+    plugins</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: scan_available_plugins"])
+    Start --> Cond1{"cfg!(target_os = 'windows')?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"let Ok(entries) = std::fs::read_dir(&lib_dir)?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"name.starts_with(&format!('?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> Loop4["Döngü: entry in entries.flatten()"]
+    Loop4 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> load_plugin_dynamic</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>orchestrator: &amp;Orchestrator, plugin_name: &amp;str</code> | <strong>Dönüş Tipi:</strong> <code>Result&lt;String, String&gt;</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>orchestrator: &amp;Orchestrator, plugin_name: &amp;str</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>Result&lt;String, String&gt;</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Farklı durum senaryolarına göre akışı uygun kola yönlendirir.<br>4. İşlemi tamamlayarak <code>Result&lt;String, String&gt;</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON load_plugin_dynamic(orchestrator: &amp;Orchestrator, plugin_name: &amp;str) -&gt; Result&lt;String, String&gt;:
+    let ext = if cfg!(target_os = &quot;windows&quot;) { &quot;dll&quot; }
+    AKSİ EĞER cfg!(target_os = &quot;macos&quot;) İSE:
+    AKSİ:
+        let prefix = if cfg!(target_os = &quot;windows&quot;) { &quot;&quot; } else { &quot;lib&quot; };
+        let clean_name = plugin_name.strip_prefix(&quot;lib&quot;).unwrap_or(plugin_name);
+        let mut lib_path_buf = get_plugin_dir();
+        lib_path_buf.push(format!(&quot;{}{}.{}&quot;, prefix, clean_name, ext));
+        let lib_path = lib_path_buf.to_string_lossy().to_string();
+        DURUM KONTROLÜ (libloading::Library::new(&amp;lib_path)):
+            Ok(lib) =&gt; {
+            type PluginInit = unsafe extern &quot;C&quot; fn(state_out: *mut *mut c_void) -&gt; RawEndpointFn;
+            DURUM KONTROLÜ (lib.get::&lt;PluginInit&gt;(b&quot;init_plugin&quot;)):
+                Ok(init_fn) =&gt; {
+                let mut state_ptr: *mut c_void = std::ptr::null_mut();
+                let endpoint_fn = init_fn(&amp;mut state_ptr);
+                let sys = SystemInstance::new(
+                plugin_name.to_string(),
+                plugin_name.to_string(),
+                state_ptr,
+                endpoint_fn,
+                );
+                orchestrator.register_system(sys);
+                Box::leak(Box::new(lib));
+                Ok(format!(&quot;{} eklentisi başarıyla yüklendi ve sisteme bağlandı.&quot;, plugin_name))
+            Err(_) =&gt; Err(format!(&quot;{} eklentisinde init_plugin sembolü bulunamadı.&quot;, plugin_name)),
+    Err(e) =&gt; Err(format!(&quot;{} eklentisi yüklenemedi: {}&quot;, plugin_name, e)),</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: load_plugin_dynamic"])
+    Start --> Cond1{"cfg!(target_os = 'windows')?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"cfg!(target_os = 'macos')?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"cfg!(target_os = 'windows')?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> process_shell_command</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>orchestrator: &amp;Orchestrator, log_tx: &amp;broadcast::Sender&lt;String&gt;, cmd_line: &amp;str</code> | <strong>Dönüş Tipi:</strong> <code>String</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>orchestrator: &amp;Orchestrator, log_tx: &amp;broadcast::Sender&lt;String&gt;, cmd_line: &amp;str</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>String</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Listeyi veya veri kümesini sırayla döngüye alarak tarar.<br>4. Farklı durum senaryolarına göre akışı uygun kola yönlendirir.<br>5. İşlemi tamamlayarak <code>String</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON process_shell_command(orchestrator: &amp;Orchestrator, log_tx: &amp;broadcast::Sender&lt;String&gt;, cmd_line: &amp;str) -&gt; String:
+    let parts: Vec&lt;&amp;str&gt; = cmd_line.trim().split_whitespace().collect();
+    EĞER parts.is_empty() İSE:
+        DÖNDÜR String::new()
+    let verb = parts[0].to_lowercase();
+    DURUM KONTROLÜ (verb.as_str()):
+        &quot;help&quot; =&gt; {
+        let mut out = String::from(&quot;=== CYCLE-ORC INTERACTIVE HFT SHELL HELP ===\n&quot;);
+        out.push_str(&quot;  help                   : Bu yardım menüsünü gösterir\n&quot;);
+        out.push_str(&quot;  list                   : Yüklü tüm eklentileri ve durumlarını listeler\n&quot;);
+        out.push_str(&quot;  available              : Diskte derlenmiş tüm eklenti (.so/.dll) dosyalarını gösterir\n&quot;);
+        out.push_str(&quot;  start &lt;id&gt;             : Belirtilen eklentiyi başlatır\n&quot;);
+        out.push_str(&quot;  stop &lt;id&gt;              : Belirtilen eklentiyi durdurur\n&quot;);
+        out.push_str(&quot;  del &lt;id&gt;               : Belirtilen eklentiyi hafızadan kaldırır\n&quot;);
+        out.push_str(&quot;  load &lt;plugin_name&gt;     : C-ABI ile kütüphaneyi anında dinamik yükler\n&quot;);
+        out.push_str(&quot;  status                 : Sistem kaynak ve çalışma istatistiklerini gösterir\n&quot;);
+        out.push_str(&quot;  clear                  : Ekranı temizler\n&quot;);
+        out
+    &quot;list&quot; =&gt; {
+    let systems = orchestrator.list_systems();
+    EĞER systems.is_empty() İSE:
+        &quot;Yüklü eklenti bulunamadı.&quot;.to_string()
+        } else {
+        let mut out = String::from(&quot;=== YÜKLÜ EKLENTİLER &amp; ANLIK KAYNAK KULLANIMI ===\n&quot;);
+        HER (i, (id, name, is_running)) in systems.iter().enumerate() İÇİN DÖNGÜ:
+            let sys_obj = orchestrator.get_system(id);
+            let valid = sys_obj.as_ref().map(|s| s.context.is_data_valid.load(core::sync::atomic::Ordering::Relaxed)).unwrap_or(false);
+            let bytes_len = orchestrator.monitor_data(id).map(|d| d.len()).unwrap_or(0);
+            let ram_kb = (bytes_len / 1024).max(16);
+            let cpu_usage = if *is_running { (0.2 + (i as f32 * 0.15) * 10.0).round() / 10.0 } else { 0.0 };
+            out.push_str(&amp;format!(&quot; • ID: {:&lt;20} | Durum: {:&lt;10} | RAM: {:&gt;5} KB | CPU: {:&gt;4.1}% | Geçerli: {}\n&quot;,
+            id,
+            EĞER *is_running İSE:
+                ram_kb,
+                cpu_usage,
+                valid
+                ));
+            out
+    &quot;available&quot; =&gt; {
+    let plugins = scan_available_plugins();
+    EĞER plugins.is_empty() İSE:
+        &quot;Mevcut eklenti bulunamadı (target/debug).&quot;.to_string()
+        } else {
+        let mut out = String::from(&quot;=== DISKTEKİ DERLENMİŞ EKLENTİLER ===\n&quot;);
+        HER p in plugins İÇİN DÖNGÜ:
+            out.push_str(&amp;format!(&quot; • {}\n&quot;, p));
+        out
+    &quot;start&quot; =&gt; {
+    EĞER parts.len() &lt; 2 İSE:
+        &quot;ERROR: Usage: start &lt;id&gt;&quot;.to_string()
+        } else {
+        let id = parts[1];
+        let mut hft_buf = vec![0u8; 64 * 1024];
+        let payload = if let Ok(content) = std::fs::read_to_string(resolve_config_path()) {
+        EĞER let Ok(json_arr) = serde_json::from_str::&lt;serde_json::Value&gt;(&amp;content) İSE:
+            json_arr.as_array()
+            .and_then(|arr| arr.iter().find(|p| p.get(&quot;plugin_name&quot;).and_then(|n| n.as_str()) == Some(id)))
+            .map(|conf| serde_json::to_vec(conf).unwrap_or_default())
+            .unwrap_or_default()
+            } else { Vec::new() }
+            } else { Vec::new() };
+            let written = orchestrator.call_endpoint(id, StandardEndpoint::Start, &amp;payload, &amp;mut hft_buf);
+            let _ = log_tx.send(format!(&quot;Shell: {} started (response: {} bytes)&quot;, id, written));
+            format!(&quot;SUCCESS: Plugin {} started (response: {} bytes).&quot;, id, written)
+    &quot;stop&quot; =&gt; {
+    EĞER parts.len() &lt; 2 İSE:
+        &quot;ERROR: Usage: stop &lt;id&gt;&quot;.to_string()
+        } else {
+        let id = parts[1];
+        let mut hft_buf = vec![0u8; 64 * 1024];
+        orchestrator.call_endpoint(id, StandardEndpoint::Stop, &amp;[], &amp;mut hft_buf);
+        let _ = log_tx.send(format!(&quot;Shell: {} stopped&quot;, id));
+        format!(&quot;SUCCESS: Plugin {} stopped.&quot;, id)
+    &quot;del&quot; | &quot;delete&quot; | &quot;remove&quot; =&gt; {
+    EĞER parts.len() &lt; 2 İSE:
+        &quot;ERROR: Usage: del &lt;id&gt;&quot;.to_string()
+        } else {
+        let id = parts[1];
+        EĞER orchestrator.unregister_system(id).is_ok() İSE:
+            let _ = log_tx.send(format!(&quot;Shell: {} removed&quot;, id));
+            format!(&quot;SUCCESS: Plugin {} removed from memory.&quot;, id)
+            } else {
+            format!(&quot;ERROR: Plugin {} not found.&quot;, id)
+    &quot;load&quot; =&gt; {
+    EĞER parts.len() &lt; 2 İSE:
+        &quot;ERROR: Usage: load &lt;plugin_name&gt;&quot;.to_string()
+        } else {
+        let name = parts[1];
+        DURUM KONTROLÜ (unsafe):
+            Ok(msg) =&gt; {
+            let _ = log_tx.send(format!(&quot;Shell: {}&quot;, msg));
+            format!(&quot;SUCCESS: {}&quot;, msg)
+        Err(err) =&gt; format!(&quot;ERROR: {}&quot;, err),
+    &quot;status&quot; =&gt; {
+    let mut sys = sysinfo::System::new_all();
+    sys.refresh_all();
+    let cpu = sys.global_cpu_info().cpu_usage();
+    let mem_used = sys.used_memory() / (1024 * 1024);
+    let mem_total = sys.total_memory() / (1024 * 1024);
+    let systems = orchestrator.list_systems();
+    format!(&quot;=== SYSTEM STATISTICS ===\n• Total Plugins : {}\n• Active Plugins : {}\n• CPU Usage     : {:.1}%\n• RAM Usage     : {} MB / {} MB&quot;,
+    systems.len(),
+    systems.iter().filter(|(_, _, r)| *r).count(),
+    cpu,
+    mem_used,
+    mem_total
+    )
+    &quot;exportjson&quot; | &quot;dumpjson&quot; | &quot;savejson&quot; | &quot;export_json&quot; =&gt; {
+    EĞER parts.len() &lt; 2 İSE:
+        &quot;ERROR: Usage: exportjson &lt;plugin_id&gt; [output_file.json]&quot;.to_string()
+        } else {
+        let id = parts[1];
+        let default_filename = format!(&quot;{}_output.json&quot;, id);
+        let out_path = parts.get(2).copied().unwrap_or(&amp;default_filename);
+        DURUM KONTROLÜ (orchestrator.monitor_data(id)):
+            Ok(data) if !data.is_empty() =&gt; {
+            EĞER let Ok(json_val) = serde_json::from_slice::&lt;serde_json::Value&gt;(&amp;data) İSE:
+                DURUM KONTROLÜ (serde_json::to_string_pretty(&amp;json_val)):
+                    Ok(pretty_json) =&gt; {
+                    EĞER let Err(err) = std::fs::write(out_path, pretty_json.as_bytes()) İSE:
+                        format!(&quot;ERROR: Failed to write JSON file ({}): {}&quot;, out_path, err)
+                        } else {
+                        let msg = format!(&quot;SUCCESS: Memory JSON data saved for plugin {}: {} ({} bytes)&quot;, id, out_path, pretty_json.len());
+                        let _ = log_tx.send(format!(&quot;Shell: {}&quot;, msg));
+                        msg
+                Err(err) =&gt; format!(&quot;ERROR: JSON serialization error: {}&quot;, err),
+            } else if let Ok(utf8_str) = std::str::from_utf8(&amp;data) {
+            EĞER !utf8_str.trim().is_empty() İSE:
+                let fallback_json = serde_json::json!({
+                &quot;plugin&quot;: id,
+                &quot;raw_output&quot;: utf8_str.trim()
+                });
+                let json_str = serde_json::to_string_pretty(&amp;fallback_json).unwrap_or_default();
+                EĞER let Err(err) = std::fs::write(out_path, json_str.as_bytes()) İSE:
+                    format!(&quot;ERROR: Failed to write file ({}): {}&quot;, out_path, err)
+                    } else {
+                    let msg = format!(&quot;SUCCESS: Text data saved as JSON for plugin {}: {}&quot;, id, out_path);
+                    let _ = log_tx.send(format!(&quot;Shell: {}&quot;, msg));
+                    msg
+                } else {
+                format!(&quot;ERROR: Memory buffer for plugin {} returned empty text.&quot;, id)
+            } else {
+            format!(&quot;ERROR: Memory buffer data for plugin {} is not valid JSON or UTF-8 text.&quot;, id)
+    Ok(_) =&gt; format!(&quot;WARNING: Memory buffer for plugin {} returned 0 bytes (empty).&quot;, id),
+    Err(e) =&gt; format!(&quot;ERROR: Failed to read memory data from plugin {}: {}&quot;, id, e),
+    _ =&gt; {
+    format!(&quot;Command not recognized: &#x27;{}&#x27;. Type &#x27;help&#x27; to view available commands.&quot;, cmd_line)</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: process_shell_command"])
+    Start --> Cond1{"parts.is_empty()?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"systems.is_empty()?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"*is_running?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> Loop4["Döngü: (i, (id, name, is_running)) in systems.iter().enumerate()"]
+    Loop4 --> Loop5["Döngü: p in plugins"]
+    Loop5 --> EndNode(["Döndür: String::new()"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> start_web_server</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>orchestrator: Arc&lt;Orchestrator&gt;,
+    log_tx: broadcast::Sender&lt;String&gt;,
+    port: u16,
+    shutdown_rx: tokio::sync::oneshot::Receiver&lt;()&gt;,</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>orchestrator: Arc&lt;Orchestrator&gt;,
+    log_tx: broadcast::Sender&lt;String&gt;,
+    port: u16,
+    shutdown_rx: tokio::sync::oneshot::Receiver&lt;()&gt;,</code> verisini alır, kendi kurallarına göre işler ve sonucunda gerekli işlemi tamamlayan adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Farklı durum senaryolarına göre akışı uygun kola yönlendirir.<br>4. İşlemi tamamlayarak <code>()</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON start_web_server(orchestrator: Arc&lt;Orchestrator&gt;,
+    log_tx: broadcast::Sender&lt;String&gt;,
+    port: u16,
+    shutdown_rx: tokio::sync::oneshot::Receiver&lt;()&gt;,) -&gt; ():
+    let addr = format!(&quot;0.0.0.0:{}&quot;, port);
+    let _ = log_tx.send(format!(&quot;[HFT WEB] Gecikmesiz Telemetri Konsolu Başlatılıyor: http://localhost:{}&quot;, port));
+    let state = AppState {
+    orchestrator,
+    log_tx: log_tx.clone(),
+    selected_monitor: Arc::new(Mutex::new(None)),
+    };
+    let cors = CorsLayer::new()
+    .allow_origin(Any)
+    .allow_methods(Any)
+    .allow_headers(Any);
+    let path1 = std::path::Path::new(&quot;crates/interfaces/web/telemetry_console/public&quot;);
+    let path2 = std::path::Path::new(&quot;../interfaces/web/telemetry_console/public&quot;);
+    let path3 = std::path::Path::new(&quot;../../crates/interfaces/web/telemetry_console/public&quot;);
+    let path4 = std::path::Path::new(&quot;interfaces/web/telemetry_console/public&quot;);
+    let path5 = std::path::Path::new(&quot;telemetry_web/public&quot;);
+    let static_dir = if path1.exists() {
+    path1
+    } else if path2.exists() {
+    path2
+    } else if path3.exists() {
+    path3
+    } else if path4.exists() {
+    path4
+    } else {
+    path5
+    };
+    let studio_path1 = std::path::Path::new(&quot;crates/interfaces/web/json_studio/public&quot;);
+    let studio_path2 = std::path::Path::new(&quot;../interfaces/web/json_studio/public&quot;);
+    let studio_path3 = std::path::Path::new(&quot;../../crates/interfaces/web/json_studio/public&quot;);
+    let studio_path4 = std::path::Path::new(&quot;interfaces/web/json_studio/public&quot;);
+    let studio_dir = if studio_path1.exists() {
+    studio_path1
+    } else if studio_path2.exists() {
+    studio_path2
+    } else if studio_path3.exists() {
+    studio_path3
+    } else {
+    studio_path4
+    };
+    let app = Router::new()
+    .route(&quot;/ws&quot;, get(ws_handler))
+    .route(&quot;/api/status&quot;, get(status_handler))
+    .route(&quot;/api/config&quot;, get(get_config_handler).post(save_config_handler))
+    .nest_service(&quot;/json_studio&quot;, ServeDir::new(studio_dir))
+    .fallback_service(ServeDir::new(static_dir))
+    .layer(cors)
+    .with_state(state);
+    DURUM KONTROLÜ (tokio::net::TcpListener::bind(&amp;addr).await):
+        Ok(listener) =&gt; {
+        let server = axum::serve(listener, app).with_graceful_shutdown(async move {
+        let _ = shutdown_rx.await;
+        });
+        EĞER let Err(e) = server.await İSE:
+            let _ = log_tx.send(format!(&quot;[HFT WEB] Sunucu hatası: {}&quot;, e));
+    Err(e) =&gt; {
+    let _ = log_tx.send(format!(&quot;[HFT WEB] Port {} dinlenemedi: {}&quot;, port, e));</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: start_web_server"])
+    Start --> Cond1{"path1.exists()?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"path2.exists()?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"path3.exists()?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> resolve_config_path</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>Yok</code> | <strong>Dönüş Tipi:</strong> <code>&amp;&#x27;static str</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan hiçbir girdi almadan verisini alır, kendi kurallarına göre işler ve sonucunda <code>&amp;&#x27;static str</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. İşlemi tamamlayarak <code>&amp;&#x27;static str</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON resolve_config_path() -&gt; &amp;&#x27;static str:
+    EĞER std::path::Path::new(&quot;config/config.json&quot;).exists() İSE:
+        &quot;config/config.json&quot;
+        } else if std::path::Path::new(&quot;../config/config.json&quot;).exists() {
+        &quot;../config/config.json&quot;
+        } else if std::path::Path::new(&quot;../../config/config.json&quot;).exists() {
+        &quot;../../config/config.json&quot;
+        } else if std::path::Path::new(&quot;flow_config.json&quot;).exists() {
+        &quot;flow_config.json&quot;
+        } else {
+        &quot;config/config.json&quot;</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: resolve_config_path"])
+    Start --> Cond1{"std::path::Path::new('config/config.json').exists()?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"std::path::Path::new('../config/config.json').exists()?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"std::path::Path::new('../../config/config.json').exists()?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> get_config_handler</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>Yok</code> | <strong>Dönüş Tipi:</strong> <code>Json&lt;serde_json::Value&gt;</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan hiçbir girdi almadan verisini alır, kendi kurallarına göre işler ve sonucunda <code>Json&lt;serde_json::Value&gt;</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. İşlemi tamamlayarak <code>Json&lt;serde_json::Value&gt;</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON get_config_handler() -&gt; Json&lt;serde_json::Value&gt;:
+    let path = resolve_config_path();
+    EĞER let Ok(content) = std::fs::read_to_string(path) İSE:
+        EĞER let Ok(json_val) = serde_json::from_str::&lt;serde_json::Value&gt;(&amp;content) İSE:
+            DÖNDÜR Json(json_val)
+    Json(serde_json::json!([]))</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: get_config_handler"])
+    Start --> Cond1{"let Ok(content) = std::fs::read_to_string(path)?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"let Ok(json_val) = serde_json::from_str::&lt;serde_json::Value&gt;(&content)?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> EndNode(["Döndür: Json(json_val)"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> save_config_handler</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>Json(payload): Json&lt;serde_json::Value&gt;</code> | <strong>Dönüş Tipi:</strong> <code>Json&lt;serde_json::Value&gt;</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Gün içinde yapılan tüm alışverişleri ve harcamaları gün sonunda kaybolmaması için büyük ana kasa defterine kaydetme işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> İşlenmiş verileri veya emir kayıtlarını veritabanına (SQLite/Disk) kalıcı olarak yazar.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON save_config_handler(Json(payload): Json&lt;serde_json::Value&gt;) -&gt; Json&lt;serde_json::Value&gt;:
+    let path = resolve_config_path();
+    EĞER let Ok(pretty_json) = serde_json::to_string_pretty(&amp;payload) İSE:
+        EĞER std::fs::write(path, pretty_json).is_ok() İSE:
+            DÖNDÜR Json(serde_json::json!({ &quot;status&quot;: &quot;ok&quot;, &quot;message&quot;: &quot;config.json başarıyla kaydedildi&quot; }))
+    Json(serde_json::json!({ &quot;status&quot;: &quot;error&quot;, &quot;message&quot;: &quot;config.json kaydedilemedi&quot; }))</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: save_config_handler"])
+    Start --> Cond1{"let Ok(pretty_json) = serde_json::to_string_pretty(&payload)?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"std::fs::write(path, pretty_json).is_ok()?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> EndNode(["Döndür: Json(serde_json::json!({ 'status': 'ok', 'message': 'config.json başarıyla kaydedildi' }))"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> status_handler</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>State(state): State&lt;AppState&gt;</code> | <strong>Dönüş Tipi:</strong> <code>Json&lt;serde_json::Value&gt;</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>State(state): State&lt;AppState&gt;</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>Json&lt;serde_json::Value&gt;</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. İşlemi tamamlayarak <code>Json&lt;serde_json::Value&gt;</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON status_handler(State(state): State&lt;AppState&gt;) -&gt; Json&lt;serde_json::Value&gt;:
+    let systems = state.orchestrator.list_systems();
+    let available = scan_available_plugins();
+    Json(serde_json::json!({
+    &quot;status&quot;: &quot;online&quot;,
+    &quot;systems_count&quot;: systems.len(),
+    &quot;available_plugins&quot;: available,
+    &quot;telemetry_port&quot;: 8080
+    }))</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: status_handler"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> ws_handler</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>ws: WebSocketUpgrade,
+    State(state): State&lt;AppState&gt;,</code> | <strong>Dönüş Tipi:</strong> <code>impl IntoResponse</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>ws: WebSocketUpgrade,
+    State(state): State&lt;AppState&gt;,</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>impl IntoResponse</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. İşlemi tamamlayarak <code>impl IntoResponse</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON ws_handler(ws: WebSocketUpgrade,
+    State(state): State&lt;AppState&gt;,) -&gt; impl IntoResponse:
+    ws.on_upgrade(|socket| handle_socket(socket, state))</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: ws_handler"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> handle_socket</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>mut socket: WebSocket, state: AppState</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>mut socket: WebSocket, state: AppState</code> verisini alır, kendi kurallarına göre işler ve sonucunda gerekli işlemi tamamlayan adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Listeyi veya veri kümesini sırayla döngüye alarak tarar.<br>4. Farklı durum senaryolarına göre akışı uygun kola yönlendirir.<br>5. İşlemi tamamlayarak <code>()</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON handle_socket(mut socket: WebSocket, state: AppState) -&gt; ():
+    let mut log_rx = state.log_tx.subscribe();
+    let mut sys_info_collector = System::new_all();
+    let mut interval = tokio::time::interval(Duration::from_millis(50));
+    loop {
+    tokio::select! {
+    _ = interval.tick() =&gt; {
+    sys_info_collector.refresh_cpu();
+    sys_info_collector.refresh_memory();
+    let raw_systems = state.orchestrator.list_systems();
+    let available = scan_available_plugins();
+    let mut systems_info = Vec::new();
+    let mut running_count = 0;
+    HER (i, (id, name, is_running)) in raw_systems.iter().enumerate() İÇİN DÖNGÜ:
+        EĞER *is_running İSE:
+            let sys_obj = state.orchestrator.get_system(id);
+            let valid = sys_obj.as_ref().map(|s| s.context.is_data_valid.load(core::sync::atomic::Ordering::Relaxed)).unwrap_or(false);
+            let ptr_str = sys_obj.as_ref().map(|s| format!(&quot;{:p}&quot;, s.plugin_state)).unwrap_or_else(|| &quot;0x0&quot;.to_string());
+            let bytes_len = state.orchestrator.monitor_data(id).map(|d| d.len()).unwrap_or(0);
+            let ram_kb = (bytes_len / 1024).max(16);
+            let cpu_val = if *is_running { (0.2 + (i as f32 * 0.15) * 10.0).round() / 10.0 } else { 0.0 };
+            systems_info.push(SystemInfo {
+            id: id.clone(),
+            name: name.clone(),
+            is_running: *is_running,
+            is_data_valid: valid,
+            memory_addr: ptr_str,
+            cpu_usage: cpu_val,
+            ram_kb,
+            });
+        let cpu = sys_info_collector.global_cpu_info().cpu_usage();
+        let mem_used = sys_info_collector.used_memory() / (1024 * 1024);
+        let mem_total = sys_info_collector.total_memory() / (1024 * 1024);
+        let selected_id = {
+        let mut guard = state.selected_monitor.lock().unwrap();
+        EĞER guard.is_none() &amp;&amp; !systems_info.is_empty() İSE:
+            *guard = Some(systems_info[0].id.clone());
+        guard.clone()
+        };
+        let (monitored_hex, monitored_str, monitored_len) = if let Some(ref target_id) = selected_id {
+        EĞER let Ok(data) = state.orchestrator.monitor_data(target_id) İSE:
+            let len = data.len();
+            let max_peek = data.len().min(512);
+            let slice = &amp;data[..max_peek];
+            let hex: String = slice.iter().map(|b| format!(&quot;{:02X} &quot;, b)).collect();
+            let ascii: String = slice.iter().map(|&amp;b| if b &gt;= 32 &amp;&amp; b &lt;= 126 { b as char } else { &#x27;.&#x27; }).collect();
+            (Some(hex), Some(ascii), len)
+            } else {
+            (None, None, 0)
+        } else {
+        (None, None, 0)
+        };
+        let resp = WebResponse::Telemetry {
+        systems: systems_info,
+        telemetry: TelemetryData {
+        cpu_usage: cpu,
+        memory_used_mb: mem_used,
+        memory_total_mb: mem_total,
+        total_systems: raw_systems.len(),
+        running_systems: running_count,
+        },
+        available_plugins: available,
+        monitored_id: selected_id,
+        monitored_hex,
+        monitored_str,
+        monitored_bytes_len: monitored_len,
+        };
+        EĞER let Ok(msg_text) = serde_json::to_string(&amp;resp) İSE:
+            EĞER socket.send(Message::Text(msg_text.into())).await.is_err() İSE:
+                break;
+    Ok(log_msg) = log_rx.recv() =&gt; {
+    let resp = WebResponse::Log { message: log_msg };
+    EĞER let Ok(msg_text) = serde_json::to_string(&amp;resp) İSE:
+        EĞER socket.send(Message::Text(msg_text.into())).await.is_err() İSE:
+            break;
+    Some(Ok(msg)) = socket.recv() =&gt; {
+    EĞER let Message::Text(text) = msg İSE:
+        EĞER let Ok(cmd) = serde_json::from_str::&lt;WebCommand&gt;(&amp;text) İSE:
+            let mut hft_buf = vec![0u8; 64 * 1024];
+            DURUM KONTROLÜ (cmd):
+                WebCommand::Start { id } =&gt; {
+                let payload = if let Ok(content) = std::fs::read_to_string(resolve_config_path()) {
+                EĞER let Ok(json_arr) = serde_json::from_str::&lt;serde_json::Value&gt;(&amp;content) İSE:
+                    json_arr.as_array()
+                    .and_then(|arr| arr.iter().find(|p| p.get(&quot;plugin_name&quot;).and_then(|n| n.as_str()) == Some(&amp;id)))
+                    .map(|conf| serde_json::to_vec(conf).unwrap_or_default())
+                    .unwrap_or_default()
+                    } else {
+                    Vec::new()
+                } else {
+                Vec::new()
+                };
+                let written = state.orchestrator.call_endpoint(&amp;id, StandardEndpoint::Start, &amp;payload, &amp;mut hft_buf);
+                let msg = format!(&quot;{} started via Web (Port 8080) (response: {} bytes)&quot;, id, written);
+                let _ = state.log_tx.send(msg);
+            WebCommand::Stop { id } =&gt; {
+            state.orchestrator.call_endpoint(&amp;id, StandardEndpoint::Stop, &amp;[], &amp;mut hft_buf);
+            let msg = format!(&quot;{} stopped via Web (Port 8080)&quot;, id);
+            let _ = state.log_tx.send(msg);
+        WebCommand::Monitor { id } =&gt; {
+        let mut guard = state.selected_monitor.lock().unwrap();
+        *guard = Some(id.clone());
+        let msg = format!(&quot;Web Monitor Focused: {}&quot;, id);
+        let _ = state.log_tx.send(msg);
+    WebCommand::Delete { id } =&gt; {
+    EĞER state.orchestrator.unregister_system(&amp;id).is_ok() İSE:
+        let mut guard = state.selected_monitor.lock().unwrap();
+        EĞER guard.as_deref() == Some(&amp;id) İSE:
+            *guard = None;
+        let msg = format!(&quot;{} deleted via Web (Port 8080)&quot;, id);
+        let _ = state.log_tx.send(msg);
+    WebCommand::Load { name } =&gt; {
+    DURUM KONTROLÜ (unsafe):
+        Ok(success_msg) =&gt; {
+        let _ = state.log_tx.send(success_msg);
+    Err(err_msg) =&gt; {
+    let _ = state.log_tx.send(format!(&quot;ERROR: {}&quot;, err_msg));
+    WebCommand::ShellInput { command } =&gt; {
+    let out_str = process_shell_command(&amp;state.orchestrator, &amp;state.log_tx, &amp;command);
+    let resp = WebResponse::ShellOutput {
+    command,
+    output: out_str,
+    };
+    EĞER let Ok(msg_text) = serde_json::to_string(&amp;resp) İSE:
+        let _ = socket.send(Message::Text(msg_text.into())).await;
+    WebCommand::Ping =&gt; {}</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: handle_socket"])
+    Start --> Cond1{"*is_running?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"*is_running?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"guard.is_none() && !systems_info.is_empty()?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> Loop4["Döngü: (i, (id, name, is_running)) in raw_systems.iter().enumerate()"]
+    Loop4 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        </section>
+
+        <details>
+            <summary>Orijinal Rust Kaynak Kodunu Göster</summary>
+            <pre><code>use crate::orchestrator::Orchestrator;
+use crate::endpoint::StandardEndpoint;
+use crate::system::{SystemInstance, RawEndpointFn};
+
+use axum::{
+    extract::ws::{WebSocket, WebSocketUpgrade, Message},
+    extract::State,
+    response::IntoResponse,
+    routing::get,
+    Router, Json,
+};
+use serde::{Deserialize, Serialize};
+use std::ffi::c_void;
+use std::sync::{Arc, Mutex};
+use std::time::Duration;
+use tokio::sync::broadcast;
+use tower_http::cors::{Any, CorsLayer};
+use tower_http::services::ServeDir;
+use sysinfo::System;
+
+#[derive(Clone)]
+pub struct AppState {
+    pub orchestrator: Arc&lt;Orchestrator&gt;,
+    pub log_tx: broadcast::Sender&lt;String&gt;,
+    pub selected_monitor: Arc&lt;Mutex&lt;Option&lt;String&gt;&gt;&gt;,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct SystemInfo {
+    pub id: String,
+    pub name: String,
+    pub is_running: bool,
+    pub is_data_valid: bool,
+    pub memory_addr: String,
+    pub cpu_usage: f32,
+    pub ram_kb: usize,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct TelemetryData {
+    pub cpu_usage: f32,
+    pub memory_used_mb: u64,
+    pub memory_total_mb: u64,
+    pub total_systems: usize,
+    pub running_systems: usize,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+#[serde(tag = &quot;type&quot;)]
+pub enum WebCommand {
+    #[serde(rename = &quot;start&quot;)]
+    Start { id: String },
+    #[serde(rename = &quot;stop&quot;)]
+    Stop { id: String },
+    #[serde(rename = &quot;monitor&quot;)]
+    Monitor { id: String },
+    #[serde(rename = &quot;delete&quot;)]
+    Delete { id: String },
+    #[serde(rename = &quot;load&quot;)]
+    Load { name: String },
+    #[serde(rename = &quot;shell_input&quot;)]
+    ShellInput { command: String },
+    #[serde(rename = &quot;ping&quot;)]
+    Ping,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+#[serde(tag = &quot;type&quot;)]
+pub enum WebResponse {
+    #[serde(rename = &quot;telemetry&quot;)]
+    Telemetry {
+        systems: Vec&lt;SystemInfo&gt;,
+        telemetry: TelemetryData,
+        available_plugins: Vec&lt;String&gt;,
+        monitored_id: Option&lt;String&gt;,
+        monitored_hex: Option&lt;String&gt;,
+        monitored_str: Option&lt;String&gt;,
+        monitored_bytes_len: usize,
+    },
+    #[serde(rename = &quot;log&quot;)]
+    Log { message: String },
+    #[serde(rename = &quot;shell_output&quot;)]
+    ShellOutput { command: String, output: String },
+}
+
+fn get_plugin_dir() -&gt; std::path::PathBuf {
+    let mut dir = std::env::current_exe().unwrap_or_else(|_| std::path::PathBuf::from(&quot;.&quot;));
+    dir.pop();
+    if dir.ends_with(&quot;deps&quot;) {
+        dir.pop();
+    }
+    dir
+}
+
+fn scan_available_plugins() -&gt; Vec&lt;String&gt; {
+    let mut plugins = Vec::new();
+    let lib_dir = get_plugin_dir();
+    let prefix = if cfg!(target_os = &quot;windows&quot;) { &quot;&quot; } else { &quot;lib&quot; };
+    if let Ok(entries) = std::fs::read_dir(&amp;lib_dir) {
+        for entry in entries.flatten() {
+            let name = entry.file_name().to_string_lossy().into_owned();
+            if name.starts_with(&amp;format!(&quot;{}plugin_&quot;, prefix)) &amp;&amp; (name.ends_with(&quot;.so&quot;) || name.ends_with(&quot;.dll&quot;) || name.ends_with(&quot;.dylib&quot;)) {
+                let ext_len = if name.ends_with(&quot;.so&quot;) { 3 } else if name.ends_with(&quot;.dll&quot;) { 4 } else { 6 };
+                let plugin_name = &amp;name[prefix.len()..name.len()-ext_len];
+                plugins.push(plugin_name.to_string());
+            }
+        }
+    }
+    plugins.sort();
+    plugins.dedup();
+    plugins
+}
+
+unsafe fn load_plugin_dynamic(orchestrator: &amp;Orchestrator, plugin_name: &amp;str) -&gt; Result&lt;String, String&gt; {
+    let ext = if cfg!(target_os = &quot;windows&quot;) { &quot;dll&quot; } 
+              else if cfg!(target_os = &quot;macos&quot;) { &quot;dylib&quot; } 
+              else { &quot;so&quot; };
+    let prefix = if cfg!(target_os = &quot;windows&quot;) { &quot;&quot; } else { &quot;lib&quot; };
+    let clean_name = plugin_name.strip_prefix(&quot;lib&quot;).unwrap_or(plugin_name);
+    
+    let mut lib_path_buf = get_plugin_dir();
+    lib_path_buf.push(format!(&quot;{}{}.{}&quot;, prefix, clean_name, ext));
+    let lib_path = lib_path_buf.to_string_lossy().to_string();
+    
+    match libloading::Library::new(&amp;lib_path) {
+        Ok(lib) =&gt; {
+            type PluginInit = unsafe extern &quot;C&quot; fn(state_out: *mut *mut c_void) -&gt; RawEndpointFn;
+            match lib.get::&lt;PluginInit&gt;(b&quot;init_plugin&quot;) {
+                Ok(init_fn) =&gt; {
+                    let mut state_ptr: *mut c_void = std::ptr::null_mut();
+                    let endpoint_fn = init_fn(&amp;mut state_ptr);
+                    let sys = SystemInstance::new(
+                        plugin_name.to_string(), 
+                        plugin_name.to_string(), 
+                        state_ptr, 
+                        endpoint_fn,
+                    );
+                    orchestrator.register_system(sys);
+                    Box::leak(Box::new(lib));
+                    Ok(format!(&quot;{} eklentisi başarıyla yüklendi ve sisteme bağlandı.&quot;, plugin_name))
+                }
+                Err(_) =&gt; Err(format!(&quot;{} eklentisinde init_plugin sembolü bulunamadı.&quot;, plugin_name)),
+            }
+        }
+        Err(e) =&gt; Err(format!(&quot;{} eklentisi yüklenemedi: {}&quot;, plugin_name, e)),
+    }
+}
+
+fn process_shell_command(orchestrator: &amp;Orchestrator, log_tx: &amp;broadcast::Sender&lt;String&gt;, cmd_line: &amp;str) -&gt; String {
+    let parts: Vec&lt;&amp;str&gt; = cmd_line.trim().split_whitespace().collect();
+    if parts.is_empty() {
+        return String::new();
+    }
+
+    let verb = parts[0].to_lowercase();
+    match verb.as_str() {
+        &quot;help&quot; =&gt; {
+            let mut out = String::from(&quot;=== CYCLE-ORC INTERACTIVE HFT SHELL HELP ===\n&quot;);
+            out.push_str(&quot;  help                   : Bu yardım menüsünü gösterir\n&quot;);
+            out.push_str(&quot;  list                   : Yüklü tüm eklentileri ve durumlarını listeler\n&quot;);
+            out.push_str(&quot;  available              : Diskte derlenmiş tüm eklenti (.so/.dll) dosyalarını gösterir\n&quot;);
+            out.push_str(&quot;  start &lt;id&gt;             : Belirtilen eklentiyi başlatır\n&quot;);
+            out.push_str(&quot;  stop &lt;id&gt;              : Belirtilen eklentiyi durdurur\n&quot;);
+            out.push_str(&quot;  del &lt;id&gt;               : Belirtilen eklentiyi hafızadan kaldırır\n&quot;);
+            out.push_str(&quot;  load &lt;plugin_name&gt;     : C-ABI ile kütüphaneyi anında dinamik yükler\n&quot;);
+            out.push_str(&quot;  status                 : Sistem kaynak ve çalışma istatistiklerini gösterir\n&quot;);
+            out.push_str(&quot;  clear                  : Ekranı temizler\n&quot;);
+            out
+        }
+        &quot;list&quot; =&gt; {
+            let systems = orchestrator.list_systems();
+            if systems.is_empty() {
+                &quot;Yüklü eklenti bulunamadı.&quot;.to_string()
+            } else {
+                let mut out = String::from(&quot;=== YÜKLÜ EKLENTİLER &amp; ANLIK KAYNAK KULLANIMI ===\n&quot;);
+                for (i, (id, name, is_running)) in systems.iter().enumerate() {
+                    let sys_obj = orchestrator.get_system(id);
+                    let valid = sys_obj.as_ref().map(|s| s.context.is_data_valid.load(core::sync::atomic::Ordering::Relaxed)).unwrap_or(false);
+                    let bytes_len = orchestrator.monitor_data(id).map(|d| d.len()).unwrap_or(0);
+                    let ram_kb = (bytes_len / 1024).max(16);
+                    let cpu_usage = if *is_running { (0.2 + (i as f32 * 0.15) * 10.0).round() / 10.0 } else { 0.0 };
+
+                    out.push_str(&amp;format!(&quot; • ID: {:&lt;20} | Durum: {:&lt;10} | RAM: {:&gt;5} KB | CPU: {:&gt;4.1}% | Geçerli: {}\n&quot;, 
+                        id, 
+                        if *is_running { &quot;ÇALIŞIYOR&quot; } else { &quot;DURDURULDU&quot; },
+                        ram_kb,
+                        cpu_usage,
+                        valid
+                    ));
+                }
+                out
+            }
+        }
+        &quot;available&quot; =&gt; {
+            let plugins = scan_available_plugins();
+            if plugins.is_empty() {
+                &quot;Mevcut eklenti bulunamadı (target/debug).&quot;.to_string()
+            } else {
+                let mut out = String::from(&quot;=== DISKTEKİ DERLENMİŞ EKLENTİLER ===\n&quot;);
+                for p in plugins {
+                    out.push_str(&amp;format!(&quot; • {}\n&quot;, p));
+                }
+                out
+            }
+        }
+        &quot;start&quot; =&gt; {
+            if parts.len() &lt; 2 {
+                &quot;ERROR: Usage: start &lt;id&gt;&quot;.to_string()
+            } else {
+                let id = parts[1];
+                let mut hft_buf = vec![0u8; 64 * 1024];
+                let payload = if let Ok(content) = std::fs::read_to_string(resolve_config_path()) {
+                    if let Ok(json_arr) = serde_json::from_str::&lt;serde_json::Value&gt;(&amp;content) {
+                        json_arr.as_array()
+                            .and_then(|arr| arr.iter().find(|p| p.get(&quot;plugin_name&quot;).and_then(|n| n.as_str()) == Some(id)))
+                            .map(|conf| serde_json::to_vec(conf).unwrap_or_default())
+                            .unwrap_or_default()
+                    } else { Vec::new() }
+                } else { Vec::new() };
+
+                let written = orchestrator.call_endpoint(id, StandardEndpoint::Start, &amp;payload, &amp;mut hft_buf);
+                let _ = log_tx.send(format!(&quot;Shell: {} started (response: {} bytes)&quot;, id, written));
+                format!(&quot;SUCCESS: Plugin {} started (response: {} bytes).&quot;, id, written)
+            }
+        }
+        &quot;stop&quot; =&gt; {
+            if parts.len() &lt; 2 {
+                &quot;ERROR: Usage: stop &lt;id&gt;&quot;.to_string()
+            } else {
+                let id = parts[1];
+                let mut hft_buf = vec![0u8; 64 * 1024];
+                orchestrator.call_endpoint(id, StandardEndpoint::Stop, &amp;[], &amp;mut hft_buf);
+                let _ = log_tx.send(format!(&quot;Shell: {} stopped&quot;, id));
+                format!(&quot;SUCCESS: Plugin {} stopped.&quot;, id)
+            }
+        }
+        &quot;del&quot; | &quot;delete&quot; | &quot;remove&quot; =&gt; {
+            if parts.len() &lt; 2 {
+                &quot;ERROR: Usage: del &lt;id&gt;&quot;.to_string()
+            } else {
+                let id = parts[1];
+                if orchestrator.unregister_system(id).is_ok() {
+                    let _ = log_tx.send(format!(&quot;Shell: {} removed&quot;, id));
+                    format!(&quot;SUCCESS: Plugin {} removed from memory.&quot;, id)
+                } else {
+                    format!(&quot;ERROR: Plugin {} not found.&quot;, id)
+                }
+            }
+        }
+        &quot;load&quot; =&gt; {
+            if parts.len() &lt; 2 {
+                &quot;ERROR: Usage: load &lt;plugin_name&gt;&quot;.to_string()
+            } else {
+                let name = parts[1];
+                match unsafe { load_plugin_dynamic(orchestrator, name) } {
+                    Ok(msg) =&gt; {
+                        let _ = log_tx.send(format!(&quot;Shell: {}&quot;, msg));
+                        format!(&quot;SUCCESS: {}&quot;, msg)
+                    }
+                    Err(err) =&gt; format!(&quot;ERROR: {}&quot;, err),
+                }
+            }
+        }
+        &quot;status&quot; =&gt; {
+            let mut sys = sysinfo::System::new_all();
+            sys.refresh_all();
+            let cpu = sys.global_cpu_info().cpu_usage();
+            let mem_used = sys.used_memory() / (1024 * 1024);
+            let mem_total = sys.total_memory() / (1024 * 1024);
+            let systems = orchestrator.list_systems();
+            format!(&quot;=== SYSTEM STATISTICS ===\n• Total Plugins : {}\n• Active Plugins : {}\n• CPU Usage     : {:.1}%\n• RAM Usage     : {} MB / {} MB&quot;,
+                systems.len(),
+                systems.iter().filter(|(_, _, r)| *r).count(),
+                cpu,
+                mem_used,
+                mem_total
+            )
+        }
+        &quot;exportjson&quot; | &quot;dumpjson&quot; | &quot;savejson&quot; | &quot;export_json&quot; =&gt; {
+            if parts.len() &lt; 2 {
+                &quot;ERROR: Usage: exportjson &lt;plugin_id&gt; [output_file.json]&quot;.to_string()
+            } else {
+                let id = parts[1];
+                let default_filename = format!(&quot;{}_output.json&quot;, id);
+                let out_path = parts.get(2).copied().unwrap_or(&amp;default_filename);
+
+                match orchestrator.monitor_data(id) {
+                    Ok(data) if !data.is_empty() =&gt; {
+                        if let Ok(json_val) = serde_json::from_slice::&lt;serde_json::Value&gt;(&amp;data) {
+                            match serde_json::to_string_pretty(&amp;json_val) {
+                                Ok(pretty_json) =&gt; {
+                                    if let Err(err) = std::fs::write(out_path, pretty_json.as_bytes()) {
+                                        format!(&quot;ERROR: Failed to write JSON file ({}): {}&quot;, out_path, err)
+                                    } else {
+                                        let msg = format!(&quot;SUCCESS: Memory JSON data saved for plugin {}: {} ({} bytes)&quot;, id, out_path, pretty_json.len());
+                                        let _ = log_tx.send(format!(&quot;Shell: {}&quot;, msg));
+                                        msg
+                                    }
+                                }
+                                Err(err) =&gt; format!(&quot;ERROR: JSON serialization error: {}&quot;, err),
+                            }
+                        } else if let Ok(utf8_str) = std::str::from_utf8(&amp;data) {
+                            if !utf8_str.trim().is_empty() {
+                                let fallback_json = serde_json::json!({
+                                    &quot;plugin&quot;: id,
+                                    &quot;raw_output&quot;: utf8_str.trim()
+                                });
+                                let json_str = serde_json::to_string_pretty(&amp;fallback_json).unwrap_or_default();
+                                if let Err(err) = std::fs::write(out_path, json_str.as_bytes()) {
+                                    format!(&quot;ERROR: Failed to write file ({}): {}&quot;, out_path, err)
+                                } else {
+                                    let msg = format!(&quot;SUCCESS: Text data saved as JSON for plugin {}: {}&quot;, id, out_path);
+                                    let _ = log_tx.send(format!(&quot;Shell: {}&quot;, msg));
+                                    msg
+                                }
+                            } else {
+                                format!(&quot;ERROR: Memory buffer for plugin {} returned empty text.&quot;, id)
+                            }
+                        } else {
+                            format!(&quot;ERROR: Memory buffer data for plugin {} is not valid JSON or UTF-8 text.&quot;, id)
+                        }
+                    }
+                    Ok(_) =&gt; format!(&quot;WARNING: Memory buffer for plugin {} returned 0 bytes (empty).&quot;, id),
+                    Err(e) =&gt; format!(&quot;ERROR: Failed to read memory data from plugin {}: {}&quot;, id, e),
+                }
+            }
+        }
+        _ =&gt; {
+            format!(&quot;Command not recognized: &#x27;{}&#x27;. Type &#x27;help&#x27; to view available commands.&quot;, cmd_line)
+        }
+    }
+}
+
+pub async fn start_web_server(
+    orchestrator: Arc&lt;Orchestrator&gt;,
+    log_tx: broadcast::Sender&lt;String&gt;,
+    port: u16,
+    shutdown_rx: tokio::sync::oneshot::Receiver&lt;()&gt;,
+) {
+    let addr = format!(&quot;0.0.0.0:{}&quot;, port);
+    let _ = log_tx.send(format!(&quot;[HFT WEB] Gecikmesiz Telemetri Konsolu Başlatılıyor: http://localhost:{}&quot;, port));
+
+    let state = AppState {
+        orchestrator,
+        log_tx: log_tx.clone(),
+        selected_monitor: Arc::new(Mutex::new(None)),
+    };
+
+    let cors = CorsLayer::new()
+        .allow_origin(Any)
+        .allow_methods(Any)
+        .allow_headers(Any);
+
+    let path1 = std::path::Path::new(&quot;crates/interfaces/web/telemetry_console/public&quot;);
+    let path2 = std::path::Path::new(&quot;../interfaces/web/telemetry_console/public&quot;);
+    let path3 = std::path::Path::new(&quot;../../crates/interfaces/web/telemetry_console/public&quot;);
+    let path4 = std::path::Path::new(&quot;interfaces/web/telemetry_console/public&quot;);
+    let path5 = std::path::Path::new(&quot;telemetry_web/public&quot;);
+    let static_dir = if path1.exists() {
+        path1
+    } else if path2.exists() {
+        path2
+    } else if path3.exists() {
+        path3
+    } else if path4.exists() {
+        path4
+    } else {
+        path5
+    };
+
+    let studio_path1 = std::path::Path::new(&quot;crates/interfaces/web/json_studio/public&quot;);
+    let studio_path2 = std::path::Path::new(&quot;../interfaces/web/json_studio/public&quot;);
+    let studio_path3 = std::path::Path::new(&quot;../../crates/interfaces/web/json_studio/public&quot;);
+    let studio_path4 = std::path::Path::new(&quot;interfaces/web/json_studio/public&quot;);
+    let studio_dir = if studio_path1.exists() {
+        studio_path1
+    } else if studio_path2.exists() {
+        studio_path2
+    } else if studio_path3.exists() {
+        studio_path3
+    } else {
+        studio_path4
+    };
+
+    let app = Router::new()
+        .route(&quot;/ws&quot;, get(ws_handler))
+        .route(&quot;/api/status&quot;, get(status_handler))
+        .route(&quot;/api/config&quot;, get(get_config_handler).post(save_config_handler))
+        .nest_service(&quot;/json_studio&quot;, ServeDir::new(studio_dir))
+        .fallback_service(ServeDir::new(static_dir))
+        .layer(cors)
+        .with_state(state);
+
+    match tokio::net::TcpListener::bind(&amp;addr).await {
+        Ok(listener) =&gt; {
+            let server = axum::serve(listener, app).with_graceful_shutdown(async move {
+                let _ = shutdown_rx.await;
+            });
+            if let Err(e) = server.await {
+                let _ = log_tx.send(format!(&quot;[HFT WEB] Sunucu hatası: {}&quot;, e));
+            }
+        }
+        Err(e) =&gt; {
+            let _ = log_tx.send(format!(&quot;[HFT WEB] Port {} dinlenemedi: {}&quot;, port, e));
+        }
+    }
+}
+
+fn resolve_config_path() -&gt; &amp;&#x27;static str {
+    if std::path::Path::new(&quot;config/config.json&quot;).exists() {
+        &quot;config/config.json&quot;
+    } else if std::path::Path::new(&quot;../config/config.json&quot;).exists() {
+        &quot;../config/config.json&quot;
+    } else if std::path::Path::new(&quot;../../config/config.json&quot;).exists() {
+        &quot;../../config/config.json&quot;
+    } else if std::path::Path::new(&quot;flow_config.json&quot;).exists() {
+        &quot;flow_config.json&quot;
+    } else {
+        &quot;config/config.json&quot;
+    }
+}
+
+async fn get_config_handler() -&gt; Json&lt;serde_json::Value&gt; {
+    let path = resolve_config_path();
+
+    if let Ok(content) = std::fs::read_to_string(path) {
+        if let Ok(json_val) = serde_json::from_str::&lt;serde_json::Value&gt;(&amp;content) {
+            return Json(json_val);
+        }
+    }
+    Json(serde_json::json!([]))
+}
+
+async fn save_config_handler(Json(payload): Json&lt;serde_json::Value&gt;) -&gt; Json&lt;serde_json::Value&gt; {
+    let path = resolve_config_path();
+
+    if let Ok(pretty_json) = serde_json::to_string_pretty(&amp;payload) {
+        if std::fs::write(path, pretty_json).is_ok() {
+            return Json(serde_json::json!({ &quot;status&quot;: &quot;ok&quot;, &quot;message&quot;: &quot;config.json başarıyla kaydedildi&quot; }));
+        }
+    }
+    Json(serde_json::json!({ &quot;status&quot;: &quot;error&quot;, &quot;message&quot;: &quot;config.json kaydedilemedi&quot; }))
+}
+
+async fn status_handler(State(state): State&lt;AppState&gt;) -&gt; Json&lt;serde_json::Value&gt; {
+    let systems = state.orchestrator.list_systems();
+    let available = scan_available_plugins();
+    Json(serde_json::json!({
+        &quot;status&quot;: &quot;online&quot;,
+        &quot;systems_count&quot;: systems.len(),
+        &quot;available_plugins&quot;: available,
+        &quot;telemetry_port&quot;: 8080
+    }))
+}
+
+async fn ws_handler(
+    ws: WebSocketUpgrade,
+    State(state): State&lt;AppState&gt;,
+) -&gt; impl IntoResponse {
+    ws.on_upgrade(|socket| handle_socket(socket, state))
+}
+
+async fn handle_socket(mut socket: WebSocket, state: AppState) {
+    let mut log_rx = state.log_tx.subscribe();
+    let mut sys_info_collector = System::new_all();
+    let mut interval = tokio::time::interval(Duration::from_millis(50));
+
+    loop {
+        tokio::select! {
+            _ = interval.tick() =&gt; {
+                sys_info_collector.refresh_cpu();
+                sys_info_collector.refresh_memory();
+
+                let raw_systems = state.orchestrator.list_systems();
+                let available = scan_available_plugins();
+                let mut systems_info = Vec::new();
+                let mut running_count = 0;
+
+                for (i, (id, name, is_running)) in raw_systems.iter().enumerate() {
+                    if *is_running { running_count += 1; }
+                    let sys_obj = state.orchestrator.get_system(id);
+                    let valid = sys_obj.as_ref().map(|s| s.context.is_data_valid.load(core::sync::atomic::Ordering::Relaxed)).unwrap_or(false);
+                    let ptr_str = sys_obj.as_ref().map(|s| format!(&quot;{:p}&quot;, s.plugin_state)).unwrap_or_else(|| &quot;0x0&quot;.to_string());
+
+                    let bytes_len = state.orchestrator.monitor_data(id).map(|d| d.len()).unwrap_or(0);
+                    let ram_kb = (bytes_len / 1024).max(16);
+                    let cpu_val = if *is_running { (0.2 + (i as f32 * 0.15) * 10.0).round() / 10.0 } else { 0.0 };
+
+                    systems_info.push(SystemInfo {
+                        id: id.clone(),
+                        name: name.clone(),
+                        is_running: *is_running,
+                        is_data_valid: valid,
+                        memory_addr: ptr_str,
+                        cpu_usage: cpu_val,
+                        ram_kb,
+                    });
+                }
+
+                let cpu = sys_info_collector.global_cpu_info().cpu_usage();
+                let mem_used = sys_info_collector.used_memory() / (1024 * 1024);
+                let mem_total = sys_info_collector.total_memory() / (1024 * 1024);
+
+                let selected_id = {
+                    let mut guard = state.selected_monitor.lock().unwrap();
+                    if guard.is_none() &amp;&amp; !systems_info.is_empty() {
+                        *guard = Some(systems_info[0].id.clone());
+                    }
+                    guard.clone()
+                };
+
+                let (monitored_hex, monitored_str, monitored_len) = if let Some(ref target_id) = selected_id {
+                    if let Ok(data) = state.orchestrator.monitor_data(target_id) {
+                        let len = data.len();
+                        let max_peek = data.len().min(512);
+                        let slice = &amp;data[..max_peek];
+
+                        let hex: String = slice.iter().map(|b| format!(&quot;{:02X} &quot;, b)).collect();
+                        let ascii: String = slice.iter().map(|&amp;b| if b &gt;= 32 &amp;&amp; b &lt;= 126 { b as char } else { &#x27;.&#x27; }).collect();
+
+                        (Some(hex), Some(ascii), len)
+                    } else {
+                        (None, None, 0)
+                    }
+                } else {
+                    (None, None, 0)
+                };
+
+                let resp = WebResponse::Telemetry {
+                    systems: systems_info,
+                    telemetry: TelemetryData {
+                        cpu_usage: cpu,
+                        memory_used_mb: mem_used,
+                        memory_total_mb: mem_total,
+                        total_systems: raw_systems.len(),
+                        running_systems: running_count,
+                    },
+                    available_plugins: available,
+                    monitored_id: selected_id,
+                    monitored_hex,
+                    monitored_str,
+                    monitored_bytes_len: monitored_len,
+                };
+
+                if let Ok(msg_text) = serde_json::to_string(&amp;resp) {
+                    if socket.send(Message::Text(msg_text.into())).await.is_err() {
+                        break;
+                    }
+                }
+            }
+
+            Ok(log_msg) = log_rx.recv() =&gt; {
+                let resp = WebResponse::Log { message: log_msg };
+                if let Ok(msg_text) = serde_json::to_string(&amp;resp) {
+                    if socket.send(Message::Text(msg_text.into())).await.is_err() {
+                        break;
+                    }
+                }
+            }
+
+            Some(Ok(msg)) = socket.recv() =&gt; {
+                if let Message::Text(text) = msg {
+                    if let Ok(cmd) = serde_json::from_str::&lt;WebCommand&gt;(&amp;text) {
+                        let mut hft_buf = vec![0u8; 64 * 1024];
+                        match cmd {
+                            WebCommand::Start { id } =&gt; {
+                                let payload = if let Ok(content) = std::fs::read_to_string(resolve_config_path()) {
+                                    if let Ok(json_arr) = serde_json::from_str::&lt;serde_json::Value&gt;(&amp;content) {
+                                        json_arr.as_array()
+                                            .and_then(|arr| arr.iter().find(|p| p.get(&quot;plugin_name&quot;).and_then(|n| n.as_str()) == Some(&amp;id)))
+                                            .map(|conf| serde_json::to_vec(conf).unwrap_or_default())
+                                            .unwrap_or_default()
+                                    } else {
+                                        Vec::new()
+                                    }
+                                } else {
+                                    Vec::new()
+                                };
+
+                                let written = state.orchestrator.call_endpoint(&amp;id, StandardEndpoint::Start, &amp;payload, &amp;mut hft_buf);
+                                let msg = format!(&quot;{} started via Web (Port 8080) (response: {} bytes)&quot;, id, written);
+                                let _ = state.log_tx.send(msg);
+                            }
+                            WebCommand::Stop { id } =&gt; {
+                                state.orchestrator.call_endpoint(&amp;id, StandardEndpoint::Stop, &amp;[], &amp;mut hft_buf);
+                                let msg = format!(&quot;{} stopped via Web (Port 8080)&quot;, id);
+                                let _ = state.log_tx.send(msg);
+                            }
+                            WebCommand::Monitor { id } =&gt; {
+                                let mut guard = state.selected_monitor.lock().unwrap();
+                                *guard = Some(id.clone());
+                                let msg = format!(&quot;Web Monitor Focused: {}&quot;, id);
+                                let _ = state.log_tx.send(msg);
+                            }
+                            WebCommand::Delete { id } =&gt; {
+                                if state.orchestrator.unregister_system(&amp;id).is_ok() {
+                                    let mut guard = state.selected_monitor.lock().unwrap();
+                                    if guard.as_deref() == Some(&amp;id) {
+                                        *guard = None;
+                                    }
+                                    let msg = format!(&quot;{} deleted via Web (Port 8080)&quot;, id);
+                                    let _ = state.log_tx.send(msg);
+                                }
+                            }
+                            WebCommand::Load { name } =&gt; {
+                                match unsafe { load_plugin_dynamic(&amp;state.orchestrator, &amp;name) } {
+                                    Ok(success_msg) =&gt; {
+                                        let _ = state.log_tx.send(success_msg);
+                                    }
+                                    Err(err_msg) =&gt; {
+                                        let _ = state.log_tx.send(format!(&quot;ERROR: {}&quot;, err_msg));
+                                    }
+                                }
+                            }
+                            WebCommand::ShellInput { command } =&gt; {
+                                let out_str = process_shell_command(&amp;state.orchestrator, &amp;state.log_tx, &amp;command);
+                                let resp = WebResponse::ShellOutput {
+                                    command,
+                                    output: out_str,
+                                };
+                                if let Ok(msg_text) = serde_json::to_string(&amp;resp) {
+                                    let _ = socket.send(Message::Text(msg_text.into())).await;
+                                }
+                            }
+                            WebCommand::Ping =&gt; {}
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+</code></pre>
+        </details>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            flowchart: { curve: 'basis' }
+        });
+    </script>
+</body>
+</html>

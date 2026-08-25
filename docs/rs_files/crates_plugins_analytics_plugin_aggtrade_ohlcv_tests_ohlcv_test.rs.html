@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ohlcv_test.rs - Rust Analiz Dokümanı</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --border: #334155;
+            --code-bg: #090d16;
+            --verbal-bg: #131f37;
+            --analogy-bg: #1e1b4b;
+            --analogy-border: #818cf8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .back-link {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .back-link:hover { text-decoration: underline; }
+        h1 { font-size: 2rem; color: var(--accent); margin-bottom: 0.5rem; }
+        .file-path { font-family: 'Fira Code', monospace; color: var(--text-muted); font-size: 0.95rem; }
+        
+        .structs-container { margin: 1.5rem 0; }
+        .badge {
+            display: inline-block;
+            background: #0284c7;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-family: 'Fira Code', monospace;
+        }
+        .badge-struct { background: #7c3aed; }
+        
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .card h3 { color: var(--accent); margin-bottom: 0.5rem; font-size: 1.3rem; }
+        .card h4 { margin: 1.2rem 0 0.5rem 0; color: var(--text-muted); font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        .easy-analogy {
+            background: var(--analogy-bg);
+            border-left: 4px solid var(--analogy-border);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1rem;
+            color: #c7d2fe;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .verbal-explanation {
+            background: var(--verbal-bg);
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1.2rem;
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            margin-bottom: 1rem;
+        }
+        
+        .mermaid {
+            background: var(--code-bg);
+            padding: 1.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+        }
+        
+        details {
+            margin-top: 2rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Ana İndekse Dön</a>
+        <header>
+            <h1>ohlcv_test.rs</h1>
+            <p class="file-path">crates/plugins/analytics/plugin_aggtrade_ohlcv/tests/ohlcv_test.rs</p>
+            <div class="structs-container">
+                <strong>Tanımlı Türler / Yapılar:</strong> Yok
+            </div>
+        </header>
+
+        <section>
+            <h2>Fonksiyon Analizleri & Basit Anlatımlar</h2>
+            
+        <div class="card">
+            <h3><span class="badge">fn</span> test_1s_ohlcv_candle_aggregation</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>Yok</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan hiçbir girdi almadan verisini alır, kendi kurallarına göre işler ve sonucunda gerekli işlemi tamamlayan adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. İşlemi tamamlayarak <code>()</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON test_1s_ohlcv_candle_aggregation() -&gt; ():
+    let engine = OhlcvEngine::new();
+    let base_ms = 1700000000000u64; // Second 1700000000
+    // Trade 1: Open @ 50000.0
+    engine.process_trade(&quot;BTCUSDT&quot;, 1, 50000.0, 1.0, false, base_ms);
+    // Trade 2: High @ 50200.0
+    engine.process_trade(&quot;BTCUSDT&quot;, 2, 50200.0, 2.0, true, base_ms + 200);
+    // Trade 3: Low @ 49800.0
+    engine.process_trade(&quot;BTCUSDT&quot;, 3, 49800.0, 1.5, false, base_ms + 500);
+    // Trade 4: Close @ 50100.0
+    engine.process_trade(&quot;BTCUSDT&quot;, 4, 50100.0, 0.5, true, base_ms + 800);
+    let active_guard = engine.active_candles.lock().unwrap();
+    let btc_candle = active_guard.get(&quot;BTCUSDT&quot;).expect(&quot;BTCUSDT mum olusturulmali&quot;);
+    assert_eq!(btc_candle.symbol, &quot;BTCUSDT&quot;);
+    assert_eq!(btc_candle.timestamp_sec, 1700000000);
+    assert_eq!(btc_candle.open, 50000.0);
+    assert_eq!(btc_candle.high, 50200.0);
+    assert_eq!(btc_candle.low, 49800.0);
+    assert_eq!(btc_candle.close, 50100.0);
+    assert_eq!(btc_candle.volume, 5.0);
+    assert_eq!(btc_candle.trades_count, 4);
+    assert_eq!(btc_candle.buy_volume, 2.5); // Trade 1 (1.0) + Trade 3 (1.5)
+    assert_eq!(btc_candle.sell_volume, 2.5); // Trade 2 (2.0) + Trade 4 (0.5)</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: test_1s_ohlcv_candle_aggregation"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> test_candle_transition_on_new_second</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>Yok</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan hiçbir girdi almadan verisini alır, kendi kurallarına göre işler ve sonucunda gerekli işlemi tamamlayan adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. İşlemi tamamlayarak <code>()</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON test_candle_transition_on_new_second() -&gt; ():
+    let engine = OhlcvEngine::new();
+    let sec1_ms = 1700000000000u64;
+    let sec2_ms = 1700000001000u64;
+    // Trades in second 1
+    engine.process_trade(&quot;ETHUSDT&quot;, 100, 3000.0, 10.0, false, sec1_ms);
+    engine.process_trade(&quot;ETHUSDT&quot;, 101, 3050.0, 5.0, true, sec1_ms + 500);
+    // Trade in second 2 -&gt; triggers completion of second 1 candle
+    engine.process_trade(&quot;ETHUSDT&quot;, 102, 3020.0, 2.0, false, sec2_ms);
+    let active_guard = engine.active_candles.lock().unwrap();
+    let completed_guard = engine.completed_candles.lock().unwrap();
+    let active = active_guard.get(&quot;ETHUSDT&quot;).unwrap();
+    assert_eq!(active.timestamp_sec, 1700000001);
+    assert_eq!(active.open, 3020.0);
+    let history = completed_guard.get(&quot;ETHUSDT&quot;).unwrap();
+    assert_eq!(history.len(), 1);
+    let prev = &amp;history[0];
+    assert_eq!(prev.timestamp_sec, 1700000000);
+    assert_eq!(prev.open, 3000.0);
+    assert_eq!(prev.high, 3050.0);
+    assert_eq!(prev.close, 3050.0);</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: test_candle_transition_on_new_second"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> test_aggtrade_payload_processing</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>Yok</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Gerçek para harcamadan önce Monopoly oyunundaki sanal para ile alışveriş yapıp taktiklerin çalışıp çalışmadığını test etme işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Gerçek piyasa emir defteri verisini alarak gecikme, komisyon ve kuyruk sırasını hesaba katan sanal alım-satım infazını gerçekleştirir.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON test_aggtrade_payload_processing() -&gt; ():
+    let engine = OhlcvEngine::new();
+    let now_ms = 1700000000000u64;
+    let payload = json!({
+    &quot;BTCUSDT&quot;: {
+    &quot;trade_id&quot;: 999,
+    &quot;price&quot;: &quot;60000.5&quot;,
+    &quot;quantity&quot;: &quot;2.5&quot;,
+    &quot;buyer_is_maker&quot;: false,
+    &quot;event_time&quot;: now_ms
+    });
+    let report = engine.process_aggtrade_payload(&amp;payload, now_ms);
+    assert!(report.contains(&quot;SANİYELİK OHLCV ÇUBUKLARI&quot;));
+    assert!(report.contains(&quot;BTCUSDT&quot;));
+    assert!(report.contains(&quot;60000.5000&quot;));
+    assert!(report.contains(&quot;2.5000&quot;));</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: test_aggtrade_payload_processing"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        </section>
+
+        <details>
+            <summary>Orijinal Rust Kaynak Kodunu Göster</summary>
+            <pre><code>use plugin_aggtrade_ohlcv::OhlcvEngine;
+use serde_json::json;
+
+#[test]
+fn test_1s_ohlcv_candle_aggregation() {
+    let engine = OhlcvEngine::new();
+    let base_ms = 1700000000000u64; // Second 1700000000
+
+    // Trade 1: Open @ 50000.0
+    engine.process_trade(&quot;BTCUSDT&quot;, 1, 50000.0, 1.0, false, base_ms);
+    // Trade 2: High @ 50200.0
+    engine.process_trade(&quot;BTCUSDT&quot;, 2, 50200.0, 2.0, true, base_ms + 200);
+    // Trade 3: Low @ 49800.0
+    engine.process_trade(&quot;BTCUSDT&quot;, 3, 49800.0, 1.5, false, base_ms + 500);
+    // Trade 4: Close @ 50100.0
+    engine.process_trade(&quot;BTCUSDT&quot;, 4, 50100.0, 0.5, true, base_ms + 800);
+
+    let active_guard = engine.active_candles.lock().unwrap();
+    let btc_candle = active_guard.get(&quot;BTCUSDT&quot;).expect(&quot;BTCUSDT mum olusturulmali&quot;);
+
+    assert_eq!(btc_candle.symbol, &quot;BTCUSDT&quot;);
+    assert_eq!(btc_candle.timestamp_sec, 1700000000);
+    assert_eq!(btc_candle.open, 50000.0);
+    assert_eq!(btc_candle.high, 50200.0);
+    assert_eq!(btc_candle.low, 49800.0);
+    assert_eq!(btc_candle.close, 50100.0);
+    assert_eq!(btc_candle.volume, 5.0);
+    assert_eq!(btc_candle.trades_count, 4);
+    assert_eq!(btc_candle.buy_volume, 2.5); // Trade 1 (1.0) + Trade 3 (1.5)
+    assert_eq!(btc_candle.sell_volume, 2.5); // Trade 2 (2.0) + Trade 4 (0.5)
+}
+
+#[test]
+fn test_candle_transition_on_new_second() {
+    let engine = OhlcvEngine::new();
+    let sec1_ms = 1700000000000u64;
+    let sec2_ms = 1700000001000u64;
+
+    // Trades in second 1
+    engine.process_trade(&quot;ETHUSDT&quot;, 100, 3000.0, 10.0, false, sec1_ms);
+    engine.process_trade(&quot;ETHUSDT&quot;, 101, 3050.0, 5.0, true, sec1_ms + 500);
+
+    // Trade in second 2 -&gt; triggers completion of second 1 candle
+    engine.process_trade(&quot;ETHUSDT&quot;, 102, 3020.0, 2.0, false, sec2_ms);
+
+    let active_guard = engine.active_candles.lock().unwrap();
+    let completed_guard = engine.completed_candles.lock().unwrap();
+
+    let active = active_guard.get(&quot;ETHUSDT&quot;).unwrap();
+    assert_eq!(active.timestamp_sec, 1700000001);
+    assert_eq!(active.open, 3020.0);
+
+    let history = completed_guard.get(&quot;ETHUSDT&quot;).unwrap();
+    assert_eq!(history.len(), 1);
+    let prev = &amp;history[0];
+    assert_eq!(prev.timestamp_sec, 1700000000);
+    assert_eq!(prev.open, 3000.0);
+    assert_eq!(prev.high, 3050.0);
+    assert_eq!(prev.close, 3050.0);
+}
+
+#[test]
+fn test_aggtrade_payload_processing() {
+    let engine = OhlcvEngine::new();
+    let now_ms = 1700000000000u64;
+
+    let payload = json!({
+        &quot;BTCUSDT&quot;: {
+            &quot;trade_id&quot;: 999,
+            &quot;price&quot;: &quot;60000.5&quot;,
+            &quot;quantity&quot;: &quot;2.5&quot;,
+            &quot;buyer_is_maker&quot;: false,
+            &quot;event_time&quot;: now_ms
+        }
+    });
+
+    let report = engine.process_aggtrade_payload(&amp;payload, now_ms);
+
+    assert!(report.contains(&quot;SANİYELİK OHLCV ÇUBUKLARI&quot;));
+    assert!(report.contains(&quot;BTCUSDT&quot;));
+    assert!(report.contains(&quot;60000.5000&quot;));
+    assert!(report.contains(&quot;2.5000&quot;));
+}
+</code></pre>
+        </details>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            flowchart: { curve: 'basis' }
+        });
+    </script>
+</body>
+</html>

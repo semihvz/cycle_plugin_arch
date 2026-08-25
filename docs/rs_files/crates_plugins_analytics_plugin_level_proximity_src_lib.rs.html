@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>lib.rs - Rust Analiz Dokümanı</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --border: #334155;
+            --code-bg: #090d16;
+            --verbal-bg: #131f37;
+            --analogy-bg: #1e1b4b;
+            --analogy-border: #818cf8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .back-link {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .back-link:hover { text-decoration: underline; }
+        h1 { font-size: 2rem; color: var(--accent); margin-bottom: 0.5rem; }
+        .file-path { font-family: 'Fira Code', monospace; color: var(--text-muted); font-size: 0.95rem; }
+        
+        .structs-container { margin: 1.5rem 0; }
+        .badge {
+            display: inline-block;
+            background: #0284c7;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-family: 'Fira Code', monospace;
+        }
+        .badge-struct { background: #7c3aed; }
+        
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .card h3 { color: var(--accent); margin-bottom: 0.5rem; font-size: 1.3rem; }
+        .card h4 { margin: 1.2rem 0 0.5rem 0; color: var(--text-muted); font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        .easy-analogy {
+            background: var(--analogy-bg);
+            border-left: 4px solid var(--analogy-border);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1rem;
+            color: #c7d2fe;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .verbal-explanation {
+            background: var(--verbal-bg);
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1.2rem;
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            margin-bottom: 1rem;
+        }
+        
+        .mermaid {
+            background: var(--code-bg);
+            padding: 1.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+        }
+        
+        details {
+            margin-top: 2rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Ana İndekse Dön</a>
+        <header>
+            <h1>lib.rs</h1>
+            <p class="file-path">crates/plugins/analytics/plugin_level_proximity/src/lib.rs</p>
+            <div class="structs-container">
+                <strong>Tanımlı Türler / Yapılar:</strong> <span class="badge badge-struct">LevelProximityEngine</span> <span class="badge badge-struct">LevelProximityMetrics</span> <span class="badge badge-struct">PluginState</span> 
+            </div>
+        </header>
+
+        <section>
+            <h2>Fonksiyon Analizleri & Basit Anlatımlar</h2>
+            
+        <div class="card">
+            <h3><span class="badge">fn</span> new</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>Yok</code> | <strong>Dönüş Tipi:</strong> <code>Self</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Dükkanı sabah açarken kasayı sıfırlama, rafları düzeltme ve tabelayı asma işlemidir. Her şey temiz bir başlangıç için hazır hale getirilir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Yapıcı (constructor) fonksiyon olarak nesnenin bellekte ilk durumları ve yapılandırmalarıyla başlatılmasını (instantiation) sağlar.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON new() -&gt; Self:
+    Self {
+    mid_prices: Mutex::new(HashMap::new()),
+    atr_values: Mutex::new(HashMap::new()),
+    support_levels: Mutex::new(HashMap::new()),
+    resistance_levels: Mutex::new(HashMap::new()),
+    symbol_metrics: Mutex::new(HashMap::new()),</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: new"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> process_payload</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self, _stream_id: &amp;str, json_data: &amp;Value, now_ms: u64</code> | <strong>Dönüş Tipi:</strong> <code>String</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>&amp;self, _stream_id: &amp;str, json_data: &amp;Value, now_ms: u64</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>String</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. İşlemi tamamlayarak <code>String</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON process_payload(&amp;self, _stream_id: &amp;str, json_data: &amp;Value, now_ms: u64) -&gt; String:
+    self.ingest_all(json_data, now_ms);
+    self.generate_report(now_ms)</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: process_payload"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> ingest_all</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self, json_data: &amp;Value, now_ms: u64</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>&amp;self, json_data: &amp;Value, now_ms: u64</code> verisini alır, kendi kurallarına göre işler ve sonucunda gerekli işlemi tamamlayan adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Listeyi veya veri kümesini sırayla döngüye alarak tarar.<br>4. İşlemi tamamlayarak <code>()</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON ingest_all(&amp;self, json_data: &amp;Value, now_ms: u64) -&gt; ():
+    self.ingest_bestprice(json_data, now_ms);
+    self.ingest_atr(json_data, now_ms);
+    self.ingest_ms_analyzer(json_data, now_ms);
+    EĞER let Some(obj) = json_data.as_object() İSE:
+        HER (_key, val) in obj.iter() İÇİN DÖNGÜ:
+            EĞER val.is_object() || val.is_array() İSE:
+                self.ingest_bestprice(val, now_ms);
+                self.ingest_atr(val, now_ms);
+                self.ingest_ms_analyzer(val, now_ms);</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: ingest_all"])
+    Start --> Cond1{"let Some(obj) = json_data.as_object()?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"val.is_object() || val.is_array()?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Loop3["Döngü: (_key, val) in obj.iter()"]
+    Loop3 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> ingest_bestprice</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self, json_data: &amp;Value, now_ms: u64</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>&amp;self, json_data: &amp;Value, now_ms: u64</code> verisini alır, kendi kurallarına göre işler ve sonucunda gerekli işlemi tamamlayan adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Listeyi veya veri kümesini sırayla döngüye alarak tarar.<br>4. İşlemi tamamlayarak <code>()</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON ingest_bestprice(&amp;self, json_data: &amp;Value, now_ms: u64) -&gt; ():
+    let mut mid_guard = self.mid_prices.lock().unwrap();
+    let target_obj = if let Some(inner) = json_data.get(&quot;stream_bestprice&quot;).and_then(|v| v.as_object()) {
+    inner
+    } else if let Some(obj) = json_data.as_object() {
+    obj
+    } else {
+    return;
+    };
+    HER (symbol, item) in target_obj.iter() İÇİN DÖNGÜ:
+        let bid = parse_f64(&amp;item[&quot;best_bid&quot;]);
+        let ask = parse_f64(&amp;item[&quot;best_ask&quot;]);
+        EĞER bid &gt; 0.0 || ask &gt; 0.0 İSE:
+            let mid = if bid &gt; 0.0 &amp;&amp; ask &gt; 0.0 { (bid + ask) / 2.0 } else { bid.max(ask) };
+            mid_guard.insert(symbol.clone(), (bid, ask, mid, now_ms));</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: ingest_bestprice"])
+    Start --> Cond1{"let Some(inner) = json_data.get('stream_bestprice').and_then(|v| v.as_object())?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"let Some(obj) = json_data.as_object()?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"bid &gt; 0.0 || ask &gt; 0.0?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> Loop4["Döngü: (symbol, item) in target_obj.iter()"]
+    Loop4 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> ingest_atr</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self, json_data: &amp;Value, now_ms: u64</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>&amp;self, json_data: &amp;Value, now_ms: u64</code> verisini alır, kendi kurallarına göre işler ve sonucunda gerekli işlemi tamamlayan adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Listeyi veya veri kümesini sırayla döngüye alarak tarar.<br>4. İşlemi tamamlayarak <code>()</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON ingest_atr(&amp;self, json_data: &amp;Value, now_ms: u64) -&gt; ():
+    let mut atr_guard = self.atr_values.lock().unwrap();
+    let process_val = |val: &amp;Value, guard: &amp;mut HashMap&lt;String, (f64, u64)&gt;| {
+    let symbol = val.get(&quot;symbol&quot;).and_then(|s| s.as_str()).unwrap_or(&quot;&quot;);
+    let atr = parse_f64(&amp;val[&quot;latest_atr&quot;])
+    .max(parse_f64(&amp;val[&quot;atr&quot;]))
+    .max(parse_f64(&amp;val[&quot;latest_tr&quot;]));
+    EĞER !symbol.is_empty() &amp;&amp; atr &gt; 0.0 İSE:
+        guard.insert(symbol.to_string(), (atr, now_ms));
+    };
+    EĞER let Some(metrics_map) = json_data.get(&quot;metrics&quot;).and_then(|m| m.as_object()) İSE:
+        HER (_stream, val) in metrics_map.iter() İÇİN DÖNGÜ:
+            process_val(val, &amp;mut atr_guard);
+        } else if let Some(arr) = json_data.as_array() {
+        HER val in arr İÇİN DÖNGÜ:
+            process_val(val, &amp;mut atr_guard);
+        } else if let Some(val) = json_data.as_object() {
+        process_val(json_data, &amp;mut atr_guard);
+        HER (_k, v) in val.iter() İÇİN DÖNGÜ:
+            EĞER v.is_object() İSE:
+                process_val(v, &amp;mut atr_guard);</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: ingest_atr"])
+    Start --> Cond1{"!symbol.is_empty() && atr &gt; 0.0?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"let Some(metrics_map) = json_data.get('metrics').and_then(|m| m.as_object())?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"let Some(arr) = json_data.as_array()?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> Loop4["Döngü: (_stream, val) in metrics_map.iter()"]
+    Loop4 --> Loop5["Döngü: val in arr"]
+    Loop5 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> ingest_ms_analyzer</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self, json_data: &amp;Value, now_ms: u64</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>&amp;self, json_data: &amp;Value, now_ms: u64</code> verisini alır, kendi kurallarına göre işler ve sonucunda gerekli işlemi tamamlayan adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Listeyi veya veri kümesini sırayla döngüye alarak tarar.<br>4. İşlemi tamamlayarak <code>()</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON ingest_ms_analyzer(&amp;self, json_data: &amp;Value, now_ms: u64) -&gt; ():
+    let mut sup_guard = self.support_levels.lock().unwrap();
+    let mut res_guard = self.resistance_levels.lock().unwrap();
+    let extract_from_obj = |obj: &amp;Value, s_guard: &amp;mut HashMap&lt;String, (f64, u64)&gt;, r_guard: &amp;mut HashMap&lt;String, (f64, u64)&gt;| {
+    let symbol = obj.get(&quot;symbol&quot;).and_then(|s| s.as_str()).unwrap_or(&quot;TACUSDT&quot;).to_string();
+    let current_price = parse_f64(&amp;obj[&quot;current_price&quot;]);
+    EĞER let Some(s_val) = obj.get(&quot;support_level&quot;).map(parse_f64).filter(|&amp;v| v &gt; 0.0) İSE:
+        s_guard.insert(symbol.clone(), (s_val, now_ms));
+    EĞER let Some(r_val) = obj.get(&quot;resistance_level&quot;).map(parse_f64).filter(|&amp;v| v &gt; 0.0) İSE:
+        r_guard.insert(symbol.clone(), (r_val, now_ms));
+    EĞER let Some(levels_arr) = obj.get(&quot;levels&quot;).and_then(|l| l.as_array()) İSE:
+        let mut closest_sup: Option&lt;f64&gt; = None;
+        let mut closest_res: Option&lt;f64&gt; = None;
+        HER level_obj in levels_arr İÇİN DÖNGÜ:
+            let price = parse_f64(&amp;level_obj[&quot;price&quot;]);
+            let l_type = level_obj.get(&quot;level_type&quot;).and_then(|t| t.as_str()).unwrap_or(&quot;&quot;);
+            EĞER price &gt; 0.0 İSE:
+                EĞER l_type.contains(&quot;SUPPORT&quot;) || (current_price &gt; 0.0 &amp;&amp; price &lt; current_price) İSE:
+                    EĞER closest_sup.map_or(true, |existing| price &gt; existing) İSE:
+                        closest_sup = Some(price);
+                    } else if l_type.contains(&quot;RESISTANCE&quot;) || (current_price &gt; 0.0 &amp;&amp; price &gt; current_price) {
+                    EĞER closest_res.map_or(true, |existing| price &lt; existing) İSE:
+                        closest_res = Some(price);
+        EĞER let Some(sup) = closest_sup İSE:
+            s_guard.insert(symbol.clone(), (sup, now_ms));
+        EĞER let Some(res) = closest_res İSE:
+            r_guard.insert(symbol.clone(), (res, now_ms));
+    };
+    EĞER let Some(obj) = json_data.as_object() İSE:
+        extract_from_obj(json_data, &amp;mut sup_guard, &amp;mut res_guard);
+        HER (_k, v) in obj.iter() İÇİN DÖNGÜ:
+            EĞER v.is_object() İSE:
+                extract_from_obj(v, &amp;mut sup_guard, &amp;mut res_guard);</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: ingest_ms_analyzer"])
+    Start --> Cond1{"let Some(s_val) = obj.get('support_level').map(parse_f64).filter(|&v| v &gt; 0.0)?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"let Some(r_val) = obj.get('resistance_level').map(parse_f64).filter(|&v| v &gt; 0.0)?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"let Some(levels_arr) = obj.get('levels').and_then(|l| l.as_array())?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> Loop4["Döngü: level_obj in levels_arr"]
+    Loop4 --> Loop5["Döngü: (_k, v) in obj.iter()"]
+    Loop5 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> generate_report</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self, now_ms: u64</code> | <strong>Dönüş Tipi:</strong> <code>String</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>&amp;self, now_ms: u64</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>String</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Listeyi veya veri kümesini sırayla döngüye alarak tarar.<br>4. İşlemi tamamlayarak <code>String</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON generate_report(&amp;self, now_ms: u64) -&gt; String:
+    let mid_guard = self.mid_prices.lock().unwrap();
+    let atr_guard = self.atr_values.lock().unwrap();
+    let sup_guard = self.support_levels.lock().unwrap();
+    let res_guard = self.resistance_levels.lock().unwrap();
+    let mut metrics_guard = self.symbol_metrics.lock().unwrap();
+    let mut symbols_set: std::collections::BTreeSet&lt;String&gt; = std::collections::BTreeSet::new();
+    symbols_set.insert(&quot;TACUSDT&quot;.to_string()); // Default target symbol
+    HER k_sym in mid_guard.keys() İÇİN DÖNGÜ:
+        HER k_sym in atr_guard.keys() İÇİN DÖNGÜ:
+            HER k_sym in sup_guard.keys() İÇİN DÖNGÜ:
+                let mut report = String::new();
+                report.push_str(&quot;============================================================\n&quot;);
+                report.push_str(&quot;🎯 KEY LEVEL ATR CALCULATOR (L - ATR_last)\n&quot;);
+                report.push_str(&quot;============================================================\n&quot;);
+                HER symbol in &amp;symbols_set İÇİN DÖNGÜ:
+                    let (best_bid, best_ask, mid_price) = mid_guard.get(symbol)
+                    .map(|&amp;(b, a, m, _)| (b, a, m))
+                    .unwrap_or((0.0, 0.0, 0.0));
+                    let last_atr = atr_guard.get(symbol).map(|&amp;(a, _)| a).unwrap_or(0.0);
+                    let support_lvl = sup_guard.get(symbol).map(|&amp;(s, _)| s);
+                    let resistance_lvl = res_guard.get(symbol).map(|&amp;(r, _)| r);
+                    // Direct L_s - ATR_last calculation
+                    let sup_minus_atr = support_lvl.and_then(|l_s| {
+                    EĞER last_atr &gt; 0.0 İSE:
+                        });
+                        // Direct L_r - ATR_last calculation
+                        let res_minus_atr = resistance_lvl.and_then(|l_r| {
+                        EĞER last_atr &gt; 0.0 İSE:
+                            });
+                            let metrics = LevelProximityMetrics {
+                            symbol: symbol.clone(),
+                            mid_price,
+                            best_bid,
+                            best_ask,
+                            last_atr,
+                            support_level: support_lvl,
+                            support_level_minus_atr: sup_minus_atr,
+                            resistance_level: resistance_lvl,
+                            resistance_level_minus_atr: res_minus_atr,
+                            last_updated_ms: now_ms,
+                            };
+                            metrics_guard.insert(symbol.clone(), metrics);
+                            report.push_str(&amp;format!(
+                            &quot;[{}]\n\
+                            ├─► Şimdiki Mid Fiyat: {:.8} (Bid: {:.8} / Ask: {:.8})\n\
+                            ├─► Son ATR (14)     : {:.8}\n\
+                            │\n&quot;,
+                            symbol, mid_price, best_bid, best_ask, last_atr
+                            ));
+                            // Support Display
+                            report.push_str(&quot; ├─► 🟢 DESTEK SEVİYESİ (SUPPORT)\n&quot;);
+                            EĞER let Some(l_s) = support_lvl İSE:
+                                report.push_str(&amp;format!(&quot; │    ├─► Seviye (L_s)       : {:.8}\n&quot;, l_s));
+                                EĞER let Some(val) = sup_minus_atr İSE:
+                                    report.push_str(&amp;format!(&quot; │    └─► L_s - ATR_last     : {:.8}\n&quot;, val));
+                                    } else {
+                                    report.push_str(&quot; │    └─► L_s - ATR_last     : ⏳ ATR Bekleniyor...\n&quot;);
+                                } else {
+                                report.push_str(&quot; │    └─► Seviye (L_s)       : ⏳ MS Analyzer Verisi Bekleniyor...\n&quot;);
+                            report.push_str(&quot; │\n&quot;);
+                            // Resistance Display
+                            report.push_str(&quot; └─► 🔴 DİRENÇ SEVİYESİ (RESISTANCE)\n&quot;);
+                            EĞER let Some(l_r) = resistance_lvl İSE:
+                                report.push_str(&amp;format!(&quot;      ├─► Seviye (L_r)       : {:.8}\n&quot;, l_r));
+                                EĞER let Some(val) = res_minus_atr İSE:
+                                    report.push_str(&amp;format!(&quot;      └─► L_r - ATR_last     : {:.8}\n&quot;, val));
+                                    } else {
+                                    report.push_str(&quot;      └─► L_r - ATR_last     : ⏳ ATR Bekleniyor...\n&quot;);
+                                } else {
+                                report.push_str(&quot;      └─► Seviye (L_r)       : ⏳ MS Analyzer Verisi Bekleniyor...\n&quot;);
+                            report.push(&#x27;\n&#x27;);
+                        report</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: generate_report"])
+    Start --> Cond1{"last_atr &gt; 0.0?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"last_atr &gt; 0.0?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"let Some(l_s) = support_lvl?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> Loop4["Döngü: k_sym in mid_guard.keys()"]
+    Loop4 --> Loop5["Döngü: k_sym in atr_guard.keys()"]
+    Loop5 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> get_metrics_json</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self</code> | <strong>Dönüş Tipi:</strong> <code>String</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>&amp;self</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>String</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. İşlemi tamamlayarak <code>String</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON get_metrics_json(&amp;self) -&gt; String:
+    let metrics_guard = self.symbol_metrics.lock().unwrap();
+    serde_json::to_string_pretty(&amp;*metrics_guard).unwrap_or_else(|_| &quot;{}&quot;.to_string())</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: get_metrics_json"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> parse_f64</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>val: &amp;Value</code> | <strong>Dönüş Tipi:</strong> <code>f64</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>val: &amp;Value</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>f64</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Farklı durum senaryolarına göre akışı uygun kola yönlendirir.<br>3. İşlemi tamamlayarak <code>f64</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON parse_f64(val: &amp;Value) -&gt; f64:
+    DURUM KONTROLÜ (val):
+        Value::Number(n) =&gt; n.as_f64().unwrap_or(0.0),
+        Value::String(s) =&gt; s.parse::&lt;f64&gt;().unwrap_or(0.0),
+        _ =&gt; 0.0,</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: parse_f64"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> init_plugin</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>state_out: *mut *mut c_void,</code> | <strong>Dönüş Tipi:</strong> <code>unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>state_out: *mut *mut c_void,</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. İşlemi tamamlayarak <code>unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON init_plugin(state_out: *mut *mut c_void,) -&gt; unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize:
+    let state = Box::new(PluginState {
+    is_running: Arc::new(AtomicBool::new(false)),
+    engine: Arc::new(Mutex::new(LevelProximityEngine::new())),
+    data: Arc::new(Mutex::new(Vec::new())),
+    });
+    *state_out = Box::into_raw(state) as *mut c_void;
+    handle_endpoint</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: init_plugin"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> handle_endpoint</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>plugin_state: *mut c_void,
+    endpoint_id: u32,
+    payload: *const u8,
+    payload_len: usize,
+    out_buf: *mut u8,
+    out_max_len: usize,</code> | <strong>Dönüş Tipi:</strong> <code>usize</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>plugin_state: *mut c_void,
+    endpoint_id: u32,
+    payload: *const u8,
+    payload_len: usize,
+    out_buf: *mut u8,
+    out_max_len: usize,</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>usize</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Farklı durum senaryolarına göre akışı uygun kola yönlendirir.<br>4. İşlemi tamamlayarak <code>usize</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON handle_endpoint(plugin_state: *mut c_void,
+    endpoint_id: u32,
+    payload: *const u8,
+    payload_len: usize,
+    out_buf: *mut u8,
+    out_max_len: usize,) -&gt; usize:
+    EĞER plugin_state.is_null() İSE:
+        DÖNDÜR 0
+    let state = &amp;*(plugin_state as *const PluginState);
+    DURUM KONTROLÜ (endpoint_id):
+        0 =&gt; { // Start
+        state.is_running.store(true, Ordering::Relaxed);
+        0
+    1 =&gt; { // Stop
+    state.is_running.store(false, Ordering::Relaxed);
+    0
+    2 =&gt; { // IsWorking
+    let running = state.is_running.load(Ordering::Relaxed);
+    EĞER out_max_len &gt;= 1 &amp;&amp; !out_buf.is_null() İSE:
+        *out_buf = if running { 1 } else { 0 };
+        1
+        } else {
+        EĞER running İSE:
+    3 =&gt; { // DataValid
+    1
+    4 | 5 =&gt; { // DataMonitor (4) / RawData (5)
+    let guard = state.data.lock().unwrap();
+    let len = guard.len().min(out_max_len);
+    EĞER len &gt; 0 &amp;&amp; !out_buf.is_null() İSE:
+        std::ptr::copy_nonoverlapping(guard.as_ptr(), out_buf, len);
+    len
+    6 =&gt; { // Inbox (Data routed from FlowEngine)
+    EĞER !state.is_running.load(Ordering::Relaxed) İSE:
+        DÖNDÜR 0
+    EĞER payload_len &gt; 32 &amp;&amp; !payload.is_null() İSE:
+        let slice = std::slice::from_raw_parts(payload, payload_len);
+        let header = &amp;slice[0..32];
+        let stream_id = std::str::from_utf8(header)
+        .unwrap_or(&quot;&quot;)
+        .trim_matches(char::from(0))
+        .trim()
+        .to_string();
+        EĞER let Ok(json_data) = serde_json::from_slice::&lt;Value&gt;(&amp;slice[32..]) İSE:
+            let now_ms = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap_or_default()
+            .as_millis() as u64;
+            let engine = state.engine.lock().unwrap();
+            let report = engine.process_payload(&amp;stream_id, &amp;json_data, now_ms);
+            let mut data_guard = state.data.lock().unwrap();
+            *data_guard = report.into_bytes();
+    0
+    _ =&gt; 0,</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: handle_endpoint"])
+    Start --> Cond1{"plugin_state.is_null()?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"out_max_len &gt;= 1 && !out_buf.is_null()?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"running?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> EndNode(["Döndür: 0"])
+            </div>
+        </div>
+        
+        </section>
+
+        <details>
+            <summary>Orijinal Rust Kaynak Kodunu Göster</summary>
+            <pre><code>use std::collections::HashMap;
+use std::ffi::c_void;
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::{Arc, Mutex};
+use std::time::{SystemTime, UNIX_EPOCH};
+use serde::{Deserialize, Serialize};
+use serde_json::Value;
+
+/// Direct Level Evaluation: Calculates L - ATR_last for Support and Resistance levels
+#[derive(Debug, Default, Clone, Serialize, Deserialize)]
+pub struct LevelProximityMetrics {
+    pub symbol: String,
+    pub mid_price: f64,
+    pub best_bid: f64,
+    pub best_ask: f64,
+    pub last_atr: f64,
+
+    // Support Level &amp; Direct Calculation (L_s - ATR_last)
+    pub support_level: Option&lt;f64&gt;,
+    pub support_level_minus_atr: Option&lt;f64&gt;,
+
+    // Resistance Level &amp; Direct Calculation (L_r - ATR_last)
+    pub resistance_level: Option&lt;f64&gt;,
+    pub resistance_level_minus_atr: Option&lt;f64&gt;,
+
+    pub last_updated_ms: u64,
+}
+
+pub struct LevelProximityEngine {
+    pub mid_prices: Mutex&lt;HashMap&lt;String, (f64, f64, f64, u64)&gt;&gt;, // (bid, ask, mid, ts)
+    pub atr_values: Mutex&lt;HashMap&lt;String, (f64, u64)&gt;&gt;,           // (atr, ts)
+    pub support_levels: Mutex&lt;HashMap&lt;String, (f64, u64)&gt;&gt;,       // (level, ts)
+    pub resistance_levels: Mutex&lt;HashMap&lt;String, (f64, u64)&gt;&gt;,    // (level, ts)
+    pub symbol_metrics: Mutex&lt;HashMap&lt;String, LevelProximityMetrics&gt;&gt;,
+}
+
+impl LevelProximityEngine {
+    pub fn new() -&gt; Self {
+        Self {
+            mid_prices: Mutex::new(HashMap::new()),
+            atr_values: Mutex::new(HashMap::new()),
+            support_levels: Mutex::new(HashMap::new()),
+            resistance_levels: Mutex::new(HashMap::new()),
+            symbol_metrics: Mutex::new(HashMap::new()),
+        }
+    }
+
+    /// Process incoming payloads from binance_gateway, plugin_atr, or plugin_ms_analyzer
+    pub fn process_payload(&amp;self, _stream_id: &amp;str, json_data: &amp;Value, now_ms: u64) -&gt; String {
+        self.ingest_all(json_data, now_ms);
+        self.generate_report(now_ms)
+    }
+
+    pub fn ingest_all(&amp;self, json_data: &amp;Value, now_ms: u64) {
+        self.ingest_bestprice(json_data, now_ms);
+        self.ingest_atr(json_data, now_ms);
+        self.ingest_ms_analyzer(json_data, now_ms);
+
+        if let Some(obj) = json_data.as_object() {
+            for (_key, val) in obj.iter() {
+                if val.is_object() || val.is_array() {
+                    self.ingest_bestprice(val, now_ms);
+                    self.ingest_atr(val, now_ms);
+                    self.ingest_ms_analyzer(val, now_ms);
+                }
+            }
+        }
+    }
+
+    pub fn ingest_bestprice(&amp;self, json_data: &amp;Value, now_ms: u64) {
+        let mut mid_guard = self.mid_prices.lock().unwrap();
+
+        let target_obj = if let Some(inner) = json_data.get(&quot;stream_bestprice&quot;).and_then(|v| v.as_object()) {
+            inner
+        } else if let Some(obj) = json_data.as_object() {
+            obj
+        } else {
+            return;
+        };
+
+        for (symbol, item) in target_obj.iter() {
+            let bid = parse_f64(&amp;item[&quot;best_bid&quot;]);
+            let ask = parse_f64(&amp;item[&quot;best_ask&quot;]);
+            if bid &gt; 0.0 || ask &gt; 0.0 {
+                let mid = if bid &gt; 0.0 &amp;&amp; ask &gt; 0.0 { (bid + ask) / 2.0 } else { bid.max(ask) };
+                mid_guard.insert(symbol.clone(), (bid, ask, mid, now_ms));
+            }
+        }
+    }
+
+    pub fn ingest_atr(&amp;self, json_data: &amp;Value, now_ms: u64) {
+        let mut atr_guard = self.atr_values.lock().unwrap();
+
+        let process_val = |val: &amp;Value, guard: &amp;mut HashMap&lt;String, (f64, u64)&gt;| {
+            let symbol = val.get(&quot;symbol&quot;).and_then(|s| s.as_str()).unwrap_or(&quot;&quot;);
+            let atr = parse_f64(&amp;val[&quot;latest_atr&quot;])
+                .max(parse_f64(&amp;val[&quot;atr&quot;]))
+                .max(parse_f64(&amp;val[&quot;latest_tr&quot;]));
+            if !symbol.is_empty() &amp;&amp; atr &gt; 0.0 {
+                guard.insert(symbol.to_string(), (atr, now_ms));
+            }
+        };
+
+        if let Some(metrics_map) = json_data.get(&quot;metrics&quot;).and_then(|m| m.as_object()) {
+            for (_stream, val) in metrics_map.iter() {
+                process_val(val, &amp;mut atr_guard);
+            }
+        } else if let Some(arr) = json_data.as_array() {
+            for val in arr {
+                process_val(val, &amp;mut atr_guard);
+            }
+        } else if let Some(val) = json_data.as_object() {
+            process_val(json_data, &amp;mut atr_guard);
+            for (_k, v) in val.iter() {
+                if v.is_object() {
+                    process_val(v, &amp;mut atr_guard);
+                }
+            }
+        }
+    }
+
+    pub fn ingest_ms_analyzer(&amp;self, json_data: &amp;Value, now_ms: u64) {
+        let mut sup_guard = self.support_levels.lock().unwrap();
+        let mut res_guard = self.resistance_levels.lock().unwrap();
+
+        let extract_from_obj = |obj: &amp;Value, s_guard: &amp;mut HashMap&lt;String, (f64, u64)&gt;, r_guard: &amp;mut HashMap&lt;String, (f64, u64)&gt;| {
+            let symbol = obj.get(&quot;symbol&quot;).and_then(|s| s.as_str()).unwrap_or(&quot;TACUSDT&quot;).to_string();
+            let current_price = parse_f64(&amp;obj[&quot;current_price&quot;]);
+
+            if let Some(s_val) = obj.get(&quot;support_level&quot;).map(parse_f64).filter(|&amp;v| v &gt; 0.0) {
+                s_guard.insert(symbol.clone(), (s_val, now_ms));
+            }
+            if let Some(r_val) = obj.get(&quot;resistance_level&quot;).map(parse_f64).filter(|&amp;v| v &gt; 0.0) {
+                r_guard.insert(symbol.clone(), (r_val, now_ms));
+            }
+
+            if let Some(levels_arr) = obj.get(&quot;levels&quot;).and_then(|l| l.as_array()) {
+                let mut closest_sup: Option&lt;f64&gt; = None;
+                let mut closest_res: Option&lt;f64&gt; = None;
+
+                for level_obj in levels_arr {
+                    let price = parse_f64(&amp;level_obj[&quot;price&quot;]);
+                    let l_type = level_obj.get(&quot;level_type&quot;).and_then(|t| t.as_str()).unwrap_or(&quot;&quot;);
+
+                    if price &gt; 0.0 {
+                        if l_type.contains(&quot;SUPPORT&quot;) || (current_price &gt; 0.0 &amp;&amp; price &lt; current_price) {
+                            if closest_sup.map_or(true, |existing| price &gt; existing) {
+                                closest_sup = Some(price);
+                            }
+                        } else if l_type.contains(&quot;RESISTANCE&quot;) || (current_price &gt; 0.0 &amp;&amp; price &gt; current_price) {
+                            if closest_res.map_or(true, |existing| price &lt; existing) {
+                                closest_res = Some(price);
+                            }
+                        }
+                    }
+                }
+
+                if let Some(sup) = closest_sup {
+                    s_guard.insert(symbol.clone(), (sup, now_ms));
+                }
+                if let Some(res) = closest_res {
+                    r_guard.insert(symbol.clone(), (res, now_ms));
+                }
+            }
+        };
+
+        if let Some(obj) = json_data.as_object() {
+            extract_from_obj(json_data, &amp;mut sup_guard, &amp;mut res_guard);
+            for (_k, v) in obj.iter() {
+                if v.is_object() {
+                    extract_from_obj(v, &amp;mut sup_guard, &amp;mut res_guard);
+                }
+            }
+        }
+    }
+
+    pub fn generate_report(&amp;self, now_ms: u64) -&gt; String {
+        let mid_guard = self.mid_prices.lock().unwrap();
+        let atr_guard = self.atr_values.lock().unwrap();
+        let sup_guard = self.support_levels.lock().unwrap();
+        let res_guard = self.resistance_levels.lock().unwrap();
+        let mut metrics_guard = self.symbol_metrics.lock().unwrap();
+
+        let mut symbols_set: std::collections::BTreeSet&lt;String&gt; = std::collections::BTreeSet::new();
+        symbols_set.insert(&quot;TACUSDT&quot;.to_string()); // Default target symbol
+        for k_sym in mid_guard.keys() { symbols_set.insert(k_sym.clone()); }
+        for k_sym in atr_guard.keys() { symbols_set.insert(k_sym.clone()); }
+        for k_sym in sup_guard.keys() { symbols_set.insert(k_sym.clone()); }
+
+        let mut report = String::new();
+        report.push_str(&quot;============================================================\n&quot;);
+        report.push_str(&quot;🎯 KEY LEVEL ATR CALCULATOR (L - ATR_last)\n&quot;);
+        report.push_str(&quot;============================================================\n&quot;);
+
+        for symbol in &amp;symbols_set {
+            let (best_bid, best_ask, mid_price) = mid_guard.get(symbol)
+                .map(|&amp;(b, a, m, _)| (b, a, m))
+                .unwrap_or((0.0, 0.0, 0.0));
+
+            let last_atr = atr_guard.get(symbol).map(|&amp;(a, _)| a).unwrap_or(0.0);
+            let support_lvl = sup_guard.get(symbol).map(|&amp;(s, _)| s);
+            let resistance_lvl = res_guard.get(symbol).map(|&amp;(r, _)| r);
+
+            // Direct L_s - ATR_last calculation
+            let sup_minus_atr = support_lvl.and_then(|l_s| {
+                if last_atr &gt; 0.0 { Some(l_s - last_atr) } else { None }
+            });
+
+            // Direct L_r - ATR_last calculation
+            let res_minus_atr = resistance_lvl.and_then(|l_r| {
+                if last_atr &gt; 0.0 { Some(l_r - last_atr) } else { None }
+            });
+
+            let metrics = LevelProximityMetrics {
+                symbol: symbol.clone(),
+                mid_price,
+                best_bid,
+                best_ask,
+                last_atr,
+                support_level: support_lvl,
+                support_level_minus_atr: sup_minus_atr,
+                resistance_level: resistance_lvl,
+                resistance_level_minus_atr: res_minus_atr,
+                last_updated_ms: now_ms,
+            };
+
+            metrics_guard.insert(symbol.clone(), metrics);
+
+            report.push_str(&amp;format!(
+                &quot;[{}]\n\
+                 ├─► Şimdiki Mid Fiyat: {:.8} (Bid: {:.8} / Ask: {:.8})\n\
+                 ├─► Son ATR (14)     : {:.8}\n\
+                 │\n&quot;,
+                symbol, mid_price, best_bid, best_ask, last_atr
+            ));
+
+            // Support Display
+            report.push_str(&quot; ├─► 🟢 DESTEK SEVİYESİ (SUPPORT)\n&quot;);
+            if let Some(l_s) = support_lvl {
+                report.push_str(&amp;format!(&quot; │    ├─► Seviye (L_s)       : {:.8}\n&quot;, l_s));
+                if let Some(val) = sup_minus_atr {
+                    report.push_str(&amp;format!(&quot; │    └─► L_s - ATR_last     : {:.8}\n&quot;, val));
+                } else {
+                    report.push_str(&quot; │    └─► L_s - ATR_last     : ⏳ ATR Bekleniyor...\n&quot;);
+                }
+            } else {
+                report.push_str(&quot; │    └─► Seviye (L_s)       : ⏳ MS Analyzer Verisi Bekleniyor...\n&quot;);
+            }
+            report.push_str(&quot; │\n&quot;);
+
+            // Resistance Display
+            report.push_str(&quot; └─► 🔴 DİRENÇ SEVİYESİ (RESISTANCE)\n&quot;);
+            if let Some(l_r) = resistance_lvl {
+                report.push_str(&amp;format!(&quot;      ├─► Seviye (L_r)       : {:.8}\n&quot;, l_r));
+                if let Some(val) = res_minus_atr {
+                    report.push_str(&amp;format!(&quot;      └─► L_r - ATR_last     : {:.8}\n&quot;, val));
+                } else {
+                    report.push_str(&quot;      └─► L_r - ATR_last     : ⏳ ATR Bekleniyor...\n&quot;);
+                }
+            } else {
+                report.push_str(&quot;      └─► Seviye (L_r)       : ⏳ MS Analyzer Verisi Bekleniyor...\n&quot;);
+            }
+            report.push(&#x27;\n&#x27;);
+        }
+        report
+    }
+
+    pub fn get_metrics_json(&amp;self) -&gt; String {
+        let metrics_guard = self.symbol_metrics.lock().unwrap();
+        serde_json::to_string_pretty(&amp;*metrics_guard).unwrap_or_else(|_| &quot;{}&quot;.to_string())
+    }
+}
+
+fn parse_f64(val: &amp;Value) -&gt; f64 {
+    match val {
+        Value::Number(n) =&gt; n.as_f64().unwrap_or(0.0),
+        Value::String(s) =&gt; s.parse::&lt;f64&gt;().unwrap_or(0.0),
+        _ =&gt; 0.0,
+    }
+}
+
+// C ABI Plugin State &amp; Exported Endpoints
+struct PluginState {
+    is_running: Arc&lt;AtomicBool&gt;,
+    engine: Arc&lt;Mutex&lt;LevelProximityEngine&gt;&gt;,
+    data: Arc&lt;Mutex&lt;Vec&lt;u8&gt;&gt;&gt;,
+}
+
+#[no_mangle]
+pub unsafe extern &quot;C&quot; fn init_plugin(
+    state_out: *mut *mut c_void,
+) -&gt; unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize {
+    let state = Box::new(PluginState {
+        is_running: Arc::new(AtomicBool::new(false)),
+        engine: Arc::new(Mutex::new(LevelProximityEngine::new())),
+        data: Arc::new(Mutex::new(Vec::new())),
+    });
+
+    *state_out = Box::into_raw(state) as *mut c_void;
+    handle_endpoint
+}
+
+pub unsafe extern &quot;C&quot; fn handle_endpoint(
+    plugin_state: *mut c_void,
+    endpoint_id: u32,
+    payload: *const u8,
+    payload_len: usize,
+    out_buf: *mut u8,
+    out_max_len: usize,
+) -&gt; usize {
+    if plugin_state.is_null() {
+        return 0;
+    }
+    let state = &amp;*(plugin_state as *const PluginState);
+
+    match endpoint_id {
+        0 =&gt; { // Start
+            state.is_running.store(true, Ordering::Relaxed);
+            0
+        }
+        1 =&gt; { // Stop
+            state.is_running.store(false, Ordering::Relaxed);
+            0
+        }
+        2 =&gt; { // IsWorking
+            let running = state.is_running.load(Ordering::Relaxed);
+            if out_max_len &gt;= 1 &amp;&amp; !out_buf.is_null() {
+                *out_buf = if running { 1 } else { 0 };
+                1
+            } else {
+                if running { 1 } else { 0 }
+            }
+        }
+        3 =&gt; { // DataValid
+            1
+        }
+        4 | 5 =&gt; { // DataMonitor (4) / RawData (5)
+            let guard = state.data.lock().unwrap();
+            let len = guard.len().min(out_max_len);
+            if len &gt; 0 &amp;&amp; !out_buf.is_null() {
+                std::ptr::copy_nonoverlapping(guard.as_ptr(), out_buf, len);
+            }
+            len
+        }
+        6 =&gt; { // Inbox (Data routed from FlowEngine)
+            if !state.is_running.load(Ordering::Relaxed) {
+                return 0;
+            }
+
+            if payload_len &gt; 32 &amp;&amp; !payload.is_null() {
+                let slice = std::slice::from_raw_parts(payload, payload_len);
+                let header = &amp;slice[0..32];
+                let stream_id = std::str::from_utf8(header)
+                    .unwrap_or(&quot;&quot;)
+                    .trim_matches(char::from(0))
+                    .trim()
+                    .to_string();
+
+                if let Ok(json_data) = serde_json::from_slice::&lt;Value&gt;(&amp;slice[32..]) {
+                    let now_ms = SystemTime::now()
+                        .duration_since(UNIX_EPOCH)
+                        .unwrap_or_default()
+                        .as_millis() as u64;
+
+                    let engine = state.engine.lock().unwrap();
+                    let report = engine.process_payload(&amp;stream_id, &amp;json_data, now_ms);
+
+                    let mut data_guard = state.data.lock().unwrap();
+                    *data_guard = report.into_bytes();
+                }
+            }
+            0
+        }
+        _ =&gt; 0,
+    }
+}
+</code></pre>
+        </details>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            flowchart: { curve: 'basis' }
+        });
+    </script>
+</body>
+</html>

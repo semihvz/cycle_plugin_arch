@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>app.rs - Rust Analiz Dokümanı</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --border: #334155;
+            --code-bg: #090d16;
+            --verbal-bg: #131f37;
+            --analogy-bg: #1e1b4b;
+            --analogy-border: #818cf8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .back-link {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .back-link:hover { text-decoration: underline; }
+        h1 { font-size: 2rem; color: var(--accent); margin-bottom: 0.5rem; }
+        .file-path { font-family: 'Fira Code', monospace; color: var(--text-muted); font-size: 0.95rem; }
+        
+        .structs-container { margin: 1.5rem 0; }
+        .badge {
+            display: inline-block;
+            background: #0284c7;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-family: 'Fira Code', monospace;
+        }
+        .badge-struct { background: #7c3aed; }
+        
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .card h3 { color: var(--accent); margin-bottom: 0.5rem; font-size: 1.3rem; }
+        .card h4 { margin: 1.2rem 0 0.5rem 0; color: var(--text-muted); font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        .easy-analogy {
+            background: var(--analogy-bg);
+            border-left: 4px solid var(--analogy-border);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1rem;
+            color: #c7d2fe;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .verbal-explanation {
+            background: var(--verbal-bg);
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1.2rem;
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            margin-bottom: 1rem;
+        }
+        
+        .mermaid {
+            background: var(--code-bg);
+            padding: 1.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+        }
+        
+        details {
+            margin-top: 2rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Ana İndekse Dön</a>
+        <header>
+            <h1>app.rs</h1>
+            <p class="file-path">crates/core/orchestrator/src/tui_interface/app.rs</p>
+            <div class="structs-container">
+                <strong>Tanımlı Türler / Yapılar:</strong> <span class="badge badge-struct">ActivePanel</span> <span class="badge badge-struct">App</span> <span class="badge badge-struct">ViewMode</span> 
+            </div>
+        </header>
+
+        <section>
+            <h2>Fonksiyon Analizleri & Basit Anlatımlar</h2>
+            
+        <div class="card">
+            <h3><span class="badge">fn</span> new</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>orchestrator: Arc&lt;Orchestrator&gt;, log_tx: broadcast::Sender&lt;String&gt;</code> | <strong>Dönüş Tipi:</strong> <code>Self</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Dükkanı sabah açarken kasayı sıfırlama, rafları düzeltme ve tabelayı asma işlemidir. Her şey temiz bir başlangıç için hazır hale getirilir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Yapıcı (constructor) fonksiyon olarak nesnenin bellekte ilk durumları ve yapılandırmalarıyla başlatılmasını (instantiation) sağlar.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON new(orchestrator: Arc&lt;Orchestrator&gt;, log_tx: broadcast::Sender&lt;String&gt;) -&gt; Self:
+    let mut sys = sysinfo::System::new_all();
+    sys.refresh_processes();
+    Self {
+    orchestrator,
+    log_tx,
+    selected: 0,
+    logs: Vec::new(),
+    monitored_data: None,
+    running: true,
+    mode: ViewMode::Main,
+    available_plugins: Vec::new(),
+    plugin_selected: 0,
+    active_tab: 0,
+    systems_panel_width: 30,
+    is_dragging_split: false,
+    monitor_scroll: 0,
+    sys,
+    input_shell: String::new(),
+    shell_history: Vec::new(),
+    textarea: None,
+    active_panel: ActivePanel::Systems,
+    hex_scroll: 0,
+    live_feed_scroll: 0,
+    logs_scroll: 0,
+    web_server_started: false,
+    web_shutdown_tx: None,
+    last_sys_refresh: std::time::Instant::now(),</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: new"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> refresh_sys_if_needed</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;mut self</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>&amp;mut self</code> verisini alır, kendi kurallarına göre işler ve sonucunda gerekli işlemi tamamlayan adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. İşlemi tamamlayarak <code>()</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON refresh_sys_if_needed(&amp;mut self) -&gt; ():
+    EĞER self.last_sys_refresh.elapsed().as_secs() &gt;= 2 İSE:
+        self.sys.refresh_processes();
+        self.last_sys_refresh = std::time::Instant::now();</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: refresh_sys_if_needed"])
+    Start --> Cond1{"self.last_sys_refresh.elapsed().as_secs() &gt;= 2?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> toggle_web_server</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;mut self</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>&amp;mut self</code> verisini alır, kendi kurallarına göre işler ve sonucunda gerekli işlemi tamamlayan adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. İşlemi tamamlayarak <code>()</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON toggle_web_server(&amp;mut self) -&gt; ():
+    EĞER !self.web_server_started || self.web_shutdown_tx.is_none() İSE:
+        let (tx, rx) = tokio::sync::oneshot::channel();
+        self.web_shutdown_tx = Some(tx);
+        self.web_server_started = true;
+        let orchestrator = self.orchestrator.clone();
+        let log_tx = self.log_tx.clone();
+        tokio::spawn(async move {
+        crate::web_server::start_web_server(orchestrator, log_tx, 8080, rx).await;
+        });
+        self.log(&quot;🚀 Web Arayüz Sunucusu Başlatıldı (Port 8080): http://localhost:8080&quot;);
+        } else {
+        EĞER let Some(tx) = self.web_shutdown_tx.take() İSE:
+            let _ = tx.send(());
+        self.web_server_started = false;
+        self.log(&quot;⏹️ Web Arayüz Sunucusu Durduruldu (Port 8080 Kapalı).&quot;);</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: toggle_web_server"])
+    Start --> Cond1{"!self.web_server_started || self.web_shutdown_tx.is_none()?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"let Some(tx) = self.web_shutdown_tx.take()?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> log</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;mut self, msg: &amp;str</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>&amp;mut self, msg: &amp;str</code> verisini alır, kendi kurallarına göre işler ve sonucunda gerekli işlemi tamamlayan adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. İşlemi tamamlayarak <code>()</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON log(&amp;mut self, msg: &amp;str) -&gt; ():
+    let now = chrono::Local::now();
+    let formatted = format!(&quot;[{}] {}&quot;, now.format(&quot;%H:%M:%S.%6f&quot;), msg);
+    self.logs.push(formatted.clone());
+    EĞER self.logs.len() &gt; 100 İSE:
+        self.logs.remove(0);
+    let _ = self.log_tx.send(formatted);</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: log"])
+    Start --> Cond1{"self.logs.len() &gt; 100?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        </section>
+
+        <details>
+            <summary>Orijinal Rust Kaynak Kodunu Göster</summary>
+            <pre><code>use crate::orchestrator::Orchestrator;
+use std::sync::Arc;
+use tokio::sync::broadcast;
+
+#[derive(PartialEq)]
+pub enum ViewMode {
+    Main,
+    PluginSelection,
+    ConfirmDelete(String),
+    ContextMenu(String, u16, u16),
+    Shell,
+    ConfigEditor,
+}
+
+#[derive(PartialEq, Clone, Copy, Debug)]
+pub enum ActivePanel {
+    Systems,
+    Hex,
+    LiveFeed,
+    Shell,
+    Logs,
+}
+
+pub struct App&lt;&#x27;a&gt; {
+    pub orchestrator: Arc&lt;Orchestrator&gt;,
+    pub log_tx: broadcast::Sender&lt;String&gt;,
+    pub selected: usize,
+    pub logs: Vec&lt;String&gt;,
+    pub monitored_data: Option&lt;Vec&lt;u8&gt;&gt;,
+    pub running: bool,
+    pub mode: ViewMode,
+    pub available_plugins: Vec&lt;String&gt;,
+    pub plugin_selected: usize,
+    pub active_tab: usize,
+    pub systems_panel_width: u16,
+    pub is_dragging_split: bool,
+    pub monitor_scroll: u16,
+    pub sys: sysinfo::System,
+    pub input_shell: String,
+    pub shell_history: Vec&lt;String&gt;,
+    pub textarea: Option&lt;tui_textarea::TextArea&lt;&#x27;a&gt;&gt;,
+    pub active_panel: ActivePanel,
+    pub hex_scroll: u16,
+    pub live_feed_scroll: u16,
+    pub logs_scroll: u16,
+    pub web_server_started: bool,
+    pub web_shutdown_tx: Option&lt;tokio::sync::oneshot::Sender&lt;()&gt;&gt;,
+    pub last_sys_refresh: std::time::Instant,
+}
+
+impl&lt;&#x27;a&gt; App&lt;&#x27;a&gt; {
+    pub fn new(orchestrator: Arc&lt;Orchestrator&gt;, log_tx: broadcast::Sender&lt;String&gt;) -&gt; Self {
+        let mut sys = sysinfo::System::new_all();
+        sys.refresh_processes();
+        Self {
+            orchestrator,
+            log_tx,
+            selected: 0,
+            logs: Vec::new(),
+            monitored_data: None,
+            running: true,
+            mode: ViewMode::Main,
+            available_plugins: Vec::new(),
+            plugin_selected: 0,
+            active_tab: 0,
+            systems_panel_width: 30,
+            is_dragging_split: false,
+            monitor_scroll: 0,
+            sys,
+            input_shell: String::new(),
+            shell_history: Vec::new(),
+            textarea: None,
+            active_panel: ActivePanel::Systems,
+            hex_scroll: 0,
+            live_feed_scroll: 0,
+            logs_scroll: 0,
+            web_server_started: false,
+            web_shutdown_tx: None,
+            last_sys_refresh: std::time::Instant::now(),
+        }
+    }
+
+    pub fn refresh_sys_if_needed(&amp;mut self) {
+        if self.last_sys_refresh.elapsed().as_secs() &gt;= 2 {
+            self.sys.refresh_processes();
+            self.last_sys_refresh = std::time::Instant::now();
+        }
+    }
+
+    pub fn toggle_web_server(&amp;mut self) {
+        if !self.web_server_started || self.web_shutdown_tx.is_none() {
+            let (tx, rx) = tokio::sync::oneshot::channel();
+            self.web_shutdown_tx = Some(tx);
+            self.web_server_started = true;
+
+            let orchestrator = self.orchestrator.clone();
+            let log_tx = self.log_tx.clone();
+            tokio::spawn(async move {
+                crate::web_server::start_web_server(orchestrator, log_tx, 8080, rx).await;
+            });
+            self.log(&quot;🚀 Web Arayüz Sunucusu Başlatıldı (Port 8080): http://localhost:8080&quot;);
+        } else {
+            if let Some(tx) = self.web_shutdown_tx.take() {
+                let _ = tx.send(());
+            }
+            self.web_server_started = false;
+            self.log(&quot;⏹️ Web Arayüz Sunucusu Durduruldu (Port 8080 Kapalı).&quot;);
+        }
+    }
+
+    pub fn log(&amp;mut self, msg: &amp;str) {
+        let now = chrono::Local::now();
+        let formatted = format!(&quot;[{}] {}&quot;, now.format(&quot;%H:%M:%S.%6f&quot;), msg);
+        self.logs.push(formatted.clone());
+        if self.logs.len() &gt; 100 {
+            self.logs.remove(0);
+        }
+        let _ = self.log_tx.send(formatted);
+    }
+}
+</code></pre>
+        </details>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            flowchart: { curve: 'basis' }
+        });
+    </script>
+</body>
+</html>

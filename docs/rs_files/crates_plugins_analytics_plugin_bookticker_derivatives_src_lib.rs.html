@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>lib.rs - Rust Analiz Dokümanı</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --border: #334155;
+            --code-bg: #090d16;
+            --verbal-bg: #131f37;
+            --analogy-bg: #1e1b4b;
+            --analogy-border: #818cf8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .back-link {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .back-link:hover { text-decoration: underline; }
+        h1 { font-size: 2rem; color: var(--accent); margin-bottom: 0.5rem; }
+        .file-path { font-family: 'Fira Code', monospace; color: var(--text-muted); font-size: 0.95rem; }
+        
+        .structs-container { margin: 1.5rem 0; }
+        .badge {
+            display: inline-block;
+            background: #0284c7;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-family: 'Fira Code', monospace;
+        }
+        .badge-struct { background: #7c3aed; }
+        
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .card h3 { color: var(--accent); margin-bottom: 0.5rem; font-size: 1.3rem; }
+        .card h4 { margin: 1.2rem 0 0.5rem 0; color: var(--text-muted); font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        .easy-analogy {
+            background: var(--analogy-bg);
+            border-left: 4px solid var(--analogy-border);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1rem;
+            color: #c7d2fe;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .verbal-explanation {
+            background: var(--verbal-bg);
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1.2rem;
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            margin-bottom: 1rem;
+        }
+        
+        .mermaid {
+            background: var(--code-bg);
+            padding: 1.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+        }
+        
+        details {
+            margin-top: 2rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Ana İndekse Dön</a>
+        <header>
+            <h1>lib.rs</h1>
+            <p class="file-path">crates/plugins/analytics/plugin_bookticker_derivatives/src/lib.rs</p>
+            <div class="structs-container">
+                <strong>Tanımlı Türler / Yapılar:</strong> <span class="badge badge-struct">BookTickerDerivativesEngine</span> <span class="badge badge-struct">DerivativeValues</span> <span class="badge badge-struct">PluginState</span> <span class="badge badge-struct">PricePoint</span> <span class="badge badge-struct">SymbolDerivativesMetrics</span> 
+            </div>
+        </header>
+
+        <section>
+            <h2>Fonksiyon Analizleri & Basit Anlatımlar</h2>
+            
+        <div class="card">
+            <h3><span class="badge">fn</span> new</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>Yok</code> | <strong>Dönüş Tipi:</strong> <code>Self</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Dükkanı sabah açarken kasayı sıfırlama, rafları düzeltme ve tabelayı asma işlemidir. Her şey temiz bir başlangıç için hazır hale getirilir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Yapıcı (constructor) fonksiyon olarak nesnenin bellekte ilk durumları ve yapılandırmalarıyla başlatılmasını (instantiation) sağlar.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON new() -&gt; Self:
+    Self {
+    window_ms: AtomicU64::new(30000), // Default 30,000 ms (30 seconds)
+    history: Mutex::new(HashMap::new()),
+    metrics: Mutex::new(HashMap::new()),</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: new"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> set_window_ms</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self, ms: u64</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>&amp;self, ms: u64</code> verisini alır, kendi kurallarına göre işler ve sonucunda gerekli işlemi tamamlayan adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. İşlemi tamamlayarak <code>()</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON set_window_ms(&amp;self, ms: u64) -&gt; ():
+    EĞER ms &gt;= 1000 İSE:
+        self.window_ms.store(ms, Ordering::Relaxed);</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: set_window_ms"])
+    Start --> Cond1{"ms &gt;= 1000?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> process_bestprice_payload</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self, json_data: &amp;Value, now_ms: u64</code> | <strong>Dönüş Tipi:</strong> <code>String</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>&amp;self, json_data: &amp;Value, now_ms: u64</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>String</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Listeyi veya veri kümesini sırayla döngüye alarak tarar.<br>4. İşlemi tamamlayarak <code>String</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON process_bestprice_payload(&amp;self, json_data: &amp;Value, now_ms: u64) -&gt; String:
+    let mut history_guard = self.history.lock().unwrap();
+    let mut metrics_guard = self.metrics.lock().unwrap();
+    let window_ms = self.window_ms.load(Ordering::Relaxed).max(1000);
+    let window_secs = window_ms as f64 / 1000.0;
+    // Ingest new points
+    EĞER let Some(obj) = json_data.as_object() İSE:
+        HER (symbol, item) in obj.iter() İÇİN DÖNGÜ:
+            let best_bid = parse_f64(&amp;item[&quot;best_bid&quot;]);
+            let best_ask = parse_f64(&amp;item[&quot;best_ask&quot;]);
+            let event_time = parse_u64(&amp;item[&quot;event_time&quot;])
+            .or_else(|| parse_u64(&amp;item[&quot;local_recv_time_ms&quot;]))
+            .unwrap_or(now_ms);
+            EĞER best_bid &gt; 0.0 || best_ask &gt; 0.0 İSE:
+                let deque = history_guard.entry(symbol.clone()).or_insert_with(VecDeque::new);
+                // Prevent pushing exact duplicate timestamps
+                EĞER deque.back().map_or(true, |last| last.timestamp_ms &lt; event_time) İSE:
+                    deque.push_back(PricePoint {
+                    timestamp_ms: event_time,
+                    best_bid,
+                    best_ask,
+                    });
+    // Compute rolling 30s window derivatives
+    let window_start_ms = now_ms.saturating_sub(window_ms);
+    let mut sorted_symbols: Vec&lt;String&gt; = history_guard.keys().cloned().collect();
+    sorted_symbols.sort();
+    let mut report = String::new();
+    report.push_str(&quot;============================================================\n&quot;);
+    report.push_str(&amp;format!(
+    &quot;📈 BOOKTICKER TÜREV ANALİZİ (PENCERE: {} ms / {:.1} sn)\n&quot;,
+    window_ms, window_secs
+    ));
+    report.push_str(&quot;============================================================\n&quot;);
+    EĞER sorted_symbols.is_empty() İSE:
+        report.push_str(&quot;Henüz en iyi alış/satış fiyat verisi alınmadı.\n&quot;);
+        } else {
+        HER symbol in &amp;sorted_symbols İÇİN DÖNGÜ:
+            EĞER let Some(deque) = history_guard.get_mut(symbol) İSE:
+                // Prune points older than 30 seconds
+                WHILE let Some(front) = deque.front() DÖNGÜSÜ:
+                    EĞER front.timestamp_ms &lt; window_start_ms İSE:
+                        deque.pop_front();
+                        } else {
+                        break;
+                let sample_count = deque.len();
+                let latest_bid = deque.back().map(|p| p.best_bid).unwrap_or(0.0);
+                let latest_ask = deque.back().map(|p| p.best_ask).unwrap_or(0.0);
+                let last_up_ms = deque.back().map(|p| p.timestamp_ms).unwrap_or(now_ms);
+                // Compute derivatives for Bid and Ask
+                let (bid_inst, bid_avg) = compute_derivatives(deque, true);
+                let (ask_inst, ask_avg) = compute_derivatives(deque, false);
+                metrics_guard.insert(
+                symbol.clone(),
+                SymbolDerivativesMetrics {
+                symbol: symbol.clone(),
+                latest_best_bid: latest_bid,
+                latest_best_ask: latest_ask,
+                bid_instantaneous: bid_inst.clone(),
+                ask_instantaneous: ask_inst.clone(),
+                bid_30s_avg: bid_avg.clone(),
+                ask_30s_avg: ask_avg.clone(),
+                sample_count,
+                last_updated_ms: last_up_ms,
+                },
+                );
+                report.push_str(&amp;format!(
+                &quot;[{}]  Bid: {:.8} | Ask: {:.8} (Örnek: {})\n\
+                ├─► ALİŞ (BID) TÜREVLERİ (Anlık / 30s Ort):\n\
+                │   ├─ 1. Türev (Hız/Vel) : {:+14.8} USDT/s | Ort: {:+14.8} USDT/s\n\
+                │   ├─ 2. Türev (İvme/Acc): {:+14.8} USDT/s²| Ort: {:+14.8} USDT/s²\n\
+                │   └─ 3. Türev (Sars/Jrk): {:+14.8} USDT/s³| Ort: {:+14.8} USDT/s³\n\
+                └─► SATIŞ (ASK) TÜREVLERİ (Anlık / 30s Ort):\n\
+                ├─ 1. Türev (Hız/Vel) : {:+14.8} USDT/s | Ort: {:+14.8} USDT/s\n\
+                ├─ 2. Türev (İvme/Acc): {:+14.8} USDT/s²| Ort: {:+14.8} USDT/s²\n\
+                └─ 3. Türev (Sars/Jrk): {:+14.8} USDT/s³| Ort: {:+14.8} USDT/s³\n\n&quot;,
+                symbol,
+                latest_bid,
+                latest_ask,
+                sample_count,
+                bid_inst.d1_velocity,
+                bid_avg.d1_velocity,
+                bid_inst.d2_acceleration,
+                bid_avg.d2_acceleration,
+                bid_inst.d3_jerk,
+                bid_avg.d3_jerk,
+                ask_inst.d1_velocity,
+                ask_avg.d1_velocity,
+                ask_inst.d2_acceleration,
+                ask_avg.d2_acceleration,
+                ask_inst.d3_jerk,
+                ask_avg.d3_jerk,
+                ));
+    report.push_str(&quot;============================================================\n&quot;);
+    report</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: process_bestprice_payload"])
+    Start --> Cond1{"let Some(obj) = json_data.as_object()?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"best_bid &gt; 0.0 || best_ask &gt; 0.0?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"deque.back().map_or(true, |last| last.timestamp_ms &lt; event_time)?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> Loop4["Döngü: (symbol, item) in obj.iter()"]
+    Loop4 --> Loop5["Döngü: symbol in &sorted_symbols"]
+    Loop5 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> get_formatted_report</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self</code> | <strong>Dönüş Tipi:</strong> <code>String</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>&amp;self</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>String</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Listeyi veya veri kümesini sırayla döngüye alarak tarar.<br>4. İşlemi tamamlayarak <code>String</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON get_formatted_report(&amp;self) -&gt; String:
+    let metrics_guard = self.metrics.lock().unwrap();
+    let window_ms = self.window_ms.load(Ordering::Relaxed);
+    let window_secs = window_ms as f64 / 1000.0;
+    let mut sorted_symbols: Vec&lt;String&gt; = metrics_guard.keys().cloned().collect();
+    sorted_symbols.sort();
+    let mut report = String::new();
+    report.push_str(&quot;============================================================\n&quot;);
+    report.push_str(&amp;format!(
+    &quot;📈 BOOKTICKER TÜREV ANALİZİ (PENCERE: {} ms / {:.1} sn)\n&quot;,
+    window_ms, window_secs
+    ));
+    report.push_str(&quot;============================================================\n&quot;);
+    EĞER sorted_symbols.is_empty() İSE:
+        report.push_str(&quot;Henüz en iyi alış/satış fiyat verisi alınmadı.\n&quot;);
+        } else {
+        HER symbol in &amp;sorted_symbols İÇİN DÖNGÜ:
+            EĞER let Some(m) = metrics_guard.get(symbol) İSE:
+                report.push_str(&amp;format!(
+                &quot;[{}]  Bid: {:.8} | Ask: {:.8} (Örnek: {})\n\
+                ├─► ALİŞ (BID) TÜREVLERİ (Anlık / 30s Ort):\n\
+                │   ├─ 1. Türev (Hız/Vel) : {:+14.8} USDT/s | Ort: {:+14.8} USDT/s\n\
+                │   ├─ 2. Türev (İvme/Acc): {:+14.8} USDT/s²| Ort: {:+14.8} USDT/s²\n\
+                │   └─ 3. Türev (Sars/Jrk): {:+14.8} USDT/s³| Ort: {:+14.8} USDT/s³\n\
+                └─► SATIŞ (ASK) TÜREVLERİ (Anlık / 30s Ort):\n\
+                ├─ 1. Türev (Hız/Vel) : {:+14.8} USDT/s | Ort: {:+14.8} USDT/s\n\
+                ├─ 2. Türev (İvme/Acc): {:+14.8} USDT/s²| Ort: {:+14.8} USDT/s²\n\
+                └─ 3. Türev (Sars/Jrk): {:+14.8} USDT/s³| Ort: {:+14.8} USDT/s³\n\n&quot;,
+                symbol,
+                m.latest_best_bid,
+                m.latest_best_ask,
+                m.sample_count,
+                m.bid_instantaneous.d1_velocity,
+                m.bid_30s_avg.d1_velocity,
+                m.bid_instantaneous.d2_acceleration,
+                m.bid_30s_avg.d2_acceleration,
+                m.bid_instantaneous.d3_jerk,
+                m.bid_30s_avg.d3_jerk,
+                m.ask_instantaneous.d1_velocity,
+                m.ask_30s_avg.d1_velocity,
+                m.ask_instantaneous.d2_acceleration,
+                m.ask_30s_avg.d2_acceleration,
+                m.ask_instantaneous.d3_jerk,
+                m.ask_30s_avg.d3_jerk,
+                ));
+    report.push_str(&quot;============================================================\n&quot;);
+    report</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: get_formatted_report"])
+    Start --> Cond1{"sorted_symbols.is_empty()?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"let Some(m) = metrics_guard.get(symbol)?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Loop3["Döngü: symbol in &sorted_symbols"]
+    Loop3 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> compute_derivatives</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>points: &amp;VecDeque&lt;PricePoint&gt;, is_bid: bool</code> | <strong>Dönüş Tipi:</strong> <code>(DerivativeValues, DerivativeValues)</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>points: &amp;VecDeque&lt;PricePoint&gt;, is_bid: bool</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>(DerivativeValues, DerivativeValues)</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Listeyi veya veri kümesini sırayla döngüye alarak tarar.<br>4. İşlemi tamamlayarak <code>(DerivativeValues, DerivativeValues)</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON compute_derivatives(points: &amp;VecDeque&lt;PricePoint&gt;, is_bid: bool) -&gt; (DerivativeValues, DerivativeValues):
+    EĞER points.len() &lt; 2 İSE:
+        DÖNDÜR (DerivativeValues::default(), DerivativeValues::default())
+    // Extract price array &amp; time array (in seconds)
+    let mut times: Vec&lt;f64&gt; = Vec::with_capacity(points.len());
+    let mut prices: Vec&lt;f64&gt; = Vec::with_capacity(points.len());
+    HER p in points İÇİN DÖNGÜ:
+        times.push(p.timestamp_ms as f64 / 1000.0);
+        prices.push(if is_bid { p.best_bid } else { p.best_ask });
+    // 1st derivatives (velocities): v[i] = (price[i] - price[i-1]) / dt
+    let mut v_times: Vec&lt;f64&gt; = Vec::new();
+    let mut v_vals: Vec&lt;f64&gt; = Vec::new();
+    HER i in 1..prices.len() İÇİN DÖNGÜ:
+        let dt = times[i] - times[i - 1];
+        EĞER dt &gt; 0.0 İSE:
+            let v = (prices[i] - prices[i - 1]) / dt;
+            v_times.push(times[i]);
+            v_vals.push(v);
+    // 2nd derivatives (accelerations): a[i] = (v[i] - v[i-1]) / dt
+    let mut a_times: Vec&lt;f64&gt; = Vec::new();
+    let mut a_vals: Vec&lt;f64&gt; = Vec::new();
+    HER i in 1..v_vals.len() İÇİN DÖNGÜ:
+        let dt = v_times[i] - v_times[i - 1];
+        EĞER dt &gt; 0.0 İSE:
+            let a = (v_vals[i] - v_vals[i - 1]) / dt;
+            a_times.push(v_times[i]);
+            a_vals.push(a);
+    // 3rd derivatives (jerks): j[i] = (a[i] - a[i-1]) / dt
+    let mut j_vals: Vec&lt;f64&gt; = Vec::new();
+    HER i in 1..a_vals.len() İÇİN DÖNGÜ:
+        let dt = a_times[i] - a_times[i - 1];
+        EĞER dt &gt; 0.0 İSE:
+            let j = (a_vals[i] - a_vals[i - 1]) / dt;
+            j_vals.push(j);
+    let inst_d1 = v_vals.last().copied().unwrap_or(0.0);
+    let inst_d2 = a_vals.last().copied().unwrap_or(0.0);
+    let inst_d3 = j_vals.last().copied().unwrap_or(0.0);
+    let avg_d1 = if !v_vals.is_empty() { v_vals.iter().sum::&lt;f64&gt;() / v_vals.len() as f64 } else { 0.0 };
+    let avg_d2 = if !a_vals.is_empty() { a_vals.iter().sum::&lt;f64&gt;() / a_vals.len() as f64 } else { 0.0 };
+    let avg_d3 = if !j_vals.is_empty() { j_vals.iter().sum::&lt;f64&gt;() / j_vals.len() as f64 } else { 0.0 };
+    (
+    DerivativeValues {
+    d1_velocity: inst_d1,
+    d2_acceleration: inst_d2,
+    d3_jerk: inst_d3,
+    },
+    DerivativeValues {
+    d1_velocity: avg_d1,
+    d2_acceleration: avg_d2,
+    d3_jerk: avg_d3,
+    },
+    )</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: compute_derivatives"])
+    Start --> Cond1{"points.len() &lt; 2?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"is_bid?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"dt &gt; 0.0?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> Loop4["Döngü: p in points"]
+    Loop4 --> Loop5["Döngü: i in 1..prices.len()"]
+    Loop5 --> EndNode(["Döndür: (DerivativeValues::default(), DerivativeValues::default())"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> parse_f64</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>val: &amp;Value</code> | <strong>Dönüş Tipi:</strong> <code>f64</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>val: &amp;Value</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>f64</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. İşlemi tamamlayarak <code>f64</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON parse_f64(val: &amp;Value) -&gt; f64:
+    EĞER let Some(f) = val.as_f64() İSE:
+        f
+        } else if let Some(s) = val.as_str() {
+        s.parse::&lt;f64&gt;().unwrap_or(0.0)
+        } else if let Some(i) = val.as_i64() {
+        i as f64
+        } else {
+        0.0</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: parse_f64"])
+    Start --> Cond1{"let Some(f) = val.as_f64()?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"let Some(s) = val.as_str()?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"let Some(i) = val.as_i64()?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> parse_u64</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>val: &amp;Value</code> | <strong>Dönüş Tipi:</strong> <code>Option&lt;u64&gt;</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>val: &amp;Value</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>Option&lt;u64&gt;</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. İşlemi tamamlayarak <code>Option&lt;u64&gt;</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON parse_u64(val: &amp;Value) -&gt; Option&lt;u64&gt;:
+    EĞER let Some(i) = val.as_u64() İSE:
+        Some(i)
+        } else if let Some(i) = val.as_i64() {
+        Some(i as u64)
+        } else if let Some(s) = val.as_str() {
+        s.parse::&lt;u64&gt;().ok()
+        } else {
+        None</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: parse_u64"])
+    Start --> Cond1{"let Some(i) = val.as_u64()?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"let Some(i) = val.as_i64()?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"let Some(s) = val.as_str()?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> init_plugin</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>state_out: *mut *mut c_void,</code> | <strong>Dönüş Tipi:</strong> <code>unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>state_out: *mut *mut c_void,</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. İşlemi tamamlayarak <code>unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON init_plugin(state_out: *mut *mut c_void,) -&gt; unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize:
+    let engine = Arc::new(BookTickerDerivativesEngine::new());
+    let initial_report = engine.get_formatted_report();
+    let state = Box::new(PluginState {
+    is_running: Arc::new(AtomicBool::new(false)),
+    engine,
+    data: Arc::new(Mutex::new(initial_report.into_bytes())),
+    });
+    unsafe {
+    *state_out = Box::into_raw(state) as *mut c_void;
+    handle_endpoint</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: init_plugin"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> handle_endpoint</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>plugin_state: *mut c_void,
+    endpoint_id: u32,
+    payload: *const u8,
+    payload_len: usize,
+    out_buf: *mut u8,
+    out_max_len: usize,</code> | <strong>Dönüş Tipi:</strong> <code>usize</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>plugin_state: *mut c_void,
+    endpoint_id: u32,
+    payload: *const u8,
+    payload_len: usize,
+    out_buf: *mut u8,
+    out_max_len: usize,</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>usize</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Farklı durum senaryolarına göre akışı uygun kola yönlendirir.<br>4. İşlemi tamamlayarak <code>usize</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON handle_endpoint(plugin_state: *mut c_void,
+    endpoint_id: u32,
+    payload: *const u8,
+    payload_len: usize,
+    out_buf: *mut u8,
+    out_max_len: usize,) -&gt; usize:
+    EĞER plugin_state.is_null() İSE:
+        DÖNDÜR 0
+    let state = &amp;*(plugin_state as *const PluginState);
+    DURUM KONTROLÜ (endpoint_id):
+        0 =&gt; { // Start
+        state.is_running.store(true, Ordering::Relaxed);
+        EĞER payload_len &gt; 0 &amp;&amp; !payload.is_null() İSE:
+            let slice = std::slice::from_raw_parts(payload, payload_len);
+            EĞER let Ok(config) = serde_json::from_slice::&lt;Value&gt;(slice) İSE:
+                let params = config.get(&quot;plugin_params&quot;).unwrap_or(&amp;config);
+                EĞER let Some(ms) = params.get(&quot;window_ms&quot;).and_then(|v| v.as_u64()) İSE:
+                    state.engine.set_window_ms(ms);
+                    } else if let Some(secs) = params.get(&quot;window_secs&quot;).and_then(|v| v.as_u64()) {
+                    state.engine.set_window_ms(secs * 1000);
+        0
+    1 =&gt; { // Stop
+    state.is_running.store(false, Ordering::Relaxed);
+    0
+    2 =&gt; { // IsWorking
+    let running = state.is_running.load(Ordering::Relaxed);
+    EĞER out_max_len &gt;= 1 &amp;&amp; !out_buf.is_null() İSE:
+        *out_buf = if running { 1 } else { 0 };
+        1
+        } else {
+        EĞER running İSE:
+    3 =&gt; { // DataValid
+    1
+    4 | 5 =&gt; { // DataMonitor (4) / RawData (5)
+    let guard = state.data.lock().unwrap();
+    let len = guard.len().min(out_max_len);
+    EĞER len &gt; 0 &amp;&amp; !out_buf.is_null() İSE:
+        std::ptr::copy_nonoverlapping(guard.as_ptr(), out_buf, len);
+    len
+    6 =&gt; { // Inbox (Data routed from FlowEngine)
+    EĞER !state.is_running.load(Ordering::Relaxed) İSE:
+        DÖNDÜR 0
+    EĞER payload_len &gt; 32 &amp;&amp; !payload.is_null() İSE:
+        let slice = std::slice::from_raw_parts(payload, payload_len);
+        let header = &amp;slice[0..32];
+        let stream_id = std::str::from_utf8(header)
+        .unwrap_or(&quot;&quot;)
+        .trim_matches(char::from(0))
+        .trim()
+        .to_string();
+        EĞER stream_id == &quot;stream_bestprice&quot; || stream_id.contains(&quot;bestprice&quot;) || stream_id.contains(&quot;bookticker&quot;) İSE:
+            EĞER let Ok(json_data) = serde_json::from_slice::&lt;Value&gt;(&amp;slice[32..]) İSE:
+                let now_ms = SystemTime::now()
+                .duration_since(UNIX_EPOCH)
+                .unwrap_or_default()
+                .as_millis() as u64;
+                let report = state.engine.process_bestprice_payload(&amp;json_data, now_ms);
+                // Update RAM buffer safely
+                let mut data_guard = state.data.lock().unwrap();
+                *data_guard = report.into_bytes();
+    0
+    _ =&gt; 0,</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: handle_endpoint"])
+    Start --> Cond1{"plugin_state.is_null()?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"payload_len &gt; 0 && !payload.is_null()?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"let Ok(config) = serde_json::from_slice::&lt;Value&gt;(slice)?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> EndNode(["Döndür: 0"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> test_derivatives_calculation_precision</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>Yok</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan hiçbir girdi almadan verisini alır, kendi kurallarına göre işler ve sonucunda gerekli işlemi tamamlayan adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. İşlemi tamamlayarak <code>()</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON test_derivatives_calculation_precision() -&gt; ():
+    let engine = BookTickerDerivativesEngine::new();
+    engine.set_window_ms(30000);
+    // Simulate 4 sequential ticks with constant velocity and acceleration
+    // t0 = 1000s, bid = 100.0
+    // t1 = 1001s, bid = 102.0 (v1 = +2.0)
+    // t2 = 1002s, bid = 105.0 (v2 = +3.0 =&gt; a1 = +1.0)
+    // t3 = 1003s, bid = 109.0 (v3 = +4.0 =&gt; a2 = +1.0 =&gt; j1 = 0.0)
+    let t0 = 1000000u64;
+    let t1 = 1001000u64;
+    let t2 = 1002000u64;
+    let t3 = 1003000u64;
+    let p0 = serde_json::json!({ &quot;BTCUSDT&quot;: { &quot;best_bid&quot;: &quot;100.0&quot;, &quot;best_ask&quot;: &quot;100.5&quot;, &quot;event_time&quot;: t0 } });
+    let p1 = serde_json::json!({ &quot;BTCUSDT&quot;: { &quot;best_bid&quot;: &quot;102.0&quot;, &quot;best_ask&quot;: &quot;102.5&quot;, &quot;event_time&quot;: t1 } });
+    let p2 = serde_json::json!({ &quot;BTCUSDT&quot;: { &quot;best_bid&quot;: &quot;105.0&quot;, &quot;best_ask&quot;: &quot;105.5&quot;, &quot;event_time&quot;: t2 } });
+    let p3 = serde_json::json!({ &quot;BTCUSDT&quot;: { &quot;best_bid&quot;: &quot;109.0&quot;, &quot;best_ask&quot;: &quot;109.5&quot;, &quot;event_time&quot;: t3 } });
+    engine.process_bestprice_payload(&amp;p0, t0);
+    engine.process_bestprice_payload(&amp;p1, t1);
+    engine.process_bestprice_payload(&amp;p2, t2);
+    let report = engine.process_bestprice_payload(&amp;p3, t3);
+    assert!(report.contains(&quot;BOOKTICKER TÜREV ANALİZİ&quot;));
+    assert!(report.contains(&quot;BTCUSDT&quot;));
+    let metrics_guard = engine.metrics.lock().unwrap();
+    let btc = metrics_guard.get(&quot;BTCUSDT&quot;).unwrap();
+    assert_eq!(btc.sample_count, 4);
+    assert_eq!(btc.latest_best_bid, 109.0);
+    assert_eq!(btc.latest_best_ask, 109.5);
+    // Velocity at t3 should be +4.0
+    assert!((btc.bid_instantaneous.d1_velocity - 4.0).abs() &lt; 1e-5);
+    // Acceleration at t3 should be +1.0
+    assert!((btc.bid_instantaneous.d2_acceleration - 1.0).abs() &lt; 1e-5);
+    // Jerk at t3 should be 0.0
+    assert!((btc.bid_instantaneous.d3_jerk - 0.0).abs() &lt; 1e-5);</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: test_derivatives_calculation_precision"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        </section>
+
+        <details>
+            <summary>Orijinal Rust Kaynak Kodunu Göster</summary>
+            <pre><code>use std::collections::{HashMap, VecDeque};
+use std::ffi::c_void;
+use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
+use std::sync::{Arc, Mutex};
+use std::time::{SystemTime, UNIX_EPOCH};
+use serde::{Deserialize, Serialize};
+use serde_json::Value;
+
+#[derive(Debug, Clone)]
+pub struct PricePoint {
+    pub timestamp_ms: u64,
+    pub best_bid: f64,
+    pub best_ask: f64,
+}
+
+#[derive(Debug, Default, Clone, Serialize, Deserialize)]
+pub struct DerivativeValues {
+    pub d1_velocity: f64,     // 1st derivative: rate of price change (USDT/s)
+    pub d2_acceleration: f64, // 2nd derivative: rate of velocity change (USDT/s²)
+    pub d3_jerk: f64,         // 3rd derivative: rate of acceleration change (USDT/s³)
+}
+
+#[derive(Debug, Default, Clone, Serialize, Deserialize)]
+pub struct SymbolDerivativesMetrics {
+    pub symbol: String,
+    pub latest_best_bid: f64,
+    pub latest_best_ask: f64,
+    pub bid_instantaneous: DerivativeValues,
+    pub ask_instantaneous: DerivativeValues,
+    pub bid_30s_avg: DerivativeValues,
+    pub ask_30s_avg: DerivativeValues,
+    pub sample_count: usize,
+    pub last_updated_ms: u64,
+}
+
+pub struct BookTickerDerivativesEngine {
+    pub window_ms: AtomicU64,
+    pub history: Mutex&lt;HashMap&lt;String, VecDeque&lt;PricePoint&gt;&gt;&gt;,
+    pub metrics: Mutex&lt;HashMap&lt;String, SymbolDerivativesMetrics&gt;&gt;,
+}
+
+impl BookTickerDerivativesEngine {
+    pub fn new() -&gt; Self {
+        Self {
+            window_ms: AtomicU64::new(30000), // Default 30,000 ms (30 seconds)
+            history: Mutex::new(HashMap::new()),
+            metrics: Mutex::new(HashMap::new()),
+        }
+    }
+
+    pub fn set_window_ms(&amp;self, ms: u64) {
+        if ms &gt;= 1000 {
+            self.window_ms.store(ms, Ordering::Relaxed);
+        }
+    }
+
+    pub fn process_bestprice_payload(&amp;self, json_data: &amp;Value, now_ms: u64) -&gt; String {
+        let mut history_guard = self.history.lock().unwrap();
+        let mut metrics_guard = self.metrics.lock().unwrap();
+        let window_ms = self.window_ms.load(Ordering::Relaxed).max(1000);
+        let window_secs = window_ms as f64 / 1000.0;
+
+        // Ingest new points
+        if let Some(obj) = json_data.as_object() {
+            for (symbol, item) in obj.iter() {
+                let best_bid = parse_f64(&amp;item[&quot;best_bid&quot;]);
+                let best_ask = parse_f64(&amp;item[&quot;best_ask&quot;]);
+                let event_time = parse_u64(&amp;item[&quot;event_time&quot;])
+                    .or_else(|| parse_u64(&amp;item[&quot;local_recv_time_ms&quot;]))
+                    .unwrap_or(now_ms);
+
+                if best_bid &gt; 0.0 || best_ask &gt; 0.0 {
+                    let deque = history_guard.entry(symbol.clone()).or_insert_with(VecDeque::new);
+                    // Prevent pushing exact duplicate timestamps
+                    if deque.back().map_or(true, |last| last.timestamp_ms &lt; event_time) {
+                        deque.push_back(PricePoint {
+                            timestamp_ms: event_time,
+                            best_bid,
+                            best_ask,
+                        });
+                    }
+                }
+            }
+        }
+
+        // Compute rolling 30s window derivatives
+        let window_start_ms = now_ms.saturating_sub(window_ms);
+        let mut sorted_symbols: Vec&lt;String&gt; = history_guard.keys().cloned().collect();
+        sorted_symbols.sort();
+
+        let mut report = String::new();
+        report.push_str(&quot;============================================================\n&quot;);
+        report.push_str(&amp;format!(
+            &quot;📈 BOOKTICKER TÜREV ANALİZİ (PENCERE: {} ms / {:.1} sn)\n&quot;,
+            window_ms, window_secs
+        ));
+        report.push_str(&quot;============================================================\n&quot;);
+
+        if sorted_symbols.is_empty() {
+            report.push_str(&quot;Henüz en iyi alış/satış fiyat verisi alınmadı.\n&quot;);
+        } else {
+            for symbol in &amp;sorted_symbols {
+                if let Some(deque) = history_guard.get_mut(symbol) {
+                    // Prune points older than 30 seconds
+                    while let Some(front) = deque.front() {
+                        if front.timestamp_ms &lt; window_start_ms {
+                            deque.pop_front();
+                        } else {
+                            break;
+                        }
+                    }
+
+                    let sample_count = deque.len();
+                    let latest_bid = deque.back().map(|p| p.best_bid).unwrap_or(0.0);
+                    let latest_ask = deque.back().map(|p| p.best_ask).unwrap_or(0.0);
+                    let last_up_ms = deque.back().map(|p| p.timestamp_ms).unwrap_or(now_ms);
+
+                    // Compute derivatives for Bid and Ask
+                    let (bid_inst, bid_avg) = compute_derivatives(deque, true);
+                    let (ask_inst, ask_avg) = compute_derivatives(deque, false);
+
+                    metrics_guard.insert(
+                        symbol.clone(),
+                        SymbolDerivativesMetrics {
+                            symbol: symbol.clone(),
+                            latest_best_bid: latest_bid,
+                            latest_best_ask: latest_ask,
+                            bid_instantaneous: bid_inst.clone(),
+                            ask_instantaneous: ask_inst.clone(),
+                            bid_30s_avg: bid_avg.clone(),
+                            ask_30s_avg: ask_avg.clone(),
+                            sample_count,
+                            last_updated_ms: last_up_ms,
+                        },
+                    );
+
+                    report.push_str(&amp;format!(
+                        &quot;[{}]  Bid: {:.8} | Ask: {:.8} (Örnek: {})\n\
+                         ├─► ALİŞ (BID) TÜREVLERİ (Anlık / 30s Ort):\n\
+                         │   ├─ 1. Türev (Hız/Vel) : {:+14.8} USDT/s | Ort: {:+14.8} USDT/s\n\
+                         │   ├─ 2. Türev (İvme/Acc): {:+14.8} USDT/s²| Ort: {:+14.8} USDT/s²\n\
+                         │   └─ 3. Türev (Sars/Jrk): {:+14.8} USDT/s³| Ort: {:+14.8} USDT/s³\n\
+                         └─► SATIŞ (ASK) TÜREVLERİ (Anlık / 30s Ort):\n\
+                             ├─ 1. Türev (Hız/Vel) : {:+14.8} USDT/s | Ort: {:+14.8} USDT/s\n\
+                             ├─ 2. Türev (İvme/Acc): {:+14.8} USDT/s²| Ort: {:+14.8} USDT/s²\n\
+                             └─ 3. Türev (Sars/Jrk): {:+14.8} USDT/s³| Ort: {:+14.8} USDT/s³\n\n&quot;,
+                        symbol,
+                        latest_bid,
+                        latest_ask,
+                        sample_count,
+                        bid_inst.d1_velocity,
+                        bid_avg.d1_velocity,
+                        bid_inst.d2_acceleration,
+                        bid_avg.d2_acceleration,
+                        bid_inst.d3_jerk,
+                        bid_avg.d3_jerk,
+                        ask_inst.d1_velocity,
+                        ask_avg.d1_velocity,
+                        ask_inst.d2_acceleration,
+                        ask_avg.d2_acceleration,
+                        ask_inst.d3_jerk,
+                        ask_avg.d3_jerk,
+                    ));
+                }
+            }
+        }
+        report.push_str(&quot;============================================================\n&quot;);
+        report
+    }
+
+    pub fn get_formatted_report(&amp;self) -&gt; String {
+        let metrics_guard = self.metrics.lock().unwrap();
+        let window_ms = self.window_ms.load(Ordering::Relaxed);
+        let window_secs = window_ms as f64 / 1000.0;
+        let mut sorted_symbols: Vec&lt;String&gt; = metrics_guard.keys().cloned().collect();
+        sorted_symbols.sort();
+
+        let mut report = String::new();
+        report.push_str(&quot;============================================================\n&quot;);
+        report.push_str(&amp;format!(
+            &quot;📈 BOOKTICKER TÜREV ANALİZİ (PENCERE: {} ms / {:.1} sn)\n&quot;,
+            window_ms, window_secs
+        ));
+        report.push_str(&quot;============================================================\n&quot;);
+
+        if sorted_symbols.is_empty() {
+            report.push_str(&quot;Henüz en iyi alış/satış fiyat verisi alınmadı.\n&quot;);
+        } else {
+            for symbol in &amp;sorted_symbols {
+                if let Some(m) = metrics_guard.get(symbol) {
+                    report.push_str(&amp;format!(
+                        &quot;[{}]  Bid: {:.8} | Ask: {:.8} (Örnek: {})\n\
+                         ├─► ALİŞ (BID) TÜREVLERİ (Anlık / 30s Ort):\n\
+                         │   ├─ 1. Türev (Hız/Vel) : {:+14.8} USDT/s | Ort: {:+14.8} USDT/s\n\
+                         │   ├─ 2. Türev (İvme/Acc): {:+14.8} USDT/s²| Ort: {:+14.8} USDT/s²\n\
+                         │   └─ 3. Türev (Sars/Jrk): {:+14.8} USDT/s³| Ort: {:+14.8} USDT/s³\n\
+                         └─► SATIŞ (ASK) TÜREVLERİ (Anlık / 30s Ort):\n\
+                             ├─ 1. Türev (Hız/Vel) : {:+14.8} USDT/s | Ort: {:+14.8} USDT/s\n\
+                             ├─ 2. Türev (İvme/Acc): {:+14.8} USDT/s²| Ort: {:+14.8} USDT/s²\n\
+                             └─ 3. Türev (Sars/Jrk): {:+14.8} USDT/s³| Ort: {:+14.8} USDT/s³\n\n&quot;,
+                        symbol,
+                        m.latest_best_bid,
+                        m.latest_best_ask,
+                        m.sample_count,
+                        m.bid_instantaneous.d1_velocity,
+                        m.bid_30s_avg.d1_velocity,
+                        m.bid_instantaneous.d2_acceleration,
+                        m.bid_30s_avg.d2_acceleration,
+                        m.bid_instantaneous.d3_jerk,
+                        m.bid_30s_avg.d3_jerk,
+                        m.ask_instantaneous.d1_velocity,
+                        m.ask_30s_avg.d1_velocity,
+                        m.ask_instantaneous.d2_acceleration,
+                        m.ask_30s_avg.d2_acceleration,
+                        m.ask_instantaneous.d3_jerk,
+                        m.ask_30s_avg.d3_jerk,
+                    ));
+                }
+            }
+        }
+        report.push_str(&quot;============================================================\n&quot;);
+        report
+    }
+}
+
+/// Calculate 1st, 2nd, and 3rd derivatives over a sequence of PricePoints
+fn compute_derivatives(points: &amp;VecDeque&lt;PricePoint&gt;, is_bid: bool) -&gt; (DerivativeValues, DerivativeValues) {
+    if points.len() &lt; 2 {
+        return (DerivativeValues::default(), DerivativeValues::default());
+    }
+
+    // Extract price array &amp; time array (in seconds)
+    let mut times: Vec&lt;f64&gt; = Vec::with_capacity(points.len());
+    let mut prices: Vec&lt;f64&gt; = Vec::with_capacity(points.len());
+
+    for p in points {
+        times.push(p.timestamp_ms as f64 / 1000.0);
+        prices.push(if is_bid { p.best_bid } else { p.best_ask });
+    }
+
+    // 1st derivatives (velocities): v[i] = (price[i] - price[i-1]) / dt
+    let mut v_times: Vec&lt;f64&gt; = Vec::new();
+    let mut v_vals: Vec&lt;f64&gt; = Vec::new();
+    for i in 1..prices.len() {
+        let dt = times[i] - times[i - 1];
+        if dt &gt; 0.0 {
+            let v = (prices[i] - prices[i - 1]) / dt;
+            v_times.push(times[i]);
+            v_vals.push(v);
+        }
+    }
+
+    // 2nd derivatives (accelerations): a[i] = (v[i] - v[i-1]) / dt
+    let mut a_times: Vec&lt;f64&gt; = Vec::new();
+    let mut a_vals: Vec&lt;f64&gt; = Vec::new();
+    for i in 1..v_vals.len() {
+        let dt = v_times[i] - v_times[i - 1];
+        if dt &gt; 0.0 {
+            let a = (v_vals[i] - v_vals[i - 1]) / dt;
+            a_times.push(v_times[i]);
+            a_vals.push(a);
+        }
+    }
+
+    // 3rd derivatives (jerks): j[i] = (a[i] - a[i-1]) / dt
+    let mut j_vals: Vec&lt;f64&gt; = Vec::new();
+    for i in 1..a_vals.len() {
+        let dt = a_times[i] - a_times[i - 1];
+        if dt &gt; 0.0 {
+            let j = (a_vals[i] - a_vals[i - 1]) / dt;
+            j_vals.push(j);
+        }
+    }
+
+    let inst_d1 = v_vals.last().copied().unwrap_or(0.0);
+    let inst_d2 = a_vals.last().copied().unwrap_or(0.0);
+    let inst_d3 = j_vals.last().copied().unwrap_or(0.0);
+
+    let avg_d1 = if !v_vals.is_empty() { v_vals.iter().sum::&lt;f64&gt;() / v_vals.len() as f64 } else { 0.0 };
+    let avg_d2 = if !a_vals.is_empty() { a_vals.iter().sum::&lt;f64&gt;() / a_vals.len() as f64 } else { 0.0 };
+    let avg_d3 = if !j_vals.is_empty() { j_vals.iter().sum::&lt;f64&gt;() / j_vals.len() as f64 } else { 0.0 };
+
+    (
+        DerivativeValues {
+            d1_velocity: inst_d1,
+            d2_acceleration: inst_d2,
+            d3_jerk: inst_d3,
+        },
+        DerivativeValues {
+            d1_velocity: avg_d1,
+            d2_acceleration: avg_d2,
+            d3_jerk: avg_d3,
+        },
+    )
+}
+
+fn parse_f64(val: &amp;Value) -&gt; f64 {
+    if let Some(f) = val.as_f64() {
+        f
+    } else if let Some(s) = val.as_str() {
+        s.parse::&lt;f64&gt;().unwrap_or(0.0)
+    } else if let Some(i) = val.as_i64() {
+        i as f64
+    } else {
+        0.0
+    }
+}
+
+fn parse_u64(val: &amp;Value) -&gt; Option&lt;u64&gt; {
+    if let Some(i) = val.as_u64() {
+        Some(i)
+    } else if let Some(i) = val.as_i64() {
+        Some(i as u64)
+    } else if let Some(s) = val.as_str() {
+        s.parse::&lt;u64&gt;().ok()
+    } else {
+        None
+    }
+}
+
+struct PluginState {
+    is_running: Arc&lt;AtomicBool&gt;,
+    engine: Arc&lt;BookTickerDerivativesEngine&gt;,
+    data: Arc&lt;Mutex&lt;Vec&lt;u8&gt;&gt;&gt;,
+}
+
+#[no_mangle]
+pub unsafe extern &quot;C&quot; fn init_plugin(
+    state_out: *mut *mut c_void,
+) -&gt; unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize {
+    let engine = Arc::new(BookTickerDerivativesEngine::new());
+    let initial_report = engine.get_formatted_report();
+
+    let state = Box::new(PluginState {
+        is_running: Arc::new(AtomicBool::new(false)),
+        engine,
+        data: Arc::new(Mutex::new(initial_report.into_bytes())),
+    });
+
+    unsafe {
+        *state_out = Box::into_raw(state) as *mut c_void;
+    }
+
+    handle_endpoint
+}
+
+unsafe extern &quot;C&quot; fn handle_endpoint(
+    plugin_state: *mut c_void,
+    endpoint_id: u32,
+    payload: *const u8,
+    payload_len: usize,
+    out_buf: *mut u8,
+    out_max_len: usize,
+) -&gt; usize {
+    if plugin_state.is_null() {
+        return 0;
+    }
+    let state = &amp;*(plugin_state as *const PluginState);
+
+    match endpoint_id {
+        0 =&gt; { // Start
+            state.is_running.store(true, Ordering::Relaxed);
+
+            if payload_len &gt; 0 &amp;&amp; !payload.is_null() {
+                let slice = std::slice::from_raw_parts(payload, payload_len);
+                if let Ok(config) = serde_json::from_slice::&lt;Value&gt;(slice) {
+                    let params = config.get(&quot;plugin_params&quot;).unwrap_or(&amp;config);
+                    if let Some(ms) = params.get(&quot;window_ms&quot;).and_then(|v| v.as_u64()) {
+                        state.engine.set_window_ms(ms);
+                    } else if let Some(secs) = params.get(&quot;window_secs&quot;).and_then(|v| v.as_u64()) {
+                        state.engine.set_window_ms(secs * 1000);
+                    }
+                }
+            }
+            0
+        }
+        1 =&gt; { // Stop
+            state.is_running.store(false, Ordering::Relaxed);
+            0
+        }
+        2 =&gt; { // IsWorking
+            let running = state.is_running.load(Ordering::Relaxed);
+            if out_max_len &gt;= 1 &amp;&amp; !out_buf.is_null() {
+                *out_buf = if running { 1 } else { 0 };
+                1
+            } else {
+                if running { 1 } else { 0 }
+            }
+        }
+        3 =&gt; { // DataValid
+            1
+        }
+        4 | 5 =&gt; { // DataMonitor (4) / RawData (5)
+            let guard = state.data.lock().unwrap();
+            let len = guard.len().min(out_max_len);
+            if len &gt; 0 &amp;&amp; !out_buf.is_null() {
+                std::ptr::copy_nonoverlapping(guard.as_ptr(), out_buf, len);
+            }
+            len
+        }
+        6 =&gt; { // Inbox (Data routed from FlowEngine)
+            if !state.is_running.load(Ordering::Relaxed) {
+                return 0;
+            }
+
+            if payload_len &gt; 32 &amp;&amp; !payload.is_null() {
+                let slice = std::slice::from_raw_parts(payload, payload_len);
+                let header = &amp;slice[0..32];
+                let stream_id = std::str::from_utf8(header)
+                    .unwrap_or(&quot;&quot;)
+                    .trim_matches(char::from(0))
+                    .trim()
+                    .to_string();
+
+                if stream_id == &quot;stream_bestprice&quot; || stream_id.contains(&quot;bestprice&quot;) || stream_id.contains(&quot;bookticker&quot;) {
+                    if let Ok(json_data) = serde_json::from_slice::&lt;Value&gt;(&amp;slice[32..]) {
+                        let now_ms = SystemTime::now()
+                            .duration_since(UNIX_EPOCH)
+                            .unwrap_or_default()
+                            .as_millis() as u64;
+
+                        let report = state.engine.process_bestprice_payload(&amp;json_data, now_ms);
+
+                        // Update RAM buffer safely
+                        let mut data_guard = state.data.lock().unwrap();
+                        *data_guard = report.into_bytes();
+                    }
+                }
+            }
+            0
+        }
+        _ =&gt; 0,
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_derivatives_calculation_precision() {
+        let engine = BookTickerDerivativesEngine::new();
+        engine.set_window_ms(30000);
+
+        // Simulate 4 sequential ticks with constant velocity and acceleration
+        // t0 = 1000s, bid = 100.0
+        // t1 = 1001s, bid = 102.0 (v1 = +2.0)
+        // t2 = 1002s, bid = 105.0 (v2 = +3.0 =&gt; a1 = +1.0)
+        // t3 = 1003s, bid = 109.0 (v3 = +4.0 =&gt; a2 = +1.0 =&gt; j1 = 0.0)
+        let t0 = 1000000u64;
+        let t1 = 1001000u64;
+        let t2 = 1002000u64;
+        let t3 = 1003000u64;
+
+        let p0 = serde_json::json!({ &quot;BTCUSDT&quot;: { &quot;best_bid&quot;: &quot;100.0&quot;, &quot;best_ask&quot;: &quot;100.5&quot;, &quot;event_time&quot;: t0 } });
+        let p1 = serde_json::json!({ &quot;BTCUSDT&quot;: { &quot;best_bid&quot;: &quot;102.0&quot;, &quot;best_ask&quot;: &quot;102.5&quot;, &quot;event_time&quot;: t1 } });
+        let p2 = serde_json::json!({ &quot;BTCUSDT&quot;: { &quot;best_bid&quot;: &quot;105.0&quot;, &quot;best_ask&quot;: &quot;105.5&quot;, &quot;event_time&quot;: t2 } });
+        let p3 = serde_json::json!({ &quot;BTCUSDT&quot;: { &quot;best_bid&quot;: &quot;109.0&quot;, &quot;best_ask&quot;: &quot;109.5&quot;, &quot;event_time&quot;: t3 } });
+
+        engine.process_bestprice_payload(&amp;p0, t0);
+        engine.process_bestprice_payload(&amp;p1, t1);
+        engine.process_bestprice_payload(&amp;p2, t2);
+        let report = engine.process_bestprice_payload(&amp;p3, t3);
+
+        assert!(report.contains(&quot;BOOKTICKER TÜREV ANALİZİ&quot;));
+        assert!(report.contains(&quot;BTCUSDT&quot;));
+
+        let metrics_guard = engine.metrics.lock().unwrap();
+        let btc = metrics_guard.get(&quot;BTCUSDT&quot;).unwrap();
+
+        assert_eq!(btc.sample_count, 4);
+        assert_eq!(btc.latest_best_bid, 109.0);
+        assert_eq!(btc.latest_best_ask, 109.5);
+
+        // Velocity at t3 should be +4.0
+        assert!((btc.bid_instantaneous.d1_velocity - 4.0).abs() &lt; 1e-5);
+        // Acceleration at t3 should be +1.0
+        assert!((btc.bid_instantaneous.d2_acceleration - 1.0).abs() &lt; 1e-5);
+        // Jerk at t3 should be 0.0
+        assert!((btc.bid_instantaneous.d3_jerk - 0.0).abs() &lt; 1e-5);
+    }
+}
+</code></pre>
+        </details>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            flowchart: { curve: 'basis' }
+        });
+    </script>
+</body>
+</html>

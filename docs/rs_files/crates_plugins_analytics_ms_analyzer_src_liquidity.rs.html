@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>liquidity.rs - Rust Analiz Dokümanı</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --border: #334155;
+            --code-bg: #090d16;
+            --verbal-bg: #131f37;
+            --analogy-bg: #1e1b4b;
+            --analogy-border: #818cf8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .back-link {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .back-link:hover { text-decoration: underline; }
+        h1 { font-size: 2rem; color: var(--accent); margin-bottom: 0.5rem; }
+        .file-path { font-family: 'Fira Code', monospace; color: var(--text-muted); font-size: 0.95rem; }
+        
+        .structs-container { margin: 1.5rem 0; }
+        .badge {
+            display: inline-block;
+            background: #0284c7;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-family: 'Fira Code', monospace;
+        }
+        .badge-struct { background: #7c3aed; }
+        
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .card h3 { color: var(--accent); margin-bottom: 0.5rem; font-size: 1.3rem; }
+        .card h4 { margin: 1.2rem 0 0.5rem 0; color: var(--text-muted); font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        .easy-analogy {
+            background: var(--analogy-bg);
+            border-left: 4px solid var(--analogy-border);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1rem;
+            color: #c7d2fe;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .verbal-explanation {
+            background: var(--verbal-bg);
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1.2rem;
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            margin-bottom: 1rem;
+        }
+        
+        .mermaid {
+            background: var(--code-bg);
+            padding: 1.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+        }
+        
+        details {
+            margin-top: 2rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Ana İndekse Dön</a>
+        <header>
+            <h1>liquidity.rs</h1>
+            <p class="file-path">crates/plugins/analytics/ms_analyzer/src/liquidity.rs</p>
+            <div class="structs-container">
+                <strong>Tanımlı Türler / Yapılar:</strong> <span class="badge badge-struct">LiquidityAnalysis</span> <span class="badge badge-struct">NodeType</span> <span class="badge badge-struct">VolumeNode</span> 
+            </div>
+        </header>
+
+        <section>
+            <h2>Fonksiyon Analizleri & Basit Anlatımlar</h2>
+            
+        <div class="card">
+            <h3><span class="badge">fn</span> vwap</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>klines: &amp;[Kline]</code> | <strong>Dönüş Tipi:</strong> <code>Decimal</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>klines: &amp;[Kline]</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>Decimal</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Listeyi veya veri kümesini sırayla döngüye alarak tarar.<br>4. İşlemi tamamlayarak <code>Decimal</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON vwap(klines: &amp;[Kline]) -&gt; Decimal:
+    let mut cum_tp_vol = Decimal::ZERO;
+    let mut cum_vol = Decimal::ZERO;
+    HER k in klines İÇİN DÖNGÜ:
+        let typical_price = (k.high + k.low + k.close) / Decimal::from(3);
+        cum_tp_vol += typical_price * k.volume;
+        cum_vol += k.volume;
+    EĞER cum_vol == Decimal::ZERO İSE:
+        DÖNDÜR Decimal::ZERO
+    cum_tp_vol / cum_vol</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: vwap"])
+    Start --> Cond1{"cum_vol == Decimal::ZERO?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Loop2["Döngü: k in klines"]
+    Loop2 --> EndNode(["Döndür: Decimal::ZERO"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> vwap_std_dev</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>klines: &amp;[Kline], vwap_val: Decimal</code> | <strong>Dönüş Tipi:</strong> <code>Decimal</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>klines: &amp;[Kline], vwap_val: Decimal</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>Decimal</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Listeyi veya veri kümesini sırayla döngüye alarak tarar.<br>4. İşlemi tamamlayarak <code>Decimal</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON vwap_std_dev(klines: &amp;[Kline], vwap_val: Decimal) -&gt; Decimal:
+    EĞER klines.is_empty() İSE:
+        DÖNDÜR Decimal::ZERO
+    let mut sum_sq = Decimal::ZERO;
+    let mut cum_vol = Decimal::ZERO;
+    HER k in klines İÇİN DÖNGÜ:
+        let typical_price = (k.high + k.low + k.close) / Decimal::from(3);
+        sum_sq += k.volume * (typical_price - vwap_val).powi(2);
+        cum_vol += k.volume;
+    EĞER cum_vol == Decimal::ZERO İSE:
+        DÖNDÜR Decimal::ZERO
+    (sum_sq / cum_vol).sqrt().unwrap_or(Decimal::ZERO)</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: vwap_std_dev"])
+    Start --> Cond1{"klines.is_empty()?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"cum_vol == Decimal::ZERO?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Loop3["Döngü: k in klines"]
+    Loop3 --> EndNode(["Döndür: Decimal::ZERO"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> volume_profile</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>klines: &amp;[Kline], bucket_count: usize</code> | <strong>Dönüş Tipi:</strong> <code>Vec&lt;VolumeNode&gt;</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>klines: &amp;[Kline], bucket_count: usize</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>Vec&lt;VolumeNode&gt;</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Listeyi veya veri kümesini sırayla döngüye alarak tarar.<br>4. İşlemi tamamlayarak <code>Vec&lt;VolumeNode&gt;</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON volume_profile(klines: &amp;[Kline], bucket_count: usize) -&gt; Vec&lt;VolumeNode&gt;:
+    EĞER klines.is_empty() || bucket_count == 0 İSE:
+        DÖNDÜR vec![]
+    let price_min = klines
+    .iter()
+    .map(|k| k.low)
+    .fold(Decimal::MAX, Decimal::min);
+    let price_max = klines
+    .iter()
+    .map(|k| k.high)
+    .fold(Decimal::MIN, Decimal::max);
+    EĞER price_max &lt;= price_min İSE:
+        DÖNDÜR vec![]
+    let bucket_size = (price_max - price_min) / Decimal::from(bucket_count);
+    let mut buckets = vec![Decimal::ZERO; bucket_count];
+    let total_volume: Decimal = klines.iter().map(|k| k.volume).sum();
+    // Her mumun hacmini fiyat aralığına orantılı dağıt
+    HER k in klines İÇİN DÖNGÜ:
+        let mut low_idx = ((k.low - price_min) / bucket_size).floor().to_usize().unwrap_or(0);
+        let mut high_idx = ((k.high - price_min) / bucket_size).floor().to_usize().unwrap_or(0);
+        low_idx = low_idx.min(bucket_count - 1);
+        high_idx = high_idx.min(bucket_count - 1);
+        let span = Decimal::from(high_idx - low_idx + 1);
+        let vol_per_bucket = k.volume / span;
+        HER b in low_idx..=high_idx İÇİN DÖNGÜ:
+            buckets[b] += vol_per_bucket;
+    // Medyan hacmi hesapla (HVN/LVN eşiği olarak kullanılır)
+    let mut sorted_vols: Vec&lt;Decimal&gt; = buckets.clone();
+    sorted_vols.sort();
+    let median_vol = sorted_vols[sorted_vols.len() / 2];
+    let mut nodes = Vec::with_capacity(bucket_count);
+    HER (i, &amp;vol) in buckets.iter().enumerate() İÇİN DÖNGÜ:
+        let p_low = price_min + Decimal::from(i) * bucket_size;
+        let p_high = p_low + bucket_size;
+        let ratio = if total_volume &gt; Decimal::ZERO {
+        vol / total_volume
+        } else {
+        Decimal::ZERO
+        };
+        let node_type = if vol &gt;= median_vol * Decimal::from_str(&quot;1.5&quot;).unwrap() {
+        NodeType::HVN
+        } else {
+        NodeType::LVN
+        };
+        // Likidite Skoru: hacim oranının yüzdesel dilimi (1-10)
+        let pct = ratio * Decimal::ONE_HUNDRED;
+        let score = (pct.round().to_u8().unwrap_or(0)).clamp(1, 10);
+        nodes.push(VolumeNode {
+        price_low: p_low,
+        price_high: p_high,
+        price_mid: (p_low + p_high) / Decimal::TWO,
+        volume: vol,
+        volume_ratio: ratio,
+        node_type,
+        liquidity_score: score,
+        });
+    nodes</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: volume_profile"])
+    Start --> Cond1{"klines.is_empty() || bucket_count == 0?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"price_max &lt;= price_min?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"total_volume &gt; Decimal::ZERO?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> Loop4["Döngü: k in klines"]
+    Loop4 --> Loop5["Döngü: b in low_idx..=high_idx"]
+    Loop5 --> EndNode(["Döndür: vec![]"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> detect_bsl_ssl</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>nodes: &amp;[VolumeNode],
+    current_price: Decimal,
+    sigma: Decimal,</code> | <strong>Dönüş Tipi:</strong> <code>(Vec&lt;VolumeNode&gt;, Vec&lt;VolumeNode&gt;)</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>nodes: &amp;[VolumeNode],
+    current_price: Decimal,
+    sigma: Decimal,</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>(Vec&lt;VolumeNode&gt;, Vec&lt;VolumeNode&gt;)</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. İşlemi tamamlayarak <code>(Vec&lt;VolumeNode&gt;, Vec&lt;VolumeNode&gt;)</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON detect_bsl_ssl(nodes: &amp;[VolumeNode],
+    current_price: Decimal,
+    sigma: Decimal,) -&gt; (Vec&lt;VolumeNode&gt;, Vec&lt;VolumeNode&gt;):
+    let one_half = Decimal::from_str(&quot;1.5&quot;).unwrap();
+    let three = Decimal::from(3);
+    let bsl_low = current_price + one_half * sigma;
+    let bsl_high = current_price + three * sigma;
+    let ssl_low = current_price - three * sigma;
+    let ssl_high = current_price - one_half * sigma;
+    let bsl: Vec&lt;VolumeNode&gt; = nodes
+    .iter()
+    .filter(|n| {
+    matches!(n.node_type, NodeType::HVN)
+    &amp;&amp; n.price_mid &gt;= bsl_low
+    &amp;&amp; n.price_mid &lt;= bsl_high
+    })
+    .cloned()
+    .collect();
+    let ssl: Vec&lt;VolumeNode&gt; = nodes
+    .iter()
+    .filter(|n| {
+    matches!(n.node_type, NodeType::HVN)
+    &amp;&amp; n.price_mid &gt;= ssl_low
+    &amp;&amp; n.price_mid &lt;= ssl_high
+    })
+    .cloned()
+    .collect();
+    (bsl, ssl)</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: detect_bsl_ssl"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> analyze_liquidity</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>klines: &amp;[Kline]</code> | <strong>Dönüş Tipi:</strong> <code>LiquidityAnalysis</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>klines: &amp;[Kline]</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>LiquidityAnalysis</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. İşlemi tamamlayarak <code>LiquidityAnalysis</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON analyze_liquidity(klines: &amp;[Kline]) -&gt; LiquidityAnalysis:
+    EĞER klines.is_empty() İSE:
+        DÖNDÜR LiquidityAnalysis {
+        vwap: Decimal::ZERO,
+        vwap_std_dev: Decimal::ZERO,
+        poc: Decimal::ZERO,
+        bsl_zones: vec![],
+        ssl_zones: vec![],
+        bsl_total_volume: Decimal::ZERO,
+        ssl_total_volume: Decimal::ZERO,
+        bsl_ssl_ratio: Decimal::ONE,
+        volatility_band_low: Decimal::ZERO,
+        volatility_band_high: Decimal::ZERO,
+        volume_profile: vec![],
+        };
+    let vwap_val = vwap(klines);
+    let sigma = vwap_std_dev(klines, vwap_val);
+    let profile = volume_profile(klines, 50);
+    let current_price = klines.last().map(|k| k.close).unwrap_or(Decimal::ZERO);
+    // POC: En yüksek hacimli bucket&#x27;ın orta noktası
+    let poc = profile
+    .iter()
+    .max_by(|a, b| a.volume.cmp(&amp;b.volume))
+    .map(|n| n.price_mid)
+    .unwrap_or(current_price);
+    let (bsl, ssl) = detect_bsl_ssl(&amp;profile, current_price, sigma);
+    let bsl_total: Decimal = bsl.iter().map(|n| n.volume).sum();
+    let ssl_total: Decimal = ssl.iter().map(|n| n.volume).sum();
+    let ratio = if ssl_total &gt; Decimal::ZERO {
+    bsl_total / ssl_total
+    } else if bsl_total &gt; Decimal::ZERO {
+    Decimal::MAX
+    } else {
+    Decimal::ONE
+    };
+    let one_half = Decimal::from_str(&quot;1.5&quot;).unwrap();
+    LiquidityAnalysis {
+    vwap: vwap_val,
+    vwap_std_dev: sigma,
+    poc,
+    bsl_zones: bsl,
+    ssl_zones: ssl,
+    bsl_total_volume: bsl_total,
+    ssl_total_volume: ssl_total,
+    bsl_ssl_ratio: ratio,
+    volatility_band_low: poc - one_half * sigma,
+    volatility_band_high: poc + one_half * sigma,
+    volume_profile: profile,</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: analyze_liquidity"])
+    Start --> Cond1{"klines.is_empty()?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"ssl_total &gt; Decimal::ZERO?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"bsl_total &gt; Decimal::ZERO?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> EndNode(["Döndür: LiquidityAnalysis {"])
+            </div>
+        </div>
+        
+        </section>
+
+        <details>
+            <summary>Orijinal Rust Kaynak Kodunu Göster</summary>
+            <pre><code>// ============================================================================
+// MSMP 2.0 — KATMAN 5: LİKİDİTE POOL (VWAP Sapması &amp; Volume Profile)
+// ============================================================================
+// Eşit bantlar TAMAMEN İPTAL. Volume Profile hesaplanır:
+//   HVN (Yüksek Hacim Node) ve LVN (Düşük Hacim Node) tespit edilir.
+// BSL Yoğunluğu = +1.5σ ile +3σ arası HVN bölgeleri
+// SSL Yoğunluğu = -1.5σ ile -3σ arası HVN bölgeleri
+// Likidite Skoru = Bölge hacmi / toplam hacim oranı (1-10)
+// ============================================================================
+
+use ohlcv_engine::Kline;
+use rust_decimal::Decimal;
+use rust_decimal::prelude::*;
+use serde::Serialize;
+
+#[derive(Debug, Clone, Serialize)]
+pub enum NodeType {
+    /// Yüksek Hacim Node — Kurumsal alım-satım yoğunluğu
+    HVN,
+    /// Düşük Hacim Node — Fiyat hızla geçer
+    LVN,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct VolumeNode {
+    pub price_low: Decimal,
+    pub price_high: Decimal,
+    pub price_mid: Decimal,
+    pub volume: Decimal,
+    /// Bu node&#x27;un toplam hacme oranı (0.0 - 1.0)
+    pub volume_ratio: Decimal,
+    pub node_type: NodeType,
+    /// Likidite skoru (1-10)
+    pub liquidity_score: u8,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct LiquidityAnalysis {
+    /// Volume-Weighted Average Price
+    pub vwap: Decimal,
+    /// VWAP standart sapması (σ)
+    pub vwap_std_dev: Decimal,
+    /// Point of Control — en yüksek hacimli fiyat seviyesi
+    pub poc: Decimal,
+    /// Buy-Side Liquidity bölgeleri (+1.5σ ~ +3σ arası HVN)
+    pub bsl_zones: Vec&lt;VolumeNode&gt;,
+    /// Sell-Side Liquidity bölgeleri (-3σ ~ -1.5σ arası HVN)
+    pub ssl_zones: Vec&lt;VolumeNode&gt;,
+    pub bsl_total_volume: Decimal,
+    pub ssl_total_volume: Decimal,
+    /// BSL/SSL Oranı — Risk asimetrisi
+    pub bsl_ssl_ratio: Decimal,
+    /// Aktif Volatilite Bandı alt sınırı: POC - 1.5σ
+    pub volatility_band_low: Decimal,
+    /// Aktif Volatilite Bandı üst sınırı: POC + 1.5σ
+    pub volatility_band_high: Decimal,
+    /// Tam volume profile
+    pub volume_profile: Vec&lt;VolumeNode&gt;,
+}
+
+/// VWAP (Volume-Weighted Average Price) hesaplaması
+pub fn vwap(klines: &amp;[Kline]) -&gt; Decimal {
+    let mut cum_tp_vol = Decimal::ZERO;
+    let mut cum_vol = Decimal::ZERO;
+
+    for k in klines {
+        let typical_price = (k.high + k.low + k.close) / Decimal::from(3);
+        cum_tp_vol += typical_price * k.volume;
+        cum_vol += k.volume;
+    }
+
+    if cum_vol == Decimal::ZERO {
+        return Decimal::ZERO;
+    }
+    cum_tp_vol / cum_vol
+}
+
+/// VWAP Standart Sapması (σ) — Hacim ağırlıklı
+pub fn vwap_std_dev(klines: &amp;[Kline], vwap_val: Decimal) -&gt; Decimal {
+    if klines.is_empty() {
+        return Decimal::ZERO;
+    }
+
+    let mut sum_sq = Decimal::ZERO;
+    let mut cum_vol = Decimal::ZERO;
+
+    for k in klines {
+        let typical_price = (k.high + k.low + k.close) / Decimal::from(3);
+        sum_sq += k.volume * (typical_price - vwap_val).powi(2);
+        cum_vol += k.volume;
+    }
+
+    if cum_vol == Decimal::ZERO {
+        return Decimal::ZERO;
+    }
+    (sum_sq / cum_vol).sqrt().unwrap_or(Decimal::ZERO)
+}
+
+/// Volume Profile — Dinamik bucket&#x27;larla hacim dağılımı
+pub fn volume_profile(klines: &amp;[Kline], bucket_count: usize) -&gt; Vec&lt;VolumeNode&gt; {
+    if klines.is_empty() || bucket_count == 0 {
+        return vec![];
+    }
+
+    let price_min = klines
+        .iter()
+        .map(|k| k.low)
+        .fold(Decimal::MAX, Decimal::min);
+    let price_max = klines
+        .iter()
+        .map(|k| k.high)
+        .fold(Decimal::MIN, Decimal::max);
+
+    if price_max &lt;= price_min {
+        return vec![];
+    }
+
+    let bucket_size = (price_max - price_min) / Decimal::from(bucket_count);
+    let mut buckets = vec![Decimal::ZERO; bucket_count];
+    let total_volume: Decimal = klines.iter().map(|k| k.volume).sum();
+
+    // Her mumun hacmini fiyat aralığına orantılı dağıt
+    for k in klines {
+        let mut low_idx = ((k.low - price_min) / bucket_size).floor().to_usize().unwrap_or(0);
+        let mut high_idx = ((k.high - price_min) / bucket_size).floor().to_usize().unwrap_or(0);
+        low_idx = low_idx.min(bucket_count - 1);
+        high_idx = high_idx.min(bucket_count - 1);
+
+        let span = Decimal::from(high_idx - low_idx + 1);
+        let vol_per_bucket = k.volume / span;
+
+        for b in low_idx..=high_idx {
+            buckets[b] += vol_per_bucket;
+        }
+    }
+
+    // Medyan hacmi hesapla (HVN/LVN eşiği olarak kullanılır)
+    let mut sorted_vols: Vec&lt;Decimal&gt; = buckets.clone();
+    sorted_vols.sort();
+    let median_vol = sorted_vols[sorted_vols.len() / 2];
+
+    let mut nodes = Vec::with_capacity(bucket_count);
+    for (i, &amp;vol) in buckets.iter().enumerate() {
+        let p_low = price_min + Decimal::from(i) * bucket_size;
+        let p_high = p_low + bucket_size;
+        let ratio = if total_volume &gt; Decimal::ZERO {
+            vol / total_volume
+        } else {
+            Decimal::ZERO
+        };
+
+        let node_type = if vol &gt;= median_vol * Decimal::from_str(&quot;1.5&quot;).unwrap() {
+            NodeType::HVN
+        } else {
+            NodeType::LVN
+        };
+
+        // Likidite Skoru: hacim oranının yüzdesel dilimi (1-10)
+        let pct = ratio * Decimal::ONE_HUNDRED;
+        let score = (pct.round().to_u8().unwrap_or(0)).clamp(1, 10);
+
+        nodes.push(VolumeNode {
+            price_low: p_low,
+            price_high: p_high,
+            price_mid: (p_low + p_high) / Decimal::TWO,
+            volume: vol,
+            volume_ratio: ratio,
+            node_type,
+            liquidity_score: score,
+        });
+    }
+
+    nodes
+}
+
+/// BSL ve SSL bölgelerini tespit et
+/// BSL: current_price + 1.5σ ~ +3σ arası HVN&#x27;ler
+/// SSL: current_price - 3σ ~ -1.5σ arası HVN&#x27;ler
+pub fn detect_bsl_ssl(
+    nodes: &amp;[VolumeNode],
+    current_price: Decimal,
+    sigma: Decimal,
+) -&gt; (Vec&lt;VolumeNode&gt;, Vec&lt;VolumeNode&gt;) {
+    let one_half = Decimal::from_str(&quot;1.5&quot;).unwrap();
+    let three = Decimal::from(3);
+    let bsl_low = current_price + one_half * sigma;
+    let bsl_high = current_price + three * sigma;
+    let ssl_low = current_price - three * sigma;
+    let ssl_high = current_price - one_half * sigma;
+
+    let bsl: Vec&lt;VolumeNode&gt; = nodes
+        .iter()
+        .filter(|n| {
+            matches!(n.node_type, NodeType::HVN)
+                &amp;&amp; n.price_mid &gt;= bsl_low
+                &amp;&amp; n.price_mid &lt;= bsl_high
+        })
+        .cloned()
+        .collect();
+
+    let ssl: Vec&lt;VolumeNode&gt; = nodes
+        .iter()
+        .filter(|n| {
+            matches!(n.node_type, NodeType::HVN)
+                &amp;&amp; n.price_mid &gt;= ssl_low
+                &amp;&amp; n.price_mid &lt;= ssl_high
+        })
+        .cloned()
+        .collect();
+
+    (bsl, ssl)
+}
+
+/// Tam likidite analizi pipeline&#x27;ı
+pub fn analyze_liquidity(klines: &amp;[Kline]) -&gt; LiquidityAnalysis {
+    if klines.is_empty() {
+        return LiquidityAnalysis {
+            vwap: Decimal::ZERO,
+            vwap_std_dev: Decimal::ZERO,
+            poc: Decimal::ZERO,
+            bsl_zones: vec![],
+            ssl_zones: vec![],
+            bsl_total_volume: Decimal::ZERO,
+            ssl_total_volume: Decimal::ZERO,
+            bsl_ssl_ratio: Decimal::ONE,
+            volatility_band_low: Decimal::ZERO,
+            volatility_band_high: Decimal::ZERO,
+            volume_profile: vec![],
+        };
+    }
+
+    let vwap_val = vwap(klines);
+    let sigma = vwap_std_dev(klines, vwap_val);
+    let profile = volume_profile(klines, 50);
+
+    let current_price = klines.last().map(|k| k.close).unwrap_or(Decimal::ZERO);
+
+    // POC: En yüksek hacimli bucket&#x27;ın orta noktası
+    let poc = profile
+        .iter()
+        .max_by(|a, b| a.volume.cmp(&amp;b.volume))
+        .map(|n| n.price_mid)
+        .unwrap_or(current_price);
+
+    let (bsl, ssl) = detect_bsl_ssl(&amp;profile, current_price, sigma);
+
+    let bsl_total: Decimal = bsl.iter().map(|n| n.volume).sum();
+    let ssl_total: Decimal = ssl.iter().map(|n| n.volume).sum();
+    let ratio = if ssl_total &gt; Decimal::ZERO {
+        bsl_total / ssl_total
+    } else if bsl_total &gt; Decimal::ZERO {
+        Decimal::MAX
+    } else {
+        Decimal::ONE
+    };
+
+    let one_half = Decimal::from_str(&quot;1.5&quot;).unwrap();
+    LiquidityAnalysis {
+        vwap: vwap_val,
+        vwap_std_dev: sigma,
+        poc,
+        bsl_zones: bsl,
+        ssl_zones: ssl,
+        bsl_total_volume: bsl_total,
+        ssl_total_volume: ssl_total,
+        bsl_ssl_ratio: ratio,
+        volatility_band_low: poc - one_half * sigma,
+        volatility_band_high: poc + one_half * sigma,
+        volume_profile: profile,
+    }
+}
+</code></pre>
+        </details>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            flowchart: { curve: 'basis' }
+        });
+    </script>
+</body>
+</html>

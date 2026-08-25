@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>main.rs - Rust Analiz Dokümanı</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --border: #334155;
+            --code-bg: #090d16;
+            --verbal-bg: #131f37;
+            --analogy-bg: #1e1b4b;
+            --analogy-border: #818cf8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .back-link {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .back-link:hover { text-decoration: underline; }
+        h1 { font-size: 2rem; color: var(--accent); margin-bottom: 0.5rem; }
+        .file-path { font-family: 'Fira Code', monospace; color: var(--text-muted); font-size: 0.95rem; }
+        
+        .structs-container { margin: 1.5rem 0; }
+        .badge {
+            display: inline-block;
+            background: #0284c7;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-family: 'Fira Code', monospace;
+        }
+        .badge-struct { background: #7c3aed; }
+        
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .card h3 { color: var(--accent); margin-bottom: 0.5rem; font-size: 1.3rem; }
+        .card h4 { margin: 1.2rem 0 0.5rem 0; color: var(--text-muted); font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        .easy-analogy {
+            background: var(--analogy-bg);
+            border-left: 4px solid var(--analogy-border);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1rem;
+            color: #c7d2fe;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .verbal-explanation {
+            background: var(--verbal-bg);
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1.2rem;
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            margin-bottom: 1rem;
+        }
+        
+        .mermaid {
+            background: var(--code-bg);
+            padding: 1.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+        }
+        
+        details {
+            margin-top: 2rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Ana İndekse Dön</a>
+        <header>
+            <h1>main.rs</h1>
+            <p class="file-path">crates/core/orchestrator/src/main.rs</p>
+            <div class="structs-container">
+                <strong>Tanımlı Türler / Yapılar:</strong> Yok
+            </div>
+        </header>
+
+        <section>
+            <h2>Fonksiyon Analizleri & Basit Anlatımlar</h2>
+            
+        <div class="card">
+            <h3><span class="badge">fn</span> load_plugin_cabi</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>app: &amp;mut App&lt;&#x27;_&gt;, plugin_name: &amp;str</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>app: &amp;mut App&lt;&#x27;_&gt;, plugin_name: &amp;str</code> verisini alır, kendi kurallarına göre işler ve sonucunda gerekli işlemi tamamlayan adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Farklı durum senaryolarına göre akışı uygun kola yönlendirir.<br>4. İşlemi tamamlayarak <code>()</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON load_plugin_cabi(app: &amp;mut App&lt;&#x27;_&gt;, plugin_name: &amp;str) -&gt; ():
+    let ext = if cfg!(target_os = &quot;windows&quot;) { &quot;dll&quot; }
+    AKSİ EĞER cfg!(target_os = &quot;macos&quot;) İSE:
+    AKSİ:
+        let prefix = if cfg!(target_os = &quot;windows&quot;) { &quot;&quot; } else { &quot;lib&quot; };
+        let clean_name = plugin_name.strip_prefix(&quot;lib&quot;).unwrap_or(plugin_name);
+        let mut lib_path_buf = get_plugin_dir();
+        lib_path_buf.push(format!(&quot;{}{}.{}&quot;, prefix, clean_name, ext));
+        let lib_path = lib_path_buf.to_string_lossy().to_string();
+        DURUM KONTROLÜ (libloading::Library::new(&amp;lib_path)):
+            Ok(lib) =&gt; {
+            // New HFT C-ABI: init_plugin(state_out) -&gt; RawEndpointFn
+            type PluginInit = unsafe extern &quot;C&quot; fn(state_out: *mut *mut c_void) -&gt; RawEndpointFn;
+            DURUM KONTROLÜ (lib.get::&lt;PluginInit&gt;(b&quot;init_plugin&quot;)):
+                Ok(init_fn) =&gt; {
+                let mut state_ptr: *mut c_void = std::ptr::null_mut();
+                let endpoint_fn = init_fn(&amp;mut state_ptr);
+                let sys = SystemInstance::new(
+                plugin_name.to_string(),
+                plugin_name.to_string(),
+                state_ptr,
+                endpoint_fn,
+                );
+                app.orchestrator.register_system(sys);
+                Box::leak(Box::new(lib)); // Keep library in memory
+                app.log(&amp;format!(&quot;Plugin {} loaded successfully (HFT/C-ABI).&quot;, plugin_name));
+            Err(_) =&gt; app.log(&amp;format!(&quot;Function init_plugin not found in plugin {}.&quot;, plugin_name)),
+    Err(e) =&gt; app.log(&amp;format!(&quot;Failed to load plugin {} (make sure it is compiled): {}&quot;, plugin_name, e)),</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: load_plugin_cabi"])
+    Start --> Cond1{"cfg!(target_os = 'windows')?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"cfg!(target_os = 'macos')?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"cfg!(target_os = 'windows')?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> get_plugin_dir</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>Yok</code> | <strong>Dönüş Tipi:</strong> <code>std::path::PathBuf</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan hiçbir girdi almadan verisini alır, kendi kurallarına göre işler ve sonucunda <code>std::path::PathBuf</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. İşlemi tamamlayarak <code>std::path::PathBuf</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON get_plugin_dir() -&gt; std::path::PathBuf:
+    let mut dir = std::env::current_exe().unwrap_or_else(|_| std::path::PathBuf::from(&quot;.&quot;));
+    dir.pop(); // exe_name
+    EĞER dir.ends_with(&quot;deps&quot;) İSE:
+        dir.pop(); // go up to debug/release
+    dir</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: get_plugin_dir"])
+    Start --> Cond1{"dir.ends_with('deps')?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> scan_plugins</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>Yok</code> | <strong>Dönüş Tipi:</strong> <code>Vec&lt;String&gt;</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan hiçbir girdi almadan verisini alır, kendi kurallarına göre işler ve sonucunda <code>Vec&lt;String&gt;</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Listeyi veya veri kümesini sırayla döngüye alarak tarar.<br>4. İşlemi tamamlayarak <code>Vec&lt;String&gt;</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON scan_plugins() -&gt; Vec&lt;String&gt;:
+    let mut plugins = Vec::new();
+    let lib_dir = get_plugin_dir();
+    let prefix = if cfg!(target_os = &quot;windows&quot;) { &quot;&quot; } else { &quot;lib&quot; };
+    EĞER let Ok(entries) = std::fs::read_dir(&amp;lib_dir) İSE:
+        HER entry in entries.flatten() İÇİN DÖNGÜ:
+            let name = entry.file_name().to_string_lossy().into_owned();
+            EĞER name.starts_with(&amp;format!(&quot; İSE:
+                let ext_len = if name.ends_with(&quot;.so&quot;) { 3 } else if name.ends_with(&quot;.dll&quot;) { 4 } else { 6 };
+                let plugin_name = &amp;name[prefix.len()..name.len()-ext_len];
+                plugins.push(plugin_name.to_string());
+    plugins.sort();
+    plugins.dedup();
+    plugins</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: scan_plugins"])
+    Start --> Cond1{"cfg!(target_os = 'windows')?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"let Ok(entries) = std::fs::read_dir(&lib_dir)?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"name.starts_with(&format!('?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> Loop4["Döngü: entry in entries.flatten()"]
+    Loop4 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> main</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>Yok</code> | <strong>Dönüş Tipi:</strong> <code>anyhow::Result&lt;()&gt;</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan hiçbir girdi almadan verisini alır, kendi kurallarına göre işler ve sonucunda <code>anyhow::Result&lt;()&gt;</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Listeyi veya veri kümesini sırayla döngüye alarak tarar.<br>4. Farklı durum senaryolarına göre akışı uygun kola yönlendirir.<br>5. İşlemi tamamlayarak <code>anyhow::Result&lt;()&gt;</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON main() -&gt; anyhow::Result&lt;()&gt;:
+    // ═══════════════════════════════════════════════════════
+    // HFT: CPU Core Pinning
+    // Main thread → Core 0, Router thread → Core 1
+    // ═══════════════════════════════════════════════════════
+    let mut pinned_core = 0;
+    EĞER let Some(core_ids) = core_affinity::get_core_ids() İSE:
+        EĞER let Some(core) = core_ids.first() İSE:
+            core_affinity::set_for_current(*core);
+        pinned_core = core_ids.first().map(|c| c.id).unwrap_or(0);
+    let (log_tx, _log_rx) = tokio::sync::broadcast::channel::&lt;String&gt;(200);
+    let orchestrator = Arc::new(Orchestrator::new());
+    let mut app = App::new(orchestrator.clone(), log_tx.clone());
+    app.log(&amp;format!(&quot;[HFT] Main thread pinned to CPU core: Core {}&quot;, pinned_core));
+    app.log(&quot;TUI Console Started. Web Interface can be launched from Settings tab or by pressing [W].&quot;);
+    // --- FLOW ENGINE &amp; CONFIG INITIALIZATION ---
+    let config_path = if std::path::Path::new(&quot;config/config.json&quot;).exists() {
+    &quot;config/config.json&quot;
+    } else if std::path::Path::new(&quot;../config/config.json&quot;).exists() {
+    &quot;../config/config.json&quot;
+    } else if std::path::Path::new(&quot;../../config/config.json&quot;).exists() {
+    &quot;../../config/config.json&quot;
+    } else if std::path::Path::new(&quot;flow_config.json&quot;).exists() {
+    &quot;flow_config.json&quot;
+    } else {
+    &quot;config/config.json&quot; // Default fallback
+    };
+    let flow_config = match flow_engine::FlowConfig::load(config_path) {
+    Ok(c) =&gt; Some(c),
+    Err(e) =&gt; {
+    app.log(&amp;format!(&quot;WARNING: Failed to read config.json: {}&quot;, e));
+    None
+    };
+    let mut engine_opt = None;
+    EĞER let Some(ref config) = flow_config İSE:
+        let engine = std::sync::Arc::new(flow_engine::FlowEngine::new(config.clone()));
+        engine_opt = Some(engine.clone());
+        app.log(&quot;Flow Engine config loaded. Starting router thread...&quot;);
+        let orc_clone = orchestrator.clone();
+        let engine_clone = engine.clone();
+        std::thread::spawn(move || {
+        EĞER let Some(core_ids) = core_affinity::get_core_ids() İSE:
+            EĞER core_ids.len() &gt; 1 İSE:
+                core_affinity::set_for_current(core_ids[1]); // Router thread -&gt; Core 1
+        let mut last_health_check = std::time::Instant::now();
+        loop {
+        engine_clone.run_loop(|plugin_name, endpoint_id, payload, out_buf| {
+        let ep = match endpoint_id {
+        5 =&gt; StandardEndpoint::RawData,
+        6 =&gt; StandardEndpoint::Inbox,
+        7 =&gt; StandardEndpoint::Outbox,
+        _ =&gt; return 0,
+        };
+        orc_clone.call_endpoint(plugin_name, ep, payload, out_buf)
+        });
+        EĞER last_health_check.elapsed().as_secs() &gt;= 5 İSE:
+            let warnings = engine_clone.health_check();
+            HER _warning in warnings İÇİN DÖNGÜ:
+                last_health_check = std::time::Instant::now();
+            std::thread::sleep(std::time::Duration::from_millis(1));
+        });
+    // Automatically scan and load all plugins
+    app.available_plugins = scan_plugins();
+    HER plugin_name in app.available_plugins.clone() İÇİN DÖNGÜ:
+        app.log(&amp;format!(&quot;Auto-loading: {}&quot;, plugin_name));
+        unsafe { load_plugin_cabi(&amp;mut app, &amp;plugin_name); }
+    // Start all loaded plugins and send their parameters (those defined and enabled==true in flow_config.json)
+    let mut startup_buf = [0u8; 8];
+    HER (id, _, _) in app.orchestrator.list_systems() İÇİN DÖNGÜ:
+        EĞER let Some(ref config) = flow_config İSE:
+            EĞER let Some(plugin_conf) = config.iter().find(|p| p.plugin_name == id) İSE:
+                EĞER plugin_conf.enabled İSE:
+                    let payload_bytes = serde_json::to_vec(&amp;plugin_conf).unwrap_or_default();
+                    app.orchestrator.call_endpoint(&amp;id, StandardEndpoint::Start, &amp;payload_bytes, &amp;mut startup_buf);
+                    app.log(&amp;format!(&quot;Auto-started: {}&quot;, id));
+                    } else {
+                    app.log(&amp;format!(&quot;Not started (disabled/enabled=false in flow_config.json): {}&quot;, id));
+                } else {
+                app.log(&amp;format!(&quot;Not started (not defined in flow_config.json): {}&quot;, id));
+    app.log(&quot;System initialized and plugins automatically loaded. [HFT Mode: CPU Pinning ON]&quot;);
+    let web_server_started = Arc::new(std::sync::atomic::AtomicBool::new(false));
+    // Connect directly to Interactive Command Shell Screen
+    cycle_finance_breakout_system::interactive_shell::run_interactive_shell_loop(
+    orchestrator.clone(),
+    log_tx,
+    None,
+    web_server_started,
+    ).await;
+    Ok(())</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: main"])
+    Start --> Cond1{"let Some(core_ids) = core_affinity::get_core_ids()?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"let Some(core) = core_ids.first()?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"std::path::Path::new('config/config.json').exists()?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> Loop4["Döngü: _warning in warnings"]
+    Loop4 --> Loop5["Döngü: plugin_name in app.available_plugins.clone()"]
+    Loop5 --> EndNode(["Döndür: 0,"])
+            </div>
+        </div>
+        
+        </section>
+
+        <details>
+            <summary>Orijinal Rust Kaynak Kodunu Göster</summary>
+            <pre><code>use cycle_finance_breakout_system::orchestrator::Orchestrator;
+use cycle_finance_breakout_system::endpoint::StandardEndpoint;
+use cycle_finance_breakout_system::system::{SystemInstance, RawEndpointFn};
+use cycle_finance_breakout_system::tui_interface::{App, ViewMode, ActivePanel, draw_ui};
+
+use crossterm::{
+    event::{self, Event, KeyCode, MouseEventKind, MouseButton, EnableMouseCapture, DisableMouseCapture},
+    terminal::{disable_raw_mode, enable_raw_mode, Clear, ClearType},
+    ExecutableCommand,
+};
+use ratatui::{backend::CrosstermBackend, Terminal};
+use ratatui::layout::{Rect, Layout, Direction, Constraint};
+use std::io;
+use std::sync::Arc;
+use std::ffi::c_void;
+
+/// Plugin loading helper function (C-ABI: init_plugin)
+unsafe fn load_plugin_cabi(app: &amp;mut App&lt;&#x27;_&gt;, plugin_name: &amp;str) {
+    let ext = if cfg!(target_os = &quot;windows&quot;) { &quot;dll&quot; } 
+              else if cfg!(target_os = &quot;macos&quot;) { &quot;dylib&quot; } 
+              else { &quot;so&quot; };
+    let prefix = if cfg!(target_os = &quot;windows&quot;) { &quot;&quot; } else { &quot;lib&quot; };
+    let clean_name = plugin_name.strip_prefix(&quot;lib&quot;).unwrap_or(plugin_name);
+    
+    let mut lib_path_buf = get_plugin_dir();
+    lib_path_buf.push(format!(&quot;{}{}.{}&quot;, prefix, clean_name, ext));
+    let lib_path = lib_path_buf.to_string_lossy().to_string();
+    
+    match libloading::Library::new(&amp;lib_path) {
+        Ok(lib) =&gt; {
+            // New HFT C-ABI: init_plugin(state_out) -&gt; RawEndpointFn
+            type PluginInit = unsafe extern &quot;C&quot; fn(state_out: *mut *mut c_void) -&gt; RawEndpointFn;
+            match lib.get::&lt;PluginInit&gt;(b&quot;init_plugin&quot;) {
+                Ok(init_fn) =&gt; {
+                    let mut state_ptr: *mut c_void = std::ptr::null_mut();
+                    let endpoint_fn = init_fn(&amp;mut state_ptr);
+                    let sys = SystemInstance::new(
+                        plugin_name.to_string(), 
+                        plugin_name.to_string(), 
+                        state_ptr, 
+                        endpoint_fn,
+                    );
+                    app.orchestrator.register_system(sys);
+                    Box::leak(Box::new(lib)); // Keep library in memory
+                    app.log(&amp;format!(&quot;Plugin {} loaded successfully (HFT/C-ABI).&quot;, plugin_name));
+                }
+                Err(_) =&gt; app.log(&amp;format!(&quot;Function init_plugin not found in plugin {}.&quot;, plugin_name)),
+            }
+        }
+        Err(e) =&gt; app.log(&amp;format!(&quot;Failed to load plugin {} (make sure it is compiled): {}&quot;, plugin_name, e)),
+    }
+}
+
+fn get_plugin_dir() -&gt; std::path::PathBuf {
+    let mut dir = std::env::current_exe().unwrap_or_else(|_| std::path::PathBuf::from(&quot;.&quot;));
+    dir.pop(); // exe_name
+    if dir.ends_with(&quot;deps&quot;) {
+        dir.pop(); // go up to debug/release
+    }
+    dir
+}
+
+/// Plugin scanning helper function
+fn scan_plugins() -&gt; Vec&lt;String&gt; {
+    let mut plugins = Vec::new();
+    let lib_dir = get_plugin_dir();
+    let prefix = if cfg!(target_os = &quot;windows&quot;) { &quot;&quot; } else { &quot;lib&quot; };
+    if let Ok(entries) = std::fs::read_dir(&amp;lib_dir) {
+        for entry in entries.flatten() {
+            let name = entry.file_name().to_string_lossy().into_owned();
+            if name.starts_with(&amp;format!(&quot;{}plugin_&quot;, prefix)) &amp;&amp; (name.ends_with(&quot;.so&quot;) || name.ends_with(&quot;.dll&quot;) || name.ends_with(&quot;.dylib&quot;)) {
+                let ext_len = if name.ends_with(&quot;.so&quot;) { 3 } else if name.ends_with(&quot;.dll&quot;) { 4 } else { 6 };
+                let plugin_name = &amp;name[prefix.len()..name.len()-ext_len];
+                plugins.push(plugin_name.to_string());
+            }
+        }
+    }
+    plugins.sort();
+    plugins.dedup();
+    plugins
+}
+
+#[tokio::main]
+async fn main() -&gt; anyhow::Result&lt;()&gt; {
+    // ═══════════════════════════════════════════════════════
+    // HFT: CPU Core Pinning
+    // Main thread → Core 0, Router thread → Core 1
+    // ═══════════════════════════════════════════════════════
+    let mut pinned_core = 0;
+    if let Some(core_ids) = core_affinity::get_core_ids() {
+        if let Some(core) = core_ids.first() {
+            core_affinity::set_for_current(*core);
+        }
+        pinned_core = core_ids.first().map(|c| c.id).unwrap_or(0);
+    }
+
+    let (log_tx, _log_rx) = tokio::sync::broadcast::channel::&lt;String&gt;(200);
+
+    let orchestrator = Arc::new(Orchestrator::new());
+    let mut app = App::new(orchestrator.clone(), log_tx.clone());
+    app.log(&amp;format!(&quot;[HFT] Main thread pinned to CPU core: Core {}&quot;, pinned_core));
+    app.log(&quot;TUI Console Started. Web Interface can be launched from Settings tab or by pressing [W].&quot;);
+    
+    // --- FLOW ENGINE &amp; CONFIG INITIALIZATION ---
+    let config_path = if std::path::Path::new(&quot;config/config.json&quot;).exists() {
+        &quot;config/config.json&quot;
+    } else if std::path::Path::new(&quot;../config/config.json&quot;).exists() {
+        &quot;../config/config.json&quot;
+    } else if std::path::Path::new(&quot;../../config/config.json&quot;).exists() {
+        &quot;../../config/config.json&quot;
+    } else if std::path::Path::new(&quot;flow_config.json&quot;).exists() {
+        &quot;flow_config.json&quot;
+    } else {
+        &quot;config/config.json&quot; // Default fallback
+    };
+    
+    let flow_config = match flow_engine::FlowConfig::load(config_path) {
+        Ok(c) =&gt; Some(c),
+        Err(e) =&gt; {
+            app.log(&amp;format!(&quot;WARNING: Failed to read config.json: {}&quot;, e));
+            None
+        }
+    };
+    
+    let mut engine_opt = None;
+    if let Some(ref config) = flow_config {
+        let engine = std::sync::Arc::new(flow_engine::FlowEngine::new(config.clone()));
+        engine_opt = Some(engine.clone());
+        app.log(&quot;Flow Engine config loaded. Starting router thread...&quot;);
+
+        let orc_clone = orchestrator.clone();
+        let engine_clone = engine.clone();
+
+        std::thread::spawn(move || {
+            if let Some(core_ids) = core_affinity::get_core_ids() {
+                if core_ids.len() &gt; 1 {
+                    core_affinity::set_for_current(core_ids[1]); // Router thread -&gt; Core 1
+                }
+            }
+            
+            let mut last_health_check = std::time::Instant::now();
+            loop {
+                engine_clone.run_loop(|plugin_name, endpoint_id, payload, out_buf| {
+                    let ep = match endpoint_id {
+                        5 =&gt; StandardEndpoint::RawData,
+                        6 =&gt; StandardEndpoint::Inbox,
+                        7 =&gt; StandardEndpoint::Outbox,
+                        _ =&gt; return 0,
+                    };
+                    orc_clone.call_endpoint(plugin_name, ep, payload, out_buf)
+                });
+                
+                if last_health_check.elapsed().as_secs() &gt;= 5 {
+                    let warnings = engine_clone.health_check();
+                    for _warning in warnings {}
+                    last_health_check = std::time::Instant::now();
+                }
+
+                std::thread::sleep(std::time::Duration::from_millis(1));
+            }
+        });
+    }
+    
+    // Automatically scan and load all plugins
+    app.available_plugins = scan_plugins();
+    for plugin_name in app.available_plugins.clone() {
+        app.log(&amp;format!(&quot;Auto-loading: {}&quot;, plugin_name));
+        unsafe { load_plugin_cabi(&amp;mut app, &amp;plugin_name); }
+    }
+    
+    // Start all loaded plugins and send their parameters (those defined and enabled==true in flow_config.json)
+    let mut startup_buf = [0u8; 8];
+    for (id, _, _) in app.orchestrator.list_systems() {
+        if let Some(ref config) = flow_config {
+            if let Some(plugin_conf) = config.iter().find(|p| p.plugin_name == id) {
+                if plugin_conf.enabled {
+                    let payload_bytes = serde_json::to_vec(&amp;plugin_conf).unwrap_or_default();
+                    app.orchestrator.call_endpoint(&amp;id, StandardEndpoint::Start, &amp;payload_bytes, &amp;mut startup_buf);
+                    app.log(&amp;format!(&quot;Auto-started: {}&quot;, id));
+                } else {
+                    app.log(&amp;format!(&quot;Not started (disabled/enabled=false in flow_config.json): {}&quot;, id));
+                }
+            } else {
+                app.log(&amp;format!(&quot;Not started (not defined in flow_config.json): {}&quot;, id));
+            }
+        }
+    }
+    
+    app.log(&quot;System initialized and plugins automatically loaded. [HFT Mode: CPU Pinning ON]&quot;);
+
+    let web_server_started = Arc::new(std::sync::atomic::AtomicBool::new(false));
+
+    // Connect directly to Interactive Command Shell Screen
+    cycle_finance_breakout_system::interactive_shell::run_interactive_shell_loop(
+        orchestrator.clone(),
+        log_tx,
+        None,
+        web_server_started,
+    ).await;
+
+    Ok(())
+}
+</code></pre>
+        </details>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            flowchart: { curve: 'basis' }
+        });
+    </script>
+</body>
+</html>

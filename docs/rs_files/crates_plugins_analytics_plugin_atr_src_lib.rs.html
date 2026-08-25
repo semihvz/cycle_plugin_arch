@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>lib.rs - Rust Analiz Dokümanı</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --border: #334155;
+            --code-bg: #090d16;
+            --verbal-bg: #131f37;
+            --analogy-bg: #1e1b4b;
+            --analogy-border: #818cf8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .back-link {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .back-link:hover { text-decoration: underline; }
+        h1 { font-size: 2rem; color: var(--accent); margin-bottom: 0.5rem; }
+        .file-path { font-family: 'Fira Code', monospace; color: var(--text-muted); font-size: 0.95rem; }
+        
+        .structs-container { margin: 1.5rem 0; }
+        .badge {
+            display: inline-block;
+            background: #0284c7;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-family: 'Fira Code', monospace;
+        }
+        .badge-struct { background: #7c3aed; }
+        
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .card h3 { color: var(--accent); margin-bottom: 0.5rem; font-size: 1.3rem; }
+        .card h4 { margin: 1.2rem 0 0.5rem 0; color: var(--text-muted); font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        .easy-analogy {
+            background: var(--analogy-bg);
+            border-left: 4px solid var(--analogy-border);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1rem;
+            color: #c7d2fe;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .verbal-explanation {
+            background: var(--verbal-bg);
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1.2rem;
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            margin-bottom: 1rem;
+        }
+        
+        .mermaid {
+            background: var(--code-bg);
+            padding: 1.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+        }
+        
+        details {
+            margin-top: 2rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Ana İndekse Dön</a>
+        <header>
+            <h1>lib.rs</h1>
+            <p class="file-path">crates/plugins/analytics/plugin_atr/src/lib.rs</p>
+            <div class="structs-container">
+                <strong>Tanımlı Türler / Yapılar:</strong> <span class="badge badge-struct">AtrMetrics</span> <span class="badge badge-struct">Bar</span> <span class="badge badge-struct">PluginState</span> 
+            </div>
+        </header>
+
+        <section>
+            <h2>Fonksiyon Analizleri & Basit Anlatımlar</h2>
+            
+        <div class="card">
+            <h3><span class="badge">fn</span> parse_f64</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>val: &amp;Value</code> | <strong>Dönüş Tipi:</strong> <code>f64</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>val: &amp;Value</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>f64</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. İşlemi tamamlayarak <code>f64</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON parse_f64(val: &amp;Value) -&gt; f64:
+    EĞER let Some(s) = val.as_str() İSE:
+        s.parse::&lt;f64&gt;().unwrap_or(0.0)
+        } else if let Some(f) = val.as_f64() {
+        f
+        } else if let Some(i) = val.as_i64() {
+        i as f64
+        } else {
+        0.0</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: parse_f64"])
+    Start --> Cond1{"let Some(s) = val.as_str()?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"let Some(f) = val.as_f64()?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"let Some(i) = val.as_i64()?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> parse_u64</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>val: &amp;Value</code> | <strong>Dönüş Tipi:</strong> <code>u64</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>val: &amp;Value</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>u64</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. İşlemi tamamlayarak <code>u64</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON parse_u64(val: &amp;Value) -&gt; u64:
+    EĞER let Some(u) = val.as_u64() İSE:
+        u
+        } else if let Some(i) = val.as_i64() {
+        i as u64
+        } else if let Some(s) = val.as_str() {
+        s.parse::&lt;u64&gt;().unwrap_or(0)
+        } else {
+        0</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: parse_u64"])
+    Start --> Cond1{"let Some(u) = val.as_u64()?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"let Some(i) = val.as_i64()?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"let Some(s) = val.as_str()?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> calculate_atr_14</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>symbol: &amp;str, interval: &amp;str, bars: &amp;[Bar], period: usize</code> | <strong>Dönüş Tipi:</strong> <code>Option&lt;AtrMetrics&gt;</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>symbol: &amp;str, interval: &amp;str, bars: &amp;[Bar], period: usize</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>Option&lt;AtrMetrics&gt;</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Listeyi veya veri kümesini sırayla döngüye alarak tarar.<br>4. İşlemi tamamlayarak <code>Option&lt;AtrMetrics&gt;</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON calculate_atr_14(symbol: &amp;str, interval: &amp;str, bars: &amp;[Bar], period: usize) -&gt; Option&lt;AtrMetrics&gt;:
+    EĞER bars.is_empty() İSE:
+        DÖNDÜR None
+    let mut tr_list = Vec::with_capacity(bars.len());
+    HER i in 0..bars.len() İÇİN DÖNGÜ:
+        let tr = if i == 0 {
+        bars[i].high - bars[i].low
+        } else {
+        let high_low = bars[i].high - bars[i].low;
+        let high_prev_close = (bars[i].high - bars[i - 1].close).abs();
+        let low_prev_close = (bars[i].low - bars[i - 1].close).abs();
+        high_low.max(high_prev_close).max(low_prev_close)
+        };
+        tr_list.push(tr);
+    let now_ms = std::time::SystemTime::now()
+    .duration_since(std::time::UNIX_EPOCH)
+    .unwrap_or_default()
+    .as_millis() as u64;
+    let latest_close = bars.last().map(|b| b.close).unwrap_or(0.0);
+    let latest_tr = *tr_list.last().unwrap_or(&amp;0.0);
+    EĞER tr_list.len() &lt; period İSE:
+        let sum: f64 = tr_list.iter().sum();
+        let avg_atr = if tr_list.is_empty() { 0.0 } else { sum / tr_list.len() as f64 };
+        let atr_pct = if latest_close &gt; 0.0 { (avg_atr / latest_close) * 100.0 } else { 0.0 };
+        DÖNDÜR Some(AtrMetrics {
+        symbol: symbol.to_string(),
+        interval: interval.to_string(),
+        period,
+        bar_count: bars.len(),
+        latest_close,
+        latest_tr,
+        latest_atr: avg_atr,
+        atr_pct_of_close: atr_pct,
+        atr_history: vec![avg_atr],
+        last_updated_ms: now_ms,
+        });
+    // Wilder&#x27;s ATR(14)
+    let mut atr_series = Vec::with_capacity(bars.len());
+    let first_sma: f64 = tr_list[0..period].iter().sum::&lt;f64&gt;() / (period as f64);
+    HER _ in 0..period - 1 İÇİN DÖNGÜ:
+        atr_series.push(0.0);
+    atr_series.push(first_sma);
+    let period_f = period as f64;
+    let mut current_atr = first_sma;
+    HER i in period..tr_list.len() İÇİN DÖNGÜ:
+        current_atr = (current_atr * (period_f - 1.0) + tr_list[i]) / period_f;
+        atr_series.push(current_atr);
+    let latest_atr = *atr_series.last().unwrap_or(&amp;0.0);
+    let atr_pct = if latest_close &gt; 0.0 { (latest_atr / latest_close) * 100.0 } else { 0.0 };
+    Some(AtrMetrics {
+    symbol: symbol.to_string(),
+    interval: interval.to_string(),
+    period,
+    bar_count: bars.len(),
+    latest_close,
+    latest_tr,
+    latest_atr,
+    atr_pct_of_close: atr_pct,
+    atr_history: atr_series.iter().filter(|&amp;&amp;v| v &gt; 0.0).copied().collect(),
+    last_updated_ms: now_ms,
+    })</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: calculate_atr_14"])
+    Start --> Cond1{"bars.is_empty()?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"i == 0?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"tr_list.len() &lt; period?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> Loop4["Döngü: i in 0..bars.len()"]
+    Loop4 --> Loop5["Döngü: _ in 0..period - 1"]
+    Loop5 --> EndNode(["Döndür: Some(AtrMetrics {"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> init_plugin</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>state_out: *mut *mut c_void</code> | <strong>Dönüş Tipi:</strong> <code>unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>state_out: *mut *mut c_void</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. İşlemi tamamlayarak <code>unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON init_plugin(state_out: *mut *mut c_void) -&gt; unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize:
+    let _runtime = tokio::runtime::Builder::new_multi_thread()
+    .worker_threads(2)
+    .enable_all()
+    .build()
+    .expect(&quot;Tokio runtime could not be created&quot;);
+    let state = Box::new(PluginState {
+    _runtime,
+    is_running: Arc::new(AtomicBool::new(false)),
+    data: Arc::new(Mutex::new(HashMap::new())),
+    outbox: Arc::new(Mutex::new(Vec::new())),
+    stream_configs: Arc::new(Mutex::new(HashMap::new())),
+    });
+    *state_out = Box::into_raw(state) as *mut c_void;
+    handle_endpoint</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: init_plugin"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> handle_endpoint</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>plugin_state: *mut c_void,
+    endpoint_id: u32,
+    payload: *const u8,
+    payload_len: usize,
+    out_buf: *mut u8,
+    out_max_len: usize,</code> | <strong>Dönüş Tipi:</strong> <code>usize</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>plugin_state: *mut c_void,
+    endpoint_id: u32,
+    payload: *const u8,
+    payload_len: usize,
+    out_buf: *mut u8,
+    out_max_len: usize,</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>usize</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Listeyi veya veri kümesini sırayla döngüye alarak tarar.<br>4. Farklı durum senaryolarına göre akışı uygun kola yönlendirir.<br>5. İşlemi tamamlayarak <code>usize</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON handle_endpoint(plugin_state: *mut c_void,
+    endpoint_id: u32,
+    payload: *const u8,
+    payload_len: usize,
+    out_buf: *mut u8,
+    out_max_len: usize,) -&gt; usize:
+    let state = &amp;*(plugin_state as *const PluginState);
+    DURUM KONTROLÜ (endpoint_id):
+        0 =&gt; { // Start
+        EĞER state.is_running.load(Ordering::Relaxed) İSE:
+            DÖNDÜR 0
+        state.is_running.store(true, Ordering::Relaxed);
+        EĞER payload_len &gt; 0 İSE:
+            let slice = std::slice::from_raw_parts(payload, payload_len);
+            EĞER let Ok(config) = serde_json::from_slice::&lt;Value&gt;(slice) İSE:
+                EĞER let Some(inputs) = config.get(&quot;plugin_inputs&quot;).and_then(|i| i.as_array()) İSE:
+                    let mut q = state.outbox.lock().unwrap();
+                    HER input in inputs İÇİN DÖNGÜ:
+                        EĞER let (Some(source), Some(params), Some(stream_id)) = ( İSE:
+                            input.get(&quot;source&quot;).and_then(|s| s.as_str()),
+                            input.get(&quot;params&quot;).and_then(|p| p.as_object()),
+                            input.get(&quot;stream_id&quot;).and_then(|s| s.as_str()),
+                            ) {
+                            let mut req = serde_json::Map::new();
+                            req.insert(&quot;to&quot;.to_string(), serde_json::json!(source));
+                            req.insert(&quot;stream_id&quot;.to_string(), serde_json::json!(stream_id));
+                            HER (k, v) in params İÇİN DÖNGÜ:
+                                req.insert(k.clone(), v.clone());
+                            let symbol = req.get(&quot;symbol&quot;).and_then(|v| v.as_str()).unwrap_or(&quot;BTCUSDT&quot;).to_string();
+                            let interval = req.get(&quot;interval&quot;).and_then(|v| v.as_str()).unwrap_or(&quot;1m&quot;).to_string();
+                            let mut configs = state.stream_configs.lock().unwrap();
+                            configs.insert(stream_id.to_string(), (symbol, interval));
+                            q.push(Value::Object(req));
+        0
+    1 =&gt; { // Stop
+    state.is_running.store(false, Ordering::Relaxed);
+    0
+    2 =&gt; { // IsWorking
+    EĞER state.is_running.load(Ordering::Relaxed) İSE:
+    3 =&gt; { // DataValid
+    1
+    4 | 5 =&gt; { // DataMonitor &amp; RawData
+    let guard = state.data.lock().unwrap();
+    // Format report
+    let mut report = String::new();
+    report.push_str(&quot;============================================================\n&quot;);
+    report.push_str(&quot;📊 ATR (14) VERİ KANALI [1m / 100 BAR]\n&quot;);
+    report.push_str(&quot;============================================================\n&quot;);
+    EĞER guard.is_empty() İSE:
+        report.push_str(&quot;Henüz ATR verisi hesaplanmadı (ohlcv_fetcher verisi bekleniyor).\n&quot;);
+        } else {
+        HER (stream_id, val) in guard.iter() İÇİN DÖNGÜ:
+            EĞER let Ok(metrics) = serde_json::from_value::&lt;AtrMetrics&gt;(val.clone()) İSE:
+                report.push_str(&amp;format!(
+                &quot;[{}] Sym: {:&lt;8} | Close: {:&lt;10.2} | TR: {:&lt;8.4} | ATR(14): {:&lt;8.4} | ATR%: {:&lt;6.2}% | Bars: {}\n&quot;,
+                stream_id, metrics.symbol, metrics.latest_close, metrics.latest_tr, metrics.latest_atr, metrics.atr_pct_of_close, metrics.bar_count
+                ));
+    report.push_str(&quot;============================================================\n&quot;);
+    let mut response_map = serde_json::Map::new();
+    response_map.insert(&quot;formatted_report&quot;.to_string(), Value::String(report));
+    response_map.insert(&quot;metrics&quot;.to_string(), serde_json::to_value(&amp;*guard).unwrap_or_default());
+    EĞER let Ok(bytes) = serde_json::to_vec(&amp;Value::Object(response_map)) İSE:
+        let len = bytes.len().min(out_max_len);
+        EĞER len &gt; 0 İSE:
+            std::ptr::copy_nonoverlapping(bytes.as_ptr(), out_buf, len);
+        len
+        } else {
+        0
+    6 =&gt; { // Inbox
+    EĞER payload_len &gt; 0 İSE:
+        let slice = std::slice::from_raw_parts(payload, payload_len);
+        let (stream_id, data_slice) = if payload_len &gt; 32 {
+        let header = &amp;slice[0..32];
+        let s_id = std::str::from_utf8(header)
+        .unwrap_or(&quot;&quot;)
+        .trim_matches(char::from(0))
+        .to_string();
+        (if s_id.is_empty() { &quot;default&quot;.to_string() } else { s_id }, &amp;slice[32..])
+        } else {
+        (&quot;default&quot;.to_string(), slice)
+        };
+        let (symbol, interval) = {
+        let configs = state.stream_configs.lock().unwrap();
+        configs.get(&amp;stream_id)
+        .cloned()
+        .unwrap_or_else(|| (
+        EĞER stream_id.contains(&quot;btc&quot;) İSE:
+        AKSİ EĞER stream_id.contains(&quot;eth&quot;) İSE:
+        AKSİ EĞER stream_id.contains(&quot;tac&quot;) İSE:
+        AKSİ:
+            &quot;1m&quot;.to_string()
+            ))
+            };
+            EĞER let Ok(data_value) = serde_json::from_slice::&lt;Value&gt;(data_slice) İSE:
+                let arr_opt = if data_value.is_array() {
+                data_value.as_array().cloned()
+                } else if let Some(arr) = data_value.get(&quot;data&quot;).and_then(|d| d.as_array()) {
+                Some(arr.clone())
+                } else {
+                None
+                };
+                EĞER let Some(arr) = arr_opt İSE:
+                    let mut bars = Vec::new();
+                    HER row in arr İÇİN DÖNGÜ:
+                        EĞER let Some(row_arr) = row.as_array() İSE:
+                            EĞER row_arr.len() &gt;= 6 İSE:
+                                bars.push(Bar {
+                                open_time: parse_u64(&amp;row_arr[0]),
+                                open: parse_f64(&amp;row_arr[1]),
+                                high: parse_f64(&amp;row_arr[2]),
+                                low: parse_f64(&amp;row_arr[3]),
+                                close: parse_f64(&amp;row_arr[4]),
+                                volume: parse_f64(&amp;row_arr[5]),
+                                close_time: parse_u64(&amp;row_arr[6]),
+                                });
+                    EĞER !bars.is_empty() İSE:
+                        EĞER let Some(metrics) = calculate_atr_14(&amp;symbol, &amp;interval, &amp;bars, 14) İSE:
+                            EĞER let Ok(val) = serde_json::to_value(&amp;metrics) İSE:
+                                let mut guard = state.data.lock().unwrap();
+                                guard.insert(stream_id, val);
+        0
+    7 =&gt; { // Outbox
+    let mut q = state.outbox.lock().unwrap();
+    EĞER !q.is_empty() İSE:
+        let json_array = Value::Array(q.clone());
+        q.clear();
+        let bytes = serde_json::to_vec(&amp;json_array).unwrap_or_default();
+        let len = bytes.len().min(out_max_len);
+        std::ptr::copy_nonoverlapping(bytes.as_ptr(), out_buf, len);
+        len
+        } else {
+        0
+    _ =&gt; 0,</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: handle_endpoint"])
+    Start --> Cond1{"state.is_running.load(Ordering::Relaxed)?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"payload_len &gt; 0?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"let Ok(config) = serde_json::from_slice::&lt;Value&gt;(slice)?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> Loop4["Döngü: input in inputs"]
+    Loop4 --> Loop5["Döngü: (k, v) in params"]
+    Loop5 --> EndNode(["Döndür: 0"])
+            </div>
+        </div>
+        
+        </section>
+
+        <details>
+            <summary>Orijinal Rust Kaynak Kodunu Göster</summary>
+            <pre><code>use std::collections::HashMap;
+use std::ffi::c_void;
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::{Arc, Mutex};
+use serde::{Deserialize, Serialize};
+use serde_json::Value;
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Bar {
+    pub open_time: u64,
+    pub open: f64,
+    pub high: f64,
+    pub low: f64,
+    pub close: f64,
+    pub volume: f64,
+    pub close_time: u64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AtrMetrics {
+    pub symbol: String,
+    pub interval: String,
+    pub period: usize,
+    pub bar_count: usize,
+    pub latest_close: f64,
+    pub latest_tr: f64,
+    pub latest_atr: f64,
+    pub atr_pct_of_close: f64,
+    pub atr_history: Vec&lt;f64&gt;,
+    pub last_updated_ms: u64,
+}
+
+fn parse_f64(val: &amp;Value) -&gt; f64 {
+    if let Some(s) = val.as_str() {
+        s.parse::&lt;f64&gt;().unwrap_or(0.0)
+    } else if let Some(f) = val.as_f64() {
+        f
+    } else if let Some(i) = val.as_i64() {
+        i as f64
+    } else {
+        0.0
+    }
+}
+
+fn parse_u64(val: &amp;Value) -&gt; u64 {
+    if let Some(u) = val.as_u64() {
+        u
+    } else if let Some(i) = val.as_i64() {
+        i as u64
+    } else if let Some(s) = val.as_str() {
+        s.parse::&lt;u64&gt;().unwrap_or(0)
+    } else {
+        0
+    }
+}
+
+pub fn calculate_atr_14(symbol: &amp;str, interval: &amp;str, bars: &amp;[Bar], period: usize) -&gt; Option&lt;AtrMetrics&gt; {
+    if bars.is_empty() {
+        return None;
+    }
+
+    let mut tr_list = Vec::with_capacity(bars.len());
+    for i in 0..bars.len() {
+        let tr = if i == 0 {
+            bars[i].high - bars[i].low
+        } else {
+            let high_low = bars[i].high - bars[i].low;
+            let high_prev_close = (bars[i].high - bars[i - 1].close).abs();
+            let low_prev_close = (bars[i].low - bars[i - 1].close).abs();
+            high_low.max(high_prev_close).max(low_prev_close)
+        };
+        tr_list.push(tr);
+    }
+
+    let now_ms = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .unwrap_or_default()
+        .as_millis() as u64;
+
+    let latest_close = bars.last().map(|b| b.close).unwrap_or(0.0);
+    let latest_tr = *tr_list.last().unwrap_or(&amp;0.0);
+
+    if tr_list.len() &lt; period {
+        let sum: f64 = tr_list.iter().sum();
+        let avg_atr = if tr_list.is_empty() { 0.0 } else { sum / tr_list.len() as f64 };
+        let atr_pct = if latest_close &gt; 0.0 { (avg_atr / latest_close) * 100.0 } else { 0.0 };
+        return Some(AtrMetrics {
+            symbol: symbol.to_string(),
+            interval: interval.to_string(),
+            period,
+            bar_count: bars.len(),
+            latest_close,
+            latest_tr,
+            latest_atr: avg_atr,
+            atr_pct_of_close: atr_pct,
+            atr_history: vec![avg_atr],
+            last_updated_ms: now_ms,
+        });
+    }
+
+    // Wilder&#x27;s ATR(14)
+    let mut atr_series = Vec::with_capacity(bars.len());
+    let first_sma: f64 = tr_list[0..period].iter().sum::&lt;f64&gt;() / (period as f64);
+    for _ in 0..period - 1 {
+        atr_series.push(0.0);
+    }
+    atr_series.push(first_sma);
+
+    let period_f = period as f64;
+    let mut current_atr = first_sma;
+
+    for i in period..tr_list.len() {
+        current_atr = (current_atr * (period_f - 1.0) + tr_list[i]) / period_f;
+        atr_series.push(current_atr);
+    }
+
+    let latest_atr = *atr_series.last().unwrap_or(&amp;0.0);
+    let atr_pct = if latest_close &gt; 0.0 { (latest_atr / latest_close) * 100.0 } else { 0.0 };
+
+    Some(AtrMetrics {
+        symbol: symbol.to_string(),
+        interval: interval.to_string(),
+        period,
+        bar_count: bars.len(),
+        latest_close,
+        latest_tr,
+        latest_atr,
+        atr_pct_of_close: atr_pct,
+        atr_history: atr_series.iter().filter(|&amp;&amp;v| v &gt; 0.0).copied().collect(),
+        last_updated_ms: now_ms,
+    })
+}
+
+struct PluginState {
+    _runtime: tokio::runtime::Runtime,
+    is_running: Arc&lt;AtomicBool&gt;,
+    data: Arc&lt;Mutex&lt;HashMap&lt;String, Value&gt;&gt;&gt;,
+    outbox: Arc&lt;Mutex&lt;Vec&lt;Value&gt;&gt;&gt;,
+    stream_configs: Arc&lt;Mutex&lt;HashMap&lt;String, (String, String)&gt;&gt;&gt;,
+}
+
+#[no_mangle]
+pub unsafe extern &quot;C&quot; fn init_plugin(state_out: *mut *mut c_void) -&gt; unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize {
+    let _runtime = tokio::runtime::Builder::new_multi_thread()
+        .worker_threads(2)
+        .enable_all()
+        .build()
+        .expect(&quot;Tokio runtime could not be created&quot;);
+
+    let state = Box::new(PluginState {
+        _runtime,
+        is_running: Arc::new(AtomicBool::new(false)),
+        data: Arc::new(Mutex::new(HashMap::new())),
+        outbox: Arc::new(Mutex::new(Vec::new())),
+        stream_configs: Arc::new(Mutex::new(HashMap::new())),
+    });
+
+    *state_out = Box::into_raw(state) as *mut c_void;
+    handle_endpoint
+}
+
+unsafe extern &quot;C&quot; fn handle_endpoint(
+    plugin_state: *mut c_void,
+    endpoint_id: u32,
+    payload: *const u8,
+    payload_len: usize,
+    out_buf: *mut u8,
+    out_max_len: usize,
+) -&gt; usize {
+    let state = &amp;*(plugin_state as *const PluginState);
+
+    match endpoint_id {
+        0 =&gt; { // Start
+            if state.is_running.load(Ordering::Relaxed) {
+                return 0;
+            }
+            state.is_running.store(true, Ordering::Relaxed);
+
+            if payload_len &gt; 0 {
+                let slice = std::slice::from_raw_parts(payload, payload_len);
+                if let Ok(config) = serde_json::from_slice::&lt;Value&gt;(slice) {
+                    if let Some(inputs) = config.get(&quot;plugin_inputs&quot;).and_then(|i| i.as_array()) {
+                        let mut q = state.outbox.lock().unwrap();
+                        for input in inputs {
+                            if let (Some(source), Some(params), Some(stream_id)) = (
+                                input.get(&quot;source&quot;).and_then(|s| s.as_str()),
+                                input.get(&quot;params&quot;).and_then(|p| p.as_object()),
+                                input.get(&quot;stream_id&quot;).and_then(|s| s.as_str()),
+                            ) {
+                                let mut req = serde_json::Map::new();
+                                req.insert(&quot;to&quot;.to_string(), serde_json::json!(source));
+                                req.insert(&quot;stream_id&quot;.to_string(), serde_json::json!(stream_id));
+                                for (k, v) in params {
+                                    req.insert(k.clone(), v.clone());
+                                }
+
+                                let symbol = req.get(&quot;symbol&quot;).and_then(|v| v.as_str()).unwrap_or(&quot;BTCUSDT&quot;).to_string();
+                                let interval = req.get(&quot;interval&quot;).and_then(|v| v.as_str()).unwrap_or(&quot;1m&quot;).to_string();
+
+                                let mut configs = state.stream_configs.lock().unwrap();
+                                configs.insert(stream_id.to_string(), (symbol, interval));
+
+                                q.push(Value::Object(req));
+                            }
+                        }
+                    }
+                }
+            }
+
+            0
+        }
+        1 =&gt; { // Stop
+            state.is_running.store(false, Ordering::Relaxed);
+            0
+        }
+        2 =&gt; { // IsWorking
+            if state.is_running.load(Ordering::Relaxed) { 1 } else { 0 }
+        }
+        3 =&gt; { // DataValid
+            1
+        }
+        4 | 5 =&gt; { // DataMonitor &amp; RawData
+            let guard = state.data.lock().unwrap();
+            
+            // Format report
+            let mut report = String::new();
+            report.push_str(&quot;============================================================\n&quot;);
+            report.push_str(&quot;📊 ATR (14) VERİ KANALI [1m / 100 BAR]\n&quot;);
+            report.push_str(&quot;============================================================\n&quot;);
+            
+            if guard.is_empty() {
+                report.push_str(&quot;Henüz ATR verisi hesaplanmadı (ohlcv_fetcher verisi bekleniyor).\n&quot;);
+            } else {
+                for (stream_id, val) in guard.iter() {
+                    if let Ok(metrics) = serde_json::from_value::&lt;AtrMetrics&gt;(val.clone()) {
+                        report.push_str(&amp;format!(
+                            &quot;[{}] Sym: {:&lt;8} | Close: {:&lt;10.2} | TR: {:&lt;8.4} | ATR(14): {:&lt;8.4} | ATR%: {:&lt;6.2}% | Bars: {}\n&quot;,
+                            stream_id, metrics.symbol, metrics.latest_close, metrics.latest_tr, metrics.latest_atr, metrics.atr_pct_of_close, metrics.bar_count
+                        ));
+                    }
+                }
+            }
+            report.push_str(&quot;============================================================\n&quot;);
+
+            let mut response_map = serde_json::Map::new();
+            response_map.insert(&quot;formatted_report&quot;.to_string(), Value::String(report));
+            response_map.insert(&quot;metrics&quot;.to_string(), serde_json::to_value(&amp;*guard).unwrap_or_default());
+
+            if let Ok(bytes) = serde_json::to_vec(&amp;Value::Object(response_map)) {
+                let len = bytes.len().min(out_max_len);
+                if len &gt; 0 {
+                    std::ptr::copy_nonoverlapping(bytes.as_ptr(), out_buf, len);
+                }
+                len
+            } else {
+                0
+            }
+        }
+        6 =&gt; { // Inbox
+            if payload_len &gt; 0 {
+                let slice = std::slice::from_raw_parts(payload, payload_len);
+                let (stream_id, data_slice) = if payload_len &gt; 32 {
+                    let header = &amp;slice[0..32];
+                    let s_id = std::str::from_utf8(header)
+                        .unwrap_or(&quot;&quot;)
+                        .trim_matches(char::from(0))
+                        .to_string();
+                    (if s_id.is_empty() { &quot;default&quot;.to_string() } else { s_id }, &amp;slice[32..])
+                } else {
+                    (&quot;default&quot;.to_string(), slice)
+                };
+
+                let (symbol, interval) = {
+                    let configs = state.stream_configs.lock().unwrap();
+                    configs.get(&amp;stream_id)
+                        .cloned()
+                        .unwrap_or_else(|| (
+                            if stream_id.contains(&quot;btc&quot;) { &quot;BTCUSDT&quot;.to_string() }
+                            else if stream_id.contains(&quot;eth&quot;) { &quot;ETHUSDT&quot;.to_string() }
+                            else if stream_id.contains(&quot;tac&quot;) { &quot;TACUSDT&quot;.to_string() }
+                            else { &quot;BTCUSDT&quot;.to_string() },
+                            &quot;1m&quot;.to_string()
+                        ))
+                };
+
+                if let Ok(data_value) = serde_json::from_slice::&lt;Value&gt;(data_slice) {
+                    let arr_opt = if data_value.is_array() {
+                        data_value.as_array().cloned()
+                    } else if let Some(arr) = data_value.get(&quot;data&quot;).and_then(|d| d.as_array()) {
+                        Some(arr.clone())
+                    } else {
+                        None
+                    };
+
+                    if let Some(arr) = arr_opt {
+                        let mut bars = Vec::new();
+                        for row in arr {
+                            if let Some(row_arr) = row.as_array() {
+                                if row_arr.len() &gt;= 6 {
+                                    bars.push(Bar {
+                                        open_time: parse_u64(&amp;row_arr[0]),
+                                        open: parse_f64(&amp;row_arr[1]),
+                                        high: parse_f64(&amp;row_arr[2]),
+                                        low: parse_f64(&amp;row_arr[3]),
+                                        close: parse_f64(&amp;row_arr[4]),
+                                        volume: parse_f64(&amp;row_arr[5]),
+                                        close_time: parse_u64(&amp;row_arr[6]),
+                                    });
+                                }
+                            }
+                        }
+
+                        if !bars.is_empty() {
+                            if let Some(metrics) = calculate_atr_14(&amp;symbol, &amp;interval, &amp;bars, 14) {
+                                if let Ok(val) = serde_json::to_value(&amp;metrics) {
+                                    let mut guard = state.data.lock().unwrap();
+                                    guard.insert(stream_id, val);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            0
+        }
+        7 =&gt; { // Outbox
+            let mut q = state.outbox.lock().unwrap();
+            if !q.is_empty() {
+                let json_array = Value::Array(q.clone());
+                q.clear();
+                let bytes = serde_json::to_vec(&amp;json_array).unwrap_or_default();
+                let len = bytes.len().min(out_max_len);
+                std::ptr::copy_nonoverlapping(bytes.as_ptr(), out_buf, len);
+                len
+            } else {
+                0
+            }
+        }
+        _ =&gt; 0,
+    }
+}
+</code></pre>
+        </details>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            flowchart: { curve: 'basis' }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>lib.rs - Rust Analiz Dokümanı</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --border: #334155;
+            --code-bg: #090d16;
+            --verbal-bg: #131f37;
+            --analogy-bg: #1e1b4b;
+            --analogy-border: #818cf8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .back-link {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .back-link:hover { text-decoration: underline; }
+        h1 { font-size: 2rem; color: var(--accent); margin-bottom: 0.5rem; }
+        .file-path { font-family: 'Fira Code', monospace; color: var(--text-muted); font-size: 0.95rem; }
+        
+        .structs-container { margin: 1.5rem 0; }
+        .badge {
+            display: inline-block;
+            background: #0284c7;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-family: 'Fira Code', monospace;
+        }
+        .badge-struct { background: #7c3aed; }
+        
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .card h3 { color: var(--accent); margin-bottom: 0.5rem; font-size: 1.3rem; }
+        .card h4 { margin: 1.2rem 0 0.5rem 0; color: var(--text-muted); font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        .easy-analogy {
+            background: var(--analogy-bg);
+            border-left: 4px solid var(--analogy-border);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1rem;
+            color: #c7d2fe;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .verbal-explanation {
+            background: var(--verbal-bg);
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1.2rem;
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            margin-bottom: 1rem;
+        }
+        
+        .mermaid {
+            background: var(--code-bg);
+            padding: 1.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+        }
+        
+        details {
+            margin-top: 2rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Ana İndekse Dön</a>
+        <header>
+            <h1>lib.rs</h1>
+            <p class="file-path">crates/plugins/producers/binance_gateway/src/lib.rs</p>
+            <div class="structs-container">
+                <strong>Tanımlı Türler / Yapılar:</strong> <span class="badge badge-struct">PluginState</span> 
+            </div>
+        </header>
+
+        <section>
+            <h2>Fonksiyon Analizleri & Basit Anlatımlar</h2>
+            
+        <div class="card">
+            <h3><span class="badge">fn</span> init_plugin</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>state_out: *mut *mut c_void,</code> | <strong>Dönüş Tipi:</strong> <code>unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>state_out: *mut *mut c_void,</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. İşlemi tamamlayarak <code>unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON init_plugin(state_out: *mut *mut c_void,) -&gt; unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize:
+    let runtime = tokio::runtime::Builder::new_multi_thread()
+    .worker_threads(2)
+    .enable_all()
+    .build()
+    .expect(&quot;Tokio runtime olusturulamadi&quot;);
+    let state = Box::new(PluginState {
+    runtime,
+    is_running: Arc::new(AtomicBool::new(false)),
+    data: Arc::new(Mutex::new(br#&quot;{&quot;stream_markprice&quot;:{},&quot;stream_bestprice&quot;:{},&quot;stream_liquidations&quot;:[],&quot;stream_aggtrades&quot;:{},&quot;stream_trades&quot;:{},&quot;stream_depth&quot;:{}}&quot;#.to_vec())),
+    shutdown_tx: Mutex::new(None),
+    });
+    *state_out = Box::into_raw(state) as *mut c_void;
+    handle_endpoint</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: init_plugin"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> handle_endpoint</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>plugin_state: *mut c_void,
+    endpoint_id: u32,
+    payload: *const u8,
+    payload_len: usize,
+    out_buf: *mut u8,
+    out_max_len: usize,</code> | <strong>Dönüş Tipi:</strong> <code>usize</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>plugin_state: *mut c_void,
+    endpoint_id: u32,
+    payload: *const u8,
+    payload_len: usize,
+    out_buf: *mut u8,
+    out_max_len: usize,</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>usize</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Listeyi veya veri kümesini sırayla döngüye alarak tarar.<br>4. Farklı durum senaryolarına göre akışı uygun kola yönlendirir.<br>5. İşlemi tamamlayarak <code>usize</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON handle_endpoint(plugin_state: *mut c_void,
+    endpoint_id: u32,
+    payload: *const u8,
+    payload_len: usize,
+    out_buf: *mut u8,
+    out_max_len: usize,) -&gt; usize:
+    let state = &amp;*(plugin_state as *const PluginState);
+    DURUM KONTROLÜ (endpoint_id):
+        0 =&gt; { // Start
+        EĞER state.is_running.load(Ordering::Relaxed) İSE:
+            DÖNDÜR 0
+        let mut symbols = vec![&quot;BTCUSDT&quot;.to_string(), &quot;ETHUSDT&quot;.to_string(), &quot;TACUSDT&quot;.to_string()];
+        EĞER payload_len &gt; 0 İSE:
+            let slice = std::slice::from_raw_parts(payload, payload_len);
+            EĞER let Ok(config) = serde_json::from_slice::&lt;serde_json::Value&gt;(slice) İSE:
+                EĞER let Some(params) = config.get(&quot;plugin_params&quot;) İSE:
+                    EĞER let Some(syms) = params.get(&quot;symbols&quot;).and_then(|s| s.as_array()) İSE:
+                        symbols.clear();
+                        HER s in syms İÇİN DÖNGÜ:
+                            EĞER let Some(s_str) = s.as_str() İSE:
+                                symbols.push(s_str.to_string());
+        let is_running = state.is_running.clone();
+        let data = state.data.clone();
+        let (tx, rx) = tokio::sync::watch::channel(false);
+        *state.shutdown_tx.lock().unwrap() = Some(tx);
+        is_running.store(true, Ordering::Relaxed);
+        state.runtime.spawn(async move {
+        stream_gateway(symbols, is_running, data, rx).await;
+        });
+        0
+    1 =&gt; { // Stop
+    state.is_running.store(false, Ordering::Relaxed);
+    EĞER let Some(tx) = state.shutdown_tx.lock().unwrap().take() İSE:
+        let _ = tx.send(true);
+    0
+    2 =&gt; { // IsWorking
+    let running = state.is_running.load(Ordering::Relaxed);
+    EĞER out_max_len &gt;= 1 İSE:
+        *out_buf = if running { 1 } else { 0 };
+        1
+        } else {
+        0
+    4 | 5 =&gt; { // DataMonitor / RawData
+    let guard = state.data.lock().unwrap();
+    let len = guard.len().min(out_max_len);
+    EĞER len &gt; 0 İSE:
+        std::ptr::copy_nonoverlapping(guard.as_ptr(), out_buf, len);
+    len
+    _ =&gt; 0,</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: handle_endpoint"])
+    Start --> Cond1{"state.is_running.load(Ordering::Relaxed)?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"payload_len &gt; 0?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"let Ok(config) = serde_json::from_slice::&lt;serde_json::Value&gt;(slice)?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> Loop4["Döngü: s in syms"]
+    Loop4 --> EndNode(["Döndür: 0"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> stream_gateway</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>symbols: Vec&lt;String&gt;,
+    is_running: Arc&lt;AtomicBool&gt;,
+    data: Arc&lt;Mutex&lt;Vec&lt;u8&gt;&gt;&gt;,
+    shutdown_rx: tokio::sync::watch::Receiver&lt;bool&gt;,</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>symbols: Vec&lt;String&gt;,
+    is_running: Arc&lt;AtomicBool&gt;,
+    data: Arc&lt;Mutex&lt;Vec&lt;u8&gt;&gt;&gt;,
+    shutdown_rx: tokio::sync::watch::Receiver&lt;bool&gt;,</code> verisini alır, kendi kurallarına göre işler ve sonucunda gerekli işlemi tamamlayan adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Listeyi veya veri kümesini sırayla döngüye alarak tarar.<br>3. İşlemi tamamlayarak <code>()</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON stream_gateway(symbols: Vec&lt;String&gt;,
+    is_running: Arc&lt;AtomicBool&gt;,
+    data: Arc&lt;Mutex&lt;Vec&lt;u8&gt;&gt;&gt;,
+    shutdown_rx: tokio::sync::watch::Receiver&lt;bool&gt;,) -&gt; ():
+    let mut public_streams = Vec::new();
+    let mut market_streams = Vec::new();
+    HER sym in &amp;symbols İÇİN DÖNGÜ:
+        let s = sym.to_lowercase();
+        market_streams.push(format!(&quot;{}@markPrice@1s&quot;, s));
+        public_streams.push(format!(&quot;{}@bookTicker&quot;, s));
+        public_streams.push(format!(&quot;{}@depth20@100ms&quot;, s));
+        public_streams.push(format!(&quot;{}@trade&quot;, s));
+    market_streams.push(&quot;!forceOrder@arr&quot;.to_string());
+    let public_url = format!(&quot;wss://fstream.binance.com/public/stream?streams={}&quot;, public_streams.join(&quot;/&quot;));
+    let market_url = format!(&quot;wss://fstream.binance.com/market/stream?streams={}&quot;, market_streams.join(&quot;/&quot;));
+    let is_running_1 = is_running.clone();
+    let data_1 = data.clone();
+    let shutdown_rx_1 = shutdown_rx.clone();
+    let is_running_2 = is_running.clone();
+    let data_2 = data.clone();
+    let shutdown_rx_2 = shutdown_rx;
+    let handle1 = tokio::spawn(async move {
+    run_websocket_loop(public_url, is_running_1, data_1, shutdown_rx_1).await;
+    });
+    let handle2 = tokio::spawn(async move {
+    run_websocket_loop(market_url, is_running_2, data_2, shutdown_rx_2).await;
+    });
+    let _ = tokio::join!(handle1, handle2);</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: stream_gateway"])
+    Start --> Loop1["Döngü: sym in &symbols"]
+    Loop1 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> run_websocket_loop</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>url: String,
+    is_running: Arc&lt;AtomicBool&gt;,
+    data: Arc&lt;Mutex&lt;Vec&lt;u8&gt;&gt;&gt;,
+    mut shutdown_rx: tokio::sync::watch::Receiver&lt;bool&gt;,</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>url: String,
+    is_running: Arc&lt;AtomicBool&gt;,
+    data: Arc&lt;Mutex&lt;Vec&lt;u8&gt;&gt;&gt;,
+    mut shutdown_rx: tokio::sync::watch::Receiver&lt;bool&gt;,</code> verisini alır, kendi kurallarına göre işler ve sonucunda gerekli işlemi tamamlayan adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Listeyi veya veri kümesini sırayla döngüye alarak tarar.<br>4. Farklı durum senaryolarına göre akışı uygun kola yönlendirir.<br>5. İşlemi tamamlayarak <code>()</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON run_websocket_loop(url: String,
+    is_running: Arc&lt;AtomicBool&gt;,
+    data: Arc&lt;Mutex&lt;Vec&lt;u8&gt;&gt;&gt;,
+    mut shutdown_rx: tokio::sync::watch::Receiver&lt;bool&gt;,) -&gt; ():
+    use futures_util::StreamExt;
+    use tokio_tungstenite::connect_async;
+    use tokio_tungstenite::tungstenite::Message;
+    use std::time::{SystemTime, UNIX_EPOCH};
+    let mut retry_count = 0;
+    WHILE is_running.load(Ordering::Relaxed) DÖNGÜSÜ:
+        EĞER retry_count &gt; 0 İSE:
+            tokio::time::sleep(tokio::time::Duration::from_secs(3)).await;
+        EĞER let Ok((ws_stream, _)) = connect_async(&amp;url).await İSE:
+            let (_, mut read) = ws_stream.split();
+            loop {
+            tokio::select! {
+            _ = shutdown_rx.changed() =&gt; { break; }
+            msg = read.next() =&gt; {
+            DURUM KONTROLÜ (msg):
+                Some(Ok(Message::Text(text))) =&gt; {
+                let recv_ms = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_millis() as i64;
+                EĞER let Ok(wrapper) = serde_json::from_str::&lt;serde_json::Value&gt;(&amp;text) İSE:
+                    EĞER let Some(stream_name) = wrapper.get(&quot;stream&quot;).and_then(|s| s.as_str()) İSE:
+                        EĞER let Some(json) = wrapper.get(&quot;data&quot;) İSE:
+                            let e_type = json.get(&quot;e&quot;).and_then(|v| v.as_str()).unwrap_or(&quot;&quot;);
+                            let mut guard = data.lock().unwrap();
+                            let mut combined: serde_json::Value = serde_json::from_slice(&amp;guard).unwrap_or_else(|_| serde_json::json!({}));
+                            EĞER !combined.is_object() İSE:
+                                combined = serde_json::json!({});
+                            {
+                            let obj = combined.as_object_mut().unwrap();
+                            EĞER !obj.contains_key(&quot;stream_markprice&quot;) İSE:
+                                EĞER !obj.contains_key(&quot;stream_bestprice&quot;) İSE:
+                                    EĞER !obj.contains_key(&quot;stream_liquidations&quot;) İSE:
+                                        EĞER !obj.contains_key(&quot;stream_aggtrades&quot;) İSE:
+                                            EĞER !obj.contains_key(&quot;stream_trades&quot;) İSE:
+                                                EĞER !obj.contains_key(&quot;stream_depth&quot;) İSE:
+                                                let ev_time = json.get(&quot;E&quot;)
+                                                .and_then(|v| v.as_i64())
+                                                .or_else(|| json.get(&quot;T&quot;).and_then(|v| v.as_i64()))
+                                                .filter(|&amp;t| t &gt; 0)
+                                                .unwrap_or(recv_ms);
+                                                EĞER e_type == &quot;forceOrder&quot; İSE:
+                                                    EĞER let Some(o) = json.get(&quot;o&quot;) İSE:
+                                                        let symbol = o[&quot;s&quot;].as_str().unwrap_or(&quot;&quot;).to_string();
+                                                        let output = serde_json::json!({
+                                                        &quot;symbol&quot;: symbol,
+                                                        &quot;side&quot;: o[&quot;S&quot;].as_str().unwrap_or(&quot;&quot;),
+                                                        &quot;type&quot;: o[&quot;o&quot;].as_str().unwrap_or(&quot;&quot;),
+                                                        &quot;price&quot;: o[&quot;p&quot;].as_str().unwrap_or(&quot;0&quot;),
+                                                        &quot;average_price&quot;: o[&quot;ap&quot;].as_str().unwrap_or(&quot;0&quot;),
+                                                        &quot;original_qty&quot;: o[&quot;q&quot;].as_str().unwrap_or(&quot;0&quot;),
+                                                        &quot;filled_qty&quot;: o[&quot;z&quot;].as_str().unwrap_or(&quot;0&quot;),
+                                                        &quot;event_time&quot;: ev_time,
+                                                        &quot;local_recv_time_ms&quot;: recv_ms
+                                                        });
+                                                        EĞER let Some(arr) = combined[&quot;stream_liquidations&quot;].as_array_mut() İSE:
+                                                            arr.push(output);
+                                                            EĞER arr.len() &gt; 50 İSE:
+                                                        } else if e_type == &quot;markPriceUpdate&quot; {
+                                                        let symbol = json[&quot;s&quot;].as_str().unwrap_or(&quot;&quot;).to_string();
+                                                        let output = serde_json::json!({
+                                                        &quot;mark_price&quot;: json[&quot;p&quot;].as_str().unwrap_or(&quot;0&quot;),
+                                                        &quot;index_price&quot;: json[&quot;i&quot;].as_str().unwrap_or(&quot;0&quot;),
+                                                        &quot;estimated_settle_price&quot;: json[&quot;P&quot;].as_str().unwrap_or(&quot;0&quot;),
+                                                        &quot;funding_rate&quot;: json[&quot;r&quot;].as_str().unwrap_or(&quot;0&quot;),
+                                                        &quot;next_funding_time&quot;: json[&quot;T&quot;].as_i64().unwrap_or(0),
+                                                        &quot;event_time&quot;: ev_time,
+                                                        &quot;local_recv_time_ms&quot;: recv_ms
+                                                        });
+                                                        combined[&quot;stream_markprice&quot;][symbol] = output;
+                                                        } else if e_type == &quot;bookTicker&quot; || stream_name.to_lowercase().ends_with(&quot;@bookticker&quot;) {
+                                                        let symbol = json[&quot;s&quot;].as_str().unwrap_or(&quot;&quot;).to_string();
+                                                        let output = serde_json::json!({
+                                                        &quot;best_bid&quot;: json[&quot;b&quot;].as_str().unwrap_or(&quot;0&quot;),
+                                                        &quot;best_bid_qty&quot;: json[&quot;B&quot;].as_str().unwrap_or(&quot;0&quot;),
+                                                        &quot;best_ask&quot;: json[&quot;a&quot;].as_str().unwrap_or(&quot;0&quot;),
+                                                        &quot;best_ask_qty&quot;: json[&quot;A&quot;].as_str().unwrap_or(&quot;0&quot;),
+                                                        &quot;event_time&quot;: ev_time,
+                                                        &quot;local_recv_time_ms&quot;: recv_ms
+                                                        });
+                                                        combined[&quot;stream_bestprice&quot;][symbol] = output;
+                                                        } else if e_type == &quot;aggTrade&quot; || e_type == &quot;trade&quot; || stream_name.to_lowercase().ends_with(&quot;@trade&quot;) {
+                                                        let symbol = json[&quot;s&quot;].as_str().unwrap_or(&quot;&quot;).to_string();
+                                                        let output = serde_json::json!({
+                                                        &quot;trade_id&quot;: json[&quot;t&quot;].as_i64().unwrap_or(0),
+                                                        &quot;price&quot;: json[&quot;p&quot;].as_str().unwrap_or(&quot;0&quot;),
+                                                        &quot;quantity&quot;: json[&quot;q&quot;].as_str().unwrap_or(&quot;0&quot;),
+                                                        &quot;buyer_is_maker&quot;: json[&quot;m&quot;].as_bool().unwrap_or(false),
+                                                        &quot;event_time&quot;: ev_time,
+                                                        &quot;local_recv_time_ms&quot;: recv_ms
+                                                        });
+                                                        combined[&quot;stream_aggtrades&quot;][symbol.clone()] = output.clone();
+                                                        combined[&quot;stream_trades&quot;][symbol] = output;
+                                                        } else if stream_name.to_lowercase().ends_with(&quot;@depth20@100ms&quot;) {
+                                                        let symbol = stream_name.split(&#x27;@&#x27;).next().unwrap_or(&quot;&quot;).to_uppercase();
+                                                        let output = serde_json::json!({
+                                                        &quot;bids&quot;: json[&quot;b&quot;],
+                                                        &quot;asks&quot;: json[&quot;a&quot;],
+                                                        &quot;last_update_id&quot;: json[&quot;lastUpdateId&quot;].as_i64().unwrap_or(0),
+                                                        &quot;event_time&quot;: ev_time,
+                                                        &quot;local_recv_time_ms&quot;: recv_ms
+                                                        });
+                                                        combined[&quot;stream_depth&quot;][symbol] = output;
+                                                    *guard = serde_json::to_vec(&amp;combined).unwrap_or_default();
+                                    Some(Err(_)) | None =&gt; { break; }
+                                    _ =&gt; {}
+                retry_count += 1;</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: run_websocket_loop"])
+    Start --> Cond1{"retry_count &gt; 0?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"let Ok((ws_stream, _)) = connect_async(&url).await?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"let Ok(wrapper) = serde_json::from_str::&lt;serde_json::Value&gt;(&text)?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        </section>
+
+        <details>
+            <summary>Orijinal Rust Kaynak Kodunu Göster</summary>
+            <pre><code>use std::ffi::c_void;
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::{Arc, Mutex};
+use std::collections::HashMap;
+
+struct PluginState {
+    runtime: tokio::runtime::Runtime,
+    is_running: Arc&lt;AtomicBool&gt;,
+    // data holds a serialized JSON of demultiplexed streams:
+    // {
+    //   &quot;stream_markprice&quot;: { &quot;BTCUSDT&quot;: { &quot;mark_price&quot;: ... } },
+    //   &quot;stream_bestprice&quot;: { &quot;BTCUSDT&quot;: { &quot;best_ask&quot;: ... } },
+    //   &quot;stream_liquidations&quot;: [ ... ],
+    // }
+    data: Arc&lt;Mutex&lt;Vec&lt;u8&gt;&gt;&gt;,
+    shutdown_tx: Mutex&lt;Option&lt;tokio::sync::watch::Sender&lt;bool&gt;&gt;&gt;,
+}
+
+#[no_mangle]
+pub unsafe extern &quot;C&quot; fn init_plugin(
+    state_out: *mut *mut c_void,
+) -&gt; unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize {
+    let runtime = tokio::runtime::Builder::new_multi_thread()
+        .worker_threads(2)
+        .enable_all()
+        .build()
+        .expect(&quot;Tokio runtime olusturulamadi&quot;);
+
+    let state = Box::new(PluginState {
+        runtime,
+        is_running: Arc::new(AtomicBool::new(false)),
+        data: Arc::new(Mutex::new(br#&quot;{&quot;stream_markprice&quot;:{},&quot;stream_bestprice&quot;:{},&quot;stream_liquidations&quot;:[],&quot;stream_aggtrades&quot;:{},&quot;stream_trades&quot;:{},&quot;stream_depth&quot;:{}}&quot;#.to_vec())),
+        shutdown_tx: Mutex::new(None),
+    });
+
+    *state_out = Box::into_raw(state) as *mut c_void;
+    handle_endpoint
+}
+
+unsafe extern &quot;C&quot; fn handle_endpoint(
+    plugin_state: *mut c_void,
+    endpoint_id: u32,
+    payload: *const u8,
+    payload_len: usize,
+    out_buf: *mut u8,
+    out_max_len: usize,
+) -&gt; usize {
+    let state = &amp;*(plugin_state as *const PluginState);
+
+    match endpoint_id {
+        0 =&gt; { // Start
+            if state.is_running.load(Ordering::Relaxed) {
+                return 0;
+            }
+            
+            let mut symbols = vec![&quot;BTCUSDT&quot;.to_string(), &quot;ETHUSDT&quot;.to_string(), &quot;TACUSDT&quot;.to_string()];
+            
+            if payload_len &gt; 0 {
+                let slice = std::slice::from_raw_parts(payload, payload_len);
+                if let Ok(config) = serde_json::from_slice::&lt;serde_json::Value&gt;(slice) {
+                    if let Some(params) = config.get(&quot;plugin_params&quot;) {
+                        if let Some(syms) = params.get(&quot;symbols&quot;).and_then(|s| s.as_array()) {
+                            symbols.clear();
+                            for s in syms {
+                                if let Some(s_str) = s.as_str() {
+                                    symbols.push(s_str.to_string());
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            let is_running = state.is_running.clone();
+            let data = state.data.clone();
+            let (tx, rx) = tokio::sync::watch::channel(false);
+
+            *state.shutdown_tx.lock().unwrap() = Some(tx);
+            is_running.store(true, Ordering::Relaxed);
+
+            state.runtime.spawn(async move {
+                stream_gateway(symbols, is_running, data, rx).await;
+            });
+            0
+        }
+        1 =&gt; { // Stop
+            state.is_running.store(false, Ordering::Relaxed);
+            if let Some(tx) = state.shutdown_tx.lock().unwrap().take() {
+                let _ = tx.send(true);
+            }
+            0
+        }
+        2 =&gt; { // IsWorking
+            let running = state.is_running.load(Ordering::Relaxed);
+            if out_max_len &gt;= 1 {
+                *out_buf = if running { 1 } else { 0 };
+                1
+            } else {
+                0
+            }
+        }
+        4 | 5 =&gt; { // DataMonitor / RawData
+            let guard = state.data.lock().unwrap();
+            let len = guard.len().min(out_max_len);
+            if len &gt; 0 {
+                std::ptr::copy_nonoverlapping(guard.as_ptr(), out_buf, len);
+            }
+            len
+        }
+        _ =&gt; 0,
+    }
+}
+
+async fn stream_gateway(
+    symbols: Vec&lt;String&gt;,
+    is_running: Arc&lt;AtomicBool&gt;,
+    data: Arc&lt;Mutex&lt;Vec&lt;u8&gt;&gt;&gt;,
+    shutdown_rx: tokio::sync::watch::Receiver&lt;bool&gt;,
+) {
+    let mut public_streams = Vec::new();
+    let mut market_streams = Vec::new();
+    for sym in &amp;symbols {
+        let s = sym.to_lowercase();
+        market_streams.push(format!(&quot;{}@markPrice@1s&quot;, s));
+        public_streams.push(format!(&quot;{}@bookTicker&quot;, s));
+        public_streams.push(format!(&quot;{}@depth20@100ms&quot;, s));
+        public_streams.push(format!(&quot;{}@trade&quot;, s));
+    }
+    market_streams.push(&quot;!forceOrder@arr&quot;.to_string());
+
+    let public_url = format!(&quot;wss://fstream.binance.com/public/stream?streams={}&quot;, public_streams.join(&quot;/&quot;));
+    let market_url = format!(&quot;wss://fstream.binance.com/market/stream?streams={}&quot;, market_streams.join(&quot;/&quot;));
+
+    let is_running_1 = is_running.clone();
+    let data_1 = data.clone();
+    let shutdown_rx_1 = shutdown_rx.clone();
+
+    let is_running_2 = is_running.clone();
+    let data_2 = data.clone();
+    let shutdown_rx_2 = shutdown_rx;
+
+    let handle1 = tokio::spawn(async move {
+        run_websocket_loop(public_url, is_running_1, data_1, shutdown_rx_1).await;
+    });
+
+    let handle2 = tokio::spawn(async move {
+        run_websocket_loop(market_url, is_running_2, data_2, shutdown_rx_2).await;
+    });
+
+    let _ = tokio::join!(handle1, handle2);
+}
+
+async fn run_websocket_loop(
+    url: String,
+    is_running: Arc&lt;AtomicBool&gt;,
+    data: Arc&lt;Mutex&lt;Vec&lt;u8&gt;&gt;&gt;,
+    mut shutdown_rx: tokio::sync::watch::Receiver&lt;bool&gt;,
+) {
+    use futures_util::StreamExt;
+    use tokio_tungstenite::connect_async;
+    use tokio_tungstenite::tungstenite::Message;
+    use std::time::{SystemTime, UNIX_EPOCH};
+
+    let mut retry_count = 0;
+    while is_running.load(Ordering::Relaxed) {
+        if retry_count &gt; 0 {
+            tokio::time::sleep(tokio::time::Duration::from_secs(3)).await;
+        }
+
+        if let Ok((ws_stream, _)) = connect_async(&amp;url).await {
+            let (_, mut read) = ws_stream.split();
+            loop {
+                tokio::select! {
+                    _ = shutdown_rx.changed() =&gt; { break; }
+                    msg = read.next() =&gt; {
+                        match msg {
+                            Some(Ok(Message::Text(text))) =&gt; {
+                                let recv_ms = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_millis() as i64;
+                                if let Ok(wrapper) = serde_json::from_str::&lt;serde_json::Value&gt;(&amp;text) {
+                                    if let Some(stream_name) = wrapper.get(&quot;stream&quot;).and_then(|s| s.as_str()) {
+                                        if let Some(json) = wrapper.get(&quot;data&quot;) {
+                                            let e_type = json.get(&quot;e&quot;).and_then(|v| v.as_str()).unwrap_or(&quot;&quot;);
+                                            
+                                            let mut guard = data.lock().unwrap();
+                                            let mut combined: serde_json::Value = serde_json::from_slice(&amp;guard).unwrap_or_else(|_| serde_json::json!({}));
+                                            if !combined.is_object() {
+                                                combined = serde_json::json!({});
+                                            }
+                                            {
+                                                let obj = combined.as_object_mut().unwrap();
+                                                if !obj.contains_key(&quot;stream_markprice&quot;) { obj.insert(&quot;stream_markprice&quot;.to_string(), serde_json::json!({})); }
+                                                if !obj.contains_key(&quot;stream_bestprice&quot;) { obj.insert(&quot;stream_bestprice&quot;.to_string(), serde_json::json!({})); }
+                                                if !obj.contains_key(&quot;stream_liquidations&quot;) { obj.insert(&quot;stream_liquidations&quot;.to_string(), serde_json::json!([])); }
+                                                if !obj.contains_key(&quot;stream_aggtrades&quot;) { obj.insert(&quot;stream_aggtrades&quot;.to_string(), serde_json::json!({})); }
+                                                if !obj.contains_key(&quot;stream_trades&quot;) { obj.insert(&quot;stream_trades&quot;.to_string(), serde_json::json!({})); }
+                                                if !obj.contains_key(&quot;stream_depth&quot;) { obj.insert(&quot;stream_depth&quot;.to_string(), serde_json::json!({})); }
+                                            }
+
+                                            let ev_time = json.get(&quot;E&quot;)
+                                                .and_then(|v| v.as_i64())
+                                                .or_else(|| json.get(&quot;T&quot;).and_then(|v| v.as_i64()))
+                                                .filter(|&amp;t| t &gt; 0)
+                                                .unwrap_or(recv_ms);
+
+                                            if e_type == &quot;forceOrder&quot; {
+                                                if let Some(o) = json.get(&quot;o&quot;) {
+                                                    let symbol = o[&quot;s&quot;].as_str().unwrap_or(&quot;&quot;).to_string();
+                                                    let output = serde_json::json!({
+                                                        &quot;symbol&quot;: symbol,
+                                                        &quot;side&quot;: o[&quot;S&quot;].as_str().unwrap_or(&quot;&quot;),
+                                                        &quot;type&quot;: o[&quot;o&quot;].as_str().unwrap_or(&quot;&quot;),
+                                                        &quot;price&quot;: o[&quot;p&quot;].as_str().unwrap_or(&quot;0&quot;),
+                                                        &quot;average_price&quot;: o[&quot;ap&quot;].as_str().unwrap_or(&quot;0&quot;),
+                                                        &quot;original_qty&quot;: o[&quot;q&quot;].as_str().unwrap_or(&quot;0&quot;),
+                                                        &quot;filled_qty&quot;: o[&quot;z&quot;].as_str().unwrap_or(&quot;0&quot;),
+                                                        &quot;event_time&quot;: ev_time,
+                                                        &quot;local_recv_time_ms&quot;: recv_ms
+                                                    });
+                                                    if let Some(arr) = combined[&quot;stream_liquidations&quot;].as_array_mut() {
+                                                        arr.push(output);
+                                                        if arr.len() &gt; 50 { arr.remove(0); }
+                                                    }
+                                                }
+                                            } else if e_type == &quot;markPriceUpdate&quot; {
+                                                let symbol = json[&quot;s&quot;].as_str().unwrap_or(&quot;&quot;).to_string();
+                                                let output = serde_json::json!({
+                                                    &quot;mark_price&quot;: json[&quot;p&quot;].as_str().unwrap_or(&quot;0&quot;),
+                                                    &quot;index_price&quot;: json[&quot;i&quot;].as_str().unwrap_or(&quot;0&quot;),
+                                                    &quot;estimated_settle_price&quot;: json[&quot;P&quot;].as_str().unwrap_or(&quot;0&quot;),
+                                                    &quot;funding_rate&quot;: json[&quot;r&quot;].as_str().unwrap_or(&quot;0&quot;),
+                                                    &quot;next_funding_time&quot;: json[&quot;T&quot;].as_i64().unwrap_or(0),
+                                                    &quot;event_time&quot;: ev_time,
+                                                    &quot;local_recv_time_ms&quot;: recv_ms
+                                                });
+                                                combined[&quot;stream_markprice&quot;][symbol] = output;
+                                            } else if e_type == &quot;bookTicker&quot; || stream_name.to_lowercase().ends_with(&quot;@bookticker&quot;) {
+                                                let symbol = json[&quot;s&quot;].as_str().unwrap_or(&quot;&quot;).to_string();
+                                                let output = serde_json::json!({
+                                                    &quot;best_bid&quot;: json[&quot;b&quot;].as_str().unwrap_or(&quot;0&quot;),
+                                                    &quot;best_bid_qty&quot;: json[&quot;B&quot;].as_str().unwrap_or(&quot;0&quot;),
+                                                    &quot;best_ask&quot;: json[&quot;a&quot;].as_str().unwrap_or(&quot;0&quot;),
+                                                    &quot;best_ask_qty&quot;: json[&quot;A&quot;].as_str().unwrap_or(&quot;0&quot;),
+                                                    &quot;event_time&quot;: ev_time,
+                                                    &quot;local_recv_time_ms&quot;: recv_ms
+                                                });
+                                                combined[&quot;stream_bestprice&quot;][symbol] = output;
+                                            } else if e_type == &quot;aggTrade&quot; || e_type == &quot;trade&quot; || stream_name.to_lowercase().ends_with(&quot;@trade&quot;) {
+                                                let symbol = json[&quot;s&quot;].as_str().unwrap_or(&quot;&quot;).to_string();
+                                                let output = serde_json::json!({
+                                                    &quot;trade_id&quot;: json[&quot;t&quot;].as_i64().unwrap_or(0),
+                                                    &quot;price&quot;: json[&quot;p&quot;].as_str().unwrap_or(&quot;0&quot;),
+                                                    &quot;quantity&quot;: json[&quot;q&quot;].as_str().unwrap_or(&quot;0&quot;),
+                                                    &quot;buyer_is_maker&quot;: json[&quot;m&quot;].as_bool().unwrap_or(false),
+                                                    &quot;event_time&quot;: ev_time,
+                                                    &quot;local_recv_time_ms&quot;: recv_ms
+                                                });
+                                                combined[&quot;stream_aggtrades&quot;][symbol.clone()] = output.clone();
+                                                combined[&quot;stream_trades&quot;][symbol] = output;
+                                            } else if stream_name.to_lowercase().ends_with(&quot;@depth20@100ms&quot;) {
+                                                let symbol = stream_name.split(&#x27;@&#x27;).next().unwrap_or(&quot;&quot;).to_uppercase();
+                                                let output = serde_json::json!({
+                                                    &quot;bids&quot;: json[&quot;b&quot;],
+                                                    &quot;asks&quot;: json[&quot;a&quot;],
+                                                    &quot;last_update_id&quot;: json[&quot;lastUpdateId&quot;].as_i64().unwrap_or(0),
+                                                    &quot;event_time&quot;: ev_time,
+                                                    &quot;local_recv_time_ms&quot;: recv_ms
+                                                });
+                                                combined[&quot;stream_depth&quot;][symbol] = output;
+                                            }
+
+                                            *guard = serde_json::to_vec(&amp;combined).unwrap_or_default();
+                                        }
+                                    }
+                                }
+                            }
+                            Some(Err(_)) | None =&gt; { break; }
+                            _ =&gt; {}
+                        }
+                    }
+                }
+            }
+        }
+        retry_count += 1;
+    }
+}
+</code></pre>
+        </details>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            flowchart: { curve: 'basis' }
+        });
+    </script>
+</body>
+</html>

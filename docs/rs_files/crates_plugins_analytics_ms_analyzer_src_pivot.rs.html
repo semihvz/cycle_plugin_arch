@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>pivot.rs - Rust Analiz Dokümanı</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --border: #334155;
+            --code-bg: #090d16;
+            --verbal-bg: #131f37;
+            --analogy-bg: #1e1b4b;
+            --analogy-border: #818cf8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .back-link {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .back-link:hover { text-decoration: underline; }
+        h1 { font-size: 2rem; color: var(--accent); margin-bottom: 0.5rem; }
+        .file-path { font-family: 'Fira Code', monospace; color: var(--text-muted); font-size: 0.95rem; }
+        
+        .structs-container { margin: 1.5rem 0; }
+        .badge {
+            display: inline-block;
+            background: #0284c7;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-family: 'Fira Code', monospace;
+        }
+        .badge-struct { background: #7c3aed; }
+        
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .card h3 { color: var(--accent); margin-bottom: 0.5rem; font-size: 1.3rem; }
+        .card h4 { margin: 1.2rem 0 0.5rem 0; color: var(--text-muted); font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        .easy-analogy {
+            background: var(--analogy-bg);
+            border-left: 4px solid var(--analogy-border);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1rem;
+            color: #c7d2fe;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .verbal-explanation {
+            background: var(--verbal-bg);
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1.2rem;
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            margin-bottom: 1rem;
+        }
+        
+        .mermaid {
+            background: var(--code-bg);
+            padding: 1.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+        }
+        
+        details {
+            margin-top: 2rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Ana İndekse Dön</a>
+        <header>
+            <h1>pivot.rs</h1>
+            <p class="file-path">crates/plugins/analytics/ms_analyzer/src/pivot.rs</p>
+            <div class="structs-container">
+                <strong>Tanımlı Türler / Yapılar:</strong> <span class="badge badge-struct">LiquidityZone</span> <span class="badge badge-struct">PivotPoint</span> <span class="badge badge-struct">PivotTip</span> <span class="badge badge-struct">PivotType</span> 
+            </div>
+        </header>
+
+        <section>
+            <h2>Fonksiyon Analizleri & Basit Anlatımlar</h2>
+            
+        <div class="card">
+            <h3><span class="badge">fn</span> atr_14</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>klines: &amp;[Kline]</code> | <strong>Dönüş Tipi:</strong> <code>Decimal</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>klines: &amp;[Kline]</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>Decimal</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Listeyi veya veri kümesini sırayla döngüye alarak tarar.<br>4. İşlemi tamamlayarak <code>Decimal</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON atr_14(klines: &amp;[Kline]) -&gt; Decimal:
+    EĞER klines.len() &lt; 2 İSE:
+        DÖNDÜR Decimal::ZERO
+    let mut trs = Vec::with_capacity(klines.len() - 1);
+    HER i in 1..klines.len() İÇİN DÖNGÜ:
+        let high = klines[i].high;
+        let low = klines[i].low;
+        let prev_close = klines[i - 1].close;
+        let tr = (high - low)
+        .max((high - prev_close).abs())
+        .max((low - prev_close).abs());
+        trs.push(tr);
+    EĞER trs.is_empty() İSE:
+        DÖNDÜR Decimal::ZERO
+    // İlk ATR: basit ortalama
+    let period = 14.min(trs.len());
+    let first_atr: Decimal = trs[..period].iter().sum::&lt;Decimal&gt;() / Decimal::from(period);
+    // EMA smoothing
+    let multiplier = Decimal::TWO / Decimal::from(period + 1);
+    let mut atr = first_atr;
+    HER &amp;tr in &amp;trs[period..] İÇİN DÖNGÜ:
+        atr = (tr - atr) * multiplier + atr;
+    atr</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: atr_14"])
+    Start --> Cond1{"klines.len() &lt; 2?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"trs.is_empty()?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Loop3["Döngü: i in 1..klines.len()"]
+    Loop3 --> Loop4["Döngü: &tr in &trs[period..]"]
+    Loop4 --> EndNode(["Döndür: Decimal::ZERO"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> extract_pivots</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>klines: &amp;[Kline], atr: Decimal</code> | <strong>Dönüş Tipi:</strong> <code>Vec&lt;PivotPoint&gt;</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>klines: &amp;[Kline], atr: Decimal</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>Vec&lt;PivotPoint&gt;</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Listeyi veya veri kümesini sırayla döngüye alarak tarar.<br>4. İşlemi tamamlayarak <code>Vec&lt;PivotPoint&gt;</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON extract_pivots(klines: &amp;[Kline], atr: Decimal) -&gt; Vec&lt;PivotPoint&gt;:
+    let threshold = atr * Decimal::from_str(&quot;0.25&quot;).unwrap();
+    let mut pivots = Vec::new();
+    EĞER klines.len() &lt; 7 İSE:
+        DÖNDÜR pivots
+    let window = 3;
+    HER i in window..(klines.len() - window) İÇİN DÖNGÜ:
+        // ── Tip A: Wick-based pivotlar ──
+        let is_swing_high_a = (1..=window).all(|j| {
+        klines[i].high &gt;= klines[i - j].high &amp;&amp; klines[i].high &gt;= klines[i + j].high
+        }) &amp;&amp; (klines[i].high - klines[i].low) &gt;= threshold;
+        let is_swing_low_a = (1..=window).all(|j| {
+        klines[i].low &lt;= klines[i - j].low &amp;&amp; klines[i].low &lt;= klines[i + j].low
+        }) &amp;&amp; (klines[i].high - klines[i].low) &gt;= threshold;
+        EĞER is_swing_high_a İSE:
+            pivots.push(PivotPoint {
+            price: klines[i].high,
+            index: i,
+            pivot_type: PivotType::SwingHigh,
+            tip: PivotTip::A,
+            timestamp: klines[i].open_time,
+            decay_weight: Decimal::ONE,
+            defense_count: 0,
+            });
+        EĞER is_swing_low_a İSE:
+            pivots.push(PivotPoint {
+            price: klines[i].low,
+            index: i,
+            pivot_type: PivotType::SwingLow,
+            tip: PivotTip::A,
+            timestamp: klines[i].open_time,
+            decay_weight: Decimal::ONE,
+            defense_count: 0,
+            });
+        // ── Tip B: Close-based pivotlar ──
+        let is_swing_high_b = (1..=window).all(|j| {
+        klines[i].close &gt;= klines[i - j].close &amp;&amp; klines[i].close &gt;= klines[i + j].close
+        }) &amp;&amp; (klines[i].close - klines[i].open).abs() &gt;= threshold * Decimal::from_str(&quot;0.5&quot;).unwrap();
+        let is_swing_low_b = (1..=window).all(|j| {
+        klines[i].close &lt;= klines[i - j].close &amp;&amp; klines[i].close &lt;= klines[i + j].close
+        }) &amp;&amp; (klines[i].close - klines[i].open).abs() &gt;= threshold * Decimal::from_str(&quot;0.5&quot;).unwrap();
+        EĞER is_swing_high_b İSE:
+            pivots.push(PivotPoint {
+            price: klines[i].close,
+            index: i,
+            pivot_type: PivotType::SwingHigh,
+            tip: PivotTip::B,
+            timestamp: klines[i].open_time,
+            decay_weight: Decimal::ONE,
+            defense_count: 0,
+            });
+        EĞER is_swing_low_b İSE:
+            pivots.push(PivotPoint {
+            price: klines[i].close,
+            index: i,
+            pivot_type: PivotType::SwingLow,
+            tip: PivotTip::B,
+            timestamp: klines[i].open_time,
+            decay_weight: Decimal::ONE,
+            defense_count: 0,
+            });
+    pivots</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: extract_pivots"])
+    Start --> Cond1{"klines.len() &lt; 7?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"is_swing_high_a?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"is_swing_low_a?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> Loop4["Döngü: i in window..(klines.len() - window)"]
+    Loop4 --> EndNode(["Döndür: pivots"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> detect_liquidity_zones</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>pivots: &amp;[PivotPoint], atr: Decimal</code> | <strong>Dönüş Tipi:</strong> <code>Vec&lt;LiquidityZone&gt;</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>pivots: &amp;[PivotPoint], atr: Decimal</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>Vec&lt;LiquidityZone&gt;</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Listeyi veya veri kümesini sırayla döngüye alarak tarar.<br>4. Farklı durum senaryolarına göre akışı uygun kola yönlendirir.<br>5. İşlemi tamamlayarak <code>Vec&lt;LiquidityZone&gt;</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON detect_liquidity_zones(pivots: &amp;[PivotPoint], atr: Decimal) -&gt; Vec&lt;LiquidityZone&gt;:
+    let mut zones = Vec::new();
+    let threshold = atr * Decimal::from_str(&quot;0.05&quot;).unwrap();
+    HER i in 0..pivots.len() İÇİN DÖNGÜ:
+        HER j in (i + 1)..pivots.len() İÇİN DÖNGÜ:
+            // Aynı mum indeksinde, farklı tip (A vs B)
+            EĞER pivots[i].index != pivots[j].index İSE:
+                continue;
+            let is_different_tip = match (&amp;pivots[i].tip, &amp;pivots[j].tip) {
+            (PivotTip::A, PivotTip::B) | (PivotTip::B, PivotTip::A) =&gt; true,
+            _ =&gt; false,
+            };
+            // Aynı yöndeki pivotları eşleştir
+            let same_direction = pivots[i].pivot_type == pivots[j].pivot_type;
+            EĞER is_different_tip &amp;&amp; same_direction İSE:
+                let diff = (pivots[i].price - pivots[j].price).abs();
+                EĞER diff &gt; threshold İSE:
+                    zones.push(LiquidityZone {
+                    price_a: pivots[i].price,
+                    price_b: pivots[j].price,
+                    zone_width: diff,
+                    timestamp: pivots[i].timestamp,
+                    confidence: &quot;A+&quot;.to_string(),
+                    });
+    zones</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: detect_liquidity_zones"])
+    Start --> Cond1{"pivots[i].index != pivots[j].index?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"is_different_tip && same_direction?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"diff &gt; threshold?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> Loop4["Döngü: i in 0..pivots.len()"]
+    Loop4 --> Loop5["Döngü: j in (i + 1)..pivots.len()"]
+    Loop5 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        </section>
+
+        <details>
+            <summary>Orijinal Rust Kaynak Kodunu Göster</summary>
+            <pre><code>// ============================================================================
+// MSMP 2.0 — KATMAN 2: PİVOT ÇIKARIMI (Dinamik Eşik &amp; Likidite Üretimi)
+// ============================================================================
+// Swing Eşiği = ATR(14) * 0.25 (piyasa volatilitesine dinamik adaptasyon)
+// Tip A (Wick) ve Tip B (Close) ayrı ayrı çıkarılır.
+// |Tip A - Tip B| &gt; ATR * %5 → &quot;Likidite Oluşum Bölgesi&quot; (Güven: A+)
+// ============================================================================
+
+use ohlcv_engine::Kline;
+use rust_decimal::Decimal;
+use rust_decimal::prelude::*;
+use serde::Serialize;
+
+#[derive(Debug, Clone, Serialize, PartialEq)]
+pub enum PivotType {
+    SwingHigh,
+    SwingLow,
+}
+
+#[derive(Debug, Clone, Serialize, PartialEq)]
+pub enum PivotTip {
+    /// Wick-based (High/Low)
+    A,
+    /// Close-based
+    B,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct PivotPoint {
+    pub price: Decimal,
+    pub index: usize,
+    pub pivot_type: PivotType,
+    pub tip: PivotTip,
+    pub timestamp: u64,
+    pub decay_weight: Decimal,
+    pub defense_count: u16,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct LiquidityZone {
+    pub price_a: Decimal,
+    pub price_b: Decimal,
+    pub zone_width: Decimal,
+    pub timestamp: u64,
+    /// Stop Loss havuzu ve Piyasa Yapıcı bloklarının konuşlandığı alan
+    pub confidence: String,
+}
+
+/// ATR(14) hesaplaması — True Range&#x27;in 14 periyotluk üssel hareketli ortalaması
+pub fn atr_14(klines: &amp;[Kline]) -&gt; Decimal {
+    if klines.len() &lt; 2 {
+        return Decimal::ZERO;
+    }
+
+    let mut trs = Vec::with_capacity(klines.len() - 1);
+    for i in 1..klines.len() {
+        let high = klines[i].high;
+        let low = klines[i].low;
+        let prev_close = klines[i - 1].close;
+
+        let tr = (high - low)
+            .max((high - prev_close).abs())
+            .max((low - prev_close).abs());
+        trs.push(tr);
+    }
+
+    if trs.is_empty() {
+        return Decimal::ZERO;
+    }
+
+    // İlk ATR: basit ortalama
+    let period = 14.min(trs.len());
+    let first_atr: Decimal = trs[..period].iter().sum::&lt;Decimal&gt;() / Decimal::from(period);
+
+    // EMA smoothing
+    let multiplier = Decimal::TWO / Decimal::from(period + 1);
+    let mut atr = first_atr;
+    for &amp;tr in &amp;trs[period..] {
+        atr = (tr - atr) * multiplier + atr;
+    }
+
+    atr
+}
+
+/// Dinamik pivot çıkarımı — Tip A (Wick) ve Tip B (Close)
+pub fn extract_pivots(klines: &amp;[Kline], atr: Decimal) -&gt; Vec&lt;PivotPoint&gt; {
+    let threshold = atr * Decimal::from_str(&quot;0.25&quot;).unwrap();
+    let mut pivots = Vec::new();
+
+    if klines.len() &lt; 7 {
+        return pivots;
+    }
+
+    let window = 3;
+
+    for i in window..(klines.len() - window) {
+        // ── Tip A: Wick-based pivotlar ──
+        let is_swing_high_a = (1..=window).all(|j| {
+            klines[i].high &gt;= klines[i - j].high &amp;&amp; klines[i].high &gt;= klines[i + j].high
+        }) &amp;&amp; (klines[i].high - klines[i].low) &gt;= threshold;
+
+        let is_swing_low_a = (1..=window).all(|j| {
+            klines[i].low &lt;= klines[i - j].low &amp;&amp; klines[i].low &lt;= klines[i + j].low
+        }) &amp;&amp; (klines[i].high - klines[i].low) &gt;= threshold;
+
+        if is_swing_high_a {
+            pivots.push(PivotPoint {
+                price: klines[i].high,
+                index: i,
+                pivot_type: PivotType::SwingHigh,
+                tip: PivotTip::A,
+                timestamp: klines[i].open_time,
+                decay_weight: Decimal::ONE,
+                defense_count: 0,
+            });
+        }
+
+        if is_swing_low_a {
+            pivots.push(PivotPoint {
+                price: klines[i].low,
+                index: i,
+                pivot_type: PivotType::SwingLow,
+                tip: PivotTip::A,
+                timestamp: klines[i].open_time,
+                decay_weight: Decimal::ONE,
+                defense_count: 0,
+            });
+        }
+
+        // ── Tip B: Close-based pivotlar ──
+        let is_swing_high_b = (1..=window).all(|j| {
+            klines[i].close &gt;= klines[i - j].close &amp;&amp; klines[i].close &gt;= klines[i + j].close
+        }) &amp;&amp; (klines[i].close - klines[i].open).abs() &gt;= threshold * Decimal::from_str(&quot;0.5&quot;).unwrap();
+
+        let is_swing_low_b = (1..=window).all(|j| {
+            klines[i].close &lt;= klines[i - j].close &amp;&amp; klines[i].close &lt;= klines[i + j].close
+        }) &amp;&amp; (klines[i].close - klines[i].open).abs() &gt;= threshold * Decimal::from_str(&quot;0.5&quot;).unwrap();
+
+        if is_swing_high_b {
+            pivots.push(PivotPoint {
+                price: klines[i].close,
+                index: i,
+                pivot_type: PivotType::SwingHigh,
+                tip: PivotTip::B,
+                timestamp: klines[i].open_time,
+                decay_weight: Decimal::ONE,
+                defense_count: 0,
+            });
+        }
+
+        if is_swing_low_b {
+            pivots.push(PivotPoint {
+                price: klines[i].close,
+                index: i,
+                pivot_type: PivotType::SwingLow,
+                tip: PivotTip::B,
+                timestamp: klines[i].open_time,
+                decay_weight: Decimal::ONE,
+                defense_count: 0,
+            });
+        }
+    }
+
+    pivots
+}
+
+/// Likidite Oluşum Bölgesi tespiti
+/// |Tip A - Tip B| &gt; ATR * 0.05 ise → Piyasa Yapıcı alım-satım bölgesi
+pub fn detect_liquidity_zones(pivots: &amp;[PivotPoint], atr: Decimal) -&gt; Vec&lt;LiquidityZone&gt; {
+    let mut zones = Vec::new();
+    let threshold = atr * Decimal::from_str(&quot;0.05&quot;).unwrap();
+
+    for i in 0..pivots.len() {
+        for j in (i + 1)..pivots.len() {
+            // Aynı mum indeksinde, farklı tip (A vs B)
+            if pivots[i].index != pivots[j].index {
+                continue;
+            }
+
+            let is_different_tip = match (&amp;pivots[i].tip, &amp;pivots[j].tip) {
+                (PivotTip::A, PivotTip::B) | (PivotTip::B, PivotTip::A) =&gt; true,
+                _ =&gt; false,
+            };
+
+            // Aynı yöndeki pivotları eşleştir
+            let same_direction = pivots[i].pivot_type == pivots[j].pivot_type;
+
+            if is_different_tip &amp;&amp; same_direction {
+                let diff = (pivots[i].price - pivots[j].price).abs();
+                if diff &gt; threshold {
+                    zones.push(LiquidityZone {
+                        price_a: pivots[i].price,
+                        price_b: pivots[j].price,
+                        zone_width: diff,
+                        timestamp: pivots[i].timestamp,
+                        confidence: &quot;A+&quot;.to_string(),
+                    });
+                }
+            }
+        }
+    }
+
+    zones
+}
+</code></pre>
+        </details>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            flowchart: { curve: 'basis' }
+        });
+    </script>
+</body>
+</html>

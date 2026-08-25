@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>lib.rs - Rust Analiz Dokümanı</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --border: #334155;
+            --code-bg: #090d16;
+            --verbal-bg: #131f37;
+            --analogy-bg: #1e1b4b;
+            --analogy-border: #818cf8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .back-link {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .back-link:hover { text-decoration: underline; }
+        h1 { font-size: 2rem; color: var(--accent); margin-bottom: 0.5rem; }
+        .file-path { font-family: 'Fira Code', monospace; color: var(--text-muted); font-size: 0.95rem; }
+        
+        .structs-container { margin: 1.5rem 0; }
+        .badge {
+            display: inline-block;
+            background: #0284c7;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-family: 'Fira Code', monospace;
+        }
+        .badge-struct { background: #7c3aed; }
+        
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .card h3 { color: var(--accent); margin-bottom: 0.5rem; font-size: 1.3rem; }
+        .card h4 { margin: 1.2rem 0 0.5rem 0; color: var(--text-muted); font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        .easy-analogy {
+            background: var(--analogy-bg);
+            border-left: 4px solid var(--analogy-border);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1rem;
+            color: #c7d2fe;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .verbal-explanation {
+            background: var(--verbal-bg);
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1.2rem;
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            margin-bottom: 1rem;
+        }
+        
+        .mermaid {
+            background: var(--code-bg);
+            padding: 1.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+        }
+        
+        details {
+            margin-top: 2rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Ana İndekse Dön</a>
+        <header>
+            <h1>lib.rs</h1>
+            <p class="file-path">crates/plugins/storage/plugin_binance_sqlite/src/lib.rs</p>
+            <div class="structs-container">
+                <strong>Tanımlı Türler / Yapılar:</strong> <span class="badge badge-struct">PluginState</span> 
+            </div>
+        </header>
+
+        <section>
+            <h2>Fonksiyon Analizleri & Basit Anlatımlar</h2>
+            
+        <div class="card">
+            <h3><span class="badge">fn</span> parse_f64</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>val: &amp;Value</code> | <strong>Dönüş Tipi:</strong> <code>f64</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Gün içinde yapılan tüm alışverişleri ve harcamaları gün sonunda kaybolmaması için büyük ana kasa defterine kaydetme işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> İşlenmiş verileri veya emir kayıtlarını veritabanına (SQLite/Disk) kalıcı olarak yazar.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON parse_f64(val: &amp;Value) -&gt; f64:
+    EĞER let Some(n) = val.as_f64() İSE:
+        n
+        } else if let Some(s) = val.as_str() {
+        s.parse::&lt;f64&gt;().unwrap_or(0.0)
+        } else {
+        0.0</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: parse_f64"])
+    Start --> Cond1{"let Some(n) = val.as_f64()?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"let Some(s) = val.as_str()?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> parse_i64</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>val: &amp;Value</code> | <strong>Dönüş Tipi:</strong> <code>i64</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Gün içinde yapılan tüm alışverişleri ve harcamaları gün sonunda kaybolmaması için büyük ana kasa defterine kaydetme işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> İşlenmiş verileri veya emir kayıtlarını veritabanına (SQLite/Disk) kalıcı olarak yazar.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON parse_i64(val: &amp;Value) -&gt; i64:
+    EĞER let Some(n) = val.as_i64() İSE:
+        n
+        } else if let Some(s) = val.as_str() {
+        s.parse::&lt;i64&gt;().unwrap_or(0)
+        } else {
+        0</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: parse_i64"])
+    Start --> Cond1{"let Some(n) = val.as_i64()?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"let Some(s) = val.as_str()?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> init_plugin</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>state_out: *mut *mut c_void,</code> | <strong>Dönüş Tipi:</strong> <code>unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Gün içinde yapılan tüm alışverişleri ve harcamaları gün sonunda kaybolmaması için büyük ana kasa defterine kaydetme işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> İşlenmiş verileri veya emir kayıtlarını veritabanına (SQLite/Disk) kalıcı olarak yazar.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON init_plugin(state_out: *mut *mut c_void,) -&gt; unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize:
+    let state = Box::new(PluginState {
+    is_running: Arc::new(AtomicBool::new(false)),
+    storage: Arc::new(Mutex::new(None)),
+    db_path: Arc::new(Mutex::new(&quot;data/binance_market_data.db&quot;.to_string())),
+    });
+    unsafe {
+    *state_out = Box::into_raw(state) as *mut c_void;
+    handle_endpoint</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: init_plugin"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> handle_endpoint</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>plugin_state: *mut c_void,
+    endpoint_id: u32,
+    payload: *const u8,
+    payload_len: usize,
+    out_buf: *mut u8,
+    out_max_len: usize,</code> | <strong>Dönüş Tipi:</strong> <code>usize</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Gün içinde yapılan tüm alışverişleri ve harcamaları gün sonunda kaybolmaması için büyük ana kasa defterine kaydetme işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> İşlenmiş verileri veya emir kayıtlarını veritabanına (SQLite/Disk) kalıcı olarak yazar.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON handle_endpoint(plugin_state: *mut c_void,
+    endpoint_id: u32,
+    payload: *const u8,
+    payload_len: usize,
+    out_buf: *mut u8,
+    out_max_len: usize,) -&gt; usize:
+    let state = &amp;*(plugin_state as *const PluginState);
+    DURUM KONTROLÜ (endpoint_id):
+        0 =&gt; { // Start
+        let mut db_path = &quot;data/binance_market_data.db&quot;.to_string();
+        EĞER payload_len &gt; 0 İSE:
+            let slice = std::slice::from_raw_parts(payload, payload_len);
+            EĞER let Ok(config) = serde_json::from_slice::&lt;Value&gt;(slice) İSE:
+                EĞER let Some(params) = config.get(&quot;plugin_params&quot;) İSE:
+                    EĞER let Some(path) = params.get(&quot;db_path&quot;).and_then(|p| p.as_str()) İSE:
+                        db_path = path.to_string();
+        *state.db_path.lock().unwrap() = db_path.clone();
+        DURUM KONTROLÜ (SqliteStorage::new(&amp;db_path)):
+            Ok(storage_inst) =&gt; {
+            *state.storage.lock().unwrap() = Some(Arc::new(storage_inst));
+            state.is_running.store(true, Ordering::Relaxed);
+            0
+        Err(e) =&gt; {
+        eprintln!(&quot;[plugin_binance_sqlite] SQLite init error: {}&quot;, e);
+        0
+    1 =&gt; { // Stop
+    state.is_running.store(false, Ordering::Relaxed);
+    0
+    2 =&gt; { // IsWorking
+    EĞER state.is_running.load(Ordering::Relaxed) İSE:
+    4 =&gt; { // DataMonitor (TUI View)
+    let mut report = String::new();
+    report.push_str(&quot;=== BINANCE SQLITE RECORDER STATUS ===\n\n&quot;);
+    let running = state.is_running.load(Ordering::Relaxed);
+    report.push_str(&amp;format!(&quot;Status: {}\n&quot;, if running { &quot;RUNNING&quot; } else { &quot;STOPPED&quot; }));
+    let current_db_path = state.db_path.lock().unwrap().clone();
+    report.push_str(&amp;format!(&quot;Database File: {}\n&quot;, current_db_path));
+    let storage_guard = state.storage.lock().unwrap();
+    EĞER let Some(storage) = storage_guard.as_ref() İSE:
+        let bytes = storage.get_file_size_bytes();
+        let mb = bytes as f64 / (1024.0 * 1024.0);
+        report.push_str(&amp;format!(&quot;DB Size: {:.2} MB ({} bytes)\n\n&quot;, mb, bytes));
+        let stats = &amp;storage.stats;
+        let mark_cnt = stats.mark_price_count.load(Ordering::Relaxed);
+        let best_cnt = stats.best_price_count.load(Ordering::Relaxed);
+        let trade_cnt = stats.trade_count.load(Ordering::Relaxed);
+        let liq_cnt = stats.liquidation_count.load(Ordering::Relaxed);
+        let depth_cnt = stats.depth_count.load(Ordering::Relaxed);
+        let total = mark_cnt + best_cnt + trade_cnt + liq_cnt + depth_cnt;
+        let last_ts = stats.last_insert_time_ms.load(Ordering::Relaxed);
+        report.push_str(&quot;[ Storage Statistics ]\n&quot;);
+        report.push_str(&amp;format!(&quot;- Mark Price Records: {}\n&quot;, mark_cnt));
+        report.push_str(&amp;format!(&quot;- Best Price Records: {}\n&quot;, best_cnt));
+        report.push_str(&amp;format!(&quot;- Trade Records: {}\n&quot;, trade_cnt));
+        report.push_str(&amp;format!(&quot;- Liquidation Records: {}\n&quot;, liq_cnt));
+        report.push_str(&amp;format!(&quot;- Depth Records: {}\n&quot;, depth_cnt));
+        report.push_str(&amp;format!(&quot;- Total Records Written: {}\n&quot;, total));
+        report.push_str(&amp;format!(&quot;- Last Record Time (ms): {}\n&quot;, last_ts));
+        } else {
+        report.push_str(&quot;\nDatabase not initialized yet.\n&quot;);
+    report.push_str(&quot;======================================\n&quot;);
+    let data = report.into_bytes();
+    let len = data.len().min(out_max_len);
+    EĞER len &gt; 0 İSE:
+        std::ptr::copy_nonoverlapping(data.as_ptr(), out_buf, len);
+    len
+    6 =&gt; { // Inbox (Data routed from FlowEngine)
+    EĞER !state.is_running.load(Ordering::Relaxed) İSE:
+        DÖNDÜR 0
+    EĞER payload_len &gt; 32 İSE:
+        let slice = std::slice::from_raw_parts(payload, payload_len);
+        let header = &amp;slice[0..32];
+        let stream_id = std::str::from_utf8(header).unwrap_or(&quot;&quot;).trim_matches(char::from(0)).to_string();
+        let storage_guard = state.storage.lock().unwrap();
+        EĞER let Some(storage) = storage_guard.as_ref() İSE:
+            EĞER let Ok(json_data) = serde_json::from_slice::&lt;Value&gt;(&amp;slice[32..]) İSE:
+                DURUM KONTROLÜ (stream_id.as_str()):
+                    &quot;stream_markprice&quot; =&gt; {
+                    EĞER let Some(obj) = json_data.as_object() İSE:
+                        HER (symbol, item) in obj.iter() İÇİN DÖNGÜ:
+                            let rec = MarkPriceRecord {
+                            symbol: symbol.clone(),
+                            mark_price: parse_f64(&amp;item[&quot;mark_price&quot;]),
+                            index_price: parse_f64(&amp;item[&quot;index_price&quot;]),
+                            funding_rate: parse_f64(&amp;item[&quot;funding_rate&quot;]),
+                            next_funding_time: parse_i64(&amp;item[&quot;next_funding_time&quot;]),
+                            event_time: parse_i64(&amp;item[&quot;event_time&quot;]),
+                            local_recv_time_ms: parse_i64(&amp;item[&quot;local_recv_time_ms&quot;]),
+                            };
+                            let _ = storage.insert_mark_price(&amp;rec);
+                &quot;stream_bestprice&quot; =&gt; {
+                EĞER let Some(obj) = json_data.as_object() İSE:
+                    HER (symbol, item) in obj.iter() İÇİN DÖNGÜ:
+                        let rec = BestPriceRecord {
+                        symbol: symbol.clone(),
+                        best_bid: parse_f64(&amp;item[&quot;best_bid&quot;]),
+                        best_bid_qty: parse_f64(&amp;item[&quot;best_bid_qty&quot;]),
+                        best_ask: parse_f64(&amp;item[&quot;best_ask&quot;]),
+                        best_ask_qty: parse_f64(&amp;item[&quot;best_ask_qty&quot;]),
+                        event_time: parse_i64(&amp;item[&quot;event_time&quot;]),
+                        local_recv_time_ms: parse_i64(&amp;item[&quot;local_recv_time_ms&quot;]),
+                        };
+                        let _ = storage.insert_best_price(&amp;rec);
+            &quot;stream_trades&quot; | &quot;stream_aggtrades&quot; =&gt; {
+            EĞER let Some(obj) = json_data.as_object() İSE:
+                HER (symbol, item) in obj.iter() İÇİN DÖNGÜ:
+                    let rec = TradeRecord {
+                    symbol: symbol.clone(),
+                    trade_id: parse_i64(&amp;item[&quot;trade_id&quot;]),
+                    price: parse_f64(&amp;item[&quot;price&quot;]),
+                    quantity: parse_f64(&amp;item[&quot;quantity&quot;]),
+                    buyer_is_maker: item[&quot;buyer_is_maker&quot;].as_bool().unwrap_or(false),
+                    event_time: parse_i64(&amp;item[&quot;event_time&quot;]),
+                    local_recv_time_ms: parse_i64(&amp;item[&quot;local_recv_time_ms&quot;]),
+                    };
+                    let _ = storage.insert_trade(&amp;rec);
+        &quot;stream_liquidations&quot; =&gt; {
+        EĞER let Some(arr) = json_data.as_array() İSE:
+            HER item in arr İÇİN DÖNGÜ:
+                let rec = LiquidationRecord {
+                symbol: item[&quot;symbol&quot;].as_str().unwrap_or(&quot;&quot;).to_string(),
+                side: item[&quot;side&quot;].as_str().unwrap_or(&quot;&quot;).to_string(),
+                order_type: item[&quot;type&quot;].as_str().unwrap_or(&quot;&quot;).to_string(),
+                price: parse_f64(&amp;item[&quot;price&quot;]),
+                average_price: parse_f64(&amp;item[&quot;average_price&quot;]),
+                original_qty: parse_f64(&amp;item[&quot;original_qty&quot;]),
+                filled_qty: parse_f64(&amp;item[&quot;filled_qty&quot;]),
+                event_time: parse_i64(&amp;item[&quot;event_time&quot;]),
+                local_recv_time_ms: parse_i64(&amp;item[&quot;local_recv_time_ms&quot;]),
+                };
+                let _ = storage.insert_liquidation(&amp;rec);
+    &quot;stream_depth&quot; =&gt; {
+    EĞER let Some(obj) = json_data.as_object() İSE:
+        HER (symbol, item) in obj.iter() İÇİN DÖNGÜ:
+            let rec = DepthRecord {
+            symbol: symbol.clone(),
+            bids_json: item[&quot;bids&quot;].to_string(),
+            asks_json: item[&quot;asks&quot;].to_string(),
+            last_update_id: parse_i64(&amp;item[&quot;last_update_id&quot;]),
+            event_time: parse_i64(&amp;item[&quot;event_time&quot;]),
+            local_recv_time_ms: parse_i64(&amp;item[&quot;local_recv_time_ms&quot;]),
+            };
+            let _ = storage.insert_depth(&amp;rec);
+    _ =&gt; {}
+    0
+    _ =&gt; 0,</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: handle_endpoint"])
+    Start --> Cond1{"payload_len &gt; 0?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"let Ok(config) = serde_json::from_slice::&lt;Value&gt;(slice)?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"let Some(params) = config.get('plugin_params')?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> Loop4["Döngü: (symbol, item) in obj.iter()"]
+    Loop4 --> Loop5["Döngü: (symbol, item) in obj.iter()"]
+    Loop5 --> EndNode(["Döndür: 0"])
+            </div>
+        </div>
+        
+        </section>
+
+        <details>
+            <summary>Orijinal Rust Kaynak Kodunu Göster</summary>
+            <pre><code>pub mod models;
+pub mod storage;
+
+pub use models::*;
+pub use storage::*;
+
+use std::ffi::c_void;
+use std::sync::{Arc, Mutex};
+use std::sync::atomic::{AtomicBool, Ordering};
+use serde_json::Value;
+
+struct PluginState {
+    is_running: Arc&lt;AtomicBool&gt;,
+    storage: Arc&lt;Mutex&lt;Option&lt;Arc&lt;SqliteStorage&gt;&gt;&gt;&gt;,
+    db_path: Arc&lt;Mutex&lt;String&gt;&gt;,
+}
+
+fn parse_f64(val: &amp;Value) -&gt; f64 {
+    if let Some(n) = val.as_f64() {
+        n
+    } else if let Some(s) = val.as_str() {
+        s.parse::&lt;f64&gt;().unwrap_or(0.0)
+    } else {
+        0.0
+    }
+}
+
+fn parse_i64(val: &amp;Value) -&gt; i64 {
+    if let Some(n) = val.as_i64() {
+        n
+    } else if let Some(s) = val.as_str() {
+        s.parse::&lt;i64&gt;().unwrap_or(0)
+    } else {
+        0
+    }
+}
+
+#[no_mangle]
+pub unsafe extern &quot;C&quot; fn init_plugin(
+    state_out: *mut *mut c_void,
+) -&gt; unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize {
+    let state = Box::new(PluginState {
+        is_running: Arc::new(AtomicBool::new(false)),
+        storage: Arc::new(Mutex::new(None)),
+        db_path: Arc::new(Mutex::new(&quot;data/binance_market_data.db&quot;.to_string())),
+    });
+
+    unsafe {
+        *state_out = Box::into_raw(state) as *mut c_void;
+    }
+
+    handle_endpoint
+}
+
+unsafe extern &quot;C&quot; fn handle_endpoint(
+    plugin_state: *mut c_void,
+    endpoint_id: u32,
+    payload: *const u8,
+    payload_len: usize,
+    out_buf: *mut u8,
+    out_max_len: usize,
+) -&gt; usize {
+    let state = &amp;*(plugin_state as *const PluginState);
+
+    match endpoint_id {
+        0 =&gt; { // Start
+            let mut db_path = &quot;data/binance_market_data.db&quot;.to_string();
+            if payload_len &gt; 0 {
+                let slice = std::slice::from_raw_parts(payload, payload_len);
+                if let Ok(config) = serde_json::from_slice::&lt;Value&gt;(slice) {
+                    if let Some(params) = config.get(&quot;plugin_params&quot;) {
+                        if let Some(path) = params.get(&quot;db_path&quot;).and_then(|p| p.as_str()) {
+                            db_path = path.to_string();
+                        }
+                    }
+                }
+            }
+
+            *state.db_path.lock().unwrap() = db_path.clone();
+
+            match SqliteStorage::new(&amp;db_path) {
+                Ok(storage_inst) =&gt; {
+                    *state.storage.lock().unwrap() = Some(Arc::new(storage_inst));
+                    state.is_running.store(true, Ordering::Relaxed);
+                    0
+                }
+                Err(e) =&gt; {
+                    eprintln!(&quot;[plugin_binance_sqlite] SQLite init error: {}&quot;, e);
+                    0
+                }
+            }
+        }
+        1 =&gt; { // Stop
+            state.is_running.store(false, Ordering::Relaxed);
+            0
+        }
+        2 =&gt; { // IsWorking
+            if state.is_running.load(Ordering::Relaxed) { 1 } else { 0 }
+        }
+        4 =&gt; { // DataMonitor (TUI View)
+            let mut report = String::new();
+            report.push_str(&quot;=== BINANCE SQLITE RECORDER STATUS ===\n\n&quot;);
+
+            let running = state.is_running.load(Ordering::Relaxed);
+            report.push_str(&amp;format!(&quot;Status: {}\n&quot;, if running { &quot;RUNNING&quot; } else { &quot;STOPPED&quot; }));
+
+            let current_db_path = state.db_path.lock().unwrap().clone();
+            report.push_str(&amp;format!(&quot;Database File: {}\n&quot;, current_db_path));
+
+            let storage_guard = state.storage.lock().unwrap();
+            if let Some(storage) = storage_guard.as_ref() {
+                let bytes = storage.get_file_size_bytes();
+                let mb = bytes as f64 / (1024.0 * 1024.0);
+                report.push_str(&amp;format!(&quot;DB Size: {:.2} MB ({} bytes)\n\n&quot;, mb, bytes));
+
+                let stats = &amp;storage.stats;
+                let mark_cnt = stats.mark_price_count.load(Ordering::Relaxed);
+                let best_cnt = stats.best_price_count.load(Ordering::Relaxed);
+                let trade_cnt = stats.trade_count.load(Ordering::Relaxed);
+                let liq_cnt = stats.liquidation_count.load(Ordering::Relaxed);
+                let depth_cnt = stats.depth_count.load(Ordering::Relaxed);
+                let total = mark_cnt + best_cnt + trade_cnt + liq_cnt + depth_cnt;
+                let last_ts = stats.last_insert_time_ms.load(Ordering::Relaxed);
+
+                report.push_str(&quot;[ Storage Statistics ]\n&quot;);
+                report.push_str(&amp;format!(&quot;- Mark Price Records: {}\n&quot;, mark_cnt));
+                report.push_str(&amp;format!(&quot;- Best Price Records: {}\n&quot;, best_cnt));
+                report.push_str(&amp;format!(&quot;- Trade Records: {}\n&quot;, trade_cnt));
+                report.push_str(&amp;format!(&quot;- Liquidation Records: {}\n&quot;, liq_cnt));
+                report.push_str(&amp;format!(&quot;- Depth Records: {}\n&quot;, depth_cnt));
+                report.push_str(&amp;format!(&quot;- Total Records Written: {}\n&quot;, total));
+                report.push_str(&amp;format!(&quot;- Last Record Time (ms): {}\n&quot;, last_ts));
+            } else {
+                report.push_str(&quot;\nDatabase not initialized yet.\n&quot;);
+            }
+            report.push_str(&quot;======================================\n&quot;);
+
+            let data = report.into_bytes();
+            let len = data.len().min(out_max_len);
+            if len &gt; 0 {
+                std::ptr::copy_nonoverlapping(data.as_ptr(), out_buf, len);
+            }
+            len
+        }
+        6 =&gt; { // Inbox (Data routed from FlowEngine)
+            if !state.is_running.load(Ordering::Relaxed) {
+                return 0;
+            }
+
+            if payload_len &gt; 32 {
+                let slice = std::slice::from_raw_parts(payload, payload_len);
+                let header = &amp;slice[0..32];
+                let stream_id = std::str::from_utf8(header).unwrap_or(&quot;&quot;).trim_matches(char::from(0)).to_string();
+
+                let storage_guard = state.storage.lock().unwrap();
+                if let Some(storage) = storage_guard.as_ref() {
+                    if let Ok(json_data) = serde_json::from_slice::&lt;Value&gt;(&amp;slice[32..]) {
+                        match stream_id.as_str() {
+                            &quot;stream_markprice&quot; =&gt; {
+                                if let Some(obj) = json_data.as_object() {
+                                    for (symbol, item) in obj.iter() {
+                                        let rec = MarkPriceRecord {
+                                            symbol: symbol.clone(),
+                                            mark_price: parse_f64(&amp;item[&quot;mark_price&quot;]),
+                                            index_price: parse_f64(&amp;item[&quot;index_price&quot;]),
+                                            funding_rate: parse_f64(&amp;item[&quot;funding_rate&quot;]),
+                                            next_funding_time: parse_i64(&amp;item[&quot;next_funding_time&quot;]),
+                                            event_time: parse_i64(&amp;item[&quot;event_time&quot;]),
+                                            local_recv_time_ms: parse_i64(&amp;item[&quot;local_recv_time_ms&quot;]),
+                                        };
+                                        let _ = storage.insert_mark_price(&amp;rec);
+                                    }
+                                }
+                            }
+                            &quot;stream_bestprice&quot; =&gt; {
+                                if let Some(obj) = json_data.as_object() {
+                                    for (symbol, item) in obj.iter() {
+                                        let rec = BestPriceRecord {
+                                            symbol: symbol.clone(),
+                                            best_bid: parse_f64(&amp;item[&quot;best_bid&quot;]),
+                                            best_bid_qty: parse_f64(&amp;item[&quot;best_bid_qty&quot;]),
+                                            best_ask: parse_f64(&amp;item[&quot;best_ask&quot;]),
+                                            best_ask_qty: parse_f64(&amp;item[&quot;best_ask_qty&quot;]),
+                                            event_time: parse_i64(&amp;item[&quot;event_time&quot;]),
+                                            local_recv_time_ms: parse_i64(&amp;item[&quot;local_recv_time_ms&quot;]),
+                                        };
+                                        let _ = storage.insert_best_price(&amp;rec);
+                                    }
+                                }
+                            }
+                            &quot;stream_trades&quot; | &quot;stream_aggtrades&quot; =&gt; {
+                                if let Some(obj) = json_data.as_object() {
+                                    for (symbol, item) in obj.iter() {
+                                        let rec = TradeRecord {
+                                            symbol: symbol.clone(),
+                                            trade_id: parse_i64(&amp;item[&quot;trade_id&quot;]),
+                                            price: parse_f64(&amp;item[&quot;price&quot;]),
+                                            quantity: parse_f64(&amp;item[&quot;quantity&quot;]),
+                                            buyer_is_maker: item[&quot;buyer_is_maker&quot;].as_bool().unwrap_or(false),
+                                            event_time: parse_i64(&amp;item[&quot;event_time&quot;]),
+                                            local_recv_time_ms: parse_i64(&amp;item[&quot;local_recv_time_ms&quot;]),
+                                        };
+                                        let _ = storage.insert_trade(&amp;rec);
+                                    }
+                                }
+                            }
+                            &quot;stream_liquidations&quot; =&gt; {
+                                if let Some(arr) = json_data.as_array() {
+                                    for item in arr {
+                                        let rec = LiquidationRecord {
+                                            symbol: item[&quot;symbol&quot;].as_str().unwrap_or(&quot;&quot;).to_string(),
+                                            side: item[&quot;side&quot;].as_str().unwrap_or(&quot;&quot;).to_string(),
+                                            order_type: item[&quot;type&quot;].as_str().unwrap_or(&quot;&quot;).to_string(),
+                                            price: parse_f64(&amp;item[&quot;price&quot;]),
+                                            average_price: parse_f64(&amp;item[&quot;average_price&quot;]),
+                                            original_qty: parse_f64(&amp;item[&quot;original_qty&quot;]),
+                                            filled_qty: parse_f64(&amp;item[&quot;filled_qty&quot;]),
+                                            event_time: parse_i64(&amp;item[&quot;event_time&quot;]),
+                                            local_recv_time_ms: parse_i64(&amp;item[&quot;local_recv_time_ms&quot;]),
+                                        };
+                                        let _ = storage.insert_liquidation(&amp;rec);
+                                    }
+                                }
+                            }
+                            &quot;stream_depth&quot; =&gt; {
+                                if let Some(obj) = json_data.as_object() {
+                                    for (symbol, item) in obj.iter() {
+                                        let rec = DepthRecord {
+                                            symbol: symbol.clone(),
+                                            bids_json: item[&quot;bids&quot;].to_string(),
+                                            asks_json: item[&quot;asks&quot;].to_string(),
+                                            last_update_id: parse_i64(&amp;item[&quot;last_update_id&quot;]),
+                                            event_time: parse_i64(&amp;item[&quot;event_time&quot;]),
+                                            local_recv_time_ms: parse_i64(&amp;item[&quot;local_recv_time_ms&quot;]),
+                                        };
+                                        let _ = storage.insert_depth(&amp;rec);
+                                    }
+                                }
+                            }
+                            _ =&gt; {}
+                        }
+                    }
+                }
+            }
+            0
+        }
+        _ =&gt; 0,
+    }
+}
+</code></pre>
+        </details>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            flowchart: { curve: 'basis' }
+        });
+    </script>
+</body>
+</html>

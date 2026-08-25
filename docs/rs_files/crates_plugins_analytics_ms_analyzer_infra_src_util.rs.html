@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>util.rs - Rust Analiz Dokümanı</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --border: #334155;
+            --code-bg: #090d16;
+            --verbal-bg: #131f37;
+            --analogy-bg: #1e1b4b;
+            --analogy-border: #818cf8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .back-link {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .back-link:hover { text-decoration: underline; }
+        h1 { font-size: 2rem; color: var(--accent); margin-bottom: 0.5rem; }
+        .file-path { font-family: 'Fira Code', monospace; color: var(--text-muted); font-size: 0.95rem; }
+        
+        .structs-container { margin: 1.5rem 0; }
+        .badge {
+            display: inline-block;
+            background: #0284c7;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-family: 'Fira Code', monospace;
+        }
+        .badge-struct { background: #7c3aed; }
+        
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .card h3 { color: var(--accent); margin-bottom: 0.5rem; font-size: 1.3rem; }
+        .card h4 { margin: 1.2rem 0 0.5rem 0; color: var(--text-muted); font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        .easy-analogy {
+            background: var(--analogy-bg);
+            border-left: 4px solid var(--analogy-border);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1rem;
+            color: #c7d2fe;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .verbal-explanation {
+            background: var(--verbal-bg);
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1.2rem;
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            margin-bottom: 1rem;
+        }
+        
+        .mermaid {
+            background: var(--code-bg);
+            padding: 1.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+        }
+        
+        details {
+            margin-top: 2rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Ana İndekse Dön</a>
+        <header>
+            <h1>util.rs</h1>
+            <p class="file-path">crates/plugins/analytics/ms_analyzer/infra/src/util.rs</p>
+            <div class="structs-container">
+                <strong>Tanımlı Türler / Yapılar:</strong> Yok
+            </div>
+        </header>
+
+        <section>
+            <h2>Fonksiyon Analizleri & Basit Anlatımlar</h2>
+            
+        <div class="card">
+            <h3><span class="badge">fn</span> single_instance</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>name: &amp;str</code> | <strong>Dönüş Tipi:</strong> <code>Result&lt;(), String&gt;</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>name: &amp;str</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>Result&lt;(), String&gt;</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. İşlemi tamamlayarak <code>Result&lt;(), String&gt;</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON single_instance(name: &amp;str) -&gt; Result&lt;(), String&gt;:
+    let lock_path = PathBuf::from(format!(&quot;/tmp/{name}.lock&quot;));
+    EĞER lock_path.exists() İSE:
+        let pid = fs::read_to_string(&amp;lock_path)
+        .ok()
+        .and_then(|s| s.trim().parse::&lt;u32&gt;().ok());
+        EĞER let Some(pid) = pid İSE:
+            EĞER process_alive(pid) İSE:
+                eprintln!(&quot;[{name}] İkiz süreç tespit edildi (PID {pid}), çıkılıyor.&quot;);
+                process::exit(1);
+        // Ölü süreç kalıntısı — temizle ve devam et
+        let _ = fs::remove_file(&amp;lock_path);
+    fs::write(&amp;lock_path, process::id().to_string()).map_err(|e| e.to_string())</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: single_instance"])
+    Start --> Cond1{"lock_path.exists()?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"let Some(pid) = pid?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"process_alive(pid)?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> process_alive</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>pid: u32</code> | <strong>Dönüş Tipi:</strong> <code>bool</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>pid: u32</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>bool</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. İşlemi tamamlayarak <code>bool</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON process_alive(pid: u32) -&gt; bool:
+    std::path::Path::new(&amp;format!(&quot;/proc/{pid}&quot;)).exists()</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: process_alive"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> bind_or_exit</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>addr: SocketAddr, name: &amp;str</code> | <strong>Dönüş Tipi:</strong> <code>TcpListener</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>addr: SocketAddr, name: &amp;str</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>TcpListener</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Farklı durum senaryolarına göre akışı uygun kola yönlendirir.<br>3. İşlemi tamamlayarak <code>TcpListener</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON bind_or_exit(addr: SocketAddr, name: &amp;str) -&gt; TcpListener:
+    DURUM KONTROLÜ (TcpListener::bind(addr).await):
+        Ok(listener) =&gt; listener,
+        Err(e) =&gt; {
+        eprintln!(&quot;[{name}] Port {} bağlanamadı: {}&quot;, addr.port(), e);
+        process::exit(1);</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: bind_or_exit"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        </section>
+
+        <details>
+            <summary>Orijinal Rust Kaynak Kodunu Göster</summary>
+            <pre><code>// ============================================================================
+// util — tek örnek koruması ve port bağlama
+// ============================================================================
+
+use std::fs;
+use std::net::SocketAddr;
+use std::path::PathBuf;
+use std::process;
+
+use tokio::net::TcpListener;
+
+/// İkiz süreç koruması. Aynı isimde zaten çalışan bir süreç varsa
+/// ikinci süreç çıkar. Ölü süreç kalıntısı (PID /proc&#x27;da yoksa) temizlenir.
+pub fn single_instance(name: &amp;str) -&gt; Result&lt;(), String&gt; {
+    let lock_path = PathBuf::from(format!(&quot;/tmp/{name}.lock&quot;));
+
+    if lock_path.exists() {
+        let pid = fs::read_to_string(&amp;lock_path)
+            .ok()
+            .and_then(|s| s.trim().parse::&lt;u32&gt;().ok());
+        if let Some(pid) = pid {
+            if process_alive(pid) {
+                eprintln!(&quot;[{name}] İkiz süreç tespit edildi (PID {pid}), çıkılıyor.&quot;);
+                process::exit(1);
+            }
+        }
+        // Ölü süreç kalıntısı — temizle ve devam et
+        let _ = fs::remove_file(&amp;lock_path);
+    }
+
+    fs::write(&amp;lock_path, process::id().to_string()).map_err(|e| e.to_string())
+}
+
+fn process_alive(pid: u32) -&gt; bool {
+    std::path::Path::new(&amp;format!(&quot;/proc/{pid}&quot;)).exists()
+}
+
+/// Adresi bağla; başarısızlıkta hata mesajı ile temiz çıkış yap.
+pub async fn bind_or_exit(addr: SocketAddr, name: &amp;str) -&gt; TcpListener {
+    match TcpListener::bind(addr).await {
+        Ok(listener) =&gt; listener,
+        Err(e) =&gt; {
+            eprintln!(&quot;[{name}] Port {} bağlanamadı: {}&quot;, addr.port(), e);
+            process::exit(1);
+        }
+    }
+}
+</code></pre>
+        </details>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            flowchart: { curve: 'basis' }
+        });
+    </script>
+</body>
+</html>

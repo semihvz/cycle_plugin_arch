@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>trend.rs - Rust Analiz Dokümanı</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --border: #334155;
+            --code-bg: #090d16;
+            --verbal-bg: #131f37;
+            --analogy-bg: #1e1b4b;
+            --analogy-border: #818cf8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .back-link {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .back-link:hover { text-decoration: underline; }
+        h1 { font-size: 2rem; color: var(--accent); margin-bottom: 0.5rem; }
+        .file-path { font-family: 'Fira Code', monospace; color: var(--text-muted); font-size: 0.95rem; }
+        
+        .structs-container { margin: 1.5rem 0; }
+        .badge {
+            display: inline-block;
+            background: #0284c7;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-family: 'Fira Code', monospace;
+        }
+        .badge-struct { background: #7c3aed; }
+        
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .card h3 { color: var(--accent); margin-bottom: 0.5rem; font-size: 1.3rem; }
+        .card h4 { margin: 1.2rem 0 0.5rem 0; color: var(--text-muted); font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        .easy-analogy {
+            background: var(--analogy-bg);
+            border-left: 4px solid var(--analogy-border);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1rem;
+            color: #c7d2fe;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .verbal-explanation {
+            background: var(--verbal-bg);
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1.2rem;
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            margin-bottom: 1rem;
+        }
+        
+        .mermaid {
+            background: var(--code-bg);
+            padding: 1.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+        }
+        
+        details {
+            margin-top: 2rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Ana İndekse Dön</a>
+        <header>
+            <h1>trend.rs</h1>
+            <p class="file-path">crates/plugins/analytics/ms_analyzer/src/trend.rs</p>
+            <div class="structs-container">
+                <strong>Tanımlı Türler / Yapılar:</strong> <span class="badge badge-struct">TrendAnalysis</span> 
+            </div>
+        </header>
+
+        <section>
+            <h2>Fonksiyon Analizleri & Basit Anlatımlar</h2>
+            
+        <div class="card">
+            <h3><span class="badge">fn</span> f</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>x: f64</code> | <strong>Dönüş Tipi:</strong> <code>Decimal</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>x: f64</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>Decimal</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. İşlemi tamamlayarak <code>Decimal</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON f(x: f64) -&gt; Decimal:
+    Decimal::from_f64(x).unwrap_or(Decimal::ZERO)</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: f"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> linear_regression</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>values: &amp;[Decimal]</code> | <strong>Dönüş Tipi:</strong> <code>(Decimal, Decimal, Decimal)</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>values: &amp;[Decimal]</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>(Decimal, Decimal, Decimal)</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Listeyi veya veri kümesini sırayla döngüye alarak tarar.<br>4. İşlemi tamamlayarak <code>(Decimal, Decimal, Decimal)</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON linear_regression(values: &amp;[Decimal]) -&gt; (Decimal, Decimal, Decimal):
+    let n = Decimal::from(values.len());
+    EĞER values.len() &lt; 2 İSE:
+        DÖNDÜR (Decimal::ZERO, Decimal::ZERO, Decimal::ZERO)
+    let x_mean = (n - Decimal::ONE) / Decimal::TWO;
+    let y_mean = values.iter().sum::&lt;Decimal&gt;() / n;
+    let mut ss_xy = Decimal::ZERO;
+    let mut ss_xx = Decimal::ZERO;
+    let mut ss_yy = Decimal::ZERO;
+    HER (i, &amp;y) in values.iter().enumerate() İÇİN DÖNGÜ:
+        let x = Decimal::from(i);
+        let dx = x - x_mean;
+        let dy = y - y_mean;
+        ss_xy += dx * dy;
+        ss_xx += dx * dx;
+        ss_yy += dy * dy;
+    EĞER ss_xx == Decimal::ZERO İSE:
+        DÖNDÜR (Decimal::ZERO, y_mean, Decimal::ZERO)
+    let slope = ss_xy / ss_xx;
+    let intercept = y_mean - slope * x_mean;
+    let r_squared = if ss_yy == Decimal::ZERO {
+    Decimal::ZERO
+    } else {
+    (ss_xy * ss_xy) / (ss_xx * ss_yy)
+    };
+    (slope, intercept, r_squared)</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: linear_regression"])
+    Start --> Cond1{"values.len() &lt; 2?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"ss_xx == Decimal::ZERO?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"ss_yy == Decimal::ZERO?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> Loop4["Döngü: (i, &y) in values.iter().enumerate()"]
+    Loop4 --> EndNode(["Döndür: (Decimal::ZERO, y_mean, Decimal::ZERO)"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> linear_regression_xy</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>x: &amp;[Decimal], y: &amp;[Decimal]</code> | <strong>Dönüş Tipi:</strong> <code>(Decimal, Decimal, Decimal)</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>x: &amp;[Decimal], y: &amp;[Decimal]</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>(Decimal, Decimal, Decimal)</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Listeyi veya veri kümesini sırayla döngüye alarak tarar.<br>4. İşlemi tamamlayarak <code>(Decimal, Decimal, Decimal)</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON linear_regression_xy(x: &amp;[Decimal], y: &amp;[Decimal]) -&gt; (Decimal, Decimal, Decimal):
+    let n = Decimal::from(x.len());
+    EĞER x.len() &lt; 2 İSE:
+        DÖNDÜR (Decimal::ZERO, Decimal::ZERO, Decimal::ZERO)
+    let x_mean = x.iter().sum::&lt;Decimal&gt;() / n;
+    let y_mean = y.iter().sum::&lt;Decimal&gt;() / n;
+    let mut ss_xy = Decimal::ZERO;
+    let mut ss_xx = Decimal::ZERO;
+    let mut ss_yy = Decimal::ZERO;
+    HER i in 0..x.len() İÇİN DÖNGÜ:
+        let dx = x[i] - x_mean;
+        let dy = y[i] - y_mean;
+        ss_xy += dx * dy;
+        ss_xx += dx * dx;
+        ss_yy += dy * dy;
+    EĞER ss_xx == Decimal::ZERO İSE:
+        DÖNDÜR (Decimal::ZERO, y_mean, Decimal::ZERO)
+    let slope = ss_xy / ss_xx;
+    let intercept = y_mean - slope * x_mean;
+    let r_squared = if ss_yy == Decimal::ZERO {
+    Decimal::ZERO
+    } else {
+    (ss_xy * ss_xy) / (ss_xx * ss_yy)
+    };
+    (slope, intercept, r_squared)</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: linear_regression_xy"])
+    Start --> Cond1{"x.len() &lt; 2?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"ss_xx == Decimal::ZERO?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"ss_yy == Decimal::ZERO?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> Loop4["Döngü: i in 0..x.len()"]
+    Loop4 --> EndNode(["Döndür: (Decimal::ZERO, y_mean, Decimal::ZERO)"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> hurst_exponent</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>values: &amp;[Decimal]</code> | <strong>Dönüş Tipi:</strong> <code>Decimal</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>values: &amp;[Decimal]</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>Decimal</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Listeyi veya veri kümesini sırayla döngüye alarak tarar.<br>4. İşlemi tamamlayarak <code>Decimal</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON hurst_exponent(values: &amp;[Decimal]) -&gt; Decimal:
+    EĞER values.len() &lt; 20 İSE:
+        DÖNDÜR f(0.5); // Yetersiz veri — rastgele yürüyüş varsay
+    let mut log_ns = Vec::new();
+    let mut log_rs = Vec::new();
+    let min_n = 8;
+    let max_n = values.len() / 2;
+    let mut n = min_n;
+    WHILE n &lt;= max_n DÖNGÜSÜ:
+        let mut rs_values = Vec::new();
+        let num_subseries = values.len() / n;
+        HER s in 0..num_subseries İÇİN DÖNGÜ:
+            let start = s * n;
+            let end = start + n;
+            EĞER end &gt; values.len() İSE:
+                break;
+            let subseries = &amp;values[start..end];
+            let mean = subseries.iter().sum::&lt;Decimal&gt;() / Decimal::from(n);
+            // Kümülatif sapma serisi
+            let mut cumulative = Vec::with_capacity(n);
+            let mut running = Decimal::ZERO;
+            HER &amp;v in subseries İÇİN DÖNGÜ:
+                running += v - mean;
+                cumulative.push(running);
+            // Range
+            let range = cumulative
+            .iter()
+            .cloned()
+            .fold(Decimal::MIN, Decimal::max)
+            - cumulative
+            .iter()
+            .cloned()
+            .fold(Decimal::MAX, Decimal::min);
+            // Standart sapma
+            let variance = subseries
+            .iter()
+            .map(|&amp;v| (v - mean).powi(2))
+            .sum::&lt;Decimal&gt;()
+            / Decimal::from(n);
+            let std_dev = variance.sqrt().unwrap_or(Decimal::ZERO);
+            EĞER std_dev &gt; Decimal::from_str(&quot;0.000000000001&quot;).unwrap() İSE:
+                rs_values.push(range / std_dev);
+        EĞER !rs_values.is_empty() İSE:
+            let avg_rs = rs_values.iter().sum::&lt;Decimal&gt;() / Decimal::from(rs_values.len());
+            EĞER avg_rs &gt; Decimal::ZERO İSE:
+                log_ns.push(Decimal::from(n).ln());
+                log_rs.push(avg_rs.ln());
+        // Geometrik artış (log-space uniform örnekleme)
+        let next_n = (Decimal::from(n) * f(1.4)).to_usize().unwrap_or(n + 1);
+        EĞER next_n &lt;= n İSE:
+            n += 1;
+            } else {
+            n = next_n;
+    EĞER log_ns.len() &lt; 2 İSE:
+        DÖNDÜR f(0.5)
+    let (hurst, _, _) = linear_regression_xy(&amp;log_ns, &amp;log_rs);
+    hurst.max(Decimal::ZERO).min(Decimal::ONE)</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: hurst_exponent"])
+    Start --> Cond1{"values.len() &lt; 20?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"end &gt; values.len()?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"sapma serisi?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> Loop4["Döngü: s in 0..num_subseries"]
+    Loop4 --> Loop5["Döngü: &v in subseries"]
+    Loop5 --> EndNode(["Döndür: f(0.5)"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> analyze_trend</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>klines: &amp;[Kline], atr: Decimal</code> | <strong>Dönüş Tipi:</strong> <code>TrendAnalysis</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>klines: &amp;[Kline], atr: Decimal</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>TrendAnalysis</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. İşlemi tamamlayarak <code>TrendAnalysis</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON analyze_trend(klines: &amp;[Kline], atr: Decimal) -&gt; TrendAnalysis:
+    EĞER klines.is_empty() || atr &lt;= Decimal::ZERO İSE:
+        DÖNDÜR TrendAnalysis {
+        slope: Decimal::ZERO,
+        r_squared: Decimal::ZERO,
+        hurst: f(0.5),
+        trend_score: Decimal::ZERO,
+        trend_label: &quot;Veri Yetersiz&quot;.to_string(),
+        };
+    // Son 50 mumun log-fiyat regresyonu
+    let n = klines.len().min(50);
+    let recent = &amp;klines[klines.len().saturating_sub(n)..];
+    let log_prices: Vec&lt;Decimal&gt; = recent.iter().map(|k| k.close.ln()).collect();
+    let (slope, _, r_squared) = linear_regression(&amp;log_prices);
+    // Log-return serisi üzerinden Hurst üssü
+    let returns: Vec&lt;Decimal&gt; = recent
+    .windows(2)
+    .map(|w| (w[1].close / w[0].close).ln())
+    .collect();
+    let hurst = hurst_exponent(&amp;returns);
+    // Nihai Trend Skoru: (Eğim / ATR) * 10 * R²
+    // Eğim log-fiyat uzayında olduğundan, gerçek fiyat eğimine çevir
+    let price_slope = slope * recent.last().unwrap().close;
+    let raw_score = (price_slope / atr) * Decimal::TEN * r_squared;
+    let trend_score = raw_score.max(Decimal::from(-10)).min(Decimal::from(10));
+    let trend_label = if hurst &gt; f(0.60) {
+    &quot;Kalıcı Trend (Momentum)&quot;.to_string()
+    } else if hurst &lt; f(0.40) {
+    &quot;Ortalama Dönüş (Range)&quot;.to_string()
+    } else {
+    &quot;Belirsiz (Random Walk)&quot;.to_string()
+    };
+    TrendAnalysis {
+    slope,
+    r_squared,
+    hurst,
+    trend_score,
+    trend_label,</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: analyze_trend"])
+    Start --> Cond1{"klines.is_empty() || atr &lt;= Decimal::ZERO?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"hurst &gt; f(0.60)?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"hurst &lt; f(0.40)?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> EndNode(["Döndür: serisi üzerinden Hurst üssü"])
+            </div>
+        </div>
+        
+        </section>
+
+        <details>
+            <summary>Orijinal Rust Kaynak Kodunu Göster</summary>
+            <pre><code>// ============================================================================
+// MSMP 2.0 — KATMAN 3: TREND YAPISI (Regresyon + Hurst Üssü)
+// ============================================================================
+// Son 50 mumun Log-Fiyat Regresyonu hesaplanır.
+// Eğim (Slope) = birim zamandaki değişim hızı
+// R² = Trendin gücü (0-1)
+// Hurst Üssü (H) = Trendin kalıcılığı (R/S analizi)
+//   H &gt; 0.60 → Kalıcı Trend (Momentum)
+//   H &lt; 0.40 → Ortalama Dönüş (Range)
+// Nihai Trend Skoru = (Eğim / ATR) * 10 * R²  → aralık [-10, +10]
+// ============================================================================
+
+use ohlcv_engine::Kline;
+use rust_decimal::Decimal;
+use rust_decimal::prelude::*;
+use serde::Serialize;
+
+fn f(x: f64) -&gt; Decimal {
+    Decimal::from_f64(x).unwrap_or(Decimal::ZERO)
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct TrendAnalysis {
+    /// Regresyon eğimi (log-fiyat)
+    pub slope: Decimal,
+    /// Belirleme katsayısı — trendin gücü (0-1)
+    pub r_squared: Decimal,
+    /// Hurst Üssü — trendin kalıcılığı (0-1)
+    pub hurst: Decimal,
+    /// Nihai trend skoru (-10 / +10)
+    pub trend_score: Decimal,
+    /// İnsan okunabilir etiket
+    pub trend_label: String,
+}
+
+/// Log-Fiyat Doğrusal Regresyon (OLS — Ordinary Least Squares)
+/// Dönüş: (slope, intercept, r_squared)
+pub fn linear_regression(values: &amp;[Decimal]) -&gt; (Decimal, Decimal, Decimal) {
+    let n = Decimal::from(values.len());
+    if values.len() &lt; 2 {
+        return (Decimal::ZERO, Decimal::ZERO, Decimal::ZERO);
+    }
+
+    let x_mean = (n - Decimal::ONE) / Decimal::TWO;
+    let y_mean = values.iter().sum::&lt;Decimal&gt;() / n;
+
+    let mut ss_xy = Decimal::ZERO;
+    let mut ss_xx = Decimal::ZERO;
+    let mut ss_yy = Decimal::ZERO;
+
+    for (i, &amp;y) in values.iter().enumerate() {
+        let x = Decimal::from(i);
+        let dx = x - x_mean;
+        let dy = y - y_mean;
+        ss_xy += dx * dy;
+        ss_xx += dx * dx;
+        ss_yy += dy * dy;
+    }
+
+    if ss_xx == Decimal::ZERO {
+        return (Decimal::ZERO, y_mean, Decimal::ZERO);
+    }
+
+    let slope = ss_xy / ss_xx;
+    let intercept = y_mean - slope * x_mean;
+    let r_squared = if ss_yy == Decimal::ZERO {
+        Decimal::ZERO
+    } else {
+        (ss_xy * ss_xy) / (ss_xx * ss_yy)
+    };
+
+    (slope, intercept, r_squared)
+}
+
+/// İki vektör arasında doğrusal regresyon (Hurst hesabı için helper)
+fn linear_regression_xy(x: &amp;[Decimal], y: &amp;[Decimal]) -&gt; (Decimal, Decimal, Decimal) {
+    let n = Decimal::from(x.len());
+    if x.len() &lt; 2 {
+        return (Decimal::ZERO, Decimal::ZERO, Decimal::ZERO);
+    }
+
+    let x_mean = x.iter().sum::&lt;Decimal&gt;() / n;
+    let y_mean = y.iter().sum::&lt;Decimal&gt;() / n;
+
+    let mut ss_xy = Decimal::ZERO;
+    let mut ss_xx = Decimal::ZERO;
+    let mut ss_yy = Decimal::ZERO;
+
+    for i in 0..x.len() {
+        let dx = x[i] - x_mean;
+        let dy = y[i] - y_mean;
+        ss_xy += dx * dy;
+        ss_xx += dx * dx;
+        ss_yy += dy * dy;
+    }
+
+    if ss_xx == Decimal::ZERO {
+        return (Decimal::ZERO, y_mean, Decimal::ZERO);
+    }
+
+    let slope = ss_xy / ss_xx;
+    let intercept = y_mean - slope * x_mean;
+    let r_squared = if ss_yy == Decimal::ZERO {
+        Decimal::ZERO
+    } else {
+        (ss_xy * ss_xy) / (ss_xx * ss_yy)
+    };
+
+    (slope, intercept, r_squared)
+}
+
+/// Hurst Üssü — R/S (Rescaled Range) Analizi
+///
+/// Farklı alt-seri uzunlukları (n) için Rescaled Range (R/S) hesaplanır.
+/// log(R/S) vs log(n) regresyonunun eğimi = Hurst üssü.
+///
+/// H &gt; 0.60 → Kalıcı Trend (long-memory, momentum)
+/// 0.40 ≤ H ≤ 0.60 → Rastgele Yürüyüş
+/// H &lt; 0.40 → Ortalama Dönüş (mean-reverting)
+pub fn hurst_exponent(values: &amp;[Decimal]) -&gt; Decimal {
+    if values.len() &lt; 20 {
+        return f(0.5); // Yetersiz veri — rastgele yürüyüş varsay
+    }
+
+    let mut log_ns = Vec::new();
+    let mut log_rs = Vec::new();
+
+    let min_n = 8;
+    let max_n = values.len() / 2;
+    let mut n = min_n;
+
+    while n &lt;= max_n {
+        let mut rs_values = Vec::new();
+        let num_subseries = values.len() / n;
+
+        for s in 0..num_subseries {
+            let start = s * n;
+            let end = start + n;
+            if end &gt; values.len() {
+                break;
+            }
+
+            let subseries = &amp;values[start..end];
+            let mean = subseries.iter().sum::&lt;Decimal&gt;() / Decimal::from(n);
+
+            // Kümülatif sapma serisi
+            let mut cumulative = Vec::with_capacity(n);
+            let mut running = Decimal::ZERO;
+            for &amp;v in subseries {
+                running += v - mean;
+                cumulative.push(running);
+            }
+
+            // Range
+            let range = cumulative
+                .iter()
+                .cloned()
+                .fold(Decimal::MIN, Decimal::max)
+                - cumulative
+                    .iter()
+                    .cloned()
+                    .fold(Decimal::MAX, Decimal::min);
+
+            // Standart sapma
+            let variance = subseries
+                .iter()
+                .map(|&amp;v| (v - mean).powi(2))
+                .sum::&lt;Decimal&gt;()
+                / Decimal::from(n);
+            let std_dev = variance.sqrt().unwrap_or(Decimal::ZERO);
+
+            if std_dev &gt; Decimal::from_str(&quot;0.000000000001&quot;).unwrap() {
+                rs_values.push(range / std_dev);
+            }
+        }
+
+        if !rs_values.is_empty() {
+            let avg_rs = rs_values.iter().sum::&lt;Decimal&gt;() / Decimal::from(rs_values.len());
+            if avg_rs &gt; Decimal::ZERO {
+                log_ns.push(Decimal::from(n).ln());
+                log_rs.push(avg_rs.ln());
+            }
+        }
+
+        // Geometrik artış (log-space uniform örnekleme)
+        let next_n = (Decimal::from(n) * f(1.4)).to_usize().unwrap_or(n + 1);
+        if next_n &lt;= n {
+            n += 1;
+        } else {
+            n = next_n;
+        }
+    }
+
+    if log_ns.len() &lt; 2 {
+        return f(0.5);
+    }
+
+    let (hurst, _, _) = linear_regression_xy(&amp;log_ns, &amp;log_rs);
+    hurst.max(Decimal::ZERO).min(Decimal::ONE)
+}
+
+/// Tam trend analizi — 3 pencere için ayrı ayrı çağrılır
+pub fn analyze_trend(klines: &amp;[Kline], atr: Decimal) -&gt; TrendAnalysis {
+    if klines.is_empty() || atr &lt;= Decimal::ZERO {
+        return TrendAnalysis {
+            slope: Decimal::ZERO,
+            r_squared: Decimal::ZERO,
+            hurst: f(0.5),
+            trend_score: Decimal::ZERO,
+            trend_label: &quot;Veri Yetersiz&quot;.to_string(),
+        };
+    }
+
+    // Son 50 mumun log-fiyat regresyonu
+    let n = klines.len().min(50);
+    let recent = &amp;klines[klines.len().saturating_sub(n)..];
+
+    let log_prices: Vec&lt;Decimal&gt; = recent.iter().map(|k| k.close.ln()).collect();
+    let (slope, _, r_squared) = linear_regression(&amp;log_prices);
+
+    // Log-return serisi üzerinden Hurst üssü
+    let returns: Vec&lt;Decimal&gt; = recent
+        .windows(2)
+        .map(|w| (w[1].close / w[0].close).ln())
+        .collect();
+    let hurst = hurst_exponent(&amp;returns);
+
+    // Nihai Trend Skoru: (Eğim / ATR) * 10 * R²
+    // Eğim log-fiyat uzayında olduğundan, gerçek fiyat eğimine çevir
+    let price_slope = slope * recent.last().unwrap().close;
+    let raw_score = (price_slope / atr) * Decimal::TEN * r_squared;
+    let trend_score = raw_score.max(Decimal::from(-10)).min(Decimal::from(10));
+
+    let trend_label = if hurst &gt; f(0.60) {
+        &quot;Kalıcı Trend (Momentum)&quot;.to_string()
+    } else if hurst &lt; f(0.40) {
+        &quot;Ortalama Dönüş (Range)&quot;.to_string()
+    } else {
+        &quot;Belirsiz (Random Walk)&quot;.to_string()
+    };
+
+    TrendAnalysis {
+        slope,
+        r_squared,
+        hurst,
+        trend_score,
+        trend_label,
+    }
+}
+</code></pre>
+        </details>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            flowchart: { curve: 'basis' }
+        });
+    </script>
+</body>
+</html>

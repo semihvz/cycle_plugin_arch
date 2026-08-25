@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>analyzer.rs - Rust Analiz Dokümanı</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --border: #334155;
+            --code-bg: #090d16;
+            --verbal-bg: #131f37;
+            --analogy-bg: #1e1b4b;
+            --analogy-border: #818cf8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .back-link {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .back-link:hover { text-decoration: underline; }
+        h1 { font-size: 2rem; color: var(--accent); margin-bottom: 0.5rem; }
+        .file-path { font-family: 'Fira Code', monospace; color: var(--text-muted); font-size: 0.95rem; }
+        
+        .structs-container { margin: 1.5rem 0; }
+        .badge {
+            display: inline-block;
+            background: #0284c7;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-family: 'Fira Code', monospace;
+        }
+        .badge-struct { background: #7c3aed; }
+        
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .card h3 { color: var(--accent); margin-bottom: 0.5rem; font-size: 1.3rem; }
+        .card h4 { margin: 1.2rem 0 0.5rem 0; color: var(--text-muted); font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        .easy-analogy {
+            background: var(--analogy-bg);
+            border-left: 4px solid var(--analogy-border);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1rem;
+            color: #c7d2fe;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .verbal-explanation {
+            background: var(--verbal-bg);
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1.2rem;
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            margin-bottom: 1rem;
+        }
+        
+        .mermaid {
+            background: var(--code-bg);
+            padding: 1.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+        }
+        
+        details {
+            margin-top: 2rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Ana İndekse Dön</a>
+        <header>
+            <h1>analyzer.rs</h1>
+            <p class="file-path">crates/plugins/analytics/plugin_scout/src/analyzer.rs</p>
+            <div class="structs-container">
+                <strong>Tanımlı Türler / Yapılar:</strong> <span class="badge badge-struct">OrderbookFluxAnalyzer</span> 
+            </div>
+        </header>
+
+        <section>
+            <h2>Fonksiyon Analizleri & Basit Anlatımlar</h2>
+            
+        <div class="card">
+            <h3><span class="badge">fn</span> now_ts</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>Yok</code> | <strong>Dönüş Tipi:</strong> <code>f64</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan hiçbir girdi almadan verisini alır, kendi kurallarına göre işler ve sonucunda <code>f64</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. İşlemi tamamlayarak <code>f64</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON now_ts() -&gt; f64:
+    SystemTime::now()
+    .duration_since(UNIX_EPOCH)
+    .expect(&quot;clock before epoch&quot;)
+    .as_secs_f64()</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: now_ts"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> new</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>Yok</code> | <strong>Dönüş Tipi:</strong> <code>Self</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Dükkanı sabah açarken kasayı sıfırlama, rafları düzeltme ve tabelayı asma işlemidir. Her şey temiz bir başlangıç için hazır hale getirilir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Yapıcı (constructor) fonksiyon olarak nesnenin bellekte ilk durumları ve yapılandırmalarıyla başlatılmasını (instantiation) sağlar.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON new() -&gt; Self:
+    Self</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: new"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> get_depth_candidates</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self, market: &amp;mut MarketState</code> | <strong>Dönüş Tipi:</strong> <code>Vec&lt;String&gt;</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Pazarda yüzlerce tezgah var. Gözcü eleman pazarın içinde hızlıca koşar ve fiyatı en çok hareket eden, alıcısı en hareketli ilk 10 tezgahı seçip detaylı incelemek üzere listenin başına koyar.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Sistem zaman damgasıyla tüm sembol verilerini günceller.<br>2. Güncel olmayan veya fiyat skoru sıfır/negatif olan sembolleri eler.<br>3. Kalan sembolleri fiyat hareket skorlarına göre büyükten küçüğe sıralar.<br>4. En yüksek puanlı <code>DEPTH_CANDIDATE_COUNT</code> adet aday sembolü döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON get_depth_candidates(&amp;self, market: &amp;mut MarketState) -&gt; Vec&lt;String&gt;:
+    let now = now_ts();
+    let mut scored: Vec&lt;(f64, String)&gt; = Vec::new();
+    HER (symbol, state) in market.states.iter_mut() İÇİN DÖNGÜ:
+        state.refresh(now);
+        EĞER !state.is_recent(now) İSE:
+            continue;
+        let score = state.price_score();
+        EĞER score &lt;= 0.0 İSE:
+            continue;
+        scored.push((score, symbol.clone()));
+    scored.sort_by(|a, b| b.0.partial_cmp(&amp;a.0).unwrap_or(Ordering::Equal));
+    scored
+    .into_iter()
+    .take(config::DEPTH_CANDIDATE_COUNT)
+    .map(|(_, symbol)| symbol)
+    .collect()</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: get_depth_candidates"])
+    Start --> Cond1{"!state.is_recent(now)?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"score &lt;= 0.0?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Loop3["Döngü: (symbol, state) in market.states.iter_mut()"]
+    Loop3 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> get_best_opportunity</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self, market: &amp;mut MarketState</code> | <strong>Dönüş Tipi:</strong> <code>Option&lt;Opportunity&gt;</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Gözcünün getirdiği aday tezgahları tek tek inceler. İçlerinden risk-kazanç dengesi en mükemmel olan 'Güçlü Fırsat' veya 'İyi Fırsat' etiketli tek bir ürünü seçip alışveriş listesinin en üstüne koyar.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Derinlik sembollerini sırayla tarar ve güncelliğini kontrol eder.<br>2. Her bir sembol için metrik ve karar puanını hesaplar.<br>3. Kararı 'Guclu' veya 'Iyi' olanlardan en yüksek skorlusunu seçer.<br>4. Öncelikle en yüksek skorlu 'Guclu' fırsatı, yoksa 'Iyi' fırsatı döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON get_best_opportunity(&amp;self, market: &amp;mut MarketState) -&gt; Option&lt;Opportunity&gt;:
+    let now = now_ts();
+    let mut best_strong: Option&lt;Opportunity&gt; = None;
+    let mut best_good: Option&lt;Opportunity&gt; = None;
+    let depth_symbols: Vec&lt;String&gt; = market.depth_symbols.iter().cloned().collect();
+    HER symbol in depth_symbols İÇİN DÖNGÜ:
+        let state = market.states.get_mut(&amp;symbol);
+        let Some(state) = state else { continue };
+        state.refresh(now);
+        EĞER !state.is_recent(now) İSE:
+            continue;
+        let Some(opp) = self.calc_opportunity(&amp;symbol, state) else {
+        continue;
+        };
+        DURUM KONTROLÜ (opp.verdict):
+            Verdict::Guclu =&gt; {
+            EĞER best_strong.is_none() || opp.score &gt; best_strong.as_ref().unwrap().score İSE:
+                best_strong = Some(opp);
+        Verdict::Iyi =&gt; {
+        EĞER best_good.is_none() || opp.score &gt; best_good.as_ref().unwrap().score İSE:
+            best_good = Some(opp);
+    _ =&gt; {}
+    best_strong.or(best_good)</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: get_best_opportunity"])
+    Start --> Cond1{"!state.is_recent(now)?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"best_strong.is_none() || opp.score &gt; best_strong.as_ref().unwrap().score?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"best_good.is_none() || opp.score &gt; best_good.as_ref().unwrap().score?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> Loop4["Döngü: symbol in depth_symbols"]
+    Loop4 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> calc_opportunity</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self, symbol: &amp;str, state: &amp;SymbolState</code> | <strong>Dönüş Tipi:</strong> <code>Option&lt;Opportunity&gt;</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Tek bir ürünün fiyatına, kalitesine ve tüccarın hareketlerine bakar. Eğer pazarcı insanları kandırmak için sahte bağırış yapıyorsa bunu 'Bot Gürültüsü' ilan eder, gerçekten kaliteli ve kârlı bir ürünse 'Güçlü Fırsat' olarak damgalar.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Fiyat, spread ve işlem hızı eşiklerini doğrulayarak yetersiz sembolleri filtreler.<br>2. Fiyat verimliliği (efficiency) ve spread-uyarlanmış fırsat skorunu hesaplar.<br>3. Metrik değerlerine göre sonucu <i>Guclu</i>, <i>Iyi</i>, <i>Normal</i>, <i>BotGurultu</i> veya <i>Zayif</i> kararlarına ayırır.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON calc_opportunity(&amp;self, symbol: &amp;str, state: &amp;SymbolState) -&gt; Option&lt;Opportunity&gt;:
+    EĞER state.mid &lt;= 0.0 || state.spread_bps &lt;= 0.0 İSE:
+        DÖNDÜR None
+    EĞER state.price_ticks_per_s() &lt; config::MIN_TICKS_PER_SECOND İSE:
+        DÖNDÜR None
+    EĞER state.ob_updates_per_s() &lt;= 0.0 || state.ob_changes_per_s() &lt;= 0.0 İSE:
+        DÖNDÜR None
+    let efficiency = state.price_bps_per_s() / state.ob_changes_per_s();
+    let adjusted_spread = state.spread_bps.max(config::MIN_SPREAD_BPS);
+    let score = (state.price_bps_per_s() * state.price_ticks_per_s()) / adjusted_spread;
+    let verdict = if efficiency &gt;= 0.05 &amp;&amp; score &gt;= 30.0 {
+    Verdict::Guclu
+    } else if efficiency &gt;= 0.03 &amp;&amp; score &gt;= 10.0 {
+    Verdict::Iyi
+    } else if efficiency &gt;= 0.01 &amp;&amp; score &gt;= 3.0 {
+    Verdict::Normal
+    } else if efficiency &lt; 0.01 &amp;&amp; state.ob_changes_per_s() &gt; 200.0 {
+    Verdict::BotGurultu
+    } else {
+    Verdict::Zayif
+    };
+    Some(Opportunity {
+    symbol: symbol.to_string(),
+    score,
+    verdict,
+    efficiency,
+    price_bps_per_s: state.price_bps_per_s(),
+    price_ticks_per_s: state.price_ticks_per_s(),
+    ob_changes_per_s: state.ob_changes_per_s(),
+    spread_bps: state.spread_bps,
+    })</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: calc_opportunity"])
+    Start --> Cond1{"state.mid &lt;= 0.0 || state.spread_bps &lt;= 0.0?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"state.price_ticks_per_s() &lt; config::MIN_TICKS_PER_SECOND?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"state.ob_updates_per_s() &lt;= 0.0 || state.ob_changes_per_s() &lt;= 0.0?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> EndNode(["Döndür: None"])
+            </div>
+        </div>
+        
+        </section>
+
+        <details>
+            <summary>Orijinal Rust Kaynak Kodunu Göster</summary>
+            <pre><code>use std::cmp::Ordering;
+use std::time::{SystemTime, UNIX_EPOCH};
+
+use crate::config;
+use crate::models::{MarketState, Opportunity, SymbolState, Verdict};
+
+fn now_ts() -&gt; f64 {
+    SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .expect(&quot;clock before epoch&quot;)
+        .as_secs_f64()
+}
+
+pub struct OrderbookFluxAnalyzer;
+
+impl OrderbookFluxAnalyzer {
+    pub fn new() -&gt; Self {
+        Self
+    }
+
+    pub fn get_depth_candidates(&amp;self, market: &amp;mut MarketState) -&gt; Vec&lt;String&gt; {
+        let now = now_ts();
+        let mut scored: Vec&lt;(f64, String)&gt; = Vec::new();
+
+        for (symbol, state) in market.states.iter_mut() {
+            state.refresh(now);
+            if !state.is_recent(now) {
+                continue;
+            }
+            let score = state.price_score();
+            if score &lt;= 0.0 {
+                continue;
+            }
+            scored.push((score, symbol.clone()));
+        }
+
+        scored.sort_by(|a, b| b.0.partial_cmp(&amp;a.0).unwrap_or(Ordering::Equal));
+        scored
+            .into_iter()
+            .take(config::DEPTH_CANDIDATE_COUNT)
+            .map(|(_, symbol)| symbol)
+            .collect()
+    }
+
+    pub fn get_best_opportunity(&amp;self, market: &amp;mut MarketState) -&gt; Option&lt;Opportunity&gt; {
+        let now = now_ts();
+        let mut best_strong: Option&lt;Opportunity&gt; = None;
+        let mut best_good: Option&lt;Opportunity&gt; = None;
+
+        let depth_symbols: Vec&lt;String&gt; = market.depth_symbols.iter().cloned().collect();
+
+        for symbol in depth_symbols {
+            let state = market.states.get_mut(&amp;symbol);
+            let Some(state) = state else { continue };
+            state.refresh(now);
+            if !state.is_recent(now) {
+                continue;
+            }
+
+            let Some(opp) = self.calc_opportunity(&amp;symbol, state) else {
+                continue;
+            };
+
+            match opp.verdict {
+                Verdict::Guclu =&gt; {
+                    if best_strong.is_none() || opp.score &gt; best_strong.as_ref().unwrap().score {
+                        best_strong = Some(opp);
+                    }
+                }
+                Verdict::Iyi =&gt; {
+                    if best_good.is_none() || opp.score &gt; best_good.as_ref().unwrap().score {
+                        best_good = Some(opp);
+                    }
+                }
+                _ =&gt; {}
+            }
+        }
+
+        best_strong.or(best_good)
+    }
+
+    fn calc_opportunity(&amp;self, symbol: &amp;str, state: &amp;SymbolState) -&gt; Option&lt;Opportunity&gt; {
+        if state.mid &lt;= 0.0 || state.spread_bps &lt;= 0.0 {
+            return None;
+        }
+        if state.price_ticks_per_s() &lt; config::MIN_TICKS_PER_SECOND {
+            return None;
+        }
+        if state.ob_updates_per_s() &lt;= 0.0 || state.ob_changes_per_s() &lt;= 0.0 {
+            return None;
+        }
+
+        let efficiency = state.price_bps_per_s() / state.ob_changes_per_s();
+        let adjusted_spread = state.spread_bps.max(config::MIN_SPREAD_BPS);
+        let score = (state.price_bps_per_s() * state.price_ticks_per_s()) / adjusted_spread;
+
+        let verdict = if efficiency &gt;= 0.05 &amp;&amp; score &gt;= 30.0 {
+            Verdict::Guclu
+        } else if efficiency &gt;= 0.03 &amp;&amp; score &gt;= 10.0 {
+            Verdict::Iyi
+        } else if efficiency &gt;= 0.01 &amp;&amp; score &gt;= 3.0 {
+            Verdict::Normal
+        } else if efficiency &lt; 0.01 &amp;&amp; state.ob_changes_per_s() &gt; 200.0 {
+            Verdict::BotGurultu
+        } else {
+            Verdict::Zayif
+        };
+
+        Some(Opportunity {
+            symbol: symbol.to_string(),
+            score,
+            verdict,
+            efficiency,
+            price_bps_per_s: state.price_bps_per_s(),
+            price_ticks_per_s: state.price_ticks_per_s(),
+            ob_changes_per_s: state.ob_changes_per_s(),
+            spread_bps: state.spread_bps,
+        })
+    }
+}
+</code></pre>
+        </details>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            flowchart: { curve: 'basis' }
+        });
+    </script>
+</body>
+</html>

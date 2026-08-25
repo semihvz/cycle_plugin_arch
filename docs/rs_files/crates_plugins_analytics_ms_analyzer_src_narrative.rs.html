@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>narrative.rs - Rust Analiz Dokümanı</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --border: #334155;
+            --code-bg: #090d16;
+            --verbal-bg: #131f37;
+            --analogy-bg: #1e1b4b;
+            --analogy-border: #818cf8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .back-link {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .back-link:hover { text-decoration: underline; }
+        h1 { font-size: 2rem; color: var(--accent); margin-bottom: 0.5rem; }
+        .file-path { font-family: 'Fira Code', monospace; color: var(--text-muted); font-size: 0.95rem; }
+        
+        .structs-container { margin: 1.5rem 0; }
+        .badge {
+            display: inline-block;
+            background: #0284c7;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-family: 'Fira Code', monospace;
+        }
+        .badge-struct { background: #7c3aed; }
+        
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .card h3 { color: var(--accent); margin-bottom: 0.5rem; font-size: 1.3rem; }
+        .card h4 { margin: 1.2rem 0 0.5rem 0; color: var(--text-muted); font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        .easy-analogy {
+            background: var(--analogy-bg);
+            border-left: 4px solid var(--analogy-border);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1rem;
+            color: #c7d2fe;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .verbal-explanation {
+            background: var(--verbal-bg);
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1.2rem;
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            margin-bottom: 1rem;
+        }
+        
+        .mermaid {
+            background: var(--code-bg);
+            padding: 1.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+        }
+        
+        details {
+            margin-top: 2rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Ana İndekse Dön</a>
+        <header>
+            <h1>narrative.rs</h1>
+            <p class="file-path">crates/plugins/analytics/ms_analyzer/src/narrative.rs</p>
+            <div class="structs-container">
+                <strong>Tanımlı Türler / Yapılar:</strong> <span class="badge badge-struct">LevelEntry</span> <span class="badge badge-struct">MSMPReport</span> <span class="badge badge-struct">VacuumZone</span> 
+            </div>
+        </header>
+
+        <section>
+            <h2>Fonksiyon Analizleri & Basit Anlatımlar</h2>
+            
+        <div class="card">
+            <h3><span class="badge">fn</span> format_table</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self, symbol: &amp;str, interval: &amp;str, stream_id: &amp;str, analyzed_bars: usize</code> | <strong>Dönüş Tipi:</strong> <code>String</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>&amp;self, symbol: &amp;str, interval: &amp;str, stream_id: &amp;str, analyzed_bars: usize</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>String</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Listeyi veya veri kümesini sırayla döngüye alarak tarar.<br>4. İşlemi tamamlayarak <code>String</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON format_table(&amp;self, symbol: &amp;str, interval: &amp;str, stream_id: &amp;str, analyzed_bars: usize) -&gt; String:
+    let mut out = String::new();
+    out.push_str(&quot;===================================================================================================\n&quot;);
+    out.push_str(&amp;format!(
+    &quot;📊 MSMP 2.0 MARKET STRUCTURE &amp; NARRATIVE REPORT | Symbol: {} ({}) | Stream: {} | Bars: {}\n&quot;,
+    symbol, interval, stream_id, analyzed_bars
+    ));
+    out.push_str(&quot;===================================================================================================\n&quot;);
+    out.push_str(&amp;format!(
+    &quot;Current Price: {:&gt;10.4}  |  ATR(14): {:&gt;8.4}  |  VWAP: {:&gt;10.4}  |  POC: {:&gt;10.4}\n&quot;,
+    self.current_price, self.atr, self.vwap, self.poc
+    ));
+    out.push_str(&amp;format!(
+    &quot;Volatility Band (POC±1.5σ): [{:.4} - {:.4}]  |  BSL/SSL Ratio: {:.2}\n&quot;,
+    self.volatility_band.0, self.volatility_band.1, self.bsl_ssl_ratio
+    ));
+    out.push_str(&quot;---------------------------------------------------------------------------------------------------\n&quot;);
+    out.push_str(&amp;format!(
+    &quot;ATS (Weighted Trend Score): {:&gt;6.2} / 10.0  |  Trend: {:&lt;20}  | Confluence: {:.1}%\n&quot;,
+    self.ats, self.trend_label, self.confluence_index
+    ));
+    out.push_str(&amp;format!(
+    &quot;Hurst Exponent (H): {:&gt;8.4}  |  R² (Trend Strength): {:&gt;6.4}  |  FVG: {} (Active Absorbers: {})\n&quot;,
+    self.hurst, self.r_squared, self.fvg_count, self.active_absorber_count
+    ));
+    EĞER let Some(ref vac) = self.vacuum_zone İSE:
+        out.push_str(&quot;---------------------------------------------------------------------------------------------------\n&quot;);
+        out.push_str(&amp;format!(
+        &quot;🌀 VACUUM ZONE: Price [{:.4} - {:.4}] | Magnetic Score: {:.2} | Tag: {}\n&quot;,
+        vac.price_low, vac.price_high, vac.magnetic_score, vac.label
+        ));
+    out.push_str(&quot;===================================================================================================\n&quot;);
+    out.push_str(&quot;🎯 STRATEGIC PIVOT LEVEL MATRIX\n&quot;);
+    out.push_str(&quot;+----------------+------------+------------------+---------+-----------+---------------+----------------+\n&quot;);
+    out.push_str(&quot;| PIVOT ID       | PRICE      | LEVEL TYPE       | DEFENSE | DECAY (W) | DELTA ALIGN   | PRIORITY SCORE |\n&quot;);
+    out.push_str(&quot;+----------------+------------+------------------+---------+-----------+---------------+----------------+\n&quot;);
+    EĞER self.levels.is_empty() İSE:
+        out.push_str(&quot;| (No registered levels found)                                                                       |\n&quot;);
+        } else {
+        HER level in self.levels.iter().take(15) İÇİN DÖNGÜ:
+            out.push_str(&amp;format!(
+            &quot;| {:&lt;14} | {:&gt;10.4} | {:&lt;16} | {:^7} | {:^9.2} | {:&lt;13} | {:^14.2} |\n&quot;,
+            level.pivot_id,
+            level.price,
+            level.level_type,
+            level.defense_count,
+            level.decay_weight,
+            level.delta_alignment,
+            level.priority_score
+            ));
+    out.push_str(&quot;+----------------+------------+------------------+---------+-----------+---------------+----------------+\n&quot;);
+    out</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: format_table"])
+    Start --> Cond1{"let Some(ref vac) = self.vacuum_zone?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"self.levels.is_empty()?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Loop3["Döngü: level in self.levels.iter().take(15)"]
+    Loop3 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> generate_report</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>core_klines: &amp;[Kline],
+    amp_klines: &amp;[Kline],
+    acute_klines: &amp;[Kline],</code> | <strong>Dönüş Tipi:</strong> <code>MSMPReport</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>core_klines: &amp;[Kline],
+    amp_klines: &amp;[Kline],
+    acute_klines: &amp;[Kline],</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>MSMPReport</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Farklı durum senaryolarına göre akışı uygun kola yönlendirir.<br>4. İşlemi tamamlayarak <code>MSMPReport</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON generate_report(core_klines: &amp;[Kline],
+    amp_klines: &amp;[Kline],
+    acute_klines: &amp;[Kline],) -&gt; MSMPReport:
+    let current_price = core_klines.last().map(|k| k.close).unwrap_or(Decimal::ZERO);
+    // ═══════════════════════════════════════════════════
+    // KATMAN 2: Pivot Çıkarımı (Core pencereden)
+    // ═══════════════════════════════════════════════════
+    let atr = pivot::atr_14(core_klines);
+    let pivots = pivot::extract_pivots(core_klines, atr);
+    let liq_zones = pivot::detect_liquidity_zones(&amp;pivots, atr);
+    // ═══════════════════════════════════════════════════
+    // KATMAN 3: Trend Analizi (3 pencere ayrı ayrı)
+    // ═══════════════════════════════════════════════════
+    let core_trend = trend::analyze_trend(core_klines, atr);
+    let amp_trend = trend::analyze_trend(amp_klines, atr);
+    let acute_trend = trend::analyze_trend(acute_klines, atr);
+    // ═══════════════════════════════════════════════════
+    // KATMAN 1: Ağırlıklı Trend Skoru + Confluence
+    // ═══════════════════════════════════════════════════
+    let ats = session::weighted_merge(
+    core_trend.trend_score,
+    amp_trend.trend_score,
+    acute_trend.trend_score,
+    );
+    let confluence = session::confluence_index(
+    core_trend.trend_score,
+    amp_trend.trend_score,
+    acute_trend.trend_score,
+    );
+    // ═══════════════════════════════════════════════════
+    // KATMAN 4: Seviye Envanteri
+    // ═══════════════════════════════════════════════════
+    let strategic_levels = levels::analyze_levels(&amp;pivots, core_klines);
+    // ═══════════════════════════════════════════════════
+    // KATMAN 5: Likidite Analizi
+    // ═══════════════════════════════════════════════════
+    let liq_analysis = liquidity::analyze_liquidity(core_klines);
+    // ═══════════════════════════════════════════════════
+    // KATMAN 6: FVG + Delta
+    // ═══════════════════════════════════════════════════
+    let fvgs = imbalance::detect_fvg(core_klines);
+    let active_absorbers: Vec&lt;_&gt; = fvgs
+    .iter()
+    .filter(|f| matches!(f.label, imbalance::FvgLabel::ActiveAbsorber))
+    .collect();
+    // ═══════════════════════════════════════════════════
+    // KATMAN 7: Vakum Bölgesi (En Yüksek Manyetik Alan)
+    // ═══════════════════════════════════════════════════
+    let vacuum = find_vacuum_zone(&amp;strategic_levels, &amp;fvgs, &amp;liq_analysis);
+    // ═══════════════════════════════════════════════════
+    // Pivot Matrisi — İlk 20 seviye
+    // ═══════════════════════════════════════════════════
+    let level_entries: Vec&lt;LevelEntry&gt; = strategic_levels
+    .iter()
+    .take(20)
+    .map(|l| {
+    // Bu seviyeye en yakın volume node&#x27;unun hacim oranı
+    let hvn_ratio = liq_analysis
+    .volume_profile
+    .iter()
+    .find(|n| l.price &gt;= n.price_low &amp;&amp; l.price &lt;= n.price_high)
+    .map(|n| n.volume_ratio)
+    .unwrap_or(Decimal::ZERO);
+    // Bu seviyeye en yakın FVG&#x27;nin delta uyumu
+    let delta_align = fvgs
+    .iter()
+    .find(|f| l.price &gt;= f.low &amp;&amp; l.price &lt;= f.high)
+    .map(|f| match f.label {
+    imbalance::FvgLabel::ActiveAbsorber =&gt; {
+    EĞER f.delta &gt; Decimal::ZERO İSE:
+        &quot;Pozitif (+)&quot;
+        } else {
+        &quot;Negatif (-)&quot;
+    imbalance::FvgLabel::PassiveGap =&gt; &quot;Nötr&quot;,
+    })
+    .unwrap_or(&quot;N/A&quot;);
+    LevelEntry {
+    pivot_id: l.pivot_id.clone(),
+    price: l.price,
+    level_type: l.level_type.clone(),
+    timestamp: l.timestamp,
+    decay_weight: l.decay_weight,
+    defense_count: l.defense_count,
+    hvn_volume_ratio: hvn_ratio,
+    delta_alignment: delta_align.to_string(),
+    priority_score: l.priority_score,
+    })
+    .collect();
+    MSMPReport {
+    ats,
+    hurst: core_trend.hurst,
+    r_squared: core_trend.r_squared,
+    trend_label: core_trend.trend_label,
+    confluence_index: confluence,
+    vwap: liq_analysis.vwap,
+    poc: liq_analysis.poc,
+    volatility_band: (
+    liq_analysis.volatility_band_low,
+    liq_analysis.volatility_band_high,
+    ),
+    bsl_ssl_ratio: liq_analysis.bsl_ssl_ratio,
+    vacuum_zone: vacuum,
+    levels: level_entries,
+    fvg_count: fvgs.len(),
+    active_absorber_count: active_absorbers.len(),
+    current_price,
+    liquidity_zones_count: liq_zones.len(),
+    atr,</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: generate_report"])
+    Start --> Cond1{"f.delta &gt; Decimal::ZERO?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"(+)'?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"(-)'?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> find_vacuum_zone</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>levels: &amp;[levels::StrategicLevel],
+    fvgs: &amp;[imbalance::Fvg],
+    liq: &amp;liquidity::LiquidityAnalysis,</code> | <strong>Dönüş Tipi:</strong> <code>Option&lt;VacuumZone&gt;</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>levels: &amp;[levels::StrategicLevel],
+    fvgs: &amp;[imbalance::Fvg],
+    liq: &amp;liquidity::LiquidityAnalysis,</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>Option&lt;VacuumZone&gt;</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Listeyi veya veri kümesini sırayla döngüye alarak tarar.<br>4. İşlemi tamamlayarak <code>Option&lt;VacuumZone&gt;</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON find_vacuum_zone(levels: &amp;[levels::StrategicLevel],
+    fvgs: &amp;[imbalance::Fvg],
+    liq: &amp;liquidity::LiquidityAnalysis,) -&gt; Option&lt;VacuumZone&gt;:
+    let mut best_score = Decimal::ZERO;
+    let mut best_zone: Option&lt;VacuumZone&gt; = None;
+    HER fvg in fvgs İÇİN DÖNGÜ:
+        let is_absorber = matches!(fvg.label, imbalance::FvgLabel::ActiveAbsorber);
+        let delta_mult = if is_absorber {
+        Decimal::from_str(&quot;1.5&quot;).unwrap()
+        } else {
+        Decimal::from_str(&quot;0.5&quot;).unwrap()
+        };
+        // Bu FVG bölgesindeki en yüksek seviye savunma skoru
+        let defense_score = levels
+        .iter()
+        .filter(|l| l.price &gt;= fvg.low &amp;&amp; l.price &lt;= fvg.high)
+        .map(|l| l.priority_score)
+        .fold(Decimal::ZERO, Decimal::max);
+        // Bu bölgedeki hacim yoğunluğu
+        let vol_score: Decimal = liq
+        .volume_profile
+        .iter()
+        .filter(|n| n.price_mid &gt;= fvg.low &amp;&amp; n.price_mid &lt;= fvg.high)
+        .map(|n| n.volume_ratio)
+        .sum::&lt;Decimal&gt;()
+        * Decimal::ONE_HUNDRED;
+        let magnetic_score = (defense_score + vol_score) * delta_mult;
+        EĞER magnetic_score &gt; best_score İSE:
+            best_score = magnetic_score;
+            best_zone = Some(VacuumZone {
+            price_low: fvg.low,
+            price_high: fvg.high,
+            magnetic_score,
+            label: if is_absorber {
+            &quot;Delta Onaylı Aktif Emici&quot;.to_string()
+            } else {
+            &quot;Pasif Dolgu Bölgesi&quot;.to_string()
+            },
+            delta_confirmed: is_absorber,
+            });
+    best_zone</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: find_vacuum_zone"])
+    Start --> Cond1{"is_absorber?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"magnetic_score &gt; best_score?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"is_absorber?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> Loop4["Döngü: fvg in fvgs"]
+    Loop4 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        </section>
+
+        <details>
+            <summary>Orijinal Rust Kaynak Kodunu Göster</summary>
+            <pre><code>// ============================================================================
+// MSMP 2.0 — KATMAN 7: BÜTÜNSEL NARATİF (Matematiksel Çıktı Formatı)
+// ============================================================================
+// 5 objektif veri ham sayı olarak çıkartılır. Yorum YASAKTIR.
+//
+// 1. ATS — Ağırlıklı Trend Skoru (-10/+10)
+// 2. Gerçek Aktif Volatilite Bandı — POC ± 1.5σ
+// 3. En Yüksek Manyetik Alan (The Vacuum)
+// 4. Likidite Eşitsizliği — BSL/SSL Oranı
+// 5. Çapraz Zaman Dilimi Uyumu — Confluence Index (%)
+// ============================================================================
+
+use crate::{imbalance, levels, liquidity, pivot, session, trend};
+use ohlcv_engine::Kline;
+use rust_decimal::Decimal;
+use rust_decimal::prelude::*;
+use serde::Serialize;
+
+/// En yüksek manyetik alan — tüm seviyeler arasında çekim gücü en yüksek bölge
+#[derive(Debug, Clone, Serialize)]
+pub struct VacuumZone {
+    pub price_low: Decimal,
+    pub price_high: Decimal,
+    /// Manyetik skor: (Savunma Skoru × Decay) + (Delta Doğrulaması) çarpımı
+    pub magnetic_score: Decimal,
+    pub label: String,
+    pub delta_confirmed: bool,
+}
+
+/// Pivot Matrisi — Nihai rapordaki seviye satırları
+#[derive(Debug, Clone, Serialize)]
+pub struct LevelEntry {
+    pub pivot_id: String,
+    pub price: Decimal,
+    pub level_type: String,
+    pub timestamp: u64,
+    pub decay_weight: Decimal,
+    pub defense_count: u16,
+    /// Bu seviyedeki HVN hacim oranı
+    pub hvn_volume_ratio: Decimal,
+    /// Delta uyumu: &quot;Pozitif (+)&quot;, &quot;Negatif (-)&quot;, &quot;Nötr&quot;, &quot;N/A&quot;
+    pub delta_alignment: String,
+    /// Nihai öncelik skoru (0-100)
+    pub priority_score: Decimal,
+}
+
+/// MSMP 2.0 Nihai Rapor — Tüm 7 katmanın birleşik çıktısı
+#[derive(Debug, Clone, Serialize)]
+pub struct MSMPReport {
+    // ── Katman 1 + 3: Ağırlıklı Trend ──
+    /// Ağırlıklı Trend Skoru: (Core×0.4) + (Amp×0.3) + (Acute×0.3)
+    pub ats: Decimal,
+    /// Hurst Üssü — Trend kalıcılığı (H&gt;0.6: Momentum, H&lt;0.4: Range)
+    pub hurst: Decimal,
+    /// Belirleme Katsayısı — Trend gücü (0-1)
+    pub r_squared: Decimal,
+    /// Trend etiketi
+    pub trend_label: String,
+    /// Çapraz Zaman Dilimi Uyumu (0-100%)
+    pub confluence_index: Decimal,
+
+    // ── Katman 5: Likidite ──
+    pub vwap: Decimal,
+    pub poc: Decimal,
+    /// Gerçek Aktif Volatilite Bandı: POC ± 1.5σ
+    pub volatility_band: (Decimal, Decimal),
+    /// BSL/SSL Oranı — Likidite eşitsizliği (Risk asimetrisi)
+    pub bsl_ssl_ratio: Decimal,
+
+    // ── Katman 7: Vakum Bölgesi ──
+    pub vacuum_zone: Option&lt;VacuumZone&gt;,
+
+    // ── Katman 4: Seviye Envanteri ──
+    pub levels: Vec&lt;LevelEntry&gt;,
+
+    // ── Katman 6: Dengesizlik ──
+    pub fvg_count: usize,
+    pub active_absorber_count: usize,
+
+    // ── Meta ──
+    pub current_price: Decimal,
+    pub liquidity_zones_count: usize,
+    pub atr: Decimal,
+}
+
+impl MSMPReport {
+    pub fn format_table(&amp;self, symbol: &amp;str, interval: &amp;str, stream_id: &amp;str, analyzed_bars: usize) -&gt; String {
+        let mut out = String::new();
+        out.push_str(&quot;===================================================================================================\n&quot;);
+        out.push_str(&amp;format!(
+            &quot;📊 MSMP 2.0 MARKET STRUCTURE &amp; NARRATIVE REPORT | Symbol: {} ({}) | Stream: {} | Bars: {}\n&quot;,
+            symbol, interval, stream_id, analyzed_bars
+        ));
+        out.push_str(&quot;===================================================================================================\n&quot;);
+        out.push_str(&amp;format!(
+            &quot;Current Price: {:&gt;10.4}  |  ATR(14): {:&gt;8.4}  |  VWAP: {:&gt;10.4}  |  POC: {:&gt;10.4}\n&quot;,
+            self.current_price, self.atr, self.vwap, self.poc
+        ));
+        out.push_str(&amp;format!(
+            &quot;Volatility Band (POC±1.5σ): [{:.4} - {:.4}]  |  BSL/SSL Ratio: {:.2}\n&quot;,
+            self.volatility_band.0, self.volatility_band.1, self.bsl_ssl_ratio
+        ));
+        out.push_str(&quot;---------------------------------------------------------------------------------------------------\n&quot;);
+        out.push_str(&amp;format!(
+            &quot;ATS (Weighted Trend Score): {:&gt;6.2} / 10.0  |  Trend: {:&lt;20}  | Confluence: {:.1}%\n&quot;,
+            self.ats, self.trend_label, self.confluence_index
+        ));
+        out.push_str(&amp;format!(
+            &quot;Hurst Exponent (H): {:&gt;8.4}  |  R² (Trend Strength): {:&gt;6.4}  |  FVG: {} (Active Absorbers: {})\n&quot;,
+            self.hurst, self.r_squared, self.fvg_count, self.active_absorber_count
+        ));
+        
+        if let Some(ref vac) = self.vacuum_zone {
+            out.push_str(&quot;---------------------------------------------------------------------------------------------------\n&quot;);
+            out.push_str(&amp;format!(
+                &quot;🌀 VACUUM ZONE: Price [{:.4} - {:.4}] | Magnetic Score: {:.2} | Tag: {}\n&quot;,
+                vac.price_low, vac.price_high, vac.magnetic_score, vac.label
+            ));
+        }
+
+        out.push_str(&quot;===================================================================================================\n&quot;);
+        out.push_str(&quot;🎯 STRATEGIC PIVOT LEVEL MATRIX\n&quot;);
+        out.push_str(&quot;+----------------+------------+------------------+---------+-----------+---------------+----------------+\n&quot;);
+        out.push_str(&quot;| PIVOT ID       | PRICE      | LEVEL TYPE       | DEFENSE | DECAY (W) | DELTA ALIGN   | PRIORITY SCORE |\n&quot;);
+        out.push_str(&quot;+----------------+------------+------------------+---------+-----------+---------------+----------------+\n&quot;);
+
+        if self.levels.is_empty() {
+            out.push_str(&quot;| (No registered levels found)                                                                       |\n&quot;);
+        } else {
+            for level in self.levels.iter().take(15) {
+                out.push_str(&amp;format!(
+                    &quot;| {:&lt;14} | {:&gt;10.4} | {:&lt;16} | {:^7} | {:^9.2} | {:&lt;13} | {:^14.2} |\n&quot;,
+                    level.pivot_id,
+                    level.price,
+                    level.level_type,
+                    level.defense_count,
+                    level.decay_weight,
+                    level.delta_alignment,
+                    level.priority_score
+                ));
+            }
+        }
+        out.push_str(&quot;+----------------+------------+------------------+---------+-----------+---------------+----------------+\n&quot;);
+
+        out
+    }
+}
+
+
+/// Tüm 7 katmanı orkestre et ve nihai rapor üret.
+///
+/// Bu fonksiyon 3 pencereden gelen Kline verilerini alır ve
+/// her katmanı sırasıyla çalıştırarak tek bir MSMPReport döndürür.
+pub fn generate_report(
+    core_klines: &amp;[Kline],
+    amp_klines: &amp;[Kline],
+    acute_klines: &amp;[Kline],
+) -&gt; MSMPReport {
+    let current_price = core_klines.last().map(|k| k.close).unwrap_or(Decimal::ZERO);
+
+    // ═══════════════════════════════════════════════════
+    // KATMAN 2: Pivot Çıkarımı (Core pencereden)
+    // ═══════════════════════════════════════════════════
+    let atr = pivot::atr_14(core_klines);
+    let pivots = pivot::extract_pivots(core_klines, atr);
+    let liq_zones = pivot::detect_liquidity_zones(&amp;pivots, atr);
+
+    // ═══════════════════════════════════════════════════
+    // KATMAN 3: Trend Analizi (3 pencere ayrı ayrı)
+    // ═══════════════════════════════════════════════════
+    let core_trend = trend::analyze_trend(core_klines, atr);
+    let amp_trend = trend::analyze_trend(amp_klines, atr);
+    let acute_trend = trend::analyze_trend(acute_klines, atr);
+
+    // ═══════════════════════════════════════════════════
+    // KATMAN 1: Ağırlıklı Trend Skoru + Confluence
+    // ═══════════════════════════════════════════════════
+    let ats = session::weighted_merge(
+        core_trend.trend_score,
+        amp_trend.trend_score,
+        acute_trend.trend_score,
+    );
+
+    let confluence = session::confluence_index(
+        core_trend.trend_score,
+        amp_trend.trend_score,
+        acute_trend.trend_score,
+    );
+
+    // ═══════════════════════════════════════════════════
+    // KATMAN 4: Seviye Envanteri
+    // ═══════════════════════════════════════════════════
+    let strategic_levels = levels::analyze_levels(&amp;pivots, core_klines);
+
+    // ═══════════════════════════════════════════════════
+    // KATMAN 5: Likidite Analizi
+    // ═══════════════════════════════════════════════════
+    let liq_analysis = liquidity::analyze_liquidity(core_klines);
+
+    // ═══════════════════════════════════════════════════
+    // KATMAN 6: FVG + Delta
+    // ═══════════════════════════════════════════════════
+    let fvgs = imbalance::detect_fvg(core_klines);
+    let active_absorbers: Vec&lt;_&gt; = fvgs
+        .iter()
+        .filter(|f| matches!(f.label, imbalance::FvgLabel::ActiveAbsorber))
+        .collect();
+
+    // ═══════════════════════════════════════════════════
+    // KATMAN 7: Vakum Bölgesi (En Yüksek Manyetik Alan)
+    // ═══════════════════════════════════════════════════
+    let vacuum = find_vacuum_zone(&amp;strategic_levels, &amp;fvgs, &amp;liq_analysis);
+
+    // ═══════════════════════════════════════════════════
+    // Pivot Matrisi — İlk 20 seviye
+    // ═══════════════════════════════════════════════════
+    let level_entries: Vec&lt;LevelEntry&gt; = strategic_levels
+        .iter()
+        .take(20)
+        .map(|l| {
+            // Bu seviyeye en yakın volume node&#x27;unun hacim oranı
+            let hvn_ratio = liq_analysis
+                .volume_profile
+                .iter()
+                .find(|n| l.price &gt;= n.price_low &amp;&amp; l.price &lt;= n.price_high)
+                .map(|n| n.volume_ratio)
+                .unwrap_or(Decimal::ZERO);
+
+            // Bu seviyeye en yakın FVG&#x27;nin delta uyumu
+            let delta_align = fvgs
+                .iter()
+                .find(|f| l.price &gt;= f.low &amp;&amp; l.price &lt;= f.high)
+                .map(|f| match f.label {
+                    imbalance::FvgLabel::ActiveAbsorber =&gt; {
+                        if f.delta &gt; Decimal::ZERO {
+                            &quot;Pozitif (+)&quot;
+                        } else {
+                            &quot;Negatif (-)&quot;
+                        }
+                    }
+                    imbalance::FvgLabel::PassiveGap =&gt; &quot;Nötr&quot;,
+                })
+                .unwrap_or(&quot;N/A&quot;);
+
+            LevelEntry {
+                pivot_id: l.pivot_id.clone(),
+                price: l.price,
+                level_type: l.level_type.clone(),
+                timestamp: l.timestamp,
+                decay_weight: l.decay_weight,
+                defense_count: l.defense_count,
+                hvn_volume_ratio: hvn_ratio,
+                delta_alignment: delta_align.to_string(),
+                priority_score: l.priority_score,
+            }
+        })
+        .collect();
+
+    MSMPReport {
+        ats,
+        hurst: core_trend.hurst,
+        r_squared: core_trend.r_squared,
+        trend_label: core_trend.trend_label,
+        confluence_index: confluence,
+        vwap: liq_analysis.vwap,
+        poc: liq_analysis.poc,
+        volatility_band: (
+            liq_analysis.volatility_band_low,
+            liq_analysis.volatility_band_high,
+        ),
+        bsl_ssl_ratio: liq_analysis.bsl_ssl_ratio,
+        vacuum_zone: vacuum,
+        levels: level_entries,
+        fvg_count: fvgs.len(),
+        active_absorber_count: active_absorbers.len(),
+        current_price,
+        liquidity_zones_count: liq_zones.len(),
+        atr,
+    }
+}
+
+/// Vakum Bölgesi tespiti — tüm FVG&#x27;ler arasında manyetik çekim gücü en yüksek bölge
+///
+/// Manyetik Skor = (Savunma Skoru × Decay W(t)) × Delta Çarpanı × Hacim Yoğunluğu
+fn find_vacuum_zone(
+    levels: &amp;[levels::StrategicLevel],
+    fvgs: &amp;[imbalance::Fvg],
+    liq: &amp;liquidity::LiquidityAnalysis,
+) -&gt; Option&lt;VacuumZone&gt; {
+    let mut best_score = Decimal::ZERO;
+    let mut best_zone: Option&lt;VacuumZone&gt; = None;
+
+    for fvg in fvgs {
+        let is_absorber = matches!(fvg.label, imbalance::FvgLabel::ActiveAbsorber);
+        let delta_mult = if is_absorber {
+            Decimal::from_str(&quot;1.5&quot;).unwrap()
+        } else {
+            Decimal::from_str(&quot;0.5&quot;).unwrap()
+        };
+
+        // Bu FVG bölgesindeki en yüksek seviye savunma skoru
+        let defense_score = levels
+            .iter()
+            .filter(|l| l.price &gt;= fvg.low &amp;&amp; l.price &lt;= fvg.high)
+            .map(|l| l.priority_score)
+            .fold(Decimal::ZERO, Decimal::max);
+
+        // Bu bölgedeki hacim yoğunluğu
+        let vol_score: Decimal = liq
+            .volume_profile
+            .iter()
+            .filter(|n| n.price_mid &gt;= fvg.low &amp;&amp; n.price_mid &lt;= fvg.high)
+            .map(|n| n.volume_ratio)
+            .sum::&lt;Decimal&gt;()
+            * Decimal::ONE_HUNDRED;
+
+        let magnetic_score = (defense_score + vol_score) * delta_mult;
+
+        if magnetic_score &gt; best_score {
+            best_score = magnetic_score;
+            best_zone = Some(VacuumZone {
+                price_low: fvg.low,
+                price_high: fvg.high,
+                magnetic_score,
+                label: if is_absorber {
+                    &quot;Delta Onaylı Aktif Emici&quot;.to_string()
+                } else {
+                    &quot;Pasif Dolgu Bölgesi&quot;.to_string()
+                },
+                delta_confirmed: is_absorber,
+            });
+        }
+    }
+
+    best_zone
+}
+</code></pre>
+        </details>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            flowchart: { curve: 'basis' }
+        });
+    </script>
+</body>
+</html>

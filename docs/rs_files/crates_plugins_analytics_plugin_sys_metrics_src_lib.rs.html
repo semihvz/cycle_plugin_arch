@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>lib.rs - Rust Analiz Dokümanı</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --border: #334155;
+            --code-bg: #090d16;
+            --verbal-bg: #131f37;
+            --analogy-bg: #1e1b4b;
+            --analogy-border: #818cf8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .back-link {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .back-link:hover { text-decoration: underline; }
+        h1 { font-size: 2rem; color: var(--accent); margin-bottom: 0.5rem; }
+        .file-path { font-family: 'Fira Code', monospace; color: var(--text-muted); font-size: 0.95rem; }
+        
+        .structs-container { margin: 1.5rem 0; }
+        .badge {
+            display: inline-block;
+            background: #0284c7;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-family: 'Fira Code', monospace;
+        }
+        .badge-struct { background: #7c3aed; }
+        
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .card h3 { color: var(--accent); margin-bottom: 0.5rem; font-size: 1.3rem; }
+        .card h4 { margin: 1.2rem 0 0.5rem 0; color: var(--text-muted); font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        .easy-analogy {
+            background: var(--analogy-bg);
+            border-left: 4px solid var(--analogy-border);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1rem;
+            color: #c7d2fe;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .verbal-explanation {
+            background: var(--verbal-bg);
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1.2rem;
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            margin-bottom: 1rem;
+        }
+        
+        .mermaid {
+            background: var(--code-bg);
+            padding: 1.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+        }
+        
+        details {
+            margin-top: 2rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Ana İndekse Dön</a>
+        <header>
+            <h1>lib.rs</h1>
+            <p class="file-path">crates/plugins/analytics/plugin_sys_metrics/src/lib.rs</p>
+            <div class="structs-container">
+                <strong>Tanımlı Türler / Yapılar:</strong> <span class="badge badge-struct">PluginResourceMetric</span> <span class="badge badge-struct">PluginState</span> <span class="badge badge-struct">SysMetricsEngine</span> <span class="badge badge-struct">SysMetricsReport</span> 
+            </div>
+        </header>
+
+        <section>
+            <h2>Fonksiyon Analizleri & Basit Anlatımlar</h2>
+            
+        <div class="card">
+            <h3><span class="badge">fn</span> new</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>Yok</code> | <strong>Dönüş Tipi:</strong> <code>Self</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Dükkanı sabah açarken kasayı sıfırlama, rafları düzeltme ve tabelayı asma işlemidir. Her şey temiz bir başlangıç için hazır hale getirilir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Yapıcı (constructor) fonksiyon olarak nesnenin bellekte ilk durumları ve yapılandırmalarıyla başlatılmasını (instantiation) sağlar.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON new() -&gt; Self:
+    let sys = System::new_with_specifics(
+    RefreshKind::new()
+    .with_cpu(CpuRefreshKind::new().with_cpu_usage())
+    .with_memory(sysinfo::MemoryRefreshKind::everything()),
+    );
+    let initial_json = serde_json::json!({
+    &quot;status&quot;: &quot;ready&quot;,
+    &quot;plugin&quot;: &quot;plugin_sys_metrics&quot;,
+    &quot;message&quot;: &quot;Resource telemetry collector active&quot;
+    })
+    .to_string();
+    Self {
+    sys: Mutex::new(sys),
+    last_refresh: Mutex::new(std::time::Instant::now()),
+    last_report: Arc::new(Mutex::new(initial_json)),</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: new"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> refresh_and_get_report</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self, running_plugins: &amp;[(&amp;str, usize, bool)]</code> | <strong>Dönüş Tipi:</strong> <code>String</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>&amp;self, running_plugins: &amp;[(&amp;str, usize, bool)]</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>String</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. İşlemi tamamlayarak <code>String</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON refresh_and_get_report(&amp;self, running_plugins: &amp;[(&amp;str, usize, bool)]) -&gt; String:
+    let mut last_ref = self.last_refresh.lock().unwrap();
+    let mut sys = self.sys.lock().unwrap();
+    EĞER last_ref.elapsed().as_millis() &gt;= 1000 İSE:
+        sys.refresh_cpu();
+        sys.refresh_memory();
+        *last_ref = std::time::Instant::now();
+    let global_cpu = sys.global_cpu_info().cpu_usage();
+    let total_mem = sys.total_memory() / 1024 / 1024;
+    let used_mem = sys.used_memory() / 1024 / 1024;
+    let now = std::time::SystemTime::now()
+    .duration_since(std::time::UNIX_EPOCH)
+    .map(|d| d.as_secs())
+    .unwrap_or(0);
+    let metrics: Vec&lt;PluginResourceMetric&gt; = running_plugins
+    .iter()
+    .enumerate()
+    .map(|(i, (id, ram_bytes, is_running))| {
+    // Per-plugin CPU estimation &amp; allocated memory buffer KB
+    let simulated_cpu = if *is_running {
+    (global_cpu / (running_plugins.len().max(1) as f32) + (i as f32 * 0.1)).min(100.0)
+    } else {
+    0.0
+    };
+    PluginResourceMetric {
+    plugin_id: id.to_string(),
+    ram_kb: (*ram_bytes / 1024).max(16),
+    cpu_usage: (simulated_cpu * 10.0).round() / 10.0,
+    is_running: *is_running,
+    })
+    .collect();
+    let report = SysMetricsReport {
+    timestamp: now,
+    total_memory_mb: total_mem,
+    used_memory_mb: used_mem,
+    global_cpu_usage: (global_cpu * 10.0).round() / 10.0,
+    plugins: metrics,
+    };
+    let json_str = serde_json::to_string_pretty(&amp;report).unwrap_or_default();
+    let mut lock = self.last_report.lock().unwrap();
+    *lock = json_str.clone();
+    json_str</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: refresh_and_get_report"])
+    Start --> Cond1{"last_ref.elapsed().as_millis() &gt;= 1000?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"*is_running?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> init_plugin</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>state_out: *mut *mut c_void,</code> | <strong>Dönüş Tipi:</strong> <code>unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>state_out: *mut *mut c_void,</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. İşlemi tamamlayarak <code>unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON init_plugin(state_out: *mut *mut c_void,) -&gt; unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize:
+    let engine = Arc::new(SysMetricsEngine::new());
+    let initial_data = engine.last_report.lock().unwrap().as_bytes().to_vec();
+    let state = Box::new(PluginState {
+    is_running: Arc::new(AtomicBool::new(false)),
+    engine,
+    data: Arc::new(Mutex::new(initial_data)),
+    });
+    unsafe {
+    *state_out = Box::into_raw(state) as *mut c_void;
+    handle_endpoint</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: init_plugin"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> handle_endpoint</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>plugin_state: *mut c_void,
+    endpoint_id: u32,
+    payload: *const u8,
+    payload_len: usize,
+    out_buf: *mut u8,
+    out_max_len: usize,</code> | <strong>Dönüş Tipi:</strong> <code>usize</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>plugin_state: *mut c_void,
+    endpoint_id: u32,
+    payload: *const u8,
+    payload_len: usize,
+    out_buf: *mut u8,
+    out_max_len: usize,</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>usize</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Farklı durum senaryolarına göre akışı uygun kola yönlendirir.<br>4. İşlemi tamamlayarak <code>usize</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON handle_endpoint(plugin_state: *mut c_void,
+    endpoint_id: u32,
+    payload: *const u8,
+    payload_len: usize,
+    out_buf: *mut u8,
+    out_max_len: usize,) -&gt; usize:
+    EĞER plugin_state.is_null() İSE:
+        DÖNDÜR 0
+    let state = &amp;*(plugin_state as *const PluginState);
+    DURUM KONTROLÜ (endpoint_id):
+        0 =&gt; { // Start
+        state.is_running.store(true, Ordering::Relaxed);
+        0
+    1 =&gt; { // Stop
+    state.is_running.store(false, Ordering::Relaxed);
+    0
+    2 =&gt; { // IsWorking
+    EĞER state.is_running.load(Ordering::Relaxed) İSE:
+    3 | 4 | 5 =&gt; { // DataValid (3), DataMonitor (4), RawData (5)
+    let sys_list = vec![
+    (&quot;plugin_sys_metrics&quot;, 65536, true),
+    (&quot;plugin_binance_gateway&quot;, 262144, true),
+    (&quot;plugin_aggtrade_ohlcv&quot;, 131072, true),
+    (&quot;plugin_breakout&quot;, 98304, true),
+    (&quot;plugin_amihud&quot;, 131072, true),
+    ];
+    let report_json = state.engine.refresh_and_get_report(&amp;sys_list);
+    let mut lock = state.data.lock().unwrap();
+    *lock = report_json.into_bytes();
+    let len = lock.len().min(out_max_len);
+    EĞER !out_buf.is_null() &amp;&amp; len &gt; 0 İSE:
+        std::ptr::copy_nonoverlapping(lock.as_ptr(), out_buf, len);
+    len
+    6 =&gt; { // Inbox
+    0
+    7 =&gt; { // Outbox
+    0
+    _ =&gt; 0,</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: handle_endpoint"])
+    Start --> Cond1{"plugin_state.is_null()?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"state.is_running.load(Ordering::Relaxed)?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"!out_buf.is_null() && len &gt; 0?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> EndNode(["Döndür: 0"])
+            </div>
+        </div>
+        
+        </section>
+
+        <details>
+            <summary>Orijinal Rust Kaynak Kodunu Göster</summary>
+            <pre><code>use std::ffi::c_void;
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::{Arc, Mutex};
+use serde::{Deserialize, Serialize};
+use serde_json::Value;
+use sysinfo::{CpuRefreshKind, RefreshKind, System};
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct PluginResourceMetric {
+    pub plugin_id: String,
+    pub ram_kb: usize,
+    pub cpu_usage: f32,
+    pub is_running: bool,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct SysMetricsReport {
+    pub timestamp: u64,
+    pub total_memory_mb: u64,
+    pub used_memory_mb: u64,
+    pub global_cpu_usage: f32,
+    pub plugins: Vec&lt;PluginResourceMetric&gt;,
+}
+
+pub struct SysMetricsEngine {
+    sys: Mutex&lt;System&gt;,
+    last_refresh: Mutex&lt;std::time::Instant&gt;,
+    last_report: Arc&lt;Mutex&lt;String&gt;&gt;,
+}
+
+impl SysMetricsEngine {
+    pub fn new() -&gt; Self {
+        let sys = System::new_with_specifics(
+            RefreshKind::new()
+                .with_cpu(CpuRefreshKind::new().with_cpu_usage())
+                .with_memory(sysinfo::MemoryRefreshKind::everything()),
+        );
+
+        let initial_json = serde_json::json!({
+            &quot;status&quot;: &quot;ready&quot;,
+            &quot;plugin&quot;: &quot;plugin_sys_metrics&quot;,
+            &quot;message&quot;: &quot;Resource telemetry collector active&quot;
+        })
+        .to_string();
+
+        Self {
+            sys: Mutex::new(sys),
+            last_refresh: Mutex::new(std::time::Instant::now()),
+            last_report: Arc::new(Mutex::new(initial_json)),
+        }
+    }
+
+    pub fn refresh_and_get_report(&amp;self, running_plugins: &amp;[(&amp;str, usize, bool)]) -&gt; String {
+        let mut last_ref = self.last_refresh.lock().unwrap();
+        let mut sys = self.sys.lock().unwrap();
+
+        if last_ref.elapsed().as_millis() &gt;= 1000 {
+            sys.refresh_cpu();
+            sys.refresh_memory();
+            *last_ref = std::time::Instant::now();
+        }
+
+        let global_cpu = sys.global_cpu_info().cpu_usage();
+        let total_mem = sys.total_memory() / 1024 / 1024;
+        let used_mem = sys.used_memory() / 1024 / 1024;
+
+        let now = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .map(|d| d.as_secs())
+            .unwrap_or(0);
+
+        let metrics: Vec&lt;PluginResourceMetric&gt; = running_plugins
+            .iter()
+            .enumerate()
+            .map(|(i, (id, ram_bytes, is_running))| {
+                // Per-plugin CPU estimation &amp; allocated memory buffer KB
+                let simulated_cpu = if *is_running {
+                    (global_cpu / (running_plugins.len().max(1) as f32) + (i as f32 * 0.1)).min(100.0)
+                } else {
+                    0.0
+                };
+
+                PluginResourceMetric {
+                    plugin_id: id.to_string(),
+                    ram_kb: (*ram_bytes / 1024).max(16),
+                    cpu_usage: (simulated_cpu * 10.0).round() / 10.0,
+                    is_running: *is_running,
+                }
+            })
+            .collect();
+
+        let report = SysMetricsReport {
+            timestamp: now,
+            total_memory_mb: total_mem,
+            used_memory_mb: used_mem,
+            global_cpu_usage: (global_cpu * 10.0).round() / 10.0,
+            plugins: metrics,
+        };
+
+        let json_str = serde_json::to_string_pretty(&amp;report).unwrap_or_default();
+        let mut lock = self.last_report.lock().unwrap();
+        *lock = json_str.clone();
+        json_str
+    }
+}
+
+pub struct PluginState {
+    pub is_running: Arc&lt;AtomicBool&gt;,
+    pub engine: Arc&lt;SysMetricsEngine&gt;,
+    pub data: Arc&lt;Mutex&lt;Vec&lt;u8&gt;&gt;&gt;,
+}
+
+#[no_mangle]
+pub unsafe extern &quot;C&quot; fn init_plugin(
+    state_out: *mut *mut c_void,
+) -&gt; unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize {
+    let engine = Arc::new(SysMetricsEngine::new());
+    let initial_data = engine.last_report.lock().unwrap().as_bytes().to_vec();
+
+    let state = Box::new(PluginState {
+        is_running: Arc::new(AtomicBool::new(false)),
+        engine,
+        data: Arc::new(Mutex::new(initial_data)),
+    });
+
+    unsafe {
+        *state_out = Box::into_raw(state) as *mut c_void;
+    }
+
+    handle_endpoint
+}
+
+unsafe extern &quot;C&quot; fn handle_endpoint(
+    plugin_state: *mut c_void,
+    endpoint_id: u32,
+    payload: *const u8,
+    payload_len: usize,
+    out_buf: *mut u8,
+    out_max_len: usize,
+) -&gt; usize {
+    if plugin_state.is_null() {
+        return 0;
+    }
+    let state = &amp;*(plugin_state as *const PluginState);
+
+    match endpoint_id {
+        0 =&gt; { // Start
+            state.is_running.store(true, Ordering::Relaxed);
+            0
+        }
+        1 =&gt; { // Stop
+            state.is_running.store(false, Ordering::Relaxed);
+            0
+        }
+        2 =&gt; { // IsWorking
+            if state.is_running.load(Ordering::Relaxed) { 1 } else { 0 }
+        }
+        3 | 4 | 5 =&gt; { // DataValid (3), DataMonitor (4), RawData (5)
+            let sys_list = vec![
+                (&quot;plugin_sys_metrics&quot;, 65536, true),
+                (&quot;plugin_binance_gateway&quot;, 262144, true),
+                (&quot;plugin_aggtrade_ohlcv&quot;, 131072, true),
+                (&quot;plugin_breakout&quot;, 98304, true),
+                (&quot;plugin_amihud&quot;, 131072, true),
+            ];
+            let report_json = state.engine.refresh_and_get_report(&amp;sys_list);
+            let mut lock = state.data.lock().unwrap();
+            *lock = report_json.into_bytes();
+
+            let len = lock.len().min(out_max_len);
+            if !out_buf.is_null() &amp;&amp; len &gt; 0 {
+                std::ptr::copy_nonoverlapping(lock.as_ptr(), out_buf, len);
+            }
+            len
+        }
+        6 =&gt; { // Inbox
+            0
+        }
+        7 =&gt; { // Outbox
+            0
+        }
+        _ =&gt; 0,
+    }
+}
+</code></pre>
+        </details>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            flowchart: { curve: 'basis' }
+        });
+    </script>
+</body>
+</html>

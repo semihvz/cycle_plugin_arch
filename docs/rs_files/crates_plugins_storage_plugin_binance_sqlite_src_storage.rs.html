@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>storage.rs - Rust Analiz Dokümanı</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --border: #334155;
+            --code-bg: #090d16;
+            --verbal-bg: #131f37;
+            --analogy-bg: #1e1b4b;
+            --analogy-border: #818cf8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .back-link {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .back-link:hover { text-decoration: underline; }
+        h1 { font-size: 2rem; color: var(--accent); margin-bottom: 0.5rem; }
+        .file-path { font-family: 'Fira Code', monospace; color: var(--text-muted); font-size: 0.95rem; }
+        
+        .structs-container { margin: 1.5rem 0; }
+        .badge {
+            display: inline-block;
+            background: #0284c7;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-family: 'Fira Code', monospace;
+        }
+        .badge-struct { background: #7c3aed; }
+        
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .card h3 { color: var(--accent); margin-bottom: 0.5rem; font-size: 1.3rem; }
+        .card h4 { margin: 1.2rem 0 0.5rem 0; color: var(--text-muted); font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        .easy-analogy {
+            background: var(--analogy-bg);
+            border-left: 4px solid var(--analogy-border);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1rem;
+            color: #c7d2fe;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .verbal-explanation {
+            background: var(--verbal-bg);
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1.2rem;
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            margin-bottom: 1rem;
+        }
+        
+        .mermaid {
+            background: var(--code-bg);
+            padding: 1.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+        }
+        
+        details {
+            margin-top: 2rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Ana İndekse Dön</a>
+        <header>
+            <h1>storage.rs</h1>
+            <p class="file-path">crates/plugins/storage/plugin_binance_sqlite/src/storage.rs</p>
+            <div class="structs-container">
+                <strong>Tanımlı Türler / Yapılar:</strong> <span class="badge badge-struct">SqliteStorage</span> <span class="badge badge-struct">StorageStats</span> 
+            </div>
+        </header>
+
+        <section>
+            <h2>Fonksiyon Analizleri & Basit Anlatımlar</h2>
+            
+        <div class="card">
+            <h3><span class="badge">fn</span> default</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>Yok</code> | <strong>Dönüş Tipi:</strong> <code>Self</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Gün içinde yapılan tüm alışverişleri ve harcamaları gün sonunda kaybolmaması için büyük ana kasa defterine kaydetme işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> İşlenmiş verileri veya emir kayıtlarını veritabanına (SQLite/Disk) kalıcı olarak yazar.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON default() -&gt; Self:
+    Self {
+    mark_price_count: AtomicU64::new(0),
+    best_price_count: AtomicU64::new(0),
+    trade_count: AtomicU64::new(0),
+    liquidation_count: AtomicU64::new(0),
+    depth_count: AtomicU64::new(0),
+    last_insert_time_ms: AtomicU64::new(0),</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: default"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> new</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>db_path: &amp;str</code> | <strong>Dönüş Tipi:</strong> <code>Result&lt;Self&gt;</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Dükkanı sabah açarken kasayı sıfırlama, rafları düzeltme ve tabelayı asma işlemidir. Her şey temiz bir başlangıç için hazır hale getirilir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Yapıcı (constructor) fonksiyon olarak nesnenin bellekte ilk durumları ve yapılandırmalarıyla başlatılmasını (instantiation) sağlar.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON new(db_path: &amp;str) -&gt; Result&lt;Self&gt;:
+    let conn = Connection::open(db_path)?;
+    // Performance tuning for real-time writes
+    let _ = conn.execute_batch(&quot;
+    PRAGMA journal_mode = WAL;
+    PRAGMA synchronous = NORMAL;
+    PRAGMA temp_store = MEMORY;
+    &quot;);
+    conn.execute(
+    &quot;CREATE TABLE IF NOT EXISTS mark_prices (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    symbol TEXT NOT NULL,
+    mark_price REAL NOT NULL,
+    index_price REAL NOT NULL,
+    funding_rate REAL NOT NULL,
+    next_funding_time INTEGER NOT NULL,
+    event_time INTEGER NOT NULL,
+    local_recv_time_ms INTEGER NOT NULL
+    )&quot;,
+    [],
+    )?;
+    conn.execute(
+    &quot;CREATE TABLE IF NOT EXISTS best_prices (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    symbol TEXT NOT NULL,
+    best_bid REAL NOT NULL,
+    best_bid_qty REAL NOT NULL,
+    best_ask REAL NOT NULL,
+    best_ask_qty REAL NOT NULL,
+    event_time INTEGER NOT NULL,
+    local_recv_time_ms INTEGER NOT NULL
+    )&quot;,
+    [],
+    )?;
+    conn.execute(
+    &quot;CREATE TABLE IF NOT EXISTS trades (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    symbol TEXT NOT NULL,
+    trade_id INTEGER NOT NULL,
+    price REAL NOT NULL,
+    quantity REAL NOT NULL,
+    buyer_is_maker INTEGER NOT NULL,
+    event_time INTEGER NOT NULL,
+    local_recv_time_ms INTEGER NOT NULL
+    )&quot;,
+    [],
+    )?;
+    conn.execute(
+    &quot;CREATE TABLE IF NOT EXISTS liquidations (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    symbol TEXT NOT NULL,
+    side TEXT NOT NULL,
+    order_type TEXT NOT NULL,
+    price REAL NOT NULL,
+    average_price REAL NOT NULL,
+    original_qty REAL NOT NULL,
+    filled_qty REAL NOT NULL,
+    event_time INTEGER NOT NULL,
+    local_recv_time_ms INTEGER NOT NULL
+    )&quot;,
+    [],
+    )?;
+    conn.execute(
+    &quot;CREATE TABLE IF NOT EXISTS depth (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    symbol TEXT NOT NULL,
+    bids_json TEXT NOT NULL,
+    asks_json TEXT NOT NULL,
+    last_update_id INTEGER NOT NULL,
+    event_time INTEGER NOT NULL,
+    local_recv_time_ms INTEGER NOT NULL
+    )&quot;,
+    [],
+    )?;
+    // Create indexes for fast queries
+    conn.execute(&quot;CREATE INDEX IF NOT EXISTS idx_mark_prices_symbol_time ON mark_prices (symbol, local_recv_time_ms)&quot;, [])?;
+    conn.execute(&quot;CREATE INDEX IF NOT EXISTS idx_best_prices_symbol_time ON best_prices (symbol, local_recv_time_ms)&quot;, [])?;
+    conn.execute(&quot;CREATE INDEX IF NOT EXISTS idx_trades_symbol_time ON trades (symbol, local_recv_time_ms)&quot;, [])?;
+    conn.execute(&quot;CREATE INDEX IF NOT EXISTS idx_liquidations_symbol_time ON liquidations (symbol, local_recv_time_ms)&quot;, [])?;
+    conn.execute(&quot;CREATE INDEX IF NOT EXISTS idx_depth_symbol_time ON depth (symbol, local_recv_time_ms)&quot;, [])?;
+    Ok(Self {
+    conn: Arc::new(Mutex::new(conn)),
+    stats: Arc::new(StorageStats::default()),
+    db_path: db_path.to_string(),
+    })</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: new"])
+    Start --> Loop1["Döngü: real-time writes"]
+    Loop1 --> Loop2["Döngü: fast queries"]
+    Loop2 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> update_timestamp</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self, recv_ms: i64</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Gün içinde yapılan tüm alışverişleri ve harcamaları gün sonunda kaybolmaması için büyük ana kasa defterine kaydetme işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> İşlenmiş verileri veya emir kayıtlarını veritabanına (SQLite/Disk) kalıcı olarak yazar.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON update_timestamp(&amp;self, recv_ms: i64) -&gt; ():
+    EĞER recv_ms &gt; 0 İSE:
+        self.stats.last_insert_time_ms.store(recv_ms as u64, Ordering::Relaxed);</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: update_timestamp"])
+    Start --> Cond1{"recv_ms &gt; 0?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> insert_mark_price</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self, rec: &amp;MarkPriceRecord</code> | <strong>Dönüş Tipi:</strong> <code>Result&lt;()&gt;</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Gün içinde yapılan tüm alışverişleri ve harcamaları gün sonunda kaybolmaması için büyük ana kasa defterine kaydetme işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> İşlenmiş verileri veya emir kayıtlarını veritabanına (SQLite/Disk) kalıcı olarak yazar.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON insert_mark_price(&amp;self, rec: &amp;MarkPriceRecord) -&gt; Result&lt;()&gt;:
+    let conn = self.conn.lock().unwrap();
+    conn.execute(
+    &quot;INSERT INTO mark_prices (symbol, mark_price, index_price, funding_rate, next_funding_time, event_time, local_recv_time_ms)
+    VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)&quot;,
+    params![
+    rec.symbol,
+    rec.mark_price,
+    rec.index_price,
+    rec.funding_rate,
+    rec.next_funding_time,
+    rec.event_time,
+    rec.local_recv_time_ms
+    ],
+    )?;
+    self.stats.mark_price_count.fetch_add(1, Ordering::Relaxed);
+    self.update_timestamp(rec.local_recv_time_ms);
+    Ok(())</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: insert_mark_price"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> insert_best_price</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self, rec: &amp;BestPriceRecord</code> | <strong>Dönüş Tipi:</strong> <code>Result&lt;()&gt;</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Gün içinde yapılan tüm alışverişleri ve harcamaları gün sonunda kaybolmaması için büyük ana kasa defterine kaydetme işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> İşlenmiş verileri veya emir kayıtlarını veritabanına (SQLite/Disk) kalıcı olarak yazar.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON insert_best_price(&amp;self, rec: &amp;BestPriceRecord) -&gt; Result&lt;()&gt;:
+    let conn = self.conn.lock().unwrap();
+    conn.execute(
+    &quot;INSERT INTO best_prices (symbol, best_bid, best_bid_qty, best_ask, best_ask_qty, event_time, local_recv_time_ms)
+    VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)&quot;,
+    params![
+    rec.symbol,
+    rec.best_bid,
+    rec.best_bid_qty,
+    rec.best_ask,
+    rec.best_ask_qty,
+    rec.event_time,
+    rec.local_recv_time_ms
+    ],
+    )?;
+    self.stats.best_price_count.fetch_add(1, Ordering::Relaxed);
+    self.update_timestamp(rec.local_recv_time_ms);
+    Ok(())</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: insert_best_price"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> insert_trade</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self, rec: &amp;TradeRecord</code> | <strong>Dönüş Tipi:</strong> <code>Result&lt;()&gt;</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Gün içinde yapılan tüm alışverişleri ve harcamaları gün sonunda kaybolmaması için büyük ana kasa defterine kaydetme işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> İşlenmiş verileri veya emir kayıtlarını veritabanına (SQLite/Disk) kalıcı olarak yazar.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON insert_trade(&amp;self, rec: &amp;TradeRecord) -&gt; Result&lt;()&gt;:
+    let conn = self.conn.lock().unwrap();
+    conn.execute(
+    &quot;INSERT INTO trades (symbol, trade_id, price, quantity, buyer_is_maker, event_time, local_recv_time_ms)
+    VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)&quot;,
+    params![
+    rec.symbol,
+    rec.trade_id,
+    rec.price,
+    rec.quantity,
+    EĞER rec.buyer_is_maker İSE:
+        rec.event_time,
+        rec.local_recv_time_ms
+        ],
+        )?;
+        self.stats.trade_count.fetch_add(1, Ordering::Relaxed);
+        self.update_timestamp(rec.local_recv_time_ms);
+        Ok(())</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: insert_trade"])
+    Start --> Cond1{"rec.buyer_is_maker?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> insert_liquidation</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self, rec: &amp;LiquidationRecord</code> | <strong>Dönüş Tipi:</strong> <code>Result&lt;()&gt;</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Gün içinde yapılan tüm alışverişleri ve harcamaları gün sonunda kaybolmaması için büyük ana kasa defterine kaydetme işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> İşlenmiş verileri veya emir kayıtlarını veritabanına (SQLite/Disk) kalıcı olarak yazar.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON insert_liquidation(&amp;self, rec: &amp;LiquidationRecord) -&gt; Result&lt;()&gt;:
+    let conn = self.conn.lock().unwrap();
+    conn.execute(
+    &quot;INSERT INTO liquidations (symbol, side, order_type, price, average_price, original_qty, filled_qty, event_time, local_recv_time_ms)
+    VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)&quot;,
+    params![
+    rec.symbol,
+    rec.side,
+    rec.order_type,
+    rec.price,
+    rec.average_price,
+    rec.original_qty,
+    rec.filled_qty,
+    rec.event_time,
+    rec.local_recv_time_ms
+    ],
+    )?;
+    self.stats.liquidation_count.fetch_add(1, Ordering::Relaxed);
+    self.update_timestamp(rec.local_recv_time_ms);
+    Ok(())</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: insert_liquidation"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> insert_depth</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self, rec: &amp;DepthRecord</code> | <strong>Dönüş Tipi:</strong> <code>Result&lt;()&gt;</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Gün içinde yapılan tüm alışverişleri ve harcamaları gün sonunda kaybolmaması için büyük ana kasa defterine kaydetme işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> İşlenmiş verileri veya emir kayıtlarını veritabanına (SQLite/Disk) kalıcı olarak yazar.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON insert_depth(&amp;self, rec: &amp;DepthRecord) -&gt; Result&lt;()&gt;:
+    let conn = self.conn.lock().unwrap();
+    conn.execute(
+    &quot;INSERT INTO depth (symbol, bids_json, asks_json, last_update_id, event_time, local_recv_time_ms)
+    VALUES (?1, ?2, ?3, ?4, ?5, ?6)&quot;,
+    params![
+    rec.symbol,
+    rec.bids_json,
+    rec.asks_json,
+    rec.last_update_id,
+    rec.event_time,
+    rec.local_recv_time_ms
+    ],
+    )?;
+    self.stats.depth_count.fetch_add(1, Ordering::Relaxed);
+    self.update_timestamp(rec.local_recv_time_ms);
+    Ok(())</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: insert_depth"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> get_file_size_bytes</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self</code> | <strong>Dönüş Tipi:</strong> <code>u64</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Gün içinde yapılan tüm alışverişleri ve harcamaları gün sonunda kaybolmaması için büyük ana kasa defterine kaydetme işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> İşlenmiş verileri veya emir kayıtlarını veritabanına (SQLite/Disk) kalıcı olarak yazar.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON get_file_size_bytes(&amp;self) -&gt; u64:
+    std::fs::metadata(&amp;self.db_path).map(|m| m.len()).unwrap_or(0)</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: get_file_size_bytes"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        </section>
+
+        <details>
+            <summary>Orijinal Rust Kaynak Kodunu Göster</summary>
+            <pre><code>use rusqlite::{params, Connection, Result};
+use std::sync::{Arc, Mutex};
+use std::sync::atomic::{AtomicU64, Ordering};
+use crate::models::*;
+
+pub struct StorageStats {
+    pub mark_price_count: AtomicU64,
+    pub best_price_count: AtomicU64,
+    pub trade_count: AtomicU64,
+    pub liquidation_count: AtomicU64,
+    pub depth_count: AtomicU64,
+    pub last_insert_time_ms: AtomicU64,
+}
+
+impl Default for StorageStats {
+    fn default() -&gt; Self {
+        Self {
+            mark_price_count: AtomicU64::new(0),
+            best_price_count: AtomicU64::new(0),
+            trade_count: AtomicU64::new(0),
+            liquidation_count: AtomicU64::new(0),
+            depth_count: AtomicU64::new(0),
+            last_insert_time_ms: AtomicU64::new(0),
+        }
+    }
+}
+
+pub struct SqliteStorage {
+    conn: Arc&lt;Mutex&lt;Connection&gt;&gt;,
+    pub stats: Arc&lt;StorageStats&gt;,
+    pub db_path: String,
+}
+
+impl SqliteStorage {
+    pub fn new(db_path: &amp;str) -&gt; Result&lt;Self&gt; {
+        let conn = Connection::open(db_path)?;
+
+        // Performance tuning for real-time writes
+        let _ = conn.execute_batch(&quot;
+            PRAGMA journal_mode = WAL;
+            PRAGMA synchronous = NORMAL;
+            PRAGMA temp_store = MEMORY;
+        &quot;);
+
+        conn.execute(
+            &quot;CREATE TABLE IF NOT EXISTS mark_prices (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                symbol TEXT NOT NULL,
+                mark_price REAL NOT NULL,
+                index_price REAL NOT NULL,
+                funding_rate REAL NOT NULL,
+                next_funding_time INTEGER NOT NULL,
+                event_time INTEGER NOT NULL,
+                local_recv_time_ms INTEGER NOT NULL
+            )&quot;,
+            [],
+        )?;
+
+        conn.execute(
+            &quot;CREATE TABLE IF NOT EXISTS best_prices (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                symbol TEXT NOT NULL,
+                best_bid REAL NOT NULL,
+                best_bid_qty REAL NOT NULL,
+                best_ask REAL NOT NULL,
+                best_ask_qty REAL NOT NULL,
+                event_time INTEGER NOT NULL,
+                local_recv_time_ms INTEGER NOT NULL
+            )&quot;,
+            [],
+        )?;
+
+        conn.execute(
+            &quot;CREATE TABLE IF NOT EXISTS trades (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                symbol TEXT NOT NULL,
+                trade_id INTEGER NOT NULL,
+                price REAL NOT NULL,
+                quantity REAL NOT NULL,
+                buyer_is_maker INTEGER NOT NULL,
+                event_time INTEGER NOT NULL,
+                local_recv_time_ms INTEGER NOT NULL
+            )&quot;,
+            [],
+        )?;
+
+        conn.execute(
+            &quot;CREATE TABLE IF NOT EXISTS liquidations (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                symbol TEXT NOT NULL,
+                side TEXT NOT NULL,
+                order_type TEXT NOT NULL,
+                price REAL NOT NULL,
+                average_price REAL NOT NULL,
+                original_qty REAL NOT NULL,
+                filled_qty REAL NOT NULL,
+                event_time INTEGER NOT NULL,
+                local_recv_time_ms INTEGER NOT NULL
+            )&quot;,
+            [],
+        )?;
+
+        conn.execute(
+            &quot;CREATE TABLE IF NOT EXISTS depth (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                symbol TEXT NOT NULL,
+                bids_json TEXT NOT NULL,
+                asks_json TEXT NOT NULL,
+                last_update_id INTEGER NOT NULL,
+                event_time INTEGER NOT NULL,
+                local_recv_time_ms INTEGER NOT NULL
+            )&quot;,
+            [],
+        )?;
+
+        // Create indexes for fast queries
+        conn.execute(&quot;CREATE INDEX IF NOT EXISTS idx_mark_prices_symbol_time ON mark_prices (symbol, local_recv_time_ms)&quot;, [])?;
+        conn.execute(&quot;CREATE INDEX IF NOT EXISTS idx_best_prices_symbol_time ON best_prices (symbol, local_recv_time_ms)&quot;, [])?;
+        conn.execute(&quot;CREATE INDEX IF NOT EXISTS idx_trades_symbol_time ON trades (symbol, local_recv_time_ms)&quot;, [])?;
+        conn.execute(&quot;CREATE INDEX IF NOT EXISTS idx_liquidations_symbol_time ON liquidations (symbol, local_recv_time_ms)&quot;, [])?;
+        conn.execute(&quot;CREATE INDEX IF NOT EXISTS idx_depth_symbol_time ON depth (symbol, local_recv_time_ms)&quot;, [])?;
+
+        Ok(Self {
+            conn: Arc::new(Mutex::new(conn)),
+            stats: Arc::new(StorageStats::default()),
+            db_path: db_path.to_string(),
+        })
+    }
+
+    fn update_timestamp(&amp;self, recv_ms: i64) {
+        if recv_ms &gt; 0 {
+            self.stats.last_insert_time_ms.store(recv_ms as u64, Ordering::Relaxed);
+        }
+    }
+
+    pub fn insert_mark_price(&amp;self, rec: &amp;MarkPriceRecord) -&gt; Result&lt;()&gt; {
+        let conn = self.conn.lock().unwrap();
+        conn.execute(
+            &quot;INSERT INTO mark_prices (symbol, mark_price, index_price, funding_rate, next_funding_time, event_time, local_recv_time_ms)
+             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)&quot;,
+            params![
+                rec.symbol,
+                rec.mark_price,
+                rec.index_price,
+                rec.funding_rate,
+                rec.next_funding_time,
+                rec.event_time,
+                rec.local_recv_time_ms
+            ],
+        )?;
+        self.stats.mark_price_count.fetch_add(1, Ordering::Relaxed);
+        self.update_timestamp(rec.local_recv_time_ms);
+        Ok(())
+    }
+
+    pub fn insert_best_price(&amp;self, rec: &amp;BestPriceRecord) -&gt; Result&lt;()&gt; {
+        let conn = self.conn.lock().unwrap();
+        conn.execute(
+            &quot;INSERT INTO best_prices (symbol, best_bid, best_bid_qty, best_ask, best_ask_qty, event_time, local_recv_time_ms)
+             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)&quot;,
+            params![
+                rec.symbol,
+                rec.best_bid,
+                rec.best_bid_qty,
+                rec.best_ask,
+                rec.best_ask_qty,
+                rec.event_time,
+                rec.local_recv_time_ms
+            ],
+        )?;
+        self.stats.best_price_count.fetch_add(1, Ordering::Relaxed);
+        self.update_timestamp(rec.local_recv_time_ms);
+        Ok(())
+    }
+
+    pub fn insert_trade(&amp;self, rec: &amp;TradeRecord) -&gt; Result&lt;()&gt; {
+        let conn = self.conn.lock().unwrap();
+        conn.execute(
+            &quot;INSERT INTO trades (symbol, trade_id, price, quantity, buyer_is_maker, event_time, local_recv_time_ms)
+             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)&quot;,
+            params![
+                rec.symbol,
+                rec.trade_id,
+                rec.price,
+                rec.quantity,
+                if rec.buyer_is_maker { 1 } else { 0 },
+                rec.event_time,
+                rec.local_recv_time_ms
+            ],
+        )?;
+        self.stats.trade_count.fetch_add(1, Ordering::Relaxed);
+        self.update_timestamp(rec.local_recv_time_ms);
+        Ok(())
+    }
+
+    pub fn insert_liquidation(&amp;self, rec: &amp;LiquidationRecord) -&gt; Result&lt;()&gt; {
+        let conn = self.conn.lock().unwrap();
+        conn.execute(
+            &quot;INSERT INTO liquidations (symbol, side, order_type, price, average_price, original_qty, filled_qty, event_time, local_recv_time_ms)
+             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)&quot;,
+            params![
+                rec.symbol,
+                rec.side,
+                rec.order_type,
+                rec.price,
+                rec.average_price,
+                rec.original_qty,
+                rec.filled_qty,
+                rec.event_time,
+                rec.local_recv_time_ms
+            ],
+        )?;
+        self.stats.liquidation_count.fetch_add(1, Ordering::Relaxed);
+        self.update_timestamp(rec.local_recv_time_ms);
+        Ok(())
+    }
+
+    pub fn insert_depth(&amp;self, rec: &amp;DepthRecord) -&gt; Result&lt;()&gt; {
+        let conn = self.conn.lock().unwrap();
+        conn.execute(
+            &quot;INSERT INTO depth (symbol, bids_json, asks_json, last_update_id, event_time, local_recv_time_ms)
+             VALUES (?1, ?2, ?3, ?4, ?5, ?6)&quot;,
+            params![
+                rec.symbol,
+                rec.bids_json,
+                rec.asks_json,
+                rec.last_update_id,
+                rec.event_time,
+                rec.local_recv_time_ms
+            ],
+        )?;
+        self.stats.depth_count.fetch_add(1, Ordering::Relaxed);
+        self.update_timestamp(rec.local_recv_time_ms);
+        Ok(())
+    }
+
+    pub fn get_file_size_bytes(&amp;self) -&gt; u64 {
+        std::fs::metadata(&amp;self.db_path).map(|m| m.len()).unwrap_or(0)
+    }
+}
+</code></pre>
+        </details>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            flowchart: { curve: 'basis' }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>lib.rs - Rust Analiz Dokümanı</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --border: #334155;
+            --code-bg: #090d16;
+            --verbal-bg: #131f37;
+            --analogy-bg: #1e1b4b;
+            --analogy-border: #818cf8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .back-link {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .back-link:hover { text-decoration: underline; }
+        h1 { font-size: 2rem; color: var(--accent); margin-bottom: 0.5rem; }
+        .file-path { font-family: 'Fira Code', monospace; color: var(--text-muted); font-size: 0.95rem; }
+        
+        .structs-container { margin: 1.5rem 0; }
+        .badge {
+            display: inline-block;
+            background: #0284c7;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-family: 'Fira Code', monospace;
+        }
+        .badge-struct { background: #7c3aed; }
+        
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .card h3 { color: var(--accent); margin-bottom: 0.5rem; font-size: 1.3rem; }
+        .card h4 { margin: 1.2rem 0 0.5rem 0; color: var(--text-muted); font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        .easy-analogy {
+            background: var(--analogy-bg);
+            border-left: 4px solid var(--analogy-border);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1rem;
+            color: #c7d2fe;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .verbal-explanation {
+            background: var(--verbal-bg);
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1.2rem;
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            margin-bottom: 1rem;
+        }
+        
+        .mermaid {
+            background: var(--code-bg);
+            padding: 1.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+        }
+        
+        details {
+            margin-top: 2rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Ana İndekse Dön</a>
+        <header>
+            <h1>lib.rs</h1>
+            <p class="file-path">crates/plugins/storage/plugin_sqlite_query/src/lib.rs</p>
+            <div class="structs-container">
+                <strong>Tanımlı Türler / Yapılar:</strong> <span class="badge badge-struct">PluginState</span> 
+            </div>
+        </header>
+
+        <section>
+            <h2>Fonksiyon Analizleri & Basit Anlatımlar</h2>
+            
+        <div class="card">
+            <h3><span class="badge">fn</span> init_plugin</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>state_out: *mut *mut c_void,</code> | <strong>Dönüş Tipi:</strong> <code>unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Gün içinde yapılan tüm alışverişleri ve harcamaları gün sonunda kaybolmaması için büyük ana kasa defterine kaydetme işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> İşlenmiş verileri veya emir kayıtlarını veritabanına (SQLite/Disk) kalıcı olarak yazar.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON init_plugin(state_out: *mut *mut c_void,) -&gt; unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize:
+    let state = Box::new(PluginState {
+    is_running: Arc::new(AtomicBool::new(false)),
+    reader: Arc::new(Mutex::new(None)),
+    db_path: Arc::new(Mutex::new(&quot;data/binance_market_data.db&quot;.to_string())),
+    outbox: Arc::new(Mutex::new(Vec::new())),
+    last_query: Arc::new(Mutex::new(String::new())),
+    last_result: Arc::new(Mutex::new(String::new())),
+    });
+    unsafe {
+    *state_out = Box::into_raw(state) as *mut c_void;
+    handle_endpoint</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: init_plugin"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> handle_endpoint</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>plugin_state: *mut c_void,
+    endpoint_id: u32,
+    payload: *const u8,
+    payload_len: usize,
+    out_buf: *mut u8,
+    out_max_len: usize,</code> | <strong>Dönüş Tipi:</strong> <code>usize</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Gün içinde yapılan tüm alışverişleri ve harcamaları gün sonunda kaybolmaması için büyük ana kasa defterine kaydetme işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> İşlenmiş verileri veya emir kayıtlarını veritabanına (SQLite/Disk) kalıcı olarak yazar.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON handle_endpoint(plugin_state: *mut c_void,
+    endpoint_id: u32,
+    payload: *const u8,
+    payload_len: usize,
+    out_buf: *mut u8,
+    out_max_len: usize,) -&gt; usize:
+    let state = &amp;*(plugin_state as *const PluginState);
+    DURUM KONTROLÜ (endpoint_id):
+        0 =&gt; { // Start
+        let mut db_path = &quot;data/binance_market_data.db&quot;.to_string();
+        EĞER payload_len &gt; 0 İSE:
+            let slice = std::slice::from_raw_parts(payload, payload_len);
+            EĞER let Ok(config) = serde_json::from_slice::&lt;Value&gt;(slice) İSE:
+                EĞER let Some(params) = config.get(&quot;plugin_params&quot;) İSE:
+                    EĞER let Some(path) = params.get(&quot;db_path&quot;).and_then(|p| p.as_str()) İSE:
+                        db_path = path.to_string();
+        *state.db_path.lock().unwrap() = db_path.clone();
+        DURUM KONTROLÜ (StorageReader::new(&amp;db_path)):
+            Ok(reader_inst) =&gt; {
+            *state.reader.lock().unwrap() = Some(Arc::new(reader_inst));
+            state.is_running.store(true, Ordering::Relaxed);
+            0
+        Err(e) =&gt; {
+        eprintln!(&quot;[plugin_sqlite_query] SQLite reader init error: {}&quot;, e);
+        0
+    1 =&gt; { // Stop
+    state.is_running.store(false, Ordering::Relaxed);
+    0
+    2 =&gt; { // IsWorking
+    EĞER state.is_running.load(Ordering::Relaxed) İSE:
+    4 =&gt; { // DataMonitor (TUI M Key View)
+    let mut report = String::new();
+    report.push_str(&quot;=== SQLITE ANLIK SORGU EKLENTİSİ (QUERY ENGINE) ===\n\n&quot;);
+    let running = state.is_running.load(Ordering::Relaxed);
+    report.push_str(&amp;format!(&quot;Durum: {}\n&quot;, if running { &quot;ÇALIŞIYOR&quot; } else { &quot;DURDURULDU&quot; }));
+    let current_db_path = state.db_path.lock().unwrap().clone();
+    report.push_str(&amp;format!(&quot;Veritabanı Dosyası: {}\n&quot;, current_db_path));
+    let reader_guard = state.reader.lock().unwrap();
+    EĞER let Some(reader) = reader_guard.as_ref() İSE:
+        let bytes = reader.get_db_file_size();
+        let mb = bytes as f64 / (1024.0 * 1024.0);
+        report.push_str(&amp;format!(&quot;DB Boyutu: {:.2} MB\n\n&quot;, mb));
+        report.push_str(&quot;[ Mevcut Tablolar ve Kayıt Sayıları ]\n&quot;);
+        EĞER let Ok(tables_res) = reader.list_tables() İSE:
+            HER row in &amp;tables_res.rows İÇİN DÖNGÜ:
+                EĞER let Some(tbl_name) = row.get(0) İSE:
+                    let count_sql = format!(&quot;SELECT COUNT(*) FROM {}&quot;, tbl_name);
+                    let cnt_str = reader.execute_sql(&amp;count_sql)
+                    .ok()
+                    .and_then(|r| r.rows.get(0)?.get(0).cloned())
+                    .unwrap_or_else(|| &quot;0&quot;.to_string());
+                    report.push_str(&amp;format!(&quot;- {}: {} kayıt\n&quot;, tbl_name, cnt_str));
+        report.push_str(&quot;\n&quot;);
+        let last_q = state.last_query.lock().unwrap().clone();
+        let last_res = state.last_result.lock().unwrap().clone();
+        EĞER !last_q.is_empty() İSE:
+            report.push_str(&amp;format!(&quot;[ Son Çalıştırılan Sorgu ]\nSQL: {}\n&quot;, last_q));
+            report.push_str(&amp;format!(&quot;Sonuç:\n{}\n&quot;, last_res));
+            } else {
+            report.push_str(&quot;Henüz sorgu çalıştırılmadı. Shell üzerinden &#x27;sql &lt;QUERY&gt;&#x27; yazarak sorgu atabilirsiniz.\n&quot;);
+        } else {
+        report.push_str(&quot;\nVeritabanı henüz başlatılmadı.\n&quot;);
+    report.push_str(&quot;===================================================\n&quot;);
+    let data = report.into_bytes();
+    let len = data.len().min(out_max_len);
+    EĞER len &gt; 0 İSE:
+        std::ptr::copy_nonoverlapping(data.as_ptr(), out_buf, len);
+    len
+    6 =&gt; { // Inbox (Incoming Query Commands)
+    EĞER payload_len &gt; 0 İSE:
+        let slice = std::slice::from_raw_parts(payload, payload_len);
+        let mut sql_to_run = None;
+        let mut is_tables_cmd = false;
+        let mut schema_table = None;
+        EĞER let Ok(cmd_json) = serde_json::from_slice::&lt;Value&gt;(slice) İSE:
+            EĞER let Some(action) = cmd_json.get(&quot;action&quot;).and_then(|v| v.as_str()) İSE:
+                DURUM KONTROLÜ (action):
+                    &quot;query&quot; =&gt; {
+                    EĞER let Some(sql) = cmd_json.get(&quot;sql&quot;).and_then(|s| s.as_str()) İSE:
+                        sql_to_run = Some(sql.to_string());
+                &quot;tables&quot; =&gt; {
+                is_tables_cmd = true;
+            &quot;schema&quot; =&gt; {
+            EĞER let Some(tbl) = cmd_json.get(&quot;table&quot;).and_then(|t| t.as_str()) İSE:
+                schema_table = Some(tbl.to_string());
+        &quot;last&quot; =&gt; {
+        let tbl = cmd_json.get(&quot;table&quot;).and_then(|t| t.as_str()).unwrap_or(&quot;mark_prices&quot;);
+        let limit = cmd_json.get(&quot;limit&quot;).and_then(|l| l.as_i64()).unwrap_or(10);
+        sql_to_run = Some(format!(&quot;SELECT * FROM {} ORDER BY id DESC LIMIT {}&quot;, tbl, limit));
+    _ =&gt; {}
+    } else if let Ok(raw_str) = std::str::from_utf8(slice) {
+    let trimmed = raw_str.trim();
+    EĞER !trimmed.is_empty() İSE:
+        sql_to_run = Some(trimmed.to_string());
+    let reader_guard = state.reader.lock().unwrap();
+    EĞER let Some(reader) = reader_guard.as_ref() İSE:
+        let query_result = if is_tables_cmd {
+        reader.list_tables()
+        } else if let Some(tbl) = schema_table {
+        reader.get_schema(&amp;tbl)
+        } else if let Some(sql) = sql_to_run {
+        *state.last_query.lock().unwrap() = sql.clone();
+        reader.execute_sql(&amp;sql)
+        } else {
+        Err(rusqlite::Error::QueryReturnedNoRows)
+        };
+        let output_text = match query_result {
+        Ok(res) =&gt; res.formatted_output,
+        Err(e) =&gt; format!(&quot;Sorgu Hatası: {}\n&quot;, e),
+        };
+        *state.last_result.lock().unwrap() = output_text.clone();
+        state.outbox.lock().unwrap().push(output_text.clone());
+        // Also copy output_text to out_buf if caller provided a buffer
+        let data = output_text.as_bytes();
+        let len = data.len().min(out_max_len);
+        EĞER len &gt; 0 İSE:
+            std::ptr::copy_nonoverlapping(data.as_ptr(), out_buf, len);
+            DÖNDÜR len
+    0
+    7 =&gt; { // Outbox (Return queued responses)
+    let mut out = state.outbox.lock().unwrap();
+    EĞER out.is_empty() İSE:
+        0
+        } else {
+        let msg = out.remove(0);
+        let bytes = msg.as_bytes();
+        let len = bytes.len().min(out_max_len);
+        EĞER len &gt; 0 İSE:
+            std::ptr::copy_nonoverlapping(bytes.as_ptr(), out_buf, len);
+        len
+    _ =&gt; 0,</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: handle_endpoint"])
+    Start --> Cond1{"payload_len &gt; 0?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"let Ok(config) = serde_json::from_slice::&lt;Value&gt;(slice)?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"let Some(params) = config.get('plugin_params')?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> Loop4["Döngü: row in &tables_res.rows"]
+    Loop4 --> EndNode(["Döndür: len"])
+            </div>
+        </div>
+        
+        </section>
+
+        <details>
+            <summary>Orijinal Rust Kaynak Kodunu Göster</summary>
+            <pre><code>pub mod storage_reader;
+
+pub use storage_reader::*;
+
+use std::ffi::c_void;
+use std::sync::{Arc, Mutex};
+use std::sync::atomic::{AtomicBool, Ordering};
+use serde_json::Value;
+
+struct PluginState {
+    is_running: Arc&lt;AtomicBool&gt;,
+    reader: Arc&lt;Mutex&lt;Option&lt;Arc&lt;StorageReader&gt;&gt;&gt;&gt;,
+    db_path: Arc&lt;Mutex&lt;String&gt;&gt;,
+    outbox: Arc&lt;Mutex&lt;Vec&lt;String&gt;&gt;&gt;,
+    last_query: Arc&lt;Mutex&lt;String&gt;&gt;,
+    last_result: Arc&lt;Mutex&lt;String&gt;&gt;,
+}
+
+#[no_mangle]
+pub unsafe extern &quot;C&quot; fn init_plugin(
+    state_out: *mut *mut c_void,
+) -&gt; unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize {
+    let state = Box::new(PluginState {
+        is_running: Arc::new(AtomicBool::new(false)),
+        reader: Arc::new(Mutex::new(None)),
+        db_path: Arc::new(Mutex::new(&quot;data/binance_market_data.db&quot;.to_string())),
+        outbox: Arc::new(Mutex::new(Vec::new())),
+        last_query: Arc::new(Mutex::new(String::new())),
+        last_result: Arc::new(Mutex::new(String::new())),
+    });
+
+    unsafe {
+        *state_out = Box::into_raw(state) as *mut c_void;
+    }
+
+    handle_endpoint
+}
+
+unsafe extern &quot;C&quot; fn handle_endpoint(
+    plugin_state: *mut c_void,
+    endpoint_id: u32,
+    payload: *const u8,
+    payload_len: usize,
+    out_buf: *mut u8,
+    out_max_len: usize,
+) -&gt; usize {
+    let state = &amp;*(plugin_state as *const PluginState);
+
+    match endpoint_id {
+        0 =&gt; { // Start
+            let mut db_path = &quot;data/binance_market_data.db&quot;.to_string();
+            if payload_len &gt; 0 {
+                let slice = std::slice::from_raw_parts(payload, payload_len);
+                if let Ok(config) = serde_json::from_slice::&lt;Value&gt;(slice) {
+                    if let Some(params) = config.get(&quot;plugin_params&quot;) {
+                        if let Some(path) = params.get(&quot;db_path&quot;).and_then(|p| p.as_str()) {
+                            db_path = path.to_string();
+                        }
+                    }
+                }
+            }
+
+            *state.db_path.lock().unwrap() = db_path.clone();
+
+            match StorageReader::new(&amp;db_path) {
+                Ok(reader_inst) =&gt; {
+                    *state.reader.lock().unwrap() = Some(Arc::new(reader_inst));
+                    state.is_running.store(true, Ordering::Relaxed);
+                    0
+                }
+                Err(e) =&gt; {
+                    eprintln!(&quot;[plugin_sqlite_query] SQLite reader init error: {}&quot;, e);
+                    0
+                }
+            }
+        }
+        1 =&gt; { // Stop
+            state.is_running.store(false, Ordering::Relaxed);
+            0
+        }
+        2 =&gt; { // IsWorking
+            if state.is_running.load(Ordering::Relaxed) { 1 } else { 0 }
+        }
+        4 =&gt; { // DataMonitor (TUI M Key View)
+            let mut report = String::new();
+            report.push_str(&quot;=== SQLITE ANLIK SORGU EKLENTİSİ (QUERY ENGINE) ===\n\n&quot;);
+
+            let running = state.is_running.load(Ordering::Relaxed);
+            report.push_str(&amp;format!(&quot;Durum: {}\n&quot;, if running { &quot;ÇALIŞIYOR&quot; } else { &quot;DURDURULDU&quot; }));
+
+            let current_db_path = state.db_path.lock().unwrap().clone();
+            report.push_str(&amp;format!(&quot;Veritabanı Dosyası: {}\n&quot;, current_db_path));
+
+            let reader_guard = state.reader.lock().unwrap();
+            if let Some(reader) = reader_guard.as_ref() {
+                let bytes = reader.get_db_file_size();
+                let mb = bytes as f64 / (1024.0 * 1024.0);
+                report.push_str(&amp;format!(&quot;DB Boyutu: {:.2} MB\n\n&quot;, mb));
+
+                report.push_str(&quot;[ Mevcut Tablolar ve Kayıt Sayıları ]\n&quot;);
+                if let Ok(tables_res) = reader.list_tables() {
+                    for row in &amp;tables_res.rows {
+                        if let Some(tbl_name) = row.get(0) {
+                            let count_sql = format!(&quot;SELECT COUNT(*) FROM {}&quot;, tbl_name);
+                            let cnt_str = reader.execute_sql(&amp;count_sql)
+                                .ok()
+                                .and_then(|r| r.rows.get(0)?.get(0).cloned())
+                                .unwrap_or_else(|| &quot;0&quot;.to_string());
+                            report.push_str(&amp;format!(&quot;- {}: {} kayıt\n&quot;, tbl_name, cnt_str));
+                        }
+                    }
+                }
+                report.push_str(&quot;\n&quot;);
+
+                let last_q = state.last_query.lock().unwrap().clone();
+                let last_res = state.last_result.lock().unwrap().clone();
+                if !last_q.is_empty() {
+                    report.push_str(&amp;format!(&quot;[ Son Çalıştırılan Sorgu ]\nSQL: {}\n&quot;, last_q));
+                    report.push_str(&amp;format!(&quot;Sonuç:\n{}\n&quot;, last_res));
+                } else {
+                    report.push_str(&quot;Henüz sorgu çalıştırılmadı. Shell üzerinden &#x27;sql &lt;QUERY&gt;&#x27; yazarak sorgu atabilirsiniz.\n&quot;);
+                }
+            } else {
+                report.push_str(&quot;\nVeritabanı henüz başlatılmadı.\n&quot;);
+            }
+            report.push_str(&quot;===================================================\n&quot;);
+
+            let data = report.into_bytes();
+            let len = data.len().min(out_max_len);
+            if len &gt; 0 {
+                std::ptr::copy_nonoverlapping(data.as_ptr(), out_buf, len);
+            }
+            len
+        }
+        6 =&gt; { // Inbox (Incoming Query Commands)
+            if payload_len &gt; 0 {
+                let slice = std::slice::from_raw_parts(payload, payload_len);
+                
+                let mut sql_to_run = None;
+                let mut is_tables_cmd = false;
+                let mut schema_table = None;
+
+                if let Ok(cmd_json) = serde_json::from_slice::&lt;Value&gt;(slice) {
+                    if let Some(action) = cmd_json.get(&quot;action&quot;).and_then(|v| v.as_str()) {
+                        match action {
+                            &quot;query&quot; =&gt; {
+                                if let Some(sql) = cmd_json.get(&quot;sql&quot;).and_then(|s| s.as_str()) {
+                                    sql_to_run = Some(sql.to_string());
+                                }
+                            }
+                            &quot;tables&quot; =&gt; {
+                                is_tables_cmd = true;
+                            }
+                            &quot;schema&quot; =&gt; {
+                                if let Some(tbl) = cmd_json.get(&quot;table&quot;).and_then(|t| t.as_str()) {
+                                    schema_table = Some(tbl.to_string());
+                                }
+                            }
+                            &quot;last&quot; =&gt; {
+                                let tbl = cmd_json.get(&quot;table&quot;).and_then(|t| t.as_str()).unwrap_or(&quot;mark_prices&quot;);
+                                let limit = cmd_json.get(&quot;limit&quot;).and_then(|l| l.as_i64()).unwrap_or(10);
+                                sql_to_run = Some(format!(&quot;SELECT * FROM {} ORDER BY id DESC LIMIT {}&quot;, tbl, limit));
+                            }
+                            _ =&gt; {}
+                        }
+                    }
+                } else if let Ok(raw_str) = std::str::from_utf8(slice) {
+                    let trimmed = raw_str.trim();
+                    if !trimmed.is_empty() {
+                        sql_to_run = Some(trimmed.to_string());
+                    }
+                }
+
+                let reader_guard = state.reader.lock().unwrap();
+                if let Some(reader) = reader_guard.as_ref() {
+                    let query_result = if is_tables_cmd {
+                        reader.list_tables()
+                    } else if let Some(tbl) = schema_table {
+                        reader.get_schema(&amp;tbl)
+                    } else if let Some(sql) = sql_to_run {
+                        *state.last_query.lock().unwrap() = sql.clone();
+                        reader.execute_sql(&amp;sql)
+                    } else {
+                        Err(rusqlite::Error::QueryReturnedNoRows)
+                    };
+
+                    let output_text = match query_result {
+                        Ok(res) =&gt; res.formatted_output,
+                        Err(e) =&gt; format!(&quot;Sorgu Hatası: {}\n&quot;, e),
+                    };
+
+                    *state.last_result.lock().unwrap() = output_text.clone();
+                    state.outbox.lock().unwrap().push(output_text.clone());
+
+                    // Also copy output_text to out_buf if caller provided a buffer
+                    let data = output_text.as_bytes();
+                    let len = data.len().min(out_max_len);
+                    if len &gt; 0 {
+                        std::ptr::copy_nonoverlapping(data.as_ptr(), out_buf, len);
+                        return len;
+                    }
+                }
+            }
+            0
+        }
+        7 =&gt; { // Outbox (Return queued responses)
+            let mut out = state.outbox.lock().unwrap();
+            if out.is_empty() {
+                0
+            } else {
+                let msg = out.remove(0);
+                let bytes = msg.as_bytes();
+                let len = bytes.len().min(out_max_len);
+                if len &gt; 0 {
+                    std::ptr::copy_nonoverlapping(bytes.as_ptr(), out_buf, len);
+                }
+                len
+            }
+        }
+        _ =&gt; 0,
+    }
+}
+</code></pre>
+        </details>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            flowchart: { curve: 'basis' }
+        });
+    </script>
+</body>
+</html>

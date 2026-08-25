@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>levels.rs - Rust Analiz Dokümanı</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --border: #334155;
+            --code-bg: #090d16;
+            --verbal-bg: #131f37;
+            --analogy-bg: #1e1b4b;
+            --analogy-border: #818cf8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .back-link {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .back-link:hover { text-decoration: underline; }
+        h1 { font-size: 2rem; color: var(--accent); margin-bottom: 0.5rem; }
+        .file-path { font-family: 'Fira Code', monospace; color: var(--text-muted); font-size: 0.95rem; }
+        
+        .structs-container { margin: 1.5rem 0; }
+        .badge {
+            display: inline-block;
+            background: #0284c7;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-family: 'Fira Code', monospace;
+        }
+        .badge-struct { background: #7c3aed; }
+        
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .card h3 { color: var(--accent); margin-bottom: 0.5rem; font-size: 1.3rem; }
+        .card h4 { margin: 1.2rem 0 0.5rem 0; color: var(--text-muted); font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        .easy-analogy {
+            background: var(--analogy-bg);
+            border-left: 4px solid var(--analogy-border);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1rem;
+            color: #c7d2fe;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .verbal-explanation {
+            background: var(--verbal-bg);
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1.2rem;
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            margin-bottom: 1rem;
+        }
+        
+        .mermaid {
+            background: var(--code-bg);
+            padding: 1.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+        }
+        
+        details {
+            margin-top: 2rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Ana İndekse Dön</a>
+        <header>
+            <h1>levels.rs</h1>
+            <p class="file-path">crates/plugins/analytics/ms_analyzer/src/levels.rs</p>
+            <div class="structs-container">
+                <strong>Tanımlı Türler / Yapılar:</strong> <span class="badge badge-struct">LevelClass</span> <span class="badge badge-struct">StrategicLevel</span> 
+            </div>
+        </header>
+
+        <section>
+            <h2>Fonksiyon Analizleri & Basit Anlatımlar</h2>
+            
+        <div class="card">
+            <h3><span class="badge">fn</span> apply_decay</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>pivots: &amp;[PivotPoint], current_index: usize</code> | <strong>Dönüş Tipi:</strong> <code>Vec&lt;StrategicLevel&gt;</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>pivots: &amp;[PivotPoint], current_index: usize</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>Vec&lt;StrategicLevel&gt;</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Farklı durum senaryolarına göre akışı uygun kola yönlendirir.<br>3. İşlemi tamamlayarak <code>Vec&lt;StrategicLevel&gt;</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON apply_decay(pivots: &amp;[PivotPoint], current_index: usize) -&gt; Vec&lt;StrategicLevel&gt;:
+    // Yarılanma sabiti: ~46 mumda yarı değere düşer (0.015)
+    let lambda = Decimal::from_str(&quot;0.015&quot;).unwrap();
+    pivots
+    .iter()
+    .enumerate()
+    .map(|(i, p)| {
+    let t = Decimal::from(current_index.saturating_sub(p.index));
+    let decay = (-lambda * t).exp();
+    let level_type = match p.pivot_type {
+    PivotType::SwingHigh =&gt; &quot;SH&quot;.to_string(),
+    PivotType::SwingLow =&gt; &quot;SL&quot;.to_string(),
+    };
+    StrategicLevel {
+    pivot_id: format!(&quot;P-{}&quot;, i + 1),
+    price: p.price,
+    level_type,
+    timestamp: p.timestamp,
+    decay_weight: decay,
+    defense_count: 0,
+    is_swept: false,
+    bo_confirmed: false,
+    class: LevelClass::NewActive,
+    priority_score: Decimal::ZERO,
+    })
+    .collect()</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: apply_decay"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> count_defenses</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>levels: &amp;mut [StrategicLevel], klines: &amp;[Kline], tolerance_pct: Decimal</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>levels: &amp;mut [StrategicLevel], klines: &amp;[Kline], tolerance_pct: Decimal</code> verisini alır, kendi kurallarına göre işler ve sonucunda gerekli işlemi tamamlayan adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Listeyi veya veri kümesini sırayla döngüye alarak tarar.<br>4. Farklı durum senaryolarına göre akışı uygun kola yönlendirir.<br>5. İşlemi tamamlayarak <code>()</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON count_defenses(levels: &amp;mut [StrategicLevel], klines: &amp;[Kline], tolerance_pct: Decimal) -&gt; ():
+    HER level in levels.iter_mut() İÇİN DÖNGÜ:
+        let mut defenses = 0u16;
+        HER k in klines.iter() İÇİN DÖNGÜ:
+            let tolerance = level.price * tolerance_pct;
+            // Fiyat seviyeye dokundu mu?
+            let touched =
+            k.high &gt;= level.price - tolerance &amp;&amp; k.low &lt;= level.price + tolerance;
+            // Kapanış seviyenin ötesine geçmedi mi? (savunma)
+            let defended = match level.level_type.as_str() {
+            &quot;SH&quot; =&gt; k.close &lt; level.price + tolerance,
+            &quot;SL&quot; =&gt; k.close &gt; level.price - tolerance,
+            _ =&gt; false,
+            };
+            EĞER touched &amp;&amp; defended İSE:
+                defenses += 1;
+        level.defense_count = defenses;</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: count_defenses"])
+    Start --> Cond1{"touched && defended?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Loop2["Döngü: level in levels.iter_mut()"]
+    Loop2 --> Loop3["Döngü: k in klines.iter()"]
+    Loop3 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> check_sweep_and_bo</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>levels: &amp;mut [StrategicLevel], klines: &amp;[Kline]</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>levels: &amp;mut [StrategicLevel], klines: &amp;[Kline]</code> verisini alır, kendi kurallarına göre işler ve sonucunda gerekli işlemi tamamlayan adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Listeyi veya veri kümesini sırayla döngüye alarak tarar.<br>4. Farklı durum senaryolarına göre akışı uygun kola yönlendirir.<br>5. İşlemi tamamlayarak <code>()</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON check_sweep_and_bo(levels: &amp;mut [StrategicLevel], klines: &amp;[Kline]) -&gt; ():
+    HER level in levels.iter_mut() İÇİN DÖNGÜ:
+        // Seviyenin oluştuğu mumdan sonrasını tara
+        let level_idx = klines
+        .iter()
+        .position(|k| k.open_time &gt;= level.timestamp)
+        .unwrap_or(0);
+        HER i in level_idx..klines.len() İÇİN DÖNGÜ:
+            // Süpürülme: wick kırar ama kapanış geri döner
+            let swept = match level.level_type.as_str() {
+            &quot;SH&quot; =&gt; klines[i].high &gt; level.price &amp;&amp; klines[i].close &lt; level.price,
+            &quot;SL&quot; =&gt; klines[i].low &lt; level.price &amp;&amp; klines[i].close &gt; level.price,
+            _ =&gt; false,
+            };
+            EĞER swept İSE:
+                level.is_swept = true;
+                // BO Onayı: 2 ardışık mum kapanışı seviyenin ötesinde
+                EĞER i + 2 &lt; klines.len() İSE:
+                    let bo = match level.level_type.as_str() {
+                    &quot;SH&quot; =&gt; {
+                    klines[i + 1].close &gt; level.price
+                    &amp;&amp; klines[i + 2].close &gt; level.price
+                &quot;SL&quot; =&gt; {
+                klines[i + 1].close &lt; level.price
+                &amp;&amp; klines[i + 2].close &lt; level.price
+            _ =&gt; false,
+            };
+            EĞER bo İSE:
+                level.bo_confirmed = true;
+        break;</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: check_sweep_and_bo"])
+    Start --> Cond1{"swept?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"i + 2 &lt; klines.len()?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"bo?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> Loop4["Döngü: level in levels.iter_mut()"]
+    Loop4 --> Loop5["Döngü: i in level_idx..klines.len()"]
+    Loop5 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> classify_levels</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>levels: &amp;mut [StrategicLevel]</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>levels: &amp;mut [StrategicLevel]</code> verisini alır, kendi kurallarına göre işler ve sonucunda gerekli işlemi tamamlayan adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Listeyi veya veri kümesini sırayla döngüye alarak tarar.<br>4. İşlemi tamamlayarak <code>()</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON classify_levels(levels: &amp;mut [StrategicLevel]) -&gt; ():
+    HER level in levels.iter_mut() İÇİN DÖNGÜ:
+        let base_score = if level.defense_count &gt;= 2 {
+        level.class = LevelClass::Defended;
+        Decimal::from(10)
+        } else if level.is_swept &amp;&amp; level.bo_confirmed {
+        level.class = LevelClass::SweptConfirmed;
+        Decimal::from(9)
+        } else if level.is_swept &amp;&amp; !level.bo_confirmed {
+        level.class = LevelClass::UnconfirmedOBFVG;
+        Decimal::from(8) - (Decimal::ONE - level.decay_weight)
+        } else {
+        level.class = LevelClass::NewActive;
+        Decimal::from(7)
+        };
+        // Nihai skor: base * decay * 10 (normalize to 0-100)
+        let raw = (base_score * level.decay_weight) * Decimal::TEN;
+        level.priority_score = raw.max(Decimal::ZERO).min(Decimal::ONE_HUNDRED);</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: classify_levels"])
+    Start --> Cond1{"level.defense_count &gt;= 2?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"level.is_swept && level.bo_confirmed?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"level.is_swept && !level.bo_confirmed?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> Loop4["Döngü: level in levels.iter_mut()"]
+    Loop4 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> analyze_levels</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>pivots: &amp;[PivotPoint], klines: &amp;[Kline]</code> | <strong>Dönüş Tipi:</strong> <code>Vec&lt;StrategicLevel&gt;</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>pivots: &amp;[PivotPoint], klines: &amp;[Kline]</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>Vec&lt;StrategicLevel&gt;</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. İşlemi tamamlayarak <code>Vec&lt;StrategicLevel&gt;</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON analyze_levels(pivots: &amp;[PivotPoint], klines: &amp;[Kline]) -&gt; Vec&lt;StrategicLevel&gt;:
+    EĞER klines.is_empty() İSE:
+        DÖNDÜR vec![]
+    let current_index = klines.len().saturating_sub(1);
+    let mut levels = apply_decay(pivots, current_index);
+    count_defenses(&amp;mut levels, klines, Decimal::from_str(&quot;0.001&quot;).unwrap()); // %0.1 tolerans
+    check_sweep_and_bo(&amp;mut levels, klines);
+    classify_levels(&amp;mut levels);
+    // Öncelik skoruna göre sırala (yüksekten düşüğe)
+    levels.sort_by(|a, b| b.priority_score.cmp(&amp;a.priority_score));
+    levels</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: analyze_levels"])
+    Start --> Cond1{"klines.is_empty()?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> EndNode(["Döndür: vec![]"])
+            </div>
+        </div>
+        
+        </section>
+
+        <details>
+            <summary>Orijinal Rust Kaynak Kodunu Göster</summary>
+            <pre><code>// ============================================================================
+// MSMP 2.0 — KATMAN 4: STRATEJİK SEVİYE ENVANTERİ
+// ============================================================================
+// W(t) = e^(-λ * t) , λ = 0.015 (yaklaşık 46 mumda yarı değere düşer)
+// Süpürülmüş seviyeler &quot;Geçersiz&quot; DEĞİLDİR:
+//   → 2 ardışık mum kapanışı ötede ise &quot;Breakout Onayı (BO Confirmation)&quot;
+// Sınıflar:
+//   Savunulmuş (≥2 Close Test) → Skor 10
+//   Süpürülmüş + BO Onayı → Skor 9
+//   Onaylanmamış OB/FVG → Skor 8 - W(t)
+//   Yeni Oluşan → Skor 7
+// ============================================================================
+
+use crate::pivot::{PivotPoint, PivotType};
+use ohlcv_engine::Kline;
+use rust_decimal::Decimal;
+use rust_decimal::prelude::*;
+use serde::Serialize;
+
+#[derive(Debug, Clone, Serialize)]
+pub enum LevelClass {
+    /// Savunulmuş (≥2 Close Test) — Öncelik Skoru: 10
+    Defended,
+    /// Süpürülmüş + BO Onayı — Öncelik Skoru: 9
+    SweptConfirmed,
+    /// Onaylanmamış OB/FVG — Öncelik Skoru: 8 - W(t)
+    UnconfirmedOBFVG,
+    /// Yeni Oluşan (Son 2 Pivot) — Öncelik Skoru: 7
+    NewActive,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct StrategicLevel {
+    pub pivot_id: String,
+    pub price: Decimal,
+    pub level_type: String,
+    pub timestamp: u64,
+    /// W(t) = e^(-λ * t)
+    pub decay_weight: Decimal,
+    /// Fiyatın seviyeye dokunup geri döndüğü sayı
+    pub defense_count: u16,
+    /// Fiyat wick ile kırıp kapanış geri mi döndü?
+    pub is_swept: bool,
+    /// 2 ardışık kapanış seviyenin ötesinde mi?
+    pub bo_confirmed: bool,
+    pub class: LevelClass,
+    /// Nihai öncelik skoru (0-100)
+    pub priority_score: Decimal,
+}
+
+/// Üssel zaman çürümesi uygula: W(t) = e^(-λ * t)
+pub fn apply_decay(pivots: &amp;[PivotPoint], current_index: usize) -&gt; Vec&lt;StrategicLevel&gt; {
+    // Yarılanma sabiti: ~46 mumda yarı değere düşer (0.015)
+    let lambda = Decimal::from_str(&quot;0.015&quot;).unwrap();
+    pivots
+        .iter()
+        .enumerate()
+        .map(|(i, p)| {
+            let t = Decimal::from(current_index.saturating_sub(p.index));
+            let decay = (-lambda * t).exp();
+
+            let level_type = match p.pivot_type {
+                PivotType::SwingHigh =&gt; &quot;SH&quot;.to_string(),
+                PivotType::SwingLow =&gt; &quot;SL&quot;.to_string(),
+            };
+
+            StrategicLevel {
+                pivot_id: format!(&quot;P-{}&quot;, i + 1),
+                price: p.price,
+                level_type,
+                timestamp: p.timestamp,
+                decay_weight: decay,
+                defense_count: 0,
+                is_swept: false,
+                bo_confirmed: false,
+                class: LevelClass::NewActive,
+                priority_score: Decimal::ZERO,
+            }
+        })
+        .collect()
+}
+
+/// Savunma sayısını hesapla — fiyatın seviyeye kaç kez dokunup geri döndüğü
+pub fn count_defenses(levels: &amp;mut [StrategicLevel], klines: &amp;[Kline], tolerance_pct: Decimal) {
+    for level in levels.iter_mut() {
+        let mut defenses = 0u16;
+
+        for k in klines.iter() {
+            let tolerance = level.price * tolerance_pct;
+
+            // Fiyat seviyeye dokundu mu?
+            let touched =
+                k.high &gt;= level.price - tolerance &amp;&amp; k.low &lt;= level.price + tolerance;
+
+            // Kapanış seviyenin ötesine geçmedi mi? (savunma)
+            let defended = match level.level_type.as_str() {
+                &quot;SH&quot; =&gt; k.close &lt; level.price + tolerance,
+                &quot;SL&quot; =&gt; k.close &gt; level.price - tolerance,
+                _ =&gt; false,
+            };
+
+            if touched &amp;&amp; defended {
+                defenses += 1;
+            }
+        }
+
+        level.defense_count = defenses;
+    }
+}
+
+/// Süpürülme (Sweep) ve Breakout Onayı (BO) kontrolü
+pub fn check_sweep_and_bo(levels: &amp;mut [StrategicLevel], klines: &amp;[Kline]) {
+    for level in levels.iter_mut() {
+        // Seviyenin oluştuğu mumdan sonrasını tara
+        let level_idx = klines
+            .iter()
+            .position(|k| k.open_time &gt;= level.timestamp)
+            .unwrap_or(0);
+
+        for i in level_idx..klines.len() {
+            // Süpürülme: wick kırar ama kapanış geri döner
+            let swept = match level.level_type.as_str() {
+                &quot;SH&quot; =&gt; klines[i].high &gt; level.price &amp;&amp; klines[i].close &lt; level.price,
+                &quot;SL&quot; =&gt; klines[i].low &lt; level.price &amp;&amp; klines[i].close &gt; level.price,
+                _ =&gt; false,
+            };
+
+            if swept {
+                level.is_swept = true;
+
+                // BO Onayı: 2 ardışık mum kapanışı seviyenin ötesinde
+                if i + 2 &lt; klines.len() {
+                    let bo = match level.level_type.as_str() {
+                        &quot;SH&quot; =&gt; {
+                            klines[i + 1].close &gt; level.price
+                                &amp;&amp; klines[i + 2].close &gt; level.price
+                        }
+                        &quot;SL&quot; =&gt; {
+                            klines[i + 1].close &lt; level.price
+                                &amp;&amp; klines[i + 2].close &lt; level.price
+                        }
+                        _ =&gt; false,
+                    };
+                    if bo {
+                        level.bo_confirmed = true;
+                    }
+                }
+                break;
+            }
+        }
+    }
+}
+
+/// Seviyeleri sınıflandır ve nihai öncelik skoru hesapla (0-100)
+pub fn classify_levels(levels: &amp;mut [StrategicLevel]) {
+    for level in levels.iter_mut() {
+        let base_score = if level.defense_count &gt;= 2 {
+            level.class = LevelClass::Defended;
+            Decimal::from(10)
+        } else if level.is_swept &amp;&amp; level.bo_confirmed {
+            level.class = LevelClass::SweptConfirmed;
+            Decimal::from(9)
+        } else if level.is_swept &amp;&amp; !level.bo_confirmed {
+            level.class = LevelClass::UnconfirmedOBFVG;
+            Decimal::from(8) - (Decimal::ONE - level.decay_weight)
+        } else {
+            level.class = LevelClass::NewActive;
+            Decimal::from(7)
+        };
+
+        // Nihai skor: base * decay * 10 (normalize to 0-100)
+        let raw = (base_score * level.decay_weight) * Decimal::TEN;
+        level.priority_score = raw.max(Decimal::ZERO).min(Decimal::ONE_HUNDRED);
+    }
+}
+
+/// Tam seviye analizi pipeline&#x27;ı
+pub fn analyze_levels(pivots: &amp;[PivotPoint], klines: &amp;[Kline]) -&gt; Vec&lt;StrategicLevel&gt; {
+    if klines.is_empty() {
+        return vec![];
+    }
+
+    let current_index = klines.len().saturating_sub(1);
+    let mut levels = apply_decay(pivots, current_index);
+
+    count_defenses(&amp;mut levels, klines, Decimal::from_str(&quot;0.001&quot;).unwrap()); // %0.1 tolerans
+    check_sweep_and_bo(&amp;mut levels, klines);
+    classify_levels(&amp;mut levels);
+
+    // Öncelik skoruna göre sırala (yüksekten düşüğe)
+    levels.sort_by(|a, b| b.priority_score.cmp(&amp;a.priority_score));
+
+    levels
+}
+</code></pre>
+        </details>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            flowchart: { curve: 'basis' }
+        });
+    </script>
+</body>
+</html>

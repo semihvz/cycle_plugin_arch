@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>lib.rs - Rust Analiz Dokümanı</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --border: #334155;
+            --code-bg: #090d16;
+            --verbal-bg: #131f37;
+            --analogy-bg: #1e1b4b;
+            --analogy-border: #818cf8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .back-link {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .back-link:hover { text-decoration: underline; }
+        h1 { font-size: 2rem; color: var(--accent); margin-bottom: 0.5rem; }
+        .file-path { font-family: 'Fira Code', monospace; color: var(--text-muted); font-size: 0.95rem; }
+        
+        .structs-container { margin: 1.5rem 0; }
+        .badge {
+            display: inline-block;
+            background: #0284c7;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-family: 'Fira Code', monospace;
+        }
+        .badge-struct { background: #7c3aed; }
+        
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .card h3 { color: var(--accent); margin-bottom: 0.5rem; font-size: 1.3rem; }
+        .card h4 { margin: 1.2rem 0 0.5rem 0; color: var(--text-muted); font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        .easy-analogy {
+            background: var(--analogy-bg);
+            border-left: 4px solid var(--analogy-border);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1rem;
+            color: #c7d2fe;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .verbal-explanation {
+            background: var(--verbal-bg);
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1.2rem;
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            margin-bottom: 1rem;
+        }
+        
+        .mermaid {
+            background: var(--code-bg);
+            padding: 1.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+        }
+        
+        details {
+            margin-top: 2rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Ana İndekse Dön</a>
+        <header>
+            <h1>lib.rs</h1>
+            <p class="file-path">crates/plugins/analytics/plugin_aggtrade_stats/src/lib.rs</p>
+            <div class="structs-container">
+                <strong>Tanımlı Türler / Yapılar:</strong> <span class="badge badge-struct">AggTradeStatsEngine</span> <span class="badge badge-struct">PluginState</span> <span class="badge badge-struct">SymbolMetrics</span> <span class="badge badge-struct">TradeEntry</span> 
+            </div>
+        </header>
+
+        <section>
+            <h2>Fonksiyon Analizleri & Basit Anlatımlar</h2>
+            
+        <div class="card">
+            <h3><span class="badge">fn</span> new</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>Yok</code> | <strong>Dönüş Tipi:</strong> <code>Self</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Dükkanı sabah açarken kasayı sıfırlama, rafları düzeltme ve tabelayı asma işlemidir. Her şey temiz bir başlangıç için hazır hale getirilir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Yapıcı (constructor) fonksiyon olarak nesnenin bellekte ilk durumları ve yapılandırmalarıyla başlatılmasını (instantiation) sağlar.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON new() -&gt; Self:
+    Self {
+    window_ms: AtomicU64::new(1000), // Default 1000ms (1 second)
+    trade_history: Mutex::new(HashMap::new()),
+    symbol_metrics: Mutex::new(HashMap::new()),
+    last_seen_trade_id: Mutex::new(HashMap::new()),</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: new"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> set_window_ms</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self, ms: u64</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>&amp;self, ms: u64</code> verisini alır, kendi kurallarına göre işler ve sonucunda gerekli işlemi tamamlayan adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. İşlemi tamamlayarak <code>()</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON set_window_ms(&amp;self, ms: u64) -&gt; ():
+    EĞER ms &gt;= 100 İSE:
+        self.window_ms.store(ms, Ordering::Relaxed);</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: set_window_ms"])
+    Start --> Cond1{"ms &gt;= 100?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> process_aggtrade_payload</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self, json_data: &amp;Value, now_ms: u64</code> | <strong>Dönüş Tipi:</strong> <code>String</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Gerçek para harcamadan önce Monopoly oyunundaki sanal para ile alışveriş yapıp taktiklerin çalışıp çalışmadığını test etme işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Gerçek piyasa emir defteri verisini alarak gecikme, komisyon ve kuyruk sırasını hesaba katan sanal alım-satım infazını gerçekleştirir.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON process_aggtrade_payload(&amp;self, json_data: &amp;Value, now_ms: u64) -&gt; String:
+    let mut history_guard = self.trade_history.lock().unwrap();
+    let mut metrics_guard = self.symbol_metrics.lock().unwrap();
+    let mut last_seen_guard = self.last_seen_trade_id.lock().unwrap();
+    let window_ms = self.window_ms.load(Ordering::Relaxed).max(100);
+    let window_secs = window_ms as f64 / 1000.0;
+    EĞER let Some(obj) = json_data.as_object() İSE:
+        HER (symbol, item) in obj.iter() İÇİN DÖNGÜ:
+            let trade_id = parse_i64(&amp;item[&quot;trade_id&quot;]);
+            // Deduplicate if identical trade_id already recorded for this symbol
+            let is_duplicate = if trade_id &gt; 0 {
+            EĞER let Some(&amp;last_id) = last_seen_guard.get(symbol) İSE:
+                last_id == trade_id
+                } else {
+                false
+            } else {
+            false
+            };
+            let price = parse_f64(&amp;item[&quot;price&quot;]);
+            let quantity = parse_f64(&amp;item[&quot;quantity&quot;]);
+            let usdt_val = price * quantity;
+            let buyer_is_maker = parse_bool(&amp;item[&quot;buyer_is_maker&quot;])
+            .or_else(|| parse_bool(&amp;item[&quot;m&quot;]))
+            .unwrap_or(false);
+            let timestamp_ms = now_ms;
+            EĞER !is_duplicate &amp;&amp; (price &gt; 0.0 || quantity &gt; 0.0 || trade_id &gt; 0) İSE:
+                EĞER trade_id &gt; 0 İSE:
+                    last_seen_guard.insert(symbol.clone(), trade_id);
+                let deque = history_guard.entry(symbol.clone()).or_insert_with(VecDeque::new);
+                deque.push_back(TradeEntry {
+                trade_id,
+                price,
+                quantity,
+                usdt_value: usdt_val,
+                buyer_is_maker,
+                timestamp_ms,
+                });
+    // Calculate rolling window metrics per symbol
+    let window_start_ms = now_ms.saturating_sub(window_ms);
+    let mut sorted_symbols: Vec&lt;String&gt; = history_guard.keys().cloned().collect();
+    sorted_symbols.sort();
+    let mut report = String::new();
+    report.push_str(&quot;============================================================\n&quot;);
+    report.push_str(&amp;format!(&quot;📊 AGGTRADE METRİKLERİ (ÖLÇÜM PENCERESİ: {} ms / {:.1} sn)\n&quot;, window_ms, window_secs));
+    report.push_str(&quot;============================================================\n&quot;);
+    EĞER sorted_symbols.is_empty() İSE:
+        report.push_str(&quot;Henüz işlem verisi alınmadı.\n&quot;);
+        } else {
+        HER symbol in &amp;sorted_symbols İÇİN DÖNGÜ:
+            EĞER let Some(deque) = history_guard.get_mut(symbol) İSE:
+                // Prune entries older than window_ms
+                WHILE let Some(front) = deque.front() DÖNGÜSÜ:
+                    EĞER front.timestamp_ms &lt; window_start_ms İSE:
+                        deque.pop_front();
+                        } else {
+                        break;
+                let total_window_volume: f64 = deque.iter().map(|t| t.usdt_value).sum();
+                let total_window_trades = deque.len();
+                let usdt_volume_per_sec = total_window_volume / window_secs;
+                let trades_per_sec = (total_window_trades as f64 / window_secs).round() as usize;
+                let last_trade = deque.back();
+                let last_trade_id = last_trade.map(|t| t.trade_id).unwrap_or(0);
+                let last_price = last_trade.map(|t| t.price).unwrap_or(0.0);
+                let maker_volume: f64 = deque.iter().filter(|t| t.buyer_is_maker).map(|t| t.usdt_value).sum();
+                let taker_volume: f64 = deque.iter().filter(|t| !t.buyer_is_maker).map(|t| t.usdt_value).sum();
+                let maker_trade_count = deque.iter().filter(|t| t.buyer_is_maker).count();
+                let taker_trade_count = deque.iter().filter(|t| !t.buyer_is_maker).count();
+                let (maker_volume_pct, taker_volume_pct) = if total_window_volume &gt; 0.0 {
+                ((maker_volume / total_window_volume) * 100.0, (taker_volume / total_window_volume) * 100.0)
+                } else {
+                (0.0, 0.0)
+                };
+                let (maker_trades_pct, taker_trades_pct) = if total_window_trades &gt; 0 {
+                ((maker_trade_count as f64 / total_window_trades as f64) * 100.0, (taker_trade_count as f64 / total_window_trades as f64) * 100.0)
+                } else {
+                (0.0, 0.0)
+                };
+                metrics_guard.insert(
+                symbol.clone(),
+                SymbolMetrics {
+                usdt_volume_per_sec,
+                trades_per_sec,
+                last_trade_id,
+                last_price,
+                maker_volume_pct,
+                taker_volume_pct,
+                maker_trades_pct,
+                taker_trades_pct,
+                },
+                );
+                report.push_str(&amp;format!(
+                &quot;[{}]  Hacim: {:.8} USDT/sn | İşlem: {}/sn (Son: {:.8}, ID: {})\n\
+                └─► Maker/Taker Hacim: %{:.2} Maker / %{:.2} Taker\n\
+                └─► Maker/Taker Adet : %{:.2} Maker / %{:.2} Taker\n&quot;,
+                symbol, usdt_volume_per_sec, trades_per_sec, last_price, last_trade_id,
+                maker_volume_pct, taker_volume_pct, maker_trades_pct, taker_trades_pct
+                ));
+    report.push_str(&quot;============================================================\n&quot;);
+    report</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: process_aggtrade_payload"])
+    Start --> Cond1{"let Some(obj) = json_data.as_object()?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"identical trade_id already recorded for this symbol?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"trade_id &gt; 0?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> Loop4["Döngü: (symbol, item) in obj.iter()"]
+    Loop4 --> Loop5["Döngü: this symbol"]
+    Loop5 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> get_formatted_report</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self</code> | <strong>Dönüş Tipi:</strong> <code>String</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>&amp;self</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>String</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Listeyi veya veri kümesini sırayla döngüye alarak tarar.<br>4. İşlemi tamamlayarak <code>String</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON get_formatted_report(&amp;self) -&gt; String:
+    let metrics_guard = self.symbol_metrics.lock().unwrap();
+    let window_ms = self.window_ms.load(Ordering::Relaxed);
+    let window_secs = window_ms as f64 / 1000.0;
+    let mut sorted_symbols: Vec&lt;String&gt; = metrics_guard.keys().cloned().collect();
+    sorted_symbols.sort();
+    let mut report = String::new();
+    report.push_str(&quot;============================================================\n&quot;);
+    report.push_str(&amp;format!(&quot;📊 AGGTRADE METRİKLERİ (ÖLÇÜM PENCERESİ: {} ms / {:.1} sn)\n&quot;, window_ms, window_secs));
+    report.push_str(&quot;============================================================\n&quot;);
+    EĞER sorted_symbols.is_empty() İSE:
+        report.push_str(&quot;Henüz işlem verisi alınmadı.\n&quot;);
+        } else {
+        HER symbol in &amp;sorted_symbols İÇİN DÖNGÜ:
+            EĞER let Some(m) = metrics_guard.get(symbol) İSE:
+                report.push_str(&amp;format!(
+                &quot;[{}]  Hacim: {:.8} USDT/sn | İşlem: {}/sn (Son: {:.8}, ID: {})\n\
+                └─► Maker/Taker Hacim: %{:.2} Maker / %{:.2} Taker\n\
+                └─► Maker/Taker Adet : %{:.2} Maker / %{:.2} Taker\n&quot;,
+                symbol, m.usdt_volume_per_sec, m.trades_per_sec, m.last_price, m.last_trade_id,
+                m.maker_volume_pct, m.taker_volume_pct, m.maker_trades_pct, m.taker_trades_pct
+                ));
+    report.push_str(&quot;============================================================\n&quot;);
+    report</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: get_formatted_report"])
+    Start --> Cond1{"sorted_symbols.is_empty()?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"let Some(m) = metrics_guard.get(symbol)?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Loop3["Döngü: symbol in &sorted_symbols"]
+    Loop3 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> parse_f64</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>val: &amp;Value</code> | <strong>Dönüş Tipi:</strong> <code>f64</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>val: &amp;Value</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>f64</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. İşlemi tamamlayarak <code>f64</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON parse_f64(val: &amp;Value) -&gt; f64:
+    EĞER let Some(f) = val.as_f64() İSE:
+        f
+        } else if let Some(s) = val.as_str() {
+        s.parse::&lt;f64&gt;().unwrap_or(0.0)
+        } else if let Some(i) = val.as_i64() {
+        i as f64
+        } else {
+        0.0</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: parse_f64"])
+    Start --> Cond1{"let Some(f) = val.as_f64()?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"let Some(s) = val.as_str()?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"let Some(i) = val.as_i64()?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> parse_i64</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>val: &amp;Value</code> | <strong>Dönüş Tipi:</strong> <code>i64</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>val: &amp;Value</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>i64</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. İşlemi tamamlayarak <code>i64</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON parse_i64(val: &amp;Value) -&gt; i64:
+    EĞER let Some(i) = val.as_i64() İSE:
+        i
+        } else if let Some(s) = val.as_str() {
+        s.parse::&lt;i64&gt;().unwrap_or(0)
+        } else {
+        0</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: parse_i64"])
+    Start --> Cond1{"let Some(i) = val.as_i64()?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"let Some(s) = val.as_str()?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> parse_bool</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>val: &amp;Value</code> | <strong>Dönüş Tipi:</strong> <code>Option&lt;bool&gt;</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>val: &amp;Value</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>Option&lt;bool&gt;</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. İşlemi tamamlayarak <code>Option&lt;bool&gt;</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON parse_bool(val: &amp;Value) -&gt; Option&lt;bool&gt;:
+    EĞER let Some(b) = val.as_bool() İSE:
+        Some(b)
+        } else if let Some(s) = val.as_str() {
+        s.parse::&lt;bool&gt;().ok()
+        } else {
+        None</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: parse_bool"])
+    Start --> Cond1{"let Some(b) = val.as_bool()?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"let Some(s) = val.as_str()?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> init_plugin</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>state_out: *mut *mut c_void</code> | <strong>Dönüş Tipi:</strong> <code>unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>state_out: *mut *mut c_void</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. İşlemi tamamlayarak <code>unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON init_plugin(state_out: *mut *mut c_void) -&gt; unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize:
+    let engine = Arc::new(AggTradeStatsEngine::new());
+    let initial_report = engine.get_formatted_report();
+    let state = Box::new(PluginState {
+    is_running: Arc::new(AtomicBool::new(false)),
+    engine,
+    data: Arc::new(Mutex::new(initial_report.into_bytes())),
+    });
+    unsafe {
+    *state_out = Box::into_raw(state) as *mut c_void;
+    handle_endpoint</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: init_plugin"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> handle_endpoint</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>plugin_state: *mut c_void,
+    endpoint_id: u32,
+    payload: *const u8,
+    payload_len: usize,
+    out_buf: *mut u8,
+    out_max_len: usize,</code> | <strong>Dönüş Tipi:</strong> <code>usize</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>plugin_state: *mut c_void,
+    endpoint_id: u32,
+    payload: *const u8,
+    payload_len: usize,
+    out_buf: *mut u8,
+    out_max_len: usize,</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>usize</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Farklı durum senaryolarına göre akışı uygun kola yönlendirir.<br>4. İşlemi tamamlayarak <code>usize</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON handle_endpoint(plugin_state: *mut c_void,
+    endpoint_id: u32,
+    payload: *const u8,
+    payload_len: usize,
+    out_buf: *mut u8,
+    out_max_len: usize,) -&gt; usize:
+    EĞER plugin_state.is_null() İSE:
+        DÖNDÜR 0
+    let state = &amp;*(plugin_state as *const PluginState);
+    DURUM KONTROLÜ (endpoint_id):
+        0 =&gt; { // Start
+        state.is_running.store(true, Ordering::Relaxed);
+        // Parse plugin configuration / parameters if passed in payload
+        EĞER payload_len &gt; 0 &amp;&amp; !payload.is_null() İSE:
+            let slice = std::slice::from_raw_parts(payload, payload_len);
+            EĞER let Ok(config) = serde_json::from_slice::&lt;Value&gt;(slice) İSE:
+                let params = config.get(&quot;plugin_params&quot;).unwrap_or(&amp;config);
+                EĞER let Some(ms) = params.get(&quot;window_ms&quot;).or_else(|| params.get(&quot;interval_ms&quot;)).and_then(|v| v.as_u64()) İSE:
+                    state.engine.set_window_ms(ms);
+                    } else if let Some(secs) = params.get(&quot;window_secs&quot;).or_else(|| params.get(&quot;interval_secs&quot;)).and_then(|v| v.as_u64()) {
+                    state.engine.set_window_ms(secs * 1000);
+        0
+    1 =&gt; { // Stop
+    state.is_running.store(false, Ordering::Relaxed);
+    0
+    2 =&gt; { // IsWorking
+    let running = state.is_running.load(Ordering::Relaxed);
+    EĞER out_max_len &gt;= 1 &amp;&amp; !out_buf.is_null() İSE:
+        *out_buf = if running { 1 } else { 0 };
+        1
+        } else {
+        EĞER running İSE:
+    3 =&gt; { // DataValid
+    1
+    4 =&gt; { // DataMonitor (TUI Monitoring)
+    let guard = state.data.lock().unwrap();
+    let len = guard.len().min(out_max_len);
+    EĞER len &gt; 0 &amp;&amp; !out_buf.is_null() İSE:
+        std::ptr::copy_nonoverlapping(guard.as_ptr(), out_buf, len);
+    len
+    6 =&gt; { // Inbox (Data routed from FlowEngine)
+    EĞER !state.is_running.load(Ordering::Relaxed) İSE:
+        DÖNDÜR 0
+    EĞER payload_len &gt; 32 &amp;&amp; !payload.is_null() İSE:
+        let slice = std::slice::from_raw_parts(payload, payload_len);
+        let header = &amp;slice[0..32];
+        let stream_id = std::str::from_utf8(header).unwrap_or(&quot;&quot;).trim_matches(char::from(0)).trim().to_string();
+        EĞER stream_id == &quot;stream_aggtrades&quot; || stream_id.contains(&quot;aggtrade&quot;) || stream_id.contains(&quot;trade&quot;) İSE:
+            EĞER let Ok(json_data) = serde_json::from_slice::&lt;Value&gt;(&amp;slice[32..]) İSE:
+                let now_ms = SystemTime::now()
+                .duration_since(UNIX_EPOCH)
+                .unwrap_or_default()
+                .as_millis() as u64;
+                let report = state.engine.process_aggtrade_payload(&amp;json_data, now_ms);
+                // Update DataMonitor memory buffer safely (without stdout println!)
+                let mut data_guard = state.data.lock().unwrap();
+                *data_guard = report.into_bytes();
+    0
+    _ =&gt; 0,</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: handle_endpoint"])
+    Start --> Cond1{"plugin_state.is_null()?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"passed in payload?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"payload_len &gt; 0 && !payload.is_null()?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> EndNode(["Döndür: 0"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> test_aggtrade_configurable_window_ms</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>Yok</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Gerçek para harcamadan önce Monopoly oyunundaki sanal para ile alışveriş yapıp taktiklerin çalışıp çalışmadığını test etme işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Gerçek piyasa emir defteri verisini alarak gecikme, komisyon ve kuyruk sırasını hesaba katan sanal alım-satım infazını gerçekleştirir.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON test_aggtrade_configurable_window_ms() -&gt; ():
+    let engine = AggTradeStatsEngine::new();
+    engine.set_window_ms(5000); // 5-second window
+    assert_eq!(engine.window_ms.load(Ordering::Relaxed), 5000);
+    let now_ms = 1700000000000u64;
+    let payload = serde_json::json!({
+    &quot;BTCUSDT&quot;: {
+    &quot;trade_id&quot;: 1001,
+    &quot;price&quot;: &quot;50000.0&quot;,
+    &quot;quantity&quot;: &quot;1.0&quot;,
+    &quot;buyer_is_maker&quot;: true,
+    &quot;local_recv_time_ms&quot;: now_ms
+    });
+    let report = engine.process_aggtrade_payload(&amp;payload, now_ms);
+    assert!(report.contains(&quot;ÖLÇÜM PENCERESİ: 5000 ms / 5.0 sn&quot;));
+    // 50000 USDT total in 5s window =&gt; 10000 USDT/sec
+    assert!(report.contains(&quot;10000.00000000 USDT/sn&quot;));</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: test_aggtrade_configurable_window_ms"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        </section>
+
+        <details>
+            <summary>Orijinal Rust Kaynak Kodunu Göster</summary>
+            <pre><code>use std::collections::{HashMap, VecDeque};
+use std::ffi::c_void;
+use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
+use std::sync::{Arc, Mutex};
+use std::time::{SystemTime, UNIX_EPOCH};
+use serde_json::Value;
+
+#[derive(Debug, Clone)]
+pub struct TradeEntry {
+    pub trade_id: i64,
+    pub price: f64,
+    pub quantity: f64,
+    pub usdt_value: f64,
+    pub buyer_is_maker: bool,
+    pub timestamp_ms: u64,
+}
+
+#[derive(Debug, Default, Clone)]
+pub struct SymbolMetrics {
+    pub usdt_volume_per_sec: f64,
+    pub trades_per_sec: usize,
+    pub last_trade_id: i64,
+    pub last_price: f64,
+    pub maker_volume_pct: f64,
+    pub taker_volume_pct: f64,
+    pub maker_trades_pct: f64,
+    pub taker_trades_pct: f64,
+}
+
+pub struct AggTradeStatsEngine {
+    pub window_ms: AtomicU64,
+    pub trade_history: Mutex&lt;HashMap&lt;String, VecDeque&lt;TradeEntry&gt;&gt;&gt;,
+    pub symbol_metrics: Mutex&lt;HashMap&lt;String, SymbolMetrics&gt;&gt;,
+    pub last_seen_trade_id: Mutex&lt;HashMap&lt;String, i64&gt;&gt;,
+}
+
+impl AggTradeStatsEngine {
+    pub fn new() -&gt; Self {
+        Self {
+            window_ms: AtomicU64::new(1000), // Default 1000ms (1 second)
+            trade_history: Mutex::new(HashMap::new()),
+            symbol_metrics: Mutex::new(HashMap::new()),
+            last_seen_trade_id: Mutex::new(HashMap::new()),
+        }
+    }
+
+    pub fn set_window_ms(&amp;self, ms: u64) {
+        if ms &gt;= 100 {
+            self.window_ms.store(ms, Ordering::Relaxed);
+        }
+    }
+
+    pub fn process_aggtrade_payload(&amp;self, json_data: &amp;Value, now_ms: u64) -&gt; String {
+        let mut history_guard = self.trade_history.lock().unwrap();
+        let mut metrics_guard = self.symbol_metrics.lock().unwrap();
+        let mut last_seen_guard = self.last_seen_trade_id.lock().unwrap();
+
+        let window_ms = self.window_ms.load(Ordering::Relaxed).max(100);
+        let window_secs = window_ms as f64 / 1000.0;
+
+        if let Some(obj) = json_data.as_object() {
+            for (symbol, item) in obj.iter() {
+                let trade_id = parse_i64(&amp;item[&quot;trade_id&quot;]);
+                
+                // Deduplicate if identical trade_id already recorded for this symbol
+                let is_duplicate = if trade_id &gt; 0 {
+                    if let Some(&amp;last_id) = last_seen_guard.get(symbol) {
+                        last_id == trade_id
+                    } else {
+                        false
+                    }
+                } else {
+                    false
+                };
+
+                let price = parse_f64(&amp;item[&quot;price&quot;]);
+                let quantity = parse_f64(&amp;item[&quot;quantity&quot;]);
+                let usdt_val = price * quantity;
+                let buyer_is_maker = parse_bool(&amp;item[&quot;buyer_is_maker&quot;])
+                    .or_else(|| parse_bool(&amp;item[&quot;m&quot;]))
+                    .unwrap_or(false);
+                let timestamp_ms = now_ms;
+
+                if !is_duplicate &amp;&amp; (price &gt; 0.0 || quantity &gt; 0.0 || trade_id &gt; 0) {
+                    if trade_id &gt; 0 {
+                        last_seen_guard.insert(symbol.clone(), trade_id);
+                    }
+                    let deque = history_guard.entry(symbol.clone()).or_insert_with(VecDeque::new);
+                    deque.push_back(TradeEntry {
+                        trade_id,
+                        price,
+                        quantity,
+                        usdt_value: usdt_val,
+                        buyer_is_maker,
+                        timestamp_ms,
+                    });
+                }
+            }
+        }
+
+        // Calculate rolling window metrics per symbol
+        let window_start_ms = now_ms.saturating_sub(window_ms);
+        let mut sorted_symbols: Vec&lt;String&gt; = history_guard.keys().cloned().collect();
+        sorted_symbols.sort();
+
+        let mut report = String::new();
+        report.push_str(&quot;============================================================\n&quot;);
+        report.push_str(&amp;format!(&quot;📊 AGGTRADE METRİKLERİ (ÖLÇÜM PENCERESİ: {} ms / {:.1} sn)\n&quot;, window_ms, window_secs));
+        report.push_str(&quot;============================================================\n&quot;);
+
+        if sorted_symbols.is_empty() {
+            report.push_str(&quot;Henüz işlem verisi alınmadı.\n&quot;);
+        } else {
+            for symbol in &amp;sorted_symbols {
+                if let Some(deque) = history_guard.get_mut(symbol) {
+                    // Prune entries older than window_ms
+                    while let Some(front) = deque.front() {
+                        if front.timestamp_ms &lt; window_start_ms {
+                            deque.pop_front();
+                        } else {
+                            break;
+                        }
+                    }
+
+                    let total_window_volume: f64 = deque.iter().map(|t| t.usdt_value).sum();
+                    let total_window_trades = deque.len();
+
+                    let usdt_volume_per_sec = total_window_volume / window_secs;
+                    let trades_per_sec = (total_window_trades as f64 / window_secs).round() as usize;
+
+                    let last_trade = deque.back();
+                    let last_trade_id = last_trade.map(|t| t.trade_id).unwrap_or(0);
+                    let last_price = last_trade.map(|t| t.price).unwrap_or(0.0);
+
+                    let maker_volume: f64 = deque.iter().filter(|t| t.buyer_is_maker).map(|t| t.usdt_value).sum();
+                    let taker_volume: f64 = deque.iter().filter(|t| !t.buyer_is_maker).map(|t| t.usdt_value).sum();
+
+                    let maker_trade_count = deque.iter().filter(|t| t.buyer_is_maker).count();
+                    let taker_trade_count = deque.iter().filter(|t| !t.buyer_is_maker).count();
+
+                    let (maker_volume_pct, taker_volume_pct) = if total_window_volume &gt; 0.0 {
+                        ((maker_volume / total_window_volume) * 100.0, (taker_volume / total_window_volume) * 100.0)
+                    } else {
+                        (0.0, 0.0)
+                    };
+
+                    let (maker_trades_pct, taker_trades_pct) = if total_window_trades &gt; 0 {
+                        ((maker_trade_count as f64 / total_window_trades as f64) * 100.0, (taker_trade_count as f64 / total_window_trades as f64) * 100.0)
+                    } else {
+                        (0.0, 0.0)
+                    };
+
+                    metrics_guard.insert(
+                        symbol.clone(),
+                        SymbolMetrics {
+                            usdt_volume_per_sec,
+                            trades_per_sec,
+                            last_trade_id,
+                            last_price,
+                            maker_volume_pct,
+                            taker_volume_pct,
+                            maker_trades_pct,
+                            taker_trades_pct,
+                        },
+                    );
+
+                    report.push_str(&amp;format!(
+                        &quot;[{}]  Hacim: {:.8} USDT/sn | İşlem: {}/sn (Son: {:.8}, ID: {})\n\
+                         └─► Maker/Taker Hacim: %{:.2} Maker / %{:.2} Taker\n\
+                         └─► Maker/Taker Adet : %{:.2} Maker / %{:.2} Taker\n&quot;,
+                        symbol, usdt_volume_per_sec, trades_per_sec, last_price, last_trade_id,
+                        maker_volume_pct, taker_volume_pct, maker_trades_pct, taker_trades_pct
+                    ));
+                }
+            }
+        }
+        report.push_str(&quot;============================================================\n&quot;);
+
+        report
+    }
+
+    pub fn get_formatted_report(&amp;self) -&gt; String {
+        let metrics_guard = self.symbol_metrics.lock().unwrap();
+        let window_ms = self.window_ms.load(Ordering::Relaxed);
+        let window_secs = window_ms as f64 / 1000.0;
+        let mut sorted_symbols: Vec&lt;String&gt; = metrics_guard.keys().cloned().collect();
+        sorted_symbols.sort();
+
+        let mut report = String::new();
+        report.push_str(&quot;============================================================\n&quot;);
+        report.push_str(&amp;format!(&quot;📊 AGGTRADE METRİKLERİ (ÖLÇÜM PENCERESİ: {} ms / {:.1} sn)\n&quot;, window_ms, window_secs));
+        report.push_str(&quot;============================================================\n&quot;);
+
+        if sorted_symbols.is_empty() {
+            report.push_str(&quot;Henüz işlem verisi alınmadı.\n&quot;);
+        } else {
+            for symbol in &amp;sorted_symbols {
+                if let Some(m) = metrics_guard.get(symbol) {
+                    report.push_str(&amp;format!(
+                        &quot;[{}]  Hacim: {:.8} USDT/sn | İşlem: {}/sn (Son: {:.8}, ID: {})\n\
+                         └─► Maker/Taker Hacim: %{:.2} Maker / %{:.2} Taker\n\
+                         └─► Maker/Taker Adet : %{:.2} Maker / %{:.2} Taker\n&quot;,
+                        symbol, m.usdt_volume_per_sec, m.trades_per_sec, m.last_price, m.last_trade_id,
+                        m.maker_volume_pct, m.taker_volume_pct, m.maker_trades_pct, m.taker_trades_pct
+                    ));
+                }
+            }
+        }
+        report.push_str(&quot;============================================================\n&quot;);
+        report
+    }
+}
+
+fn parse_f64(val: &amp;Value) -&gt; f64 {
+    if let Some(f) = val.as_f64() {
+        f
+    } else if let Some(s) = val.as_str() {
+        s.parse::&lt;f64&gt;().unwrap_or(0.0)
+    } else if let Some(i) = val.as_i64() {
+        i as f64
+    } else {
+        0.0
+    }
+}
+
+fn parse_i64(val: &amp;Value) -&gt; i64 {
+    if let Some(i) = val.as_i64() {
+        i
+    } else if let Some(s) = val.as_str() {
+        s.parse::&lt;i64&gt;().unwrap_or(0)
+    } else {
+        0
+    }
+}
+
+fn parse_bool(val: &amp;Value) -&gt; Option&lt;bool&gt; {
+    if let Some(b) = val.as_bool() {
+        Some(b)
+    } else if let Some(s) = val.as_str() {
+        s.parse::&lt;bool&gt;().ok()
+    } else {
+        None
+    }
+}
+
+struct PluginState {
+    is_running: Arc&lt;AtomicBool&gt;,
+    engine: Arc&lt;AggTradeStatsEngine&gt;,
+    data: Arc&lt;Mutex&lt;Vec&lt;u8&gt;&gt;&gt;,
+}
+
+#[no_mangle]
+pub unsafe extern &quot;C&quot; fn init_plugin(state_out: *mut *mut c_void) -&gt; unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize {
+    let engine = Arc::new(AggTradeStatsEngine::new());
+    let initial_report = engine.get_formatted_report();
+
+    let state = Box::new(PluginState {
+        is_running: Arc::new(AtomicBool::new(false)),
+        engine,
+        data: Arc::new(Mutex::new(initial_report.into_bytes())),
+    });
+
+    unsafe {
+        *state_out = Box::into_raw(state) as *mut c_void;
+    }
+
+    handle_endpoint
+}
+
+unsafe extern &quot;C&quot; fn handle_endpoint(
+    plugin_state: *mut c_void,
+    endpoint_id: u32,
+    payload: *const u8,
+    payload_len: usize,
+    out_buf: *mut u8,
+    out_max_len: usize,
+) -&gt; usize {
+    if plugin_state.is_null() {
+        return 0;
+    }
+    let state = &amp;*(plugin_state as *const PluginState);
+
+    match endpoint_id {
+        0 =&gt; { // Start
+            state.is_running.store(true, Ordering::Relaxed);
+            
+            // Parse plugin configuration / parameters if passed in payload
+            if payload_len &gt; 0 &amp;&amp; !payload.is_null() {
+                let slice = std::slice::from_raw_parts(payload, payload_len);
+                if let Ok(config) = serde_json::from_slice::&lt;Value&gt;(slice) {
+                    let params = config.get(&quot;plugin_params&quot;).unwrap_or(&amp;config);
+                    
+                    if let Some(ms) = params.get(&quot;window_ms&quot;).or_else(|| params.get(&quot;interval_ms&quot;)).and_then(|v| v.as_u64()) {
+                        state.engine.set_window_ms(ms);
+                    } else if let Some(secs) = params.get(&quot;window_secs&quot;).or_else(|| params.get(&quot;interval_secs&quot;)).and_then(|v| v.as_u64()) {
+                        state.engine.set_window_ms(secs * 1000);
+                    }
+                }
+            }
+            0
+        }
+        1 =&gt; { // Stop
+            state.is_running.store(false, Ordering::Relaxed);
+            0
+        }
+        2 =&gt; { // IsWorking
+            let running = state.is_running.load(Ordering::Relaxed);
+            if out_max_len &gt;= 1 &amp;&amp; !out_buf.is_null() {
+                *out_buf = if running { 1 } else { 0 };
+                1
+            } else {
+                if running { 1 } else { 0 }
+            }
+        }
+        3 =&gt; { // DataValid
+            1
+        }
+        4 =&gt; { // DataMonitor (TUI Monitoring)
+            let guard = state.data.lock().unwrap();
+            let len = guard.len().min(out_max_len);
+            if len &gt; 0 &amp;&amp; !out_buf.is_null() {
+                std::ptr::copy_nonoverlapping(guard.as_ptr(), out_buf, len);
+            }
+            len
+        }
+        6 =&gt; { // Inbox (Data routed from FlowEngine)
+            if !state.is_running.load(Ordering::Relaxed) {
+                return 0;
+            }
+
+            if payload_len &gt; 32 &amp;&amp; !payload.is_null() {
+                let slice = std::slice::from_raw_parts(payload, payload_len);
+                let header = &amp;slice[0..32];
+                let stream_id = std::str::from_utf8(header).unwrap_or(&quot;&quot;).trim_matches(char::from(0)).trim().to_string();
+
+                if stream_id == &quot;stream_aggtrades&quot; || stream_id.contains(&quot;aggtrade&quot;) || stream_id.contains(&quot;trade&quot;) {
+                    if let Ok(json_data) = serde_json::from_slice::&lt;Value&gt;(&amp;slice[32..]) {
+                        let now_ms = SystemTime::now()
+                            .duration_since(UNIX_EPOCH)
+                            .unwrap_or_default()
+                            .as_millis() as u64;
+
+                        let report = state.engine.process_aggtrade_payload(&amp;json_data, now_ms);
+                        
+                        // Update DataMonitor memory buffer safely (without stdout println!)
+                        let mut data_guard = state.data.lock().unwrap();
+                        *data_guard = report.into_bytes();
+                    }
+                }
+            }
+            0
+        }
+        _ =&gt; 0,
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_aggtrade_configurable_window_ms() {
+        let engine = AggTradeStatsEngine::new();
+        engine.set_window_ms(5000); // 5-second window
+        assert_eq!(engine.window_ms.load(Ordering::Relaxed), 5000);
+
+        let now_ms = 1700000000000u64;
+        let payload = serde_json::json!({
+            &quot;BTCUSDT&quot;: {
+                &quot;trade_id&quot;: 1001,
+                &quot;price&quot;: &quot;50000.0&quot;,
+                &quot;quantity&quot;: &quot;1.0&quot;,
+                &quot;buyer_is_maker&quot;: true,
+                &quot;local_recv_time_ms&quot;: now_ms
+            }
+        });
+
+        let report = engine.process_aggtrade_payload(&amp;payload, now_ms);
+        assert!(report.contains(&quot;ÖLÇÜM PENCERESİ: 5000 ms / 5.0 sn&quot;));
+        // 50000 USDT total in 5s window =&gt; 10000 USDT/sec
+        assert!(report.contains(&quot;10000.00000000 USDT/sn&quot;));
+    }
+}
+</code></pre>
+        </details>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            flowchart: { curve: 'basis' }
+        });
+    </script>
+</body>
+</html>

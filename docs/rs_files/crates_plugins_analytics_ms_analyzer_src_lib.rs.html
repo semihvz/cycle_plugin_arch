@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>lib.rs - Rust Analiz Dokümanı</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --border: #334155;
+            --code-bg: #090d16;
+            --verbal-bg: #131f37;
+            --analogy-bg: #1e1b4b;
+            --analogy-border: #818cf8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .back-link {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .back-link:hover { text-decoration: underline; }
+        h1 { font-size: 2rem; color: var(--accent); margin-bottom: 0.5rem; }
+        .file-path { font-family: 'Fira Code', monospace; color: var(--text-muted); font-size: 0.95rem; }
+        
+        .structs-container { margin: 1.5rem 0; }
+        .badge {
+            display: inline-block;
+            background: #0284c7;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-family: 'Fira Code', monospace;
+        }
+        .badge-struct { background: #7c3aed; }
+        
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .card h3 { color: var(--accent); margin-bottom: 0.5rem; font-size: 1.3rem; }
+        .card h4 { margin: 1.2rem 0 0.5rem 0; color: var(--text-muted); font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        .easy-analogy {
+            background: var(--analogy-bg);
+            border-left: 4px solid var(--analogy-border);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1rem;
+            color: #c7d2fe;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .verbal-explanation {
+            background: var(--verbal-bg);
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1.2rem;
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            margin-bottom: 1rem;
+        }
+        
+        .mermaid {
+            background: var(--code-bg);
+            padding: 1.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+        }
+        
+        details {
+            margin-top: 2rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Ana İndekse Dön</a>
+        <header>
+            <h1>lib.rs</h1>
+            <p class="file-path">crates/plugins/analytics/ms_analyzer/src/lib.rs</p>
+            <div class="structs-container">
+                <strong>Tanımlı Türler / Yapılar:</strong> <span class="badge badge-struct">32</span> <span class="badge badge-struct">PluginOps</span> <span class="badge badge-struct">PluginState</span> 
+            </div>
+        </header>
+
+        <section>
+            <h2>Fonksiyon Analizleri & Basit Anlatımlar</h2>
+            
+        <div class="card">
+            <h3><span class="badge">fn</span> parse_decimal</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>val: &amp;serde_json::Value</code> | <strong>Dönüş Tipi:</strong> <code>rust_decimal::Decimal</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>val: &amp;serde_json::Value</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>rust_decimal::Decimal</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. İşlemi tamamlayarak <code>rust_decimal::Decimal</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON parse_decimal(val: &amp;serde_json::Value) -&gt; rust_decimal::Decimal:
+    EĞER let Some(s) = val.as_str() İSE:
+        rust_decimal::Decimal::from_str(s).unwrap_or_default()
+        } else if let Some(f) = val.as_f64() {
+        rust_decimal::Decimal::from_f64_retain(f).unwrap_or_default()
+        } else if let Some(i) = val.as_i64() {
+        rust_decimal::Decimal::from(i)
+        } else if let Some(u) = val.as_u64() {
+        rust_decimal::Decimal::from(u)
+        } else {
+        rust_decimal::Decimal::ZERO</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: parse_decimal"])
+    Start --> Cond1{"let Some(s) = val.as_str()?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"let Some(f) = val.as_f64()?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"let Some(i) = val.as_i64()?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> init_plugin</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>state_out: *mut *mut c_void</code> | <strong>Dönüş Tipi:</strong> <code>unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>state_out: *mut *mut c_void</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. İşlemi tamamlayarak <code>unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON init_plugin(state_out: *mut *mut c_void) -&gt; unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize:
+    let state = Box::new(PluginState {
+    is_running: Arc::new(AtomicBool::new(false)),
+    data: Arc::new(Mutex::new(HashMap::new())),
+    outbox: Arc::new(Mutex::new(Vec::new())),
+    stream_configs: Arc::new(Mutex::new(HashMap::new())),
+    output_streams: Arc::new(Mutex::new(Vec::new())),
+    });
+    unsafe {
+    *state_out = Box::into_raw(state) as *mut c_void;
+    handle_endpoint</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: init_plugin"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> handle_endpoint</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>plugin_state: *mut c_void,
+    endpoint_id: u32,
+    payload: *const u8,
+    payload_len: usize,
+    out_buf: *mut u8,
+    out_max_len: usize,</code> | <strong>Dönüş Tipi:</strong> <code>usize</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>plugin_state: *mut c_void,
+    endpoint_id: u32,
+    payload: *const u8,
+    payload_len: usize,
+    out_buf: *mut u8,
+    out_max_len: usize,</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>usize</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Listeyi veya veri kümesini sırayla döngüye alarak tarar.<br>4. Farklı durum senaryolarına göre akışı uygun kola yönlendirir.<br>5. İşlemi tamamlayarak <code>usize</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON handle_endpoint(plugin_state: *mut c_void,
+    endpoint_id: u32,
+    payload: *const u8,
+    payload_len: usize,
+    out_buf: *mut u8,
+    out_max_len: usize,) -&gt; usize:
+    let state = &amp;*(plugin_state as *const PluginState);
+    DURUM KONTROLÜ (endpoint_id):
+        0 =&gt; { // Start
+        EĞER state.is_running.load(Ordering::Relaxed) İSE:
+            DÖNDÜR 0
+        state.is_running.store(true, Ordering::Relaxed);
+        EĞER payload_len &gt; 0 İSE:
+            let slice = std::slice::from_raw_parts(payload, payload_len);
+            EĞER let Ok(config) = serde_json::from_slice::&lt;serde_json::Value&gt;(slice) İSE:
+                EĞER let Some(outputs) = config.get(&quot;plugin_outputs&quot;).and_then(|o| o.as_array()) İSE:
+                    let mut outs = state.output_streams.lock().unwrap();
+                    outs.clear();
+                    HER out in outputs İÇİN DÖNGÜ:
+                        EĞER let Some(s) = out.as_str() İSE:
+                            outs.push(s.to_string());
+                EĞER let Some(inputs) = config.get(&quot;plugin_inputs&quot;).and_then(|i| i.as_array()) İSE:
+                    let mut q = state.outbox.lock().unwrap();
+                    HER input in inputs İÇİN DÖNGÜ:
+                        EĞER let (Some(source), Some(params), Some(stream_id)) = ( İSE:
+                            input.get(&quot;source&quot;).and_then(|s| s.as_str()),
+                            input.get(&quot;params&quot;).and_then(|p| p.as_object()),
+                            input.get(&quot;stream_id&quot;).and_then(|s| s.as_str())
+                            ) {
+                            let mut req = serde_json::Map::new();
+                            req.insert(&quot;to&quot;.to_string(), serde_json::json!(source));
+                            req.insert(&quot;stream_id&quot;.to_string(), serde_json::json!(stream_id));
+                            HER (k, v) in params İÇİN DÖNGÜ:
+                                req.insert(k.clone(), v.clone());
+                            EĞER let (Some(sym), Some(inv)) = ( İSE:
+                                req.get(&quot;symbol&quot;).and_then(|v| v.as_str()),
+                                req.get(&quot;interval&quot;).and_then(|v| v.as_str())
+                                ) {
+                                let mut configs = state.stream_configs.lock().unwrap();
+                                configs.insert(stream_id.to_string(), (sym.to_string(), inv.to_string()));
+                            q.push(serde_json::Value::Object(req));
+        0
+    1 =&gt; { // Stop
+    state.is_running.store(false, Ordering::Relaxed);
+    0
+    2 =&gt; { // IsWorking
+    EĞER state.is_running.load(Ordering::Relaxed) İSE:
+    3 =&gt; { // DataValid
+    1
+    4 | 5 =&gt; { // DataMonitor &amp; RawData
+    let guard = state.data.lock().unwrap();
+    EĞER let Ok(bytes) = serde_json::to_vec(&amp;*guard) İSE:
+        let len = bytes.len().min(out_max_len);
+        EĞER len &gt; 0 İSE:
+            std::ptr::copy_nonoverlapping(bytes.as_ptr(), out_buf, len);
+        len
+        } else {
+        0
+    6 =&gt; { // Inbox
+    EĞER payload_len &gt; 32 İSE:
+        let slice = std::slice::from_raw_parts(payload, payload_len);
+        // FlowEngine prepends a 32-byte header with the local input name (e.g., &quot;ohlcv&quot;)
+        let header = &amp;slice[0..32];
+        let data_slice = &amp;slice[32..];
+        let stream_id = std::str::from_utf8(header)
+        .unwrap_or(&quot;&quot;)
+        .trim_matches(char::from(0))
+        .to_string();
+        let (symbol, interval) = {
+        let configs = state.stream_configs.lock().unwrap();
+        configs.get(&amp;stream_id)
+        .cloned()
+        .unwrap_or_else(|| (&quot;Bilinmiyor&quot;.to_string(), &quot;Bilinmiyor&quot;.to_string()))
+        };
+        // Read the JSON array of klines
+        EĞER let Ok(data_array) = serde_json::from_slice::&lt;serde_json::Value&gt;(data_slice) İSE:
+            EĞER let Some(arr) = data_array.as_array() İSE:
+                let mut klines = Vec::new();
+                HER row in arr İÇİN DÖNGÜ:
+                    EĞER let Some(row_arr) = row.as_array() İSE:
+                        EĞER row_arr.len() &gt;= 11 İSE:
+                            let open_time = row_arr[0].as_u64().unwrap_or(0);
+                            let open = parse_decimal(&amp;row_arr[1]);
+                            let high = parse_decimal(&amp;row_arr[2]);
+                            let low = parse_decimal(&amp;row_arr[3]);
+                            let close = parse_decimal(&amp;row_arr[4]);
+                            let volume = parse_decimal(&amp;row_arr[5]);
+                            let close_time = row_arr[6].as_u64().unwrap_or(0);
+                            let taker_buy_base = parse_decimal(&amp;row_arr[9]);
+                            klines.push(Kline {
+                            open_time, open, high, low, close, volume, close_time,
+                            taker_buy_base_asset_volume: taker_buy_base,
+                            });
+                EĞER !klines.is_empty() İSE:
+                    let len = klines.len();
+                    let core_limit = 100.min(len);
+                    let amp_limit = 400.min(len);
+                    let acute_limit = 96.min(len);
+                    let core_klines = &amp;klines[len.saturating_sub(core_limit)..];
+                    let amp_klines = &amp;klines[len.saturating_sub(amp_limit)..];
+                    let acute_klines = &amp;klines[len.saturating_sub(acute_limit)..];
+                    let report = narrative::generate_report(core_klines, amp_klines, acute_klines);
+                    let formatted_table = report.format_table(&amp;symbol, &amp;interval, &amp;stream_id, len);
+                    let mut report_json = serde_json::to_value(&amp;report).unwrap_or_default();
+                    EĞER let Some(obj) = report_json.as_object_mut() İSE:
+                        obj.insert(&quot;symbol&quot;.to_string(), serde_json::json!(symbol));
+                        obj.insert(&quot;interval&quot;.to_string(), serde_json::json!(interval));
+                        obj.insert(&quot;analyzed_bars&quot;.to_string(), serde_json::json!(len));
+                        obj.insert(&quot;stream_id&quot;.to_string(), serde_json::json!(stream_id));
+                        obj.insert(&quot;formatted_table&quot;.to_string(), serde_json::json!(formatted_table));
+                    // Write to RAM/screen buffer map
+                    let mut guard = state.data.lock().unwrap();
+                    guard.insert(stream_id.clone(), report_json.clone());
+                    let outs = state.output_streams.lock().unwrap();
+                    HER out_stream in outs.iter() İÇİN DÖNGÜ:
+                        EĞER (stream_id.contains(&quot;btc&quot;) &amp;&amp; out_stream.contains(&quot;btc&quot;)) İSE:
+                            || (stream_id.contains(&quot;eth&quot;) &amp;&amp; out_stream.contains(&quot;eth&quot;))
+                            || (stream_id.contains(&quot;tac&quot;) &amp;&amp; out_stream.contains(&quot;tac&quot;))
+                            || (symbol.to_lowercase().contains(&quot;btc&quot;) &amp;&amp; out_stream.contains(&quot;btc&quot;))
+                            || (symbol.to_lowercase().contains(&quot;eth&quot;) &amp;&amp; out_stream.contains(&quot;eth&quot;))
+                            || (symbol.to_lowercase().contains(&quot;tac&quot;) &amp;&amp; out_stream.contains(&quot;tac&quot;)) {
+                            guard.insert(out_stream.clone(), report_json.clone());
+                    EĞER outs.len() == 1 İSE:
+                        guard.insert(outs[0].clone(), report_json.clone());
+    0
+    7 =&gt; { // Outbox
+    let mut q = state.outbox.lock().unwrap();
+    EĞER !q.is_empty() İSE:
+        let json_array = serde_json::Value::Array(q.clone());
+        q.clear();
+        let bytes = serde_json::to_vec(&amp;json_array).unwrap_or_default();
+        let len = bytes.len().min(out_max_len);
+        std::ptr::copy_nonoverlapping(bytes.as_ptr(), out_buf, len);
+        len
+        } else {
+        0
+    _ =&gt; 0,</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: handle_endpoint"])
+    Start --> Cond1{"state.is_running.load(Ordering::Relaxed)?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"payload_len &gt; 0?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"let Ok(config) = serde_json::from_slice::&lt;serde_json::Value&gt;(slice)?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> Loop4["Döngü: out in outputs"]
+    Loop4 --> Loop5["Döngü: input in inputs"]
+    Loop5 --> EndNode(["Döndür: 0"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> test_ms_analyzer_lifecycle_and_endpoints</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>Yok</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan hiçbir girdi almadan verisini alır, kendi kurallarına göre işler ve sonucunda gerekli işlemi tamamlayan adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Listeyi veya veri kümesini sırayla döngüye alarak tarar.<br>4. İşlemi tamamlayarak <code>()</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON test_ms_analyzer_lifecycle_and_endpoints() -&gt; ():
+    let mut state_ptr: *mut c_void = std::ptr::null_mut();
+    unsafe {
+    let endpoint_fn = init_plugin(&amp;mut state_ptr);
+    // 1. Start with plugin config
+    let start_config = serde_json::json!({
+    &quot;plugin_name&quot;: &quot;plugin_ms_analyzer&quot;,
+    &quot;plugin_outputs&quot;: [&quot;ms_signals_btc&quot;],
+    &quot;plugin_inputs&quot;: [
+    {
+    &quot;source&quot;: &quot;plugin_ohlcv_fetcher&quot;,
+    &quot;stream_id&quot;: &quot;btc_15m&quot;,
+    &quot;params&quot;: {
+    &quot;symbol&quot;: &quot;BTCUSDT&quot;,
+    &quot;interval&quot;: &quot;15m&quot;
+    ]
+    });
+    let config_bytes = serde_json::to_vec(&amp;start_config).unwrap();
+    let mut dummy_buf = [0u8; 16];
+    endpoint_fn(state_ptr, 0, config_bytes.as_ptr(), config_bytes.len(), dummy_buf.as_mut_ptr(), dummy_buf.len());
+    // 2. Check working status
+    let is_working = endpoint_fn(state_ptr, 2, std::ptr::null(), 0, dummy_buf.as_mut_ptr(), dummy_buf.len());
+    assert_eq!(is_working, 1);
+    // 3. Send mock klines via Inbox (Endpoint 6)
+    let mut klines_json = Vec::new();
+    HER i in 0..15 İÇİN DÖNGÜ:
+        let open_time = 1600000000000u64 + (i as u64) * 900000u64;
+        let close_time = open_time + 899999;
+        let open_val = 60000.0 + (i as f64) * 10.0;
+        let high_val = open_val + 50.0;
+        let low_val = open_val - 20.0;
+        let close_val = open_val + 30.0;
+        let vol_val = 100.5;
+        let taker_vol = 50.25;
+        // Test mixing numbers and string representations
+        let row = if i % 2 == 0 {
+        serde_json::json!([open_time, open_val, high_val, low_val, close_val, vol_val, close_time, &quot;0&quot;, 0, taker_vol, &quot;0&quot;, &quot;0&quot;])
+        } else {
+        serde_json::json!([open_time, open_val.to_string(), high_val.to_string(), low_val.to_string(), close_val.to_string(), vol_val.to_string(), close_time, &quot;0&quot;, 0, taker_vol.to_string(), &quot;0&quot;, &quot;0&quot;])
+        };
+        klines_json.push(row);
+    let data_bytes = serde_json::to_vec(&amp;serde_json::Value::Array(klines_json)).unwrap();
+    // Construct 32-byte header + data_bytes
+    let mut combined = Vec::with_capacity(32 + data_bytes.len());
+    let mut header = [0u8; 32];
+    let stream_id_bytes = b&quot;btc_15m&quot;;
+    header[..stream_id_bytes.len()].copy_from_slice(stream_id_bytes);
+    combined.extend_from_slice(&amp;header);
+    combined.extend_from_slice(&amp;data_bytes);
+    endpoint_fn(state_ptr, 6, combined.as_ptr(), combined.len(), dummy_buf.as_mut_ptr(), dummy_buf.len());
+    // 4. Test RawData / DataMonitor (Endpoint 5 and 4)
+    let mut raw_buf = vec![0u8; 65536];
+    let written_5 = endpoint_fn(state_ptr, 5, std::ptr::null(), 0, raw_buf.as_mut_ptr(), raw_buf.len());
+    assert!(written_5 &gt; 0, &quot;Endpoint 5 (RawData) should return &gt; 0 bytes&quot;);
+    let written_4 = endpoint_fn(state_ptr, 4, std::ptr::null(), 0, raw_buf.as_mut_ptr(), raw_buf.len());
+    assert!(written_4 &gt; 0, &quot;Endpoint 4 (DataMonitor) should return &gt; 0 bytes&quot;);
+    let parsed: serde_json::Value = serde_json::from_slice(&amp;raw_buf[..written_5]).unwrap();
+    assert!(parsed.get(&quot;btc_15m&quot;).is_some() || parsed.get(&quot;ms_signals_btc&quot;).is_some());</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: test_ms_analyzer_lifecycle_and_endpoints"])
+    Start --> Cond1{"i % 2 == 0?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Loop2["Döngü: i in 0..15"]
+    Loop2 --> EndNode(["Döndür: &gt; 0 bytes')"])
+            </div>
+        </div>
+        
+        </section>
+
+        <details>
+            <summary>Orijinal Rust Kaynak Kodunu Göster</summary>
+            <pre><code>use std::ffi::c_void;
+use std::sync::{Arc, Mutex};
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::str::FromStr;
+
+mod session;
+mod pivot;
+mod trend;
+mod levels;
+mod liquidity;
+mod imbalance;
+mod narrative;
+
+use ohlcv_engine::Kline;
+
+#[repr(C)]
+pub struct PluginOps {
+    pub name: *const std::ffi::c_char,
+    pub start: unsafe extern &quot;C&quot; fn(*mut c_void),
+    pub stop: unsafe extern &quot;C&quot; fn(*mut c_void),
+    pub update: unsafe extern &quot;C&quot; fn(*mut c_void, *mut u8, usize) -&gt; usize,
+    pub call_endpoint: unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize,
+}
+
+use std::collections::HashMap;
+
+fn parse_decimal(val: &amp;serde_json::Value) -&gt; rust_decimal::Decimal {
+    if let Some(s) = val.as_str() {
+        rust_decimal::Decimal::from_str(s).unwrap_or_default()
+    } else if let Some(f) = val.as_f64() {
+        rust_decimal::Decimal::from_f64_retain(f).unwrap_or_default()
+    } else if let Some(i) = val.as_i64() {
+        rust_decimal::Decimal::from(i)
+    } else if let Some(u) = val.as_u64() {
+        rust_decimal::Decimal::from(u)
+    } else {
+        rust_decimal::Decimal::ZERO
+    }
+}
+
+struct PluginState {
+    is_running: Arc&lt;AtomicBool&gt;,
+    data: Arc&lt;Mutex&lt;HashMap&lt;String, serde_json::Value&gt;&gt;&gt;,
+    outbox: Arc&lt;Mutex&lt;Vec&lt;serde_json::Value&gt;&gt;&gt;,
+    stream_configs: Arc&lt;Mutex&lt;HashMap&lt;String, (String, String)&gt;&gt;&gt;,
+    output_streams: Arc&lt;Mutex&lt;Vec&lt;String&gt;&gt;&gt;,
+}
+
+#[no_mangle]
+pub unsafe extern &quot;C&quot; fn init_plugin(state_out: *mut *mut c_void) -&gt; unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize {
+    let state = Box::new(PluginState {
+        is_running: Arc::new(AtomicBool::new(false)),
+        data: Arc::new(Mutex::new(HashMap::new())),
+        outbox: Arc::new(Mutex::new(Vec::new())),
+        stream_configs: Arc::new(Mutex::new(HashMap::new())),
+        output_streams: Arc::new(Mutex::new(Vec::new())),
+    });
+
+    unsafe {
+        *state_out = Box::into_raw(state) as *mut c_void;
+    }
+
+    handle_endpoint
+}
+
+unsafe extern &quot;C&quot; fn handle_endpoint(
+    plugin_state: *mut c_void,
+    endpoint_id: u32,
+    payload: *const u8,
+    payload_len: usize,
+    out_buf: *mut u8,
+    out_max_len: usize,
+) -&gt; usize {
+    let state = &amp;*(plugin_state as *const PluginState);
+
+    match endpoint_id {
+        0 =&gt; { // Start
+            if state.is_running.load(Ordering::Relaxed) {
+                return 0;
+            }
+            state.is_running.store(true, Ordering::Relaxed);
+            
+            if payload_len &gt; 0 {
+                let slice = std::slice::from_raw_parts(payload, payload_len);
+                if let Ok(config) = serde_json::from_slice::&lt;serde_json::Value&gt;(slice) {
+                    if let Some(outputs) = config.get(&quot;plugin_outputs&quot;).and_then(|o| o.as_array()) {
+                        let mut outs = state.output_streams.lock().unwrap();
+                        outs.clear();
+                        for out in outputs {
+                            if let Some(s) = out.as_str() {
+                                outs.push(s.to_string());
+                            }
+                        }
+                    }
+                    if let Some(inputs) = config.get(&quot;plugin_inputs&quot;).and_then(|i| i.as_array()) {
+                        let mut q = state.outbox.lock().unwrap();
+                        for input in inputs {
+                            if let (Some(source), Some(params), Some(stream_id)) = (
+                                input.get(&quot;source&quot;).and_then(|s| s.as_str()),
+                                input.get(&quot;params&quot;).and_then(|p| p.as_object()),
+                                input.get(&quot;stream_id&quot;).and_then(|s| s.as_str())
+                            ) {
+                                let mut req = serde_json::Map::new();
+                                req.insert(&quot;to&quot;.to_string(), serde_json::json!(source));
+                                req.insert(&quot;stream_id&quot;.to_string(), serde_json::json!(stream_id));
+                                for (k, v) in params {
+                                    req.insert(k.clone(), v.clone());
+                                }
+                                
+                                if let (Some(sym), Some(inv)) = (
+                                    req.get(&quot;symbol&quot;).and_then(|v| v.as_str()),
+                                    req.get(&quot;interval&quot;).and_then(|v| v.as_str())
+                                ) {
+                                    let mut configs = state.stream_configs.lock().unwrap();
+                                    configs.insert(stream_id.to_string(), (sym.to_string(), inv.to_string()));
+                                }
+                                
+                                q.push(serde_json::Value::Object(req));
+                            }
+                        }
+                    }
+                }
+            }
+            
+            0
+        }
+        1 =&gt; { // Stop
+            state.is_running.store(false, Ordering::Relaxed);
+            0
+        }
+        2 =&gt; { // IsWorking
+            if state.is_running.load(Ordering::Relaxed) { 1 } else { 0 }
+        }
+        3 =&gt; { // DataValid
+            1
+        }
+        4 | 5 =&gt; { // DataMonitor &amp; RawData
+            let guard = state.data.lock().unwrap();
+            if let Ok(bytes) = serde_json::to_vec(&amp;*guard) {
+                let len = bytes.len().min(out_max_len);
+                if len &gt; 0 {
+                    std::ptr::copy_nonoverlapping(bytes.as_ptr(), out_buf, len);
+                }
+                len
+            } else {
+                0
+            }
+        }
+        6 =&gt; { // Inbox
+            if payload_len &gt; 32 {
+                let slice = std::slice::from_raw_parts(payload, payload_len);
+                // FlowEngine prepends a 32-byte header with the local input name (e.g., &quot;ohlcv&quot;)
+                let header = &amp;slice[0..32];
+                let data_slice = &amp;slice[32..];
+                
+                let stream_id = std::str::from_utf8(header)
+                    .unwrap_or(&quot;&quot;)
+                    .trim_matches(char::from(0))
+                    .to_string();
+                    
+                let (symbol, interval) = {
+                    let configs = state.stream_configs.lock().unwrap();
+                    configs.get(&amp;stream_id)
+                        .cloned()
+                        .unwrap_or_else(|| (&quot;Bilinmiyor&quot;.to_string(), &quot;Bilinmiyor&quot;.to_string()))
+                };
+                
+                // Read the JSON array of klines
+                if let Ok(data_array) = serde_json::from_slice::&lt;serde_json::Value&gt;(data_slice) {
+                    if let Some(arr) = data_array.as_array() {
+                        let mut klines = Vec::new();
+                        for row in arr {
+                            if let Some(row_arr) = row.as_array() {
+                                if row_arr.len() &gt;= 11 {
+                                    let open_time = row_arr[0].as_u64().unwrap_or(0);
+                                    let open = parse_decimal(&amp;row_arr[1]);
+                                    let high = parse_decimal(&amp;row_arr[2]);
+                                    let low = parse_decimal(&amp;row_arr[3]);
+                                    let close = parse_decimal(&amp;row_arr[4]);
+                                    let volume = parse_decimal(&amp;row_arr[5]);
+                                    let close_time = row_arr[6].as_u64().unwrap_or(0);
+                                    let taker_buy_base = parse_decimal(&amp;row_arr[9]);
+                                    
+                                    klines.push(Kline {
+                                        open_time, open, high, low, close, volume, close_time,
+                                        taker_buy_base_asset_volume: taker_buy_base,
+                                    });
+                                }
+                            }
+                        }
+                        
+                        if !klines.is_empty() {
+                            let len = klines.len();
+                            let core_limit = 100.min(len);
+                            let amp_limit = 400.min(len);
+                            let acute_limit = 96.min(len);
+                            
+                            let core_klines = &amp;klines[len.saturating_sub(core_limit)..];
+                            let amp_klines = &amp;klines[len.saturating_sub(amp_limit)..];
+                            let acute_klines = &amp;klines[len.saturating_sub(acute_limit)..];
+                            
+                            let report = narrative::generate_report(core_klines, amp_klines, acute_klines);
+                            let formatted_table = report.format_table(&amp;symbol, &amp;interval, &amp;stream_id, len);
+                            
+                            let mut report_json = serde_json::to_value(&amp;report).unwrap_or_default();
+                            if let Some(obj) = report_json.as_object_mut() {
+                                obj.insert(&quot;symbol&quot;.to_string(), serde_json::json!(symbol));
+                                obj.insert(&quot;interval&quot;.to_string(), serde_json::json!(interval));
+                                obj.insert(&quot;analyzed_bars&quot;.to_string(), serde_json::json!(len));
+                                obj.insert(&quot;stream_id&quot;.to_string(), serde_json::json!(stream_id));
+                                obj.insert(&quot;formatted_table&quot;.to_string(), serde_json::json!(formatted_table));
+                            }
+                            
+                            // Write to RAM/screen buffer map
+                            let mut guard = state.data.lock().unwrap();
+                            guard.insert(stream_id.clone(), report_json.clone());
+                            
+                            let outs = state.output_streams.lock().unwrap();
+                            for out_stream in outs.iter() {
+                                if (stream_id.contains(&quot;btc&quot;) &amp;&amp; out_stream.contains(&quot;btc&quot;))
+                                    || (stream_id.contains(&quot;eth&quot;) &amp;&amp; out_stream.contains(&quot;eth&quot;))
+                                    || (stream_id.contains(&quot;tac&quot;) &amp;&amp; out_stream.contains(&quot;tac&quot;))
+                                    || (symbol.to_lowercase().contains(&quot;btc&quot;) &amp;&amp; out_stream.contains(&quot;btc&quot;))
+                                    || (symbol.to_lowercase().contains(&quot;eth&quot;) &amp;&amp; out_stream.contains(&quot;eth&quot;))
+                                    || (symbol.to_lowercase().contains(&quot;tac&quot;) &amp;&amp; out_stream.contains(&quot;tac&quot;)) {
+                                    guard.insert(out_stream.clone(), report_json.clone());
+                                }
+                            }
+                            if outs.len() == 1 {
+                                guard.insert(outs[0].clone(), report_json.clone());
+                            }
+                        }
+                    }
+                }
+            }
+            0
+        }
+        7 =&gt; { // Outbox
+            let mut q = state.outbox.lock().unwrap();
+            if !q.is_empty() {
+                let json_array = serde_json::Value::Array(q.clone());
+                q.clear();
+                let bytes = serde_json::to_vec(&amp;json_array).unwrap_or_default();
+                let len = bytes.len().min(out_max_len);
+                std::ptr::copy_nonoverlapping(bytes.as_ptr(), out_buf, len);
+                len
+            } else {
+                0
+            }
+        }
+        _ =&gt; 0,
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_ms_analyzer_lifecycle_and_endpoints() {
+        let mut state_ptr: *mut c_void = std::ptr::null_mut();
+        unsafe {
+            let endpoint_fn = init_plugin(&amp;mut state_ptr);
+
+            // 1. Start with plugin config
+            let start_config = serde_json::json!({
+                &quot;plugin_name&quot;: &quot;plugin_ms_analyzer&quot;,
+                &quot;plugin_outputs&quot;: [&quot;ms_signals_btc&quot;],
+                &quot;plugin_inputs&quot;: [
+                    {
+                        &quot;source&quot;: &quot;plugin_ohlcv_fetcher&quot;,
+                        &quot;stream_id&quot;: &quot;btc_15m&quot;,
+                        &quot;params&quot;: {
+                            &quot;symbol&quot;: &quot;BTCUSDT&quot;,
+                            &quot;interval&quot;: &quot;15m&quot;
+                        }
+                    }
+                ]
+            });
+            let config_bytes = serde_json::to_vec(&amp;start_config).unwrap();
+            let mut dummy_buf = [0u8; 16];
+            endpoint_fn(state_ptr, 0, config_bytes.as_ptr(), config_bytes.len(), dummy_buf.as_mut_ptr(), dummy_buf.len());
+
+            // 2. Check working status
+            let is_working = endpoint_fn(state_ptr, 2, std::ptr::null(), 0, dummy_buf.as_mut_ptr(), dummy_buf.len());
+            assert_eq!(is_working, 1);
+
+            // 3. Send mock klines via Inbox (Endpoint 6)
+            let mut klines_json = Vec::new();
+            for i in 0..15 {
+                let open_time = 1600000000000u64 + (i as u64) * 900000u64;
+                let close_time = open_time + 899999;
+                let open_val = 60000.0 + (i as f64) * 10.0;
+                let high_val = open_val + 50.0;
+                let low_val = open_val - 20.0;
+                let close_val = open_val + 30.0;
+                let vol_val = 100.5;
+                let taker_vol = 50.25;
+
+                // Test mixing numbers and string representations
+                let row = if i % 2 == 0 {
+                    serde_json::json!([open_time, open_val, high_val, low_val, close_val, vol_val, close_time, &quot;0&quot;, 0, taker_vol, &quot;0&quot;, &quot;0&quot;])
+                } else {
+                    serde_json::json!([open_time, open_val.to_string(), high_val.to_string(), low_val.to_string(), close_val.to_string(), vol_val.to_string(), close_time, &quot;0&quot;, 0, taker_vol.to_string(), &quot;0&quot;, &quot;0&quot;])
+                };
+                klines_json.push(row);
+            }
+            let data_bytes = serde_json::to_vec(&amp;serde_json::Value::Array(klines_json)).unwrap();
+
+            // Construct 32-byte header + data_bytes
+            let mut combined = Vec::with_capacity(32 + data_bytes.len());
+            let mut header = [0u8; 32];
+            let stream_id_bytes = b&quot;btc_15m&quot;;
+            header[..stream_id_bytes.len()].copy_from_slice(stream_id_bytes);
+            combined.extend_from_slice(&amp;header);
+            combined.extend_from_slice(&amp;data_bytes);
+
+            endpoint_fn(state_ptr, 6, combined.as_ptr(), combined.len(), dummy_buf.as_mut_ptr(), dummy_buf.len());
+
+            // 4. Test RawData / DataMonitor (Endpoint 5 and 4)
+            let mut raw_buf = vec![0u8; 65536];
+            let written_5 = endpoint_fn(state_ptr, 5, std::ptr::null(), 0, raw_buf.as_mut_ptr(), raw_buf.len());
+            assert!(written_5 &gt; 0, &quot;Endpoint 5 (RawData) should return &gt; 0 bytes&quot;);
+
+            let written_4 = endpoint_fn(state_ptr, 4, std::ptr::null(), 0, raw_buf.as_mut_ptr(), raw_buf.len());
+            assert!(written_4 &gt; 0, &quot;Endpoint 4 (DataMonitor) should return &gt; 0 bytes&quot;);
+
+            let parsed: serde_json::Value = serde_json::from_slice(&amp;raw_buf[..written_5]).unwrap();
+            assert!(parsed.get(&quot;btc_15m&quot;).is_some() || parsed.get(&quot;ms_signals_btc&quot;).is_some());
+        }
+    }
+}
+
+
+</code></pre>
+        </details>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            flowchart: { curve: 'basis' }
+        });
+    </script>
+</body>
+</html>

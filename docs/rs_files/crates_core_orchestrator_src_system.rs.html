@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>system.rs - Rust Analiz Dokümanı</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --border: #334155;
+            --code-bg: #090d16;
+            --verbal-bg: #131f37;
+            --analogy-bg: #1e1b4b;
+            --analogy-border: #818cf8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .back-link {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .back-link:hover { text-decoration: underline; }
+        h1 { font-size: 2rem; color: var(--accent); margin-bottom: 0.5rem; }
+        .file-path { font-family: 'Fira Code', monospace; color: var(--text-muted); font-size: 0.95rem; }
+        
+        .structs-container { margin: 1.5rem 0; }
+        .badge {
+            display: inline-block;
+            background: #0284c7;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-family: 'Fira Code', monospace;
+        }
+        .badge-struct { background: #7c3aed; }
+        
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .card h3 { color: var(--accent); margin-bottom: 0.5rem; font-size: 1.3rem; }
+        .card h4 { margin: 1.2rem 0 0.5rem 0; color: var(--text-muted); font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        .easy-analogy {
+            background: var(--analogy-bg);
+            border-left: 4px solid var(--analogy-border);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1rem;
+            color: #c7d2fe;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .verbal-explanation {
+            background: var(--verbal-bg);
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1.2rem;
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            margin-bottom: 1rem;
+        }
+        
+        .mermaid {
+            background: var(--code-bg);
+            padding: 1.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+        }
+        
+        details {
+            margin-top: 2rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Ana İndekse Dön</a>
+        <header>
+            <h1>system.rs</h1>
+            <p class="file-path">crates/core/orchestrator/src/system.rs</p>
+            <div class="structs-container">
+                <strong>Tanımlı Türler / Yapılar:</strong> <span class="badge badge-struct">SystemContext</span> <span class="badge badge-struct">SystemInstance</span> <span class="badge badge-struct">can</span> 
+            </div>
+        </header>
+
+        <section>
+            <h2>Fonksiyon Analizleri & Basit Anlatımlar</h2>
+            
+        <div class="card">
+            <h3><span class="badge">fn</span> new</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>id: &amp;str, name: &amp;str</code> | <strong>Dönüş Tipi:</strong> <code>Self</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Dükkanı sabah açarken kasayı sıfırlama, rafları düzeltme ve tabelayı asma işlemidir. Her şey temiz bir başlangıç için hazır hale getirilir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Yapıcı (constructor) fonksiyon olarak nesnenin bellekte ilk durumları ve yapılandırmalarıyla başlatılmasını (instantiation) sağlar.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON new(id: &amp;str, name: &amp;str) -&gt; Self:
+    Self {
+    id: id.to_string(),
+    name: name.to_string(),
+    is_running: Arc::new(AtomicBool::new(false)),
+    is_data_valid: Arc::new(AtomicBool::new(false)),</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: new"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> new</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>id: String, 
+        name: String, 
+        plugin_state: *mut c_void, 
+        endpoint_handler: RawEndpointFn</code> | <strong>Dönüş Tipi:</strong> <code>Self</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Dükkanı sabah açarken kasayı sıfırlama, rafları düzeltme ve tabelayı asma işlemidir. Her şey temiz bir başlangıç için hazır hale getirilir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Yapıcı (constructor) fonksiyon olarak nesnenin bellekte ilk durumları ve yapılandırmalarıyla başlatılmasını (instantiation) sağlar.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON new(id: String, 
+        name: String, 
+        plugin_state: *mut c_void, 
+        endpoint_handler: RawEndpointFn) -&gt; Self:
+    Self {
+    id: id.clone(),
+    name: name.clone(),
+    context: Arc::new(SystemContext::new(&amp;id, &amp;name)),
+    plugin_state,
+    endpoint_handler,</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: new"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> call</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self, endpoint: StandardEndpoint, payload: &amp;[u8], out_buf: &amp;mut [u8]</code> | <strong>Dönüş Tipi:</strong> <code>usize</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>&amp;self, endpoint: StandardEndpoint, payload: &amp;[u8], out_buf: &amp;mut [u8]</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>usize</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. İşlemi tamamlayarak <code>usize</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON call(&amp;self, endpoint: StandardEndpoint, payload: &amp;[u8], out_buf: &amp;mut [u8]) -&gt; usize:
+    unsafe {
+    (self.endpoint_handler)(
+    self.plugin_state,
+    endpoint as u32,
+    payload.as_ptr(),
+    payload.len(),
+    out_buf.as_mut_ptr(),
+    out_buf.len()
+    )</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: call"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        </section>
+
+        <details>
+            <summary>Orijinal Rust Kaynak Kodunu Göster</summary>
+            <pre><code>use crate::endpoint::StandardEndpoint;
+use std::ffi::c_void;
+use std::sync::Arc;
+use core::sync::atomic::AtomicBool;
+
+// C-ABI Endpoint function signature (Zero-copy, No V-Table)
+pub type RawEndpointFn = unsafe extern &quot;C&quot; fn(
+    plugin_state: *mut c_void, 
+    endpoint_id: u32, 
+    payload: *const u8, 
+    payload_len: usize, 
+    out_buf: *mut u8, 
+    out_max_len: usize
+) -&gt; usize;
+
+// Context that plugins can access lock-free
+pub struct SystemContext {
+    pub id: String,
+    pub name: String,
+    pub is_running: Arc&lt;AtomicBool&gt;,
+    pub is_data_valid: Arc&lt;AtomicBool&gt;,
+}
+
+impl SystemContext {
+    pub fn new(id: &amp;str, name: &amp;str) -&gt; Self {
+        Self {
+            id: id.to_string(),
+            name: name.to_string(),
+            is_running: Arc::new(AtomicBool::new(false)),
+            is_data_valid: Arc::new(AtomicBool::new(false)),
+        }
+    }
+}
+
+pub struct SystemInstance {
+    pub id: String,
+    pub name: String,
+    pub context: Arc&lt;SystemContext&gt;,
+    // Pointer to internal plugin state (so orchestrator doesn&#x27;t need to know the type)
+    pub plugin_state: *mut c_void,
+    // The raw function pointer for endpoints
+    pub endpoint_handler: RawEndpointFn,
+}
+
+// Ensure the struct can be shared across threads safely
+unsafe impl Send for SystemInstance {}
+unsafe impl Sync for SystemInstance {}
+
+impl SystemInstance {
+    pub fn new(
+        id: String, 
+        name: String, 
+        plugin_state: *mut c_void, 
+        endpoint_handler: RawEndpointFn
+    ) -&gt; Self {
+        Self {
+            id: id.clone(),
+            name: name.clone(),
+            context: Arc::new(SystemContext::new(&amp;id, &amp;name)),
+            plugin_state,
+            endpoint_handler,
+        }
+    }
+
+    #[inline(always)]
+    pub fn call(&amp;self, endpoint: StandardEndpoint, payload: &amp;[u8], out_buf: &amp;mut [u8]) -&gt; usize {
+        unsafe {
+            (self.endpoint_handler)(
+                self.plugin_state,
+                endpoint as u32,
+                payload.as_ptr(),
+                payload.len(),
+                out_buf.as_mut_ptr(),
+                out_buf.len()
+            )
+        }
+    }
+}
+</code></pre>
+        </details>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            flowchart: { curve: 'basis' }
+        });
+    </script>
+</body>
+</html>

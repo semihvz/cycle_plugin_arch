@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>models.rs - Rust Analiz Dokümanı</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --border: #334155;
+            --code-bg: #090d16;
+            --verbal-bg: #131f37;
+            --analogy-bg: #1e1b4b;
+            --analogy-border: #818cf8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .back-link {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .back-link:hover { text-decoration: underline; }
+        h1 { font-size: 2rem; color: var(--accent); margin-bottom: 0.5rem; }
+        .file-path { font-family: 'Fira Code', monospace; color: var(--text-muted); font-size: 0.95rem; }
+        
+        .structs-container { margin: 1.5rem 0; }
+        .badge {
+            display: inline-block;
+            background: #0284c7;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-family: 'Fira Code', monospace;
+        }
+        .badge-struct { background: #7c3aed; }
+        
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .card h3 { color: var(--accent); margin-bottom: 0.5rem; font-size: 1.3rem; }
+        .card h4 { margin: 1.2rem 0 0.5rem 0; color: var(--text-muted); font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        .easy-analogy {
+            background: var(--analogy-bg);
+            border-left: 4px solid var(--analogy-border);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1rem;
+            color: #c7d2fe;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .verbal-explanation {
+            background: var(--verbal-bg);
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1.2rem;
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            margin-bottom: 1rem;
+        }
+        
+        .mermaid {
+            background: var(--code-bg);
+            padding: 1.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+        }
+        
+        details {
+            margin-top: 2rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Ana İndekse Dön</a>
+        <header>
+            <h1>models.rs</h1>
+            <p class="file-path">crates/plugins/analytics/plugin_scout/src/models.rs</p>
+            <div class="structs-container">
+                <strong>Tanımlı Türler / Yapılar:</strong> <span class="badge badge-struct">MarketState</span> <span class="badge badge-struct">Opportunity</span> <span class="badge badge-struct">SymbolState</span> <span class="badge badge-struct">Verdict</span> 
+            </div>
+        </header>
+
+        <section>
+            <h2>Fonksiyon Analizleri & Basit Anlatımlar</h2>
+            
+        <div class="card">
+            <h3><span class="badge">fn</span> new</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>Yok</code> | <strong>Dönüş Tipi:</strong> <code>Self</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Dükkanı sabah açarken kasayı sıfırlama, rafları düzeltme ve tabelayı asma işlemidir. Her şey temiz bir başlangıç için hazır hale getirilir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Yapıcı (constructor) fonksiyon olarak nesnenin bellekte ilk durumları ve yapılandırmalarıyla başlatılmasını (instantiation) sağlar.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON new() -&gt; Self:
+    Self {
+    best_bid: 0.0,
+    best_ask: 0.0,
+    spread_bps: 0.0,
+    mid: 0.0,
+    last_book_ts: 0.0,
+    last_mid_ts: 0.0,
+    price_moves: VecDeque::new(),
+    price_bps_sum: 0.0,
+    price_tick_sum: 0,
+    depth_updates: VecDeque::new(),
+    depth_changes: VecDeque::new(),
+    depth_change_sum: 0,
+    last_depth_ts: 0.0,
+    last_depth_bids: Vec::new(),
+    last_depth_asks: Vec::new(),</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: new"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> update_book_ticker</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;mut self, event_ts: f64, best_bid: f64, best_ask: f64</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>&amp;mut self, event_ts: f64, best_bid: f64, best_ask: f64</code> verisini alır, kendi kurallarına göre işler ve sonucunda gerekli işlemi tamamlayan adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. İşlemi tamamlayarak <code>()</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON update_book_ticker(&amp;mut self, event_ts: f64, best_bid: f64, best_ask: f64) -&gt; ():
+    self.best_bid = best_bid;
+    self.best_ask = best_ask;
+    self.last_book_ts = event_ts;
+    let mid = if best_bid &gt; 0.0 &amp;&amp; best_ask &gt; 0.0 {
+    self.spread_bps = (best_ask - best_bid) / best_bid * 10000.0;
+    (best_bid + best_ask) / 2.0
+    } else {
+    self.spread_bps = 0.0;
+    0.0
+    };
+    EĞER mid &gt; 0.0 &amp;&amp; self.mid &gt; 0.0 &amp;&amp; event_ts &gt; self.last_mid_ts &amp;&amp; mid != self.mid İSE:
+        let bps = (mid - self.mid).abs() / self.mid * 10000.0;
+        self.price_moves.push_back((event_ts, bps, 1));
+        self.price_bps_sum += bps;
+        self.price_tick_sum += 1;
+    self.mid = mid;
+    self.last_mid_ts = event_ts;
+    self.expire_price_moves(event_ts);</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: update_book_ticker"])
+    Start --> Cond1{"best_bid &gt; 0.0 && best_ask &gt; 0.0?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"mid &gt; 0.0 && self.mid &gt; 0.0 && event_ts &gt; self.last_mid_ts && mid != self.mid?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> update_depth</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;mut self,
+        event_ts: f64,
+        bids: &amp;[(f64, f64)],
+        asks: &amp;[(f64, f64)],</code> | <strong>Dönüş Tipi:</strong> <code>i64</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>&amp;mut self,
+        event_ts: f64,
+        bids: &amp;[(f64, f64)],
+        asks: &amp;[(f64, f64)],</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>i64</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. İşlemi tamamlayarak <code>i64</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON update_depth(&amp;mut self,
+        event_ts: f64,
+        bids: &amp;[(f64, f64)],
+        asks: &amp;[(f64, f64)],) -&gt; i64:
+    self.last_depth_ts = event_ts;
+    let changes = if self.last_depth_bids.is_empty() &amp;&amp; self.last_depth_asks.is_empty() {
+    0
+    } else {
+    Self::count_depth_changes(&amp;self.last_depth_bids, bids)
+    + Self::count_depth_changes(&amp;self.last_depth_asks, asks)
+    };
+    self.last_depth_bids = bids.to_vec();
+    self.last_depth_asks = asks.to_vec();
+    self.depth_updates.push_back(event_ts);
+    self.depth_changes.push_back((event_ts, changes));
+    self.depth_change_sum += changes;
+    self.expire_depth(event_ts);
+    changes</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: update_depth"])
+    Start --> Cond1{"self.last_depth_bids.is_empty() && self.last_depth_asks.is_empty()?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> refresh</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;mut self, now_ts: f64</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>&amp;mut self, now_ts: f64</code> verisini alır, kendi kurallarına göre işler ve sonucunda gerekli işlemi tamamlayan adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. İşlemi tamamlayarak <code>()</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON refresh(&amp;mut self, now_ts: f64) -&gt; ():
+    self.expire_price_moves(now_ts);
+    self.expire_depth(now_ts);</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: refresh"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> expire_price_moves</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;mut self, now_ts: f64</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>&amp;mut self, now_ts: f64</code> verisini alır, kendi kurallarına göre işler ve sonucunda gerekli işlemi tamamlayan adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Listeyi veya veri kümesini sırayla döngüye alarak tarar.<br>4. İşlemi tamamlayarak <code>()</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON expire_price_moves(&amp;mut self, now_ts: f64) -&gt; ():
+    let cutoff = now_ts - config::WINDOW_SECONDS;
+    WHILE let Some(&amp;(ts, bps, ticks)) = self.price_moves.front() DÖNGÜSÜ:
+        EĞER ts &gt;= cutoff İSE:
+            break;
+        self.price_moves.pop_front();
+        self.price_bps_sum -= bps;
+        self.price_tick_sum -= ticks;</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: expire_price_moves"])
+    Start --> Cond1{"ts &gt;= cutoff?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> expire_depth</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;mut self, now_ts: f64</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>&amp;mut self, now_ts: f64</code> verisini alır, kendi kurallarına göre işler ve sonucunda gerekli işlemi tamamlayan adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Listeyi veya veri kümesini sırayla döngüye alarak tarar.<br>4. İşlemi tamamlayarak <code>()</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON expire_depth(&amp;mut self, now_ts: f64) -&gt; ():
+    let cutoff = now_ts - config::WINDOW_SECONDS;
+    WHILE let Some(&amp;ts) = self.depth_updates.front() DÖNGÜSÜ:
+        EĞER ts &gt;= cutoff İSE:
+            break;
+        self.depth_updates.pop_front();
+    WHILE let Some(&amp;(ts, changes)) = self.depth_changes.front() DÖNGÜSÜ:
+        EĞER ts &gt;= cutoff İSE:
+            break;
+        self.depth_changes.pop_front();
+        self.depth_change_sum -= changes;</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: expire_depth"])
+    Start --> Cond1{"ts &gt;= cutoff?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"ts &gt;= cutoff?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> count_depth_changes</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>prev: &amp;[(f64, f64)], cur: &amp;[(f64, f64)]</code> | <strong>Dönüş Tipi:</strong> <code>i64</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>prev: &amp;[(f64, f64)], cur: &amp;[(f64, f64)]</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>i64</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. İşlemi tamamlayarak <code>i64</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON count_depth_changes(prev: &amp;[(f64, f64)], cur: &amp;[(f64, f64)]) -&gt; i64:
+    let max = prev.len().max(cur.len());
+    (0..max).filter(|&amp;i| prev.get(i) != cur.get(i)).count() as i64</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: count_depth_changes"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> price_bps_per_s</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self</code> | <strong>Dönüş Tipi:</strong> <code>f64</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>&amp;self</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>f64</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. İşlemi tamamlayarak <code>f64</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON price_bps_per_s(&amp;self) -&gt; f64:
+    self.price_bps_sum / config::WINDOW_SECONDS</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: price_bps_per_s"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> price_ticks_per_s</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self</code> | <strong>Dönüş Tipi:</strong> <code>f64</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>&amp;self</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>f64</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. İşlemi tamamlayarak <code>f64</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON price_ticks_per_s(&amp;self) -&gt; f64:
+    self.price_tick_sum as f64 / config::WINDOW_SECONDS</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: price_ticks_per_s"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> ob_updates_per_s</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self</code> | <strong>Dönüş Tipi:</strong> <code>f64</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>&amp;self</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>f64</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. İşlemi tamamlayarak <code>f64</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON ob_updates_per_s(&amp;self) -&gt; f64:
+    self.depth_updates.len() as f64 / config::WINDOW_SECONDS</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: ob_updates_per_s"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> ob_changes_per_s</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self</code> | <strong>Dönüş Tipi:</strong> <code>f64</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>&amp;self</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>f64</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. İşlemi tamamlayarak <code>f64</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON ob_changes_per_s(&amp;self) -&gt; f64:
+    self.depth_change_sum as f64 / config::WINDOW_SECONDS</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: ob_changes_per_s"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> price_score</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self</code> | <strong>Dönüş Tipi:</strong> <code>f64</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>&amp;self</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>f64</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. İşlemi tamamlayarak <code>f64</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON price_score(&amp;self) -&gt; f64:
+    EĞER self.mid &lt;= 0.0 || self.spread_bps &lt;= 0.0 İSE:
+        DÖNDÜR 0.0
+    let adjusted_spread = self.spread_bps.max(config::MIN_SPREAD_BPS);
+    (self.price_bps_per_s() * self.price_ticks_per_s()) / adjusted_spread</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: price_score"])
+    Start --> Cond1{"self.mid &lt;= 0.0 || self.spread_bps &lt;= 0.0?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> EndNode(["Döndür: 0.0"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> is_recent</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self, now_ts: f64</code> | <strong>Dönüş Tipi:</strong> <code>bool</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>&amp;self, now_ts: f64</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>bool</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. İşlemi tamamlayarak <code>bool</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON is_recent(&amp;self, now_ts: f64) -&gt; bool:
+    self.last_book_ts &gt; 0.0 &amp;&amp; (now_ts - self.last_book_ts) &lt;= config::STALE_SYMBOL_SECS</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: is_recent"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> as_str</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self</code> | <strong>Dönüş Tipi:</strong> <code>&amp;&#x27;static str</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>&amp;self</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>&amp;&#x27;static str</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Farklı durum senaryolarına göre akışı uygun kola yönlendirir.<br>4. İşlemi tamamlayarak <code>&amp;&#x27;static str</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON as_str(&amp;self) -&gt; &amp;&#x27;static str:
+    DURUM KONTROLÜ (self):
+        Verdict::Guclu =&gt; &quot;GUCLU FIRSAT&quot;,
+        Verdict::Iyi =&gt; &quot;IYI FIRSAT&quot;,
+        Verdict::Normal =&gt; &quot;NORMAL&quot;,
+        Verdict::BotGurultu =&gt; &quot;BOT/GURULTU&quot;,
+        Verdict::Zayif =&gt; &quot;ZAYIF&quot;,</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: as_str"])
+    Start --> Cond1{"=&gt; 'ZAYIF',?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> new</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>symbols: Vec&lt;String&gt;</code> | <strong>Dönüş Tipi:</strong> <code>Self</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Dükkanı sabah açarken kasayı sıfırlama, rafları düzeltme ve tabelayı asma işlemidir. Her şey temiz bir başlangıç için hazır hale getirilir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Yapıcı (constructor) fonksiyon olarak nesnenin bellekte ilk durumları ve yapılandırmalarıyla başlatılmasını (instantiation) sağlar.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON new(symbols: Vec&lt;String&gt;) -&gt; Self:
+    let states = symbols
+    .into_iter()
+    .map(|symbol| (symbol, SymbolState::new()))
+    .collect();
+    Self {
+    states,
+    depth_symbols: HashSet::new(),</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: new"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        </section>
+
+        <details>
+            <summary>Orijinal Rust Kaynak Kodunu Göster</summary>
+            <pre><code>use std::collections::{HashMap, HashSet, VecDeque};
+
+use crate::config;
+
+pub type BpsTick = (f64, f64, i64);
+
+#[derive(Debug)]
+pub struct SymbolState {
+    pub best_bid: f64,
+    pub best_ask: f64,
+    pub spread_bps: f64,
+    pub mid: f64,
+    pub last_book_ts: f64,
+    pub last_mid_ts: f64,
+
+    price_moves: VecDeque&lt;BpsTick&gt;,
+    price_bps_sum: f64,
+    price_tick_sum: i64,
+
+    depth_updates: VecDeque&lt;f64&gt;,
+    depth_changes: VecDeque&lt;(f64, i64)&gt;,
+    depth_change_sum: i64,
+    pub last_depth_ts: f64,
+    last_depth_bids: Vec&lt;(f64, f64)&gt;,
+    last_depth_asks: Vec&lt;(f64, f64)&gt;,
+}
+
+impl SymbolState {
+    pub fn new() -&gt; Self {
+        Self {
+            best_bid: 0.0,
+            best_ask: 0.0,
+            spread_bps: 0.0,
+            mid: 0.0,
+            last_book_ts: 0.0,
+            last_mid_ts: 0.0,
+            price_moves: VecDeque::new(),
+            price_bps_sum: 0.0,
+            price_tick_sum: 0,
+            depth_updates: VecDeque::new(),
+            depth_changes: VecDeque::new(),
+            depth_change_sum: 0,
+            last_depth_ts: 0.0,
+            last_depth_bids: Vec::new(),
+            last_depth_asks: Vec::new(),
+        }
+    }
+
+    pub fn update_book_ticker(&amp;mut self, event_ts: f64, best_bid: f64, best_ask: f64) {
+        self.best_bid = best_bid;
+        self.best_ask = best_ask;
+        self.last_book_ts = event_ts;
+
+        let mid = if best_bid &gt; 0.0 &amp;&amp; best_ask &gt; 0.0 {
+            self.spread_bps = (best_ask - best_bid) / best_bid * 10000.0;
+            (best_bid + best_ask) / 2.0
+        } else {
+            self.spread_bps = 0.0;
+            0.0
+        };
+
+        if mid &gt; 0.0 &amp;&amp; self.mid &gt; 0.0 &amp;&amp; event_ts &gt; self.last_mid_ts &amp;&amp; mid != self.mid {
+            let bps = (mid - self.mid).abs() / self.mid * 10000.0;
+            self.price_moves.push_back((event_ts, bps, 1));
+            self.price_bps_sum += bps;
+            self.price_tick_sum += 1;
+        }
+
+        self.mid = mid;
+        self.last_mid_ts = event_ts;
+        self.expire_price_moves(event_ts);
+    }
+
+    pub fn update_depth(
+        &amp;mut self,
+        event_ts: f64,
+        bids: &amp;[(f64, f64)],
+        asks: &amp;[(f64, f64)],
+    ) -&gt; i64 {
+        self.last_depth_ts = event_ts;
+
+        let changes = if self.last_depth_bids.is_empty() &amp;&amp; self.last_depth_asks.is_empty() {
+            0
+        } else {
+            Self::count_depth_changes(&amp;self.last_depth_bids, bids)
+                + Self::count_depth_changes(&amp;self.last_depth_asks, asks)
+        };
+
+        self.last_depth_bids = bids.to_vec();
+        self.last_depth_asks = asks.to_vec();
+        self.depth_updates.push_back(event_ts);
+        self.depth_changes.push_back((event_ts, changes));
+        self.depth_change_sum += changes;
+        self.expire_depth(event_ts);
+        changes
+    }
+
+    pub fn refresh(&amp;mut self, now_ts: f64) {
+        self.expire_price_moves(now_ts);
+        self.expire_depth(now_ts);
+    }
+
+    fn expire_price_moves(&amp;mut self, now_ts: f64) {
+        let cutoff = now_ts - config::WINDOW_SECONDS;
+        while let Some(&amp;(ts, bps, ticks)) = self.price_moves.front() {
+            if ts &gt;= cutoff {
+                break;
+            }
+            self.price_moves.pop_front();
+            self.price_bps_sum -= bps;
+            self.price_tick_sum -= ticks;
+        }
+    }
+
+    fn expire_depth(&amp;mut self, now_ts: f64) {
+        let cutoff = now_ts - config::WINDOW_SECONDS;
+        while let Some(&amp;ts) = self.depth_updates.front() {
+            if ts &gt;= cutoff {
+                break;
+            }
+            self.depth_updates.pop_front();
+        }
+        while let Some(&amp;(ts, changes)) = self.depth_changes.front() {
+            if ts &gt;= cutoff {
+                break;
+            }
+            self.depth_changes.pop_front();
+            self.depth_change_sum -= changes;
+        }
+    }
+
+    fn count_depth_changes(prev: &amp;[(f64, f64)], cur: &amp;[(f64, f64)]) -&gt; i64 {
+        let max = prev.len().max(cur.len());
+        (0..max).filter(|&amp;i| prev.get(i) != cur.get(i)).count() as i64
+    }
+
+    pub fn price_bps_per_s(&amp;self) -&gt; f64 {
+        self.price_bps_sum / config::WINDOW_SECONDS
+    }
+
+    pub fn price_ticks_per_s(&amp;self) -&gt; f64 {
+        self.price_tick_sum as f64 / config::WINDOW_SECONDS
+    }
+
+    pub fn ob_updates_per_s(&amp;self) -&gt; f64 {
+        self.depth_updates.len() as f64 / config::WINDOW_SECONDS
+    }
+
+    pub fn ob_changes_per_s(&amp;self) -&gt; f64 {
+        self.depth_change_sum as f64 / config::WINDOW_SECONDS
+    }
+
+    pub fn price_score(&amp;self) -&gt; f64 {
+        if self.mid &lt;= 0.0 || self.spread_bps &lt;= 0.0 {
+            return 0.0;
+        }
+        let adjusted_spread = self.spread_bps.max(config::MIN_SPREAD_BPS);
+        (self.price_bps_per_s() * self.price_ticks_per_s()) / adjusted_spread
+    }
+
+    pub fn is_recent(&amp;self, now_ts: f64) -&gt; bool {
+        self.last_book_ts &gt; 0.0 &amp;&amp; (now_ts - self.last_book_ts) &lt;= config::STALE_SYMBOL_SECS
+    }
+}
+
+#[derive(PartialEq, Eq, Clone, Copy, Debug)]
+pub enum Verdict {
+    Guclu,
+    Iyi,
+    Normal,
+    BotGurultu,
+    Zayif,
+}
+
+impl Verdict {
+    pub fn as_str(&amp;self) -&gt; &amp;&#x27;static str {
+        match self {
+            Verdict::Guclu =&gt; &quot;GUCLU FIRSAT&quot;,
+            Verdict::Iyi =&gt; &quot;IYI FIRSAT&quot;,
+            Verdict::Normal =&gt; &quot;NORMAL&quot;,
+            Verdict::BotGurultu =&gt; &quot;BOT/GURULTU&quot;,
+            Verdict::Zayif =&gt; &quot;ZAYIF&quot;,
+        }
+    }
+}
+
+pub struct Opportunity {
+    pub symbol: String,
+    pub score: f64,
+    pub verdict: Verdict,
+    pub efficiency: f64,
+    pub price_bps_per_s: f64,
+    pub price_ticks_per_s: f64,
+    pub ob_changes_per_s: f64,
+    pub spread_bps: f64,
+}
+
+pub struct MarketState {
+    pub states: HashMap&lt;String, SymbolState&gt;,
+    pub depth_symbols: HashSet&lt;String&gt;,
+}
+
+impl MarketState {
+    pub fn new(symbols: Vec&lt;String&gt;) -&gt; Self {
+        let states = symbols
+            .into_iter()
+            .map(|symbol| (symbol, SymbolState::new()))
+            .collect();
+        Self {
+            states,
+            depth_symbols: HashSet::new(),
+        }
+    }
+}
+</code></pre>
+        </details>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            flowchart: { curve: 'basis' }
+        });
+    </script>
+</body>
+</html>

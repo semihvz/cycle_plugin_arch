@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>bug_tests.rs - Rust Analiz Dokümanı</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --border: #334155;
+            --code-bg: #090d16;
+            --verbal-bg: #131f37;
+            --analogy-bg: #1e1b4b;
+            --analogy-border: #818cf8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .back-link {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .back-link:hover { text-decoration: underline; }
+        h1 { font-size: 2rem; color: var(--accent); margin-bottom: 0.5rem; }
+        .file-path { font-family: 'Fira Code', monospace; color: var(--text-muted); font-size: 0.95rem; }
+        
+        .structs-container { margin: 1.5rem 0; }
+        .badge {
+            display: inline-block;
+            background: #0284c7;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-family: 'Fira Code', monospace;
+        }
+        .badge-struct { background: #7c3aed; }
+        
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .card h3 { color: var(--accent); margin-bottom: 0.5rem; font-size: 1.3rem; }
+        .card h4 { margin: 1.2rem 0 0.5rem 0; color: var(--text-muted); font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        .easy-analogy {
+            background: var(--analogy-bg);
+            border-left: 4px solid var(--analogy-border);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1rem;
+            color: #c7d2fe;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .verbal-explanation {
+            background: var(--verbal-bg);
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1.2rem;
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            margin-bottom: 1rem;
+        }
+        
+        .mermaid {
+            background: var(--code-bg);
+            padding: 1.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+        }
+        
+        details {
+            margin-top: 2rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Ana İndekse Dön</a>
+        <header>
+            <h1>bug_tests.rs</h1>
+            <p class="file-path">crates/plugins/execution/plugin_paper_exchange/tests/bug_tests.rs</p>
+            <div class="structs-container">
+                <strong>Tanımlı Türler / Yapılar:</strong> Yok
+            </div>
+        </header>
+
+        <section>
+            <h2>Fonksiyon Analizleri & Basit Anlatımlar</h2>
+            
+        <div class="card">
+            <h3><span class="badge">fn</span> make_engine</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>Yok</code> | <strong>Dönüş Tipi:</strong> <code>Arc&lt;PaperEngine&gt;</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Gerçek para harcamadan önce Monopoly oyunundaki sanal para ile alışveriş yapıp taktiklerin çalışıp çalışmadığını test etme işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Gerçek piyasa emir defteri verisini alarak gecikme, komisyon ve kuyruk sırasını hesaba katan sanal alım-satım infazını gerçekleştirir.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON make_engine() -&gt; Arc&lt;PaperEngine&gt;:
+    let storage = Storage::new(&quot;:memory:&quot;).unwrap();
+    let engine = PaperEngine::new(Arc::new(storage));
+    engine.create_account(&quot;test&quot;, 10000.0);
+    Arc::new(engine)</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: make_engine"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> test_bug_realized_pnl_not_credited</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>Yok</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Gerçek para harcamadan önce Monopoly oyunundaki sanal para ile alışveriş yapıp taktiklerin çalışıp çalışmadığını test etme işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Gerçek piyasa emir defteri verisini alarak gecikme, komisyon ve kuyruk sırasını hesaba katan sanal alım-satım infazını gerçekleştirir.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON test_bug_realized_pnl_not_credited() -&gt; ():
+    let engine = make_engine();
+    // Fiyat: 100
+    engine.latest_prices.insert(&quot;BTCUSDT&quot;.into(), 100.0);
+    // Long aç: 1 adet, 10x kaldıraç
+    let order = Order {
+    id: &quot;open_1&quot;.into(),
+    user_id: &quot;test&quot;.into(),
+    symbol: &quot;BTCUSDT&quot;.into(),
+    side: OrderSide::Buy,
+    position_side: PositionSide::Long,
+    order_type: OrderType::Market,
+    price: 0.0,
+    stop_price: 0.0,
+    amount: 1.0,
+    leverage: 10.0,
+    executed: 0.0,
+    timestamp: 0,
+    };
+    engine.submit_order(&quot;test&quot;, order).unwrap();
+    // Fiyat 110&#x27;a çıktı
+    engine.on_mark_price_update(&quot;BTCUSDT&quot;, 110.0);
+    engine.on_last_price_update(&quot;BTCUSDT&quot;, 110.0);
+    // unrealized PnL kontrol
+    let pos = engine.positions.get(&quot;test&quot;).unwrap();
+    let p = pos.get(&quot;BTCUSDT_Long&quot;).unwrap();
+    assert_eq!(p.unrealized_pnl, 10.0, &quot;unrealized PnL 10 olmalı&quot;);
+    drop(p);
+    drop(pos);
+    // Pozisyonu kapat: Sell 1 adet
+    let close_order = Order {
+    id: &quot;close_1&quot;.into(),
+    user_id: &quot;test&quot;.into(),
+    symbol: &quot;BTCUSDT&quot;.into(),
+    side: OrderSide::Sell,
+    position_side: PositionSide::Long,
+    order_type: OrderType::Market,
+    price: 0.0,
+    stop_price: 0.0,
+    amount: 1.0,
+    leverage: 10.0,
+    executed: 0.0,
+    timestamp: 0,
+    };
+    engine.submit_order(&quot;test&quot;, close_order).unwrap();
+    // Pozisyon kapandı mı?
+    let pos = engine.positions.get(&quot;test&quot;).unwrap();
+    let p = pos.get(&quot;BTCUSDT_Long&quot;).unwrap();
+    assert!(p.amount == 0.0, &quot;Pozisyon kapanmış olmalı&quot;);
+    drop(p);
+    drop(pos);
+    // ASIL TEST: wallet_balance 10010 olmalı (10000 + 10 kâr)
+    let acc = engine.accounts.get(&quot;test&quot;).unwrap();
+    println!(&quot;BUG TEST 1 - wallet_balance: {} (beklenen: 10010)&quot;, acc.wallet_balance);
+    println!(&quot;BUG TEST 1 - margin_balance: {} (beklenen: 10010)&quot;, acc.margin_balance);
+    // Eğer 10000 kalıyorsa → kâr kayıp, BUG!
+    EĞER acc.wallet_balance == 10000.0 İSE:
+        println!(&quot;❌ BUG BULUNDU: Realized PnL wallet_balance&#x27;a EKLENMIYOR! Kâr kayboldu.&quot;);
+    assert_eq!(acc.wallet_balance, 10010.0, &quot;BUG: Realized PnL wallet_balance&#x27;a eklenmiyor!&quot;);</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: test_bug_realized_pnl_not_credited"])
+    Start --> Cond1{"acc.wallet_balance == 10000.0?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> test_bug_realized_loss_not_deducted</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>Yok</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Gerçek para harcamadan önce Monopoly oyunundaki sanal para ile alışveriş yapıp taktiklerin çalışıp çalışmadığını test etme işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Gerçek piyasa emir defteri verisini alarak gecikme, komisyon ve kuyruk sırasını hesaba katan sanal alım-satım infazını gerçekleştirir.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON test_bug_realized_loss_not_deducted() -&gt; ():
+    let engine = make_engine();
+    engine.latest_prices.insert(&quot;ETHUSDT&quot;.into(), 100.0);
+    let order = Order {
+    id: &quot;loss_open&quot;.into(),
+    user_id: &quot;test&quot;.into(),
+    symbol: &quot;ETHUSDT&quot;.into(),
+    side: OrderSide::Buy,
+    position_side: PositionSide::Long,
+    order_type: OrderType::Market,
+    price: 0.0,
+    stop_price: 0.0,
+    amount: 1.0,
+    leverage: 10.0,
+    executed: 0.0,
+    timestamp: 0,
+    };
+    engine.submit_order(&quot;test&quot;, order).unwrap();
+    // Fiyat 90&#x27;a düştü
+    engine.on_mark_price_update(&quot;ETHUSDT&quot;, 90.0);
+    engine.on_last_price_update(&quot;ETHUSDT&quot;, 90.0);
+    // Kapat
+    let close = Order {
+    id: &quot;loss_close&quot;.into(),
+    user_id: &quot;test&quot;.into(),
+    symbol: &quot;ETHUSDT&quot;.into(),
+    side: OrderSide::Sell,
+    position_side: PositionSide::Long,
+    order_type: OrderType::Market,
+    price: 0.0,
+    stop_price: 0.0,
+    amount: 1.0,
+    leverage: 10.0,
+    executed: 0.0,
+    timestamp: 0,
+    };
+    engine.submit_order(&quot;test&quot;, close).unwrap();
+    let acc = engine.accounts.get(&quot;test&quot;).unwrap();
+    println!(&quot;BUG TEST 2 - wallet_balance: {} (beklenen: 9990)&quot;, acc.wallet_balance);
+    EĞER acc.wallet_balance == 10000.0 İSE:
+        println!(&quot;❌ BUG BULUNDU: Realized Loss wallet_balance&#x27;dan DÜŞÜLMÜYOR!&quot;);
+    assert_eq!(acc.wallet_balance, 9990.0, &quot;BUG: Realized loss wallet_balance&#x27;dan düşülmüyor!&quot;);</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: test_bug_realized_loss_not_deducted"])
+    Start --> Cond1{"acc.wallet_balance == 10000.0?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> test_short_pnl_correct</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>Yok</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Gerçek para harcamadan önce Monopoly oyunundaki sanal para ile alışveriş yapıp taktiklerin çalışıp çalışmadığını test etme işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Gerçek piyasa emir defteri verisini alarak gecikme, komisyon ve kuyruk sırasını hesaba katan sanal alım-satım infazını gerçekleştirir.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON test_short_pnl_correct() -&gt; ():
+    let engine = make_engine();
+    engine.latest_prices.insert(&quot;XRPUSDT&quot;.into(), 100.0);
+    let order = Order {
+    id: &quot;short_1&quot;.into(),
+    user_id: &quot;test&quot;.into(),
+    symbol: &quot;XRPUSDT&quot;.into(),
+    side: OrderSide::Sell,
+    position_side: PositionSide::Short,
+    order_type: OrderType::Market,
+    price: 0.0,
+    stop_price: 0.0,
+    amount: 1.0,
+    leverage: 10.0,
+    executed: 0.0,
+    timestamp: 0,
+    };
+    engine.submit_order(&quot;test&quot;, order).unwrap();
+    engine.on_mark_price_update(&quot;XRPUSDT&quot;, 90.0);
+    let pos = engine.positions.get(&quot;test&quot;).unwrap();
+    let p = pos.get(&quot;XRPUSDT_Short&quot;).unwrap();
+    println!(&quot;BUG TEST 3 - Short PnL: {} (beklenen: 10)&quot;, p.unrealized_pnl);
+    assert_eq!(p.unrealized_pnl, 10.0, &quot;Short PnL hesaplaması yanlış!&quot;);</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: test_short_pnl_correct"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> test_liquidation_balance</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>Yok</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Gerçek para harcamadan önce Monopoly oyunundaki sanal para ile alışveriş yapıp taktiklerin çalışıp çalışmadığını test etme işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Gerçek piyasa emir defteri verisini alarak gecikme, komisyon ve kuyruk sırasını hesaba katan sanal alım-satım infazını gerçekleştirir.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON test_liquidation_balance() -&gt; ():
+    let engine = make_engine();
+    engine.latest_prices.insert(&quot;SOLUSDT&quot;.into(), 100.0);
+    let order = Order {
+    id: &quot;liq_1&quot;.into(),
+    user_id: &quot;test&quot;.into(),
+    symbol: &quot;SOLUSDT&quot;.into(),
+    side: OrderSide::Buy,
+    position_side: PositionSide::Long,
+    order_type: OrderType::Market,
+    price: 0.0,
+    stop_price: 0.0,
+    amount: 10.0, // 10 adet × 100 = 1000 USDT notional, 20x → 50 USDT margin
+    leverage: 20.0,
+    executed: 0.0,
+    timestamp: 0,
+    };
+    engine.submit_order(&quot;test&quot;, order).unwrap();
+    // Likidasyon fiyatı: 100 * (1 - 1/20 + 0.005) = 100 * 0.955 = 95.5
+    let pos = engine.positions.get(&quot;test&quot;).unwrap();
+    let p = pos.get(&quot;SOLUSDT_Long&quot;).unwrap();
+    let liq_price = p.liquidation_price;
+    println!(&quot;BUG TEST 4 - Likidasyon fiyatı: {} (beklenen: 95.5)&quot;, liq_price);
+    drop(p);
+    drop(pos);
+    // Mark fiyatı likidasyon altına düşür
+    engine.on_mark_price_update(&quot;SOLUSDT&quot;, 95.0);
+    let acc = engine.accounts.get(&quot;test&quot;).unwrap();
+    let pos = engine.positions.get(&quot;test&quot;).unwrap();
+    let p = pos.get(&quot;SOLUSDT_Long&quot;).unwrap();
+    println!(&quot;BUG TEST 4 - Likidasyon sonrası: wallet={}, margin={}, pos_amount={}&quot;,
+    acc.wallet_balance, acc.margin_balance, p.amount);
+    // Pozisyon sıfırlanmış olmalı
+    assert_eq!(p.amount, 0.0, &quot;Likidasyon sonrası pozisyon sıfır olmalı&quot;);
+    // Wallet balance düşmüş olmalı (margin kaybı = 10 * 100 / 20 = 50)
+    let expected_balance = 10000.0 - 50.0; // 9950
+    println!(&quot;BUG TEST 4 - wallet_balance: {} (beklenen: {})&quot;, acc.wallet_balance, expected_balance);
+    EĞER acc.wallet_balance != expected_balance İSE:
+        println!(&quot;⚠️ Likidasyon loss hesaplaması beklenenden farklı. Gerçek kayıp: {}&quot;, 10000.0 - acc.wallet_balance);</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: test_liquidation_balance"])
+    Start --> Cond1{"acc.wallet_balance != expected_balance?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> test_limit_order_trigger</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>Yok</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Gerçek para harcamadan önce Monopoly oyunundaki sanal para ile alışveriş yapıp taktiklerin çalışıp çalışmadığını test etme işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Gerçek piyasa emir defteri verisini alarak gecikme, komisyon ve kuyruk sırasını hesaba katan sanal alım-satım infazını gerçekleştirir.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON test_limit_order_trigger() -&gt; ():
+    let engine = make_engine();
+    engine.latest_prices.insert(&quot;BNBUSDT&quot;.into(), 100.0);
+    let limit = Order {
+    id: &quot;limit_1&quot;.into(),
+    user_id: &quot;test&quot;.into(),
+    symbol: &quot;BNBUSDT&quot;.into(),
+    side: OrderSide::Buy,
+    position_side: PositionSide::Long,
+    order_type: OrderType::Limit,
+    price: 95.0,
+    stop_price: 0.0,
+    amount: 2.0,
+    leverage: 10.0,
+    executed: 0.0,
+    timestamp: 0,
+    };
+    engine.submit_order(&quot;test&quot;, limit).unwrap();
+    // Fiyat henüz 97, tetiklenmemeli
+    engine.on_last_price_update(&quot;BNBUSDT&quot;, 97.0);
+    let pos = engine.positions.get(&quot;test&quot;).unwrap();
+    let has_pos = pos.get(&quot;BNBUSDT_Long&quot;).map(|p| p.amount &gt; 0.0).unwrap_or(false);
+    assert!(!has_pos, &quot;Fiyat 97&#x27;de limit 95 tetiklenmemeli!&quot;);
+    drop(pos);
+    // Fiyat 94&#x27;e düştü → limit tetiklenmeli
+    engine.on_last_price_update(&quot;BNBUSDT&quot;, 94.0);
+    let pos = engine.positions.get(&quot;test&quot;).unwrap();
+    let p = pos.get(&quot;BNBUSDT_Long&quot;).unwrap();
+    println!(&quot;BUG TEST 5 - Limit tetikleme: amount={} entry={} (beklenen: amount=2, entry=95)&quot;, p.amount, p.entry_price);
+    assert_eq!(p.amount, 2.0, &quot;Limit emir tetiklenmiş olmalı&quot;);
+    assert_eq!(p.entry_price, 95.0, &quot;Limit emir fiyatından execute edilmeli&quot;);</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: test_limit_order_trigger"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> test_stop_market_trigger</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>Yok</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Gerçek para harcamadan önce Monopoly oyunundaki sanal para ile alışveriş yapıp taktiklerin çalışıp çalışmadığını test etme işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Gerçek piyasa emir defteri verisini alarak gecikme, komisyon ve kuyruk sırasını hesaba katan sanal alım-satım infazını gerçekleştirir.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON test_stop_market_trigger() -&gt; ():
+    let engine = make_engine();
+    engine.latest_prices.insert(&quot;DOTUSDT&quot;.into(), 100.0);
+    let stop = Order {
+    id: &quot;stop_1&quot;.into(),
+    user_id: &quot;test&quot;.into(),
+    symbol: &quot;DOTUSDT&quot;.into(),
+    side: OrderSide::Buy,
+    position_side: PositionSide::Long,
+    order_type: OrderType::StopMarket,
+    price: 0.0,
+    stop_price: 105.0,
+    amount: 3.0,
+    leverage: 10.0,
+    executed: 0.0,
+    timestamp: 0,
+    };
+    engine.submit_order(&quot;test&quot;, stop).unwrap();
+    // Fiyat 103, tetiklenmemeli
+    engine.on_last_price_update(&quot;DOTUSDT&quot;, 103.0);
+    let pos = engine.positions.get(&quot;test&quot;).unwrap();
+    let has = pos.get(&quot;DOTUSDT_Long&quot;).map(|p| p.amount &gt; 0.0).unwrap_or(false);
+    assert!(!has, &quot;Fiyat 103&#x27;te stop 105 tetiklenmemeli&quot;);
+    drop(pos);
+    // Fiyat 106 → tetiklenmeli
+    engine.on_last_price_update(&quot;DOTUSDT&quot;, 106.0);
+    let pos = engine.positions.get(&quot;test&quot;).unwrap();
+    let p = pos.get(&quot;DOTUSDT_Long&quot;).unwrap();
+    println!(&quot;BUG TEST 6 - StopMarket: amount={} entry={} (beklenen: 3, market price 106)&quot;, p.amount, p.entry_price);
+    assert_eq!(p.amount, 3.0, &quot;Stop emir tetiklenmiş olmalı&quot;);
+    // StopMarket → market fiyatından execute
+    assert_eq!(p.entry_price, 106.0, &quot;StopMarket piyasa fiyatından execute edilmeli&quot;);</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: test_stop_market_trigger"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> test_average_entry_price</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>Yok</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Gerçek para harcamadan önce Monopoly oyunundaki sanal para ile alışveriş yapıp taktiklerin çalışıp çalışmadığını test etme işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Gerçek piyasa emir defteri verisini alarak gecikme, komisyon ve kuyruk sırasını hesaba katan sanal alım-satım infazını gerçekleştirir.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON test_average_entry_price() -&gt; ():
+    let engine = make_engine();
+    engine.latest_prices.insert(&quot;AVAXUSDT&quot;.into(), 100.0);
+    let o1 = Order {
+    id: &quot;avg_1&quot;.into(),
+    user_id: &quot;test&quot;.into(),
+    symbol: &quot;AVAXUSDT&quot;.into(),
+    side: OrderSide::Buy,
+    position_side: PositionSide::Long,
+    order_type: OrderType::Market,
+    price: 0.0,
+    stop_price: 0.0,
+    amount: 1.0,
+    leverage: 10.0,
+    executed: 0.0,
+    timestamp: 0,
+    };
+    engine.submit_order(&quot;test&quot;, o1).unwrap();
+    engine.on_last_price_update(&quot;AVAXUSDT&quot;, 110.0);
+    let o2 = Order {
+    id: &quot;avg_2&quot;.into(),
+    user_id: &quot;test&quot;.into(),
+    symbol: &quot;AVAXUSDT&quot;.into(),
+    side: OrderSide::Buy,
+    position_side: PositionSide::Long,
+    order_type: OrderType::Market,
+    price: 0.0,
+    stop_price: 0.0,
+    amount: 1.0,
+    leverage: 10.0,
+    executed: 0.0,
+    timestamp: 0,
+    };
+    engine.submit_order(&quot;test&quot;, o2).unwrap();
+    let pos = engine.positions.get(&quot;test&quot;).unwrap();
+    let p = pos.get(&quot;AVAXUSDT_Long&quot;).unwrap();
+    println!(&quot;BUG TEST 7 - Ortalama giriş: {} (beklenen: 105)&quot;, p.entry_price);
+    assert_eq!(p.amount, 2.0);
+    assert_eq!(p.entry_price, 105.0, &quot;Ortalama giriş fiyatı yanlış!&quot;);</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: test_average_entry_price"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> test_partial_close</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>Yok</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Gerçek para harcamadan önce Monopoly oyunundaki sanal para ile alışveriş yapıp taktiklerin çalışıp çalışmadığını test etme işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Gerçek piyasa emir defteri verisini alarak gecikme, komisyon ve kuyruk sırasını hesaba katan sanal alım-satım infazını gerçekleştirir.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON test_partial_close() -&gt; ():
+    let engine = make_engine();
+    engine.latest_prices.insert(&quot;LINKUSDT&quot;.into(), 50.0);
+    let open = Order {
+    id: &quot;part_open&quot;.into(),
+    user_id: &quot;test&quot;.into(),
+    symbol: &quot;LINKUSDT&quot;.into(),
+    side: OrderSide::Buy,
+    position_side: PositionSide::Long,
+    order_type: OrderType::Market,
+    price: 0.0,
+    stop_price: 0.0,
+    amount: 2.0,
+    leverage: 10.0,
+    executed: 0.0,
+    timestamp: 0,
+    };
+    engine.submit_order(&quot;test&quot;, open).unwrap();
+    // Kısmi kapat: 1 adet
+    engine.on_last_price_update(&quot;LINKUSDT&quot;, 55.0);
+    let close = Order {
+    id: &quot;part_close&quot;.into(),
+    user_id: &quot;test&quot;.into(),
+    symbol: &quot;LINKUSDT&quot;.into(),
+    side: OrderSide::Sell,
+    position_side: PositionSide::Long,
+    order_type: OrderType::Market,
+    price: 0.0,
+    stop_price: 0.0,
+    amount: 1.0,
+    leverage: 10.0,
+    executed: 0.0,
+    timestamp: 0,
+    };
+    engine.submit_order(&quot;test&quot;, close).unwrap();
+    let pos = engine.positions.get(&quot;test&quot;).unwrap();
+    let p = pos.get(&quot;LINKUSDT_Long&quot;).unwrap();
+    println!(&quot;BUG TEST 8 - Kısmi kapatma: amount={} entry={} (beklenen: 1, 50)&quot;, p.amount, p.entry_price);
+    assert_eq!(p.amount, 1.0, &quot;Kısmi kapatma sonrası 1 adet kalmalı&quot;);
+    assert_eq!(p.entry_price, 50.0, &quot;Entry price değişmemeli&quot;);</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: test_partial_close"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> test_take_profit_trigger</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>Yok</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Gerçek para harcamadan önce Monopoly oyunundaki sanal para ile alışveriş yapıp taktiklerin çalışıp çalışmadığını test etme işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Gerçek piyasa emir defteri verisini alarak gecikme, komisyon ve kuyruk sırasını hesaba katan sanal alım-satım infazını gerçekleştirir.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON test_take_profit_trigger() -&gt; ():
+    let engine = make_engine();
+    engine.latest_prices.insert(&quot;ADAUSDT&quot;.into(), 100.0);
+    // Önce pozisyon aç
+    let open = Order {
+    id: &quot;tp_open&quot;.into(),
+    user_id: &quot;test&quot;.into(),
+    symbol: &quot;ADAUSDT&quot;.into(),
+    side: OrderSide::Buy,
+    position_side: PositionSide::Long,
+    order_type: OrderType::Market,
+    price: 0.0,
+    stop_price: 0.0,
+    amount: 5.0,
+    leverage: 10.0,
+    executed: 0.0,
+    timestamp: 0,
+    };
+    engine.submit_order(&quot;test&quot;, open).unwrap();
+    // TakeProfit Sell at 110
+    let tp = Order {
+    id: &quot;tp_1&quot;.into(),
+    user_id: &quot;test&quot;.into(),
+    symbol: &quot;ADAUSDT&quot;.into(),
+    side: OrderSide::Sell,
+    position_side: PositionSide::Long,
+    order_type: OrderType::TakeProfitMarket,
+    price: 0.0,
+    stop_price: 110.0,
+    amount: 5.0,
+    leverage: 10.0,
+    executed: 0.0,
+    timestamp: 0,
+    };
+    engine.submit_order(&quot;test&quot;, tp).unwrap();
+    // Fiyat 105, tetiklenmemeli
+    engine.on_last_price_update(&quot;ADAUSDT&quot;, 105.0);
+    let pos = engine.positions.get(&quot;test&quot;).unwrap();
+    let p = pos.get(&quot;ADAUSDT_Long&quot;).unwrap();
+    assert_eq!(p.amount, 5.0, &quot;105&#x27;te TP tetiklenmemeli&quot;);
+    drop(p);
+    drop(pos);
+    // Fiyat 111 → TakeProfit Sell tetiklenmeli
+    engine.on_last_price_update(&quot;ADAUSDT&quot;, 111.0);
+    let pos = engine.positions.get(&quot;test&quot;).unwrap();
+    let p = pos.get(&quot;ADAUSDT_Long&quot;).unwrap();
+    println!(&quot;BUG TEST 9 - TP sonrası: amount={} (beklenen: 0)&quot;, p.amount);
+    assert_eq!(p.amount, 0.0, &quot;TakeProfit tetiklendikten sonra pozisyon kapanmalı&quot;);</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: test_take_profit_trigger"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> test_multi_user_liquidation</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>Yok</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Gerçek para harcamadan önce Monopoly oyunundaki sanal para ile alışveriş yapıp taktiklerin çalışıp çalışmadığını test etme işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Gerçek piyasa emir defteri verisini alarak gecikme, komisyon ve kuyruk sırasını hesaba katan sanal alım-satım infazını gerçekleştirir.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON test_multi_user_liquidation() -&gt; ():
+    let engine = make_engine();
+    engine.create_account(&quot;user_a&quot;, 5000.0);
+    engine.create_account(&quot;user_b&quot;, 5000.0);
+    engine.latest_prices.insert(&quot;MATICUSDT&quot;.into(), 100.0);
+    // Her iki kullanıcı da aynı sembolde long aç
+    HER user in &amp;[&quot;user_a&quot;, &quot;user_b&quot;] İÇİN DÖNGÜ:
+        let o = Order {
+        id: format!(&quot;multi_{}&quot;, user),
+        user_id: user.to_string(),
+        symbol: &quot;MATICUSDT&quot;.into(),
+        side: OrderSide::Buy,
+        position_side: PositionSide::Long,
+        order_type: OrderType::Market,
+        price: 0.0,
+        stop_price: 0.0,
+        amount: 10.0,
+        leverage: 20.0,
+        executed: 0.0,
+        timestamp: 0,
+        };
+        engine.submit_order(user, o).unwrap();
+    // Likidasyon seviyesinin altına düşür
+    engine.on_mark_price_update(&quot;MATICUSDT&quot;, 94.0);
+    let acc_a = engine.accounts.get(&quot;user_a&quot;).unwrap();
+    let acc_b = engine.accounts.get(&quot;user_b&quot;).unwrap();
+    println!(&quot;BUG TEST 10 - user_a wallet: {} (beklenen: 4950)&quot;, acc_a.wallet_balance);
+    println!(&quot;BUG TEST 10 - user_b wallet: {} (beklenen: 4950)&quot;, acc_b.wallet_balance);
+    // Her iki kullanıcının da bakiyesi düşmüş olmalı
+    let a_lost = acc_a.wallet_balance &lt; 5000.0;
+    let b_lost = acc_b.wallet_balance &lt; 5000.0;
+    EĞER !a_lost || !b_lost İSE:
+        println!(&quot;❌ BUG BULUNDU: Çoklu likidasyon düzgün çalışmıyor! a_lost={} b_lost={}&quot;, a_lost, b_lost);
+    assert!(a_lost, &quot;user_a likide olmuş olmalı&quot;);
+    assert!(b_lost, &quot;user_b likide olmuş olmalı&quot;);</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: test_multi_user_liquidation"])
+    Start --> Cond1{"!a_lost || !b_lost?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Loop2["Döngü: user in &['user_a', 'user_b']"]
+    Loop2 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        </section>
+
+        <details>
+            <summary>Orijinal Rust Kaynak Kodunu Göster</summary>
+            <pre><code>#[cfg(test)]
+mod bug_tests {
+    use std::sync::Arc;
+    use plugin_paper_exchange::*;
+
+    fn make_engine() -&gt; Arc&lt;PaperEngine&gt; {
+        let storage = Storage::new(&quot;:memory:&quot;).unwrap();
+        let engine = PaperEngine::new(Arc::new(storage));
+        engine.create_account(&quot;test&quot;, 10000.0);
+        Arc::new(engine)
+    }
+
+    // ============================================================
+    // BUG TEST 1: Pozisyon kapatınca kâr wallet_balance&#x27;a yansıyor mu?
+    // Long aç 100&#x27;den, fiyat 110&#x27;a çıksın, kapat → 10 USDT kâr olmalı
+    // ============================================================
+    #[test]
+    fn test_bug_realized_pnl_not_credited() {
+        let engine = make_engine();
+
+        // Fiyat: 100
+        engine.latest_prices.insert(&quot;BTCUSDT&quot;.into(), 100.0);
+
+        // Long aç: 1 adet, 10x kaldıraç
+        let order = Order {
+            id: &quot;open_1&quot;.into(),
+            user_id: &quot;test&quot;.into(),
+            symbol: &quot;BTCUSDT&quot;.into(),
+            side: OrderSide::Buy,
+            position_side: PositionSide::Long,
+            order_type: OrderType::Market,
+            price: 0.0,
+            stop_price: 0.0,
+            amount: 1.0,
+            leverage: 10.0,
+            executed: 0.0,
+            timestamp: 0,
+        };
+        engine.submit_order(&quot;test&quot;, order).unwrap();
+
+        // Fiyat 110&#x27;a çıktı
+        engine.on_mark_price_update(&quot;BTCUSDT&quot;, 110.0);
+        engine.on_last_price_update(&quot;BTCUSDT&quot;, 110.0);
+
+        // unrealized PnL kontrol
+        let pos = engine.positions.get(&quot;test&quot;).unwrap();
+        let p = pos.get(&quot;BTCUSDT_Long&quot;).unwrap();
+        assert_eq!(p.unrealized_pnl, 10.0, &quot;unrealized PnL 10 olmalı&quot;);
+        drop(p);
+        drop(pos);
+
+        // Pozisyonu kapat: Sell 1 adet
+        let close_order = Order {
+            id: &quot;close_1&quot;.into(),
+            user_id: &quot;test&quot;.into(),
+            symbol: &quot;BTCUSDT&quot;.into(),
+            side: OrderSide::Sell,
+            position_side: PositionSide::Long,
+            order_type: OrderType::Market,
+            price: 0.0,
+            stop_price: 0.0,
+            amount: 1.0,
+            leverage: 10.0,
+            executed: 0.0,
+            timestamp: 0,
+        };
+        engine.submit_order(&quot;test&quot;, close_order).unwrap();
+
+        // Pozisyon kapandı mı?
+        let pos = engine.positions.get(&quot;test&quot;).unwrap();
+        let p = pos.get(&quot;BTCUSDT_Long&quot;).unwrap();
+        assert!(p.amount == 0.0, &quot;Pozisyon kapanmış olmalı&quot;);
+        drop(p);
+        drop(pos);
+
+        // ASIL TEST: wallet_balance 10010 olmalı (10000 + 10 kâr)
+        let acc = engine.accounts.get(&quot;test&quot;).unwrap();
+        println!(&quot;BUG TEST 1 - wallet_balance: {} (beklenen: 10010)&quot;, acc.wallet_balance);
+        println!(&quot;BUG TEST 1 - margin_balance: {} (beklenen: 10010)&quot;, acc.margin_balance);
+
+        // Eğer 10000 kalıyorsa → kâr kayıp, BUG!
+        if acc.wallet_balance == 10000.0 {
+            println!(&quot;❌ BUG BULUNDU: Realized PnL wallet_balance&#x27;a EKLENMIYOR! Kâr kayboldu.&quot;);
+        }
+        assert_eq!(acc.wallet_balance, 10010.0, &quot;BUG: Realized PnL wallet_balance&#x27;a eklenmiyor!&quot;);
+    }
+
+    // ============================================================
+    // BUG TEST 2: Zarar ile kapatınca wallet_balance düşüyor mu?
+    // Long aç 100&#x27;den, fiyat 90&#x27;a düşsün, kapat → 10 USDT zarar
+    // ============================================================
+    #[test]
+    fn test_bug_realized_loss_not_deducted() {
+        let engine = make_engine();
+
+        engine.latest_prices.insert(&quot;ETHUSDT&quot;.into(), 100.0);
+
+        let order = Order {
+            id: &quot;loss_open&quot;.into(),
+            user_id: &quot;test&quot;.into(),
+            symbol: &quot;ETHUSDT&quot;.into(),
+            side: OrderSide::Buy,
+            position_side: PositionSide::Long,
+            order_type: OrderType::Market,
+            price: 0.0,
+            stop_price: 0.0,
+            amount: 1.0,
+            leverage: 10.0,
+            executed: 0.0,
+            timestamp: 0,
+        };
+        engine.submit_order(&quot;test&quot;, order).unwrap();
+
+        // Fiyat 90&#x27;a düştü
+        engine.on_mark_price_update(&quot;ETHUSDT&quot;, 90.0);
+        engine.on_last_price_update(&quot;ETHUSDT&quot;, 90.0);
+
+        // Kapat
+        let close = Order {
+            id: &quot;loss_close&quot;.into(),
+            user_id: &quot;test&quot;.into(),
+            symbol: &quot;ETHUSDT&quot;.into(),
+            side: OrderSide::Sell,
+            position_side: PositionSide::Long,
+            order_type: OrderType::Market,
+            price: 0.0,
+            stop_price: 0.0,
+            amount: 1.0,
+            leverage: 10.0,
+            executed: 0.0,
+            timestamp: 0,
+        };
+        engine.submit_order(&quot;test&quot;, close).unwrap();
+
+        let acc = engine.accounts.get(&quot;test&quot;).unwrap();
+        println!(&quot;BUG TEST 2 - wallet_balance: {} (beklenen: 9990)&quot;, acc.wallet_balance);
+
+        if acc.wallet_balance == 10000.0 {
+            println!(&quot;❌ BUG BULUNDU: Realized Loss wallet_balance&#x27;dan DÜŞÜLMÜYOR!&quot;);
+        }
+        assert_eq!(acc.wallet_balance, 9990.0, &quot;BUG: Realized loss wallet_balance&#x27;dan düşülmüyor!&quot;);
+    }
+
+    // ============================================================
+    // BUG TEST 3: Short pozisyon PnL doğru mu?
+    // Short aç 100&#x27;den, fiyat 90&#x27;a düşsün → 10 USDT kâr
+    // ============================================================
+    #[test]
+    fn test_short_pnl_correct() {
+        let engine = make_engine();
+
+        engine.latest_prices.insert(&quot;XRPUSDT&quot;.into(), 100.0);
+
+        let order = Order {
+            id: &quot;short_1&quot;.into(),
+            user_id: &quot;test&quot;.into(),
+            symbol: &quot;XRPUSDT&quot;.into(),
+            side: OrderSide::Sell,
+            position_side: PositionSide::Short,
+            order_type: OrderType::Market,
+            price: 0.0,
+            stop_price: 0.0,
+            amount: 1.0,
+            leverage: 10.0,
+            executed: 0.0,
+            timestamp: 0,
+        };
+        engine.submit_order(&quot;test&quot;, order).unwrap();
+
+        engine.on_mark_price_update(&quot;XRPUSDT&quot;, 90.0);
+
+        let pos = engine.positions.get(&quot;test&quot;).unwrap();
+        let p = pos.get(&quot;XRPUSDT_Short&quot;).unwrap();
+        println!(&quot;BUG TEST 3 - Short PnL: {} (beklenen: 10)&quot;, p.unrealized_pnl);
+        assert_eq!(p.unrealized_pnl, 10.0, &quot;Short PnL hesaplaması yanlış!&quot;);
+    }
+
+    // ============================================================
+    // BUG TEST 4: Likidasyon sonrası wallet_balance doğru mu?
+    // 20x kaldıraçla Long aç, likidasyon fiyatına düşür
+    // ============================================================
+    #[test]
+    fn test_liquidation_balance() {
+        let engine = make_engine();
+
+        engine.latest_prices.insert(&quot;SOLUSDT&quot;.into(), 100.0);
+
+        let order = Order {
+            id: &quot;liq_1&quot;.into(),
+            user_id: &quot;test&quot;.into(),
+            symbol: &quot;SOLUSDT&quot;.into(),
+            side: OrderSide::Buy,
+            position_side: PositionSide::Long,
+            order_type: OrderType::Market,
+            price: 0.0,
+            stop_price: 0.0,
+            amount: 10.0, // 10 adet × 100 = 1000 USDT notional, 20x → 50 USDT margin
+            leverage: 20.0,
+            executed: 0.0,
+            timestamp: 0,
+        };
+        engine.submit_order(&quot;test&quot;, order).unwrap();
+
+        // Likidasyon fiyatı: 100 * (1 - 1/20 + 0.005) = 100 * 0.955 = 95.5
+        let pos = engine.positions.get(&quot;test&quot;).unwrap();
+        let p = pos.get(&quot;SOLUSDT_Long&quot;).unwrap();
+        let liq_price = p.liquidation_price;
+        println!(&quot;BUG TEST 4 - Likidasyon fiyatı: {} (beklenen: 95.5)&quot;, liq_price);
+        drop(p);
+        drop(pos);
+
+        // Mark fiyatı likidasyon altına düşür
+        engine.on_mark_price_update(&quot;SOLUSDT&quot;, 95.0);
+
+        let acc = engine.accounts.get(&quot;test&quot;).unwrap();
+        let pos = engine.positions.get(&quot;test&quot;).unwrap();
+        let p = pos.get(&quot;SOLUSDT_Long&quot;).unwrap();
+
+        println!(&quot;BUG TEST 4 - Likidasyon sonrası: wallet={}, margin={}, pos_amount={}&quot;, 
+            acc.wallet_balance, acc.margin_balance, p.amount);
+
+        // Pozisyon sıfırlanmış olmalı
+        assert_eq!(p.amount, 0.0, &quot;Likidasyon sonrası pozisyon sıfır olmalı&quot;);
+
+        // Wallet balance düşmüş olmalı (margin kaybı = 10 * 100 / 20 = 50)
+        let expected_balance = 10000.0 - 50.0; // 9950
+        println!(&quot;BUG TEST 4 - wallet_balance: {} (beklenen: {})&quot;, acc.wallet_balance, expected_balance);
+
+        if acc.wallet_balance != expected_balance {
+            println!(&quot;⚠️ Likidasyon loss hesaplaması beklenenden farklı. Gerçek kayıp: {}&quot;, 10000.0 - acc.wallet_balance);
+        }
+    }
+
+    // ============================================================
+    // BUG TEST 5: Limit emir tetiklenmesi doğru mu?
+    // Buy Limit 95&#x27;e koy, fiyat 94&#x27;e düşsün → tetiklenmeli
+    // ============================================================
+    #[test]
+    fn test_limit_order_trigger() {
+        let engine = make_engine();
+
+        engine.latest_prices.insert(&quot;BNBUSDT&quot;.into(), 100.0);
+
+        let limit = Order {
+            id: &quot;limit_1&quot;.into(),
+            user_id: &quot;test&quot;.into(),
+            symbol: &quot;BNBUSDT&quot;.into(),
+            side: OrderSide::Buy,
+            position_side: PositionSide::Long,
+            order_type: OrderType::Limit,
+            price: 95.0,
+            stop_price: 0.0,
+            amount: 2.0,
+            leverage: 10.0,
+            executed: 0.0,
+            timestamp: 0,
+        };
+        engine.submit_order(&quot;test&quot;, limit).unwrap();
+
+        // Fiyat henüz 97, tetiklenmemeli
+        engine.on_last_price_update(&quot;BNBUSDT&quot;, 97.0);
+        let pos = engine.positions.get(&quot;test&quot;).unwrap();
+        let has_pos = pos.get(&quot;BNBUSDT_Long&quot;).map(|p| p.amount &gt; 0.0).unwrap_or(false);
+        assert!(!has_pos, &quot;Fiyat 97&#x27;de limit 95 tetiklenmemeli!&quot;);
+        drop(pos);
+
+        // Fiyat 94&#x27;e düştü → limit tetiklenmeli
+        engine.on_last_price_update(&quot;BNBUSDT&quot;, 94.0);
+        let pos = engine.positions.get(&quot;test&quot;).unwrap();
+        let p = pos.get(&quot;BNBUSDT_Long&quot;).unwrap();
+        println!(&quot;BUG TEST 5 - Limit tetikleme: amount={} entry={} (beklenen: amount=2, entry=95)&quot;, p.amount, p.entry_price);
+        assert_eq!(p.amount, 2.0, &quot;Limit emir tetiklenmiş olmalı&quot;);
+        assert_eq!(p.entry_price, 95.0, &quot;Limit emir fiyatından execute edilmeli&quot;);
+    }
+
+    // ============================================================
+    // BUG TEST 6: StopMarket emir tetiklenmesi doğru mu?
+    // Buy StopMarket stop=105&#x27;e koy, fiyat 106&#x27;ya çıksın → tetiklenmeli
+    // ============================================================
+    #[test]
+    fn test_stop_market_trigger() {
+        let engine = make_engine();
+
+        engine.latest_prices.insert(&quot;DOTUSDT&quot;.into(), 100.0);
+
+        let stop = Order {
+            id: &quot;stop_1&quot;.into(),
+            user_id: &quot;test&quot;.into(),
+            symbol: &quot;DOTUSDT&quot;.into(),
+            side: OrderSide::Buy,
+            position_side: PositionSide::Long,
+            order_type: OrderType::StopMarket,
+            price: 0.0,
+            stop_price: 105.0,
+            amount: 3.0,
+            leverage: 10.0,
+            executed: 0.0,
+            timestamp: 0,
+        };
+        engine.submit_order(&quot;test&quot;, stop).unwrap();
+
+        // Fiyat 103, tetiklenmemeli
+        engine.on_last_price_update(&quot;DOTUSDT&quot;, 103.0);
+        let pos = engine.positions.get(&quot;test&quot;).unwrap();
+        let has = pos.get(&quot;DOTUSDT_Long&quot;).map(|p| p.amount &gt; 0.0).unwrap_or(false);
+        assert!(!has, &quot;Fiyat 103&#x27;te stop 105 tetiklenmemeli&quot;);
+        drop(pos);
+
+        // Fiyat 106 → tetiklenmeli
+        engine.on_last_price_update(&quot;DOTUSDT&quot;, 106.0);
+        let pos = engine.positions.get(&quot;test&quot;).unwrap();
+        let p = pos.get(&quot;DOTUSDT_Long&quot;).unwrap();
+        println!(&quot;BUG TEST 6 - StopMarket: amount={} entry={} (beklenen: 3, market price 106)&quot;, p.amount, p.entry_price);
+        assert_eq!(p.amount, 3.0, &quot;Stop emir tetiklenmiş olmalı&quot;);
+        // StopMarket → market fiyatından execute
+        assert_eq!(p.entry_price, 106.0, &quot;StopMarket piyasa fiyatından execute edilmeli&quot;);
+    }
+
+    // ============================================================
+    // BUG TEST 7: Aynı sembolde birden fazla pozisyon ekleme (ortalama giriş)
+    // 100&#x27;den 1 adet, sonra 110&#x27;dan 1 adet → ortalama 105 olmalı
+    // ============================================================
+    #[test]
+    fn test_average_entry_price() {
+        let engine = make_engine();
+
+        engine.latest_prices.insert(&quot;AVAXUSDT&quot;.into(), 100.0);
+
+        let o1 = Order {
+            id: &quot;avg_1&quot;.into(),
+            user_id: &quot;test&quot;.into(),
+            symbol: &quot;AVAXUSDT&quot;.into(),
+            side: OrderSide::Buy,
+            position_side: PositionSide::Long,
+            order_type: OrderType::Market,
+            price: 0.0,
+            stop_price: 0.0,
+            amount: 1.0,
+            leverage: 10.0,
+            executed: 0.0,
+            timestamp: 0,
+        };
+        engine.submit_order(&quot;test&quot;, o1).unwrap();
+
+        engine.on_last_price_update(&quot;AVAXUSDT&quot;, 110.0);
+
+        let o2 = Order {
+            id: &quot;avg_2&quot;.into(),
+            user_id: &quot;test&quot;.into(),
+            symbol: &quot;AVAXUSDT&quot;.into(),
+            side: OrderSide::Buy,
+            position_side: PositionSide::Long,
+            order_type: OrderType::Market,
+            price: 0.0,
+            stop_price: 0.0,
+            amount: 1.0,
+            leverage: 10.0,
+            executed: 0.0,
+            timestamp: 0,
+        };
+        engine.submit_order(&quot;test&quot;, o2).unwrap();
+
+        let pos = engine.positions.get(&quot;test&quot;).unwrap();
+        let p = pos.get(&quot;AVAXUSDT_Long&quot;).unwrap();
+        println!(&quot;BUG TEST 7 - Ortalama giriş: {} (beklenen: 105)&quot;, p.entry_price);
+        assert_eq!(p.amount, 2.0);
+        assert_eq!(p.entry_price, 105.0, &quot;Ortalama giriş fiyatı yanlış!&quot;);
+    }
+
+    // ============================================================
+    // BUG TEST 8: Kısmi kapatma doğru mu?
+    // 2 adet açtın, 1 adet kapat → 1 adet kalmalı, entry değişmemeli
+    // ============================================================
+    #[test]
+    fn test_partial_close() {
+        let engine = make_engine();
+
+        engine.latest_prices.insert(&quot;LINKUSDT&quot;.into(), 50.0);
+
+        let open = Order {
+            id: &quot;part_open&quot;.into(),
+            user_id: &quot;test&quot;.into(),
+            symbol: &quot;LINKUSDT&quot;.into(),
+            side: OrderSide::Buy,
+            position_side: PositionSide::Long,
+            order_type: OrderType::Market,
+            price: 0.0,
+            stop_price: 0.0,
+            amount: 2.0,
+            leverage: 10.0,
+            executed: 0.0,
+            timestamp: 0,
+        };
+        engine.submit_order(&quot;test&quot;, open).unwrap();
+
+        // Kısmi kapat: 1 adet
+        engine.on_last_price_update(&quot;LINKUSDT&quot;, 55.0);
+
+        let close = Order {
+            id: &quot;part_close&quot;.into(),
+            user_id: &quot;test&quot;.into(),
+            symbol: &quot;LINKUSDT&quot;.into(),
+            side: OrderSide::Sell,
+            position_side: PositionSide::Long,
+            order_type: OrderType::Market,
+            price: 0.0,
+            stop_price: 0.0,
+            amount: 1.0,
+            leverage: 10.0,
+            executed: 0.0,
+            timestamp: 0,
+        };
+        engine.submit_order(&quot;test&quot;, close).unwrap();
+
+        let pos = engine.positions.get(&quot;test&quot;).unwrap();
+        let p = pos.get(&quot;LINKUSDT_Long&quot;).unwrap();
+        println!(&quot;BUG TEST 8 - Kısmi kapatma: amount={} entry={} (beklenen: 1, 50)&quot;, p.amount, p.entry_price);
+        assert_eq!(p.amount, 1.0, &quot;Kısmi kapatma sonrası 1 adet kalmalı&quot;);
+        assert_eq!(p.entry_price, 50.0, &quot;Entry price değişmemeli&quot;);
+    }
+
+    // ============================================================
+    // BUG TEST 9: TakeProfit emir doğru tetikleniyor mu?
+    // Long pozisyon var, TakeProfit Sell stop=110, fiyat 111 → tetiklenmeli
+    // ============================================================
+    #[test]
+    fn test_take_profit_trigger() {
+        let engine = make_engine();
+
+        engine.latest_prices.insert(&quot;ADAUSDT&quot;.into(), 100.0);
+
+        // Önce pozisyon aç
+        let open = Order {
+            id: &quot;tp_open&quot;.into(),
+            user_id: &quot;test&quot;.into(),
+            symbol: &quot;ADAUSDT&quot;.into(),
+            side: OrderSide::Buy,
+            position_side: PositionSide::Long,
+            order_type: OrderType::Market,
+            price: 0.0,
+            stop_price: 0.0,
+            amount: 5.0,
+            leverage: 10.0,
+            executed: 0.0,
+            timestamp: 0,
+        };
+        engine.submit_order(&quot;test&quot;, open).unwrap();
+
+        // TakeProfit Sell at 110
+        let tp = Order {
+            id: &quot;tp_1&quot;.into(),
+            user_id: &quot;test&quot;.into(),
+            symbol: &quot;ADAUSDT&quot;.into(),
+            side: OrderSide::Sell,
+            position_side: PositionSide::Long,
+            order_type: OrderType::TakeProfitMarket,
+            price: 0.0,
+            stop_price: 110.0,
+            amount: 5.0,
+            leverage: 10.0,
+            executed: 0.0,
+            timestamp: 0,
+        };
+        engine.submit_order(&quot;test&quot;, tp).unwrap();
+
+        // Fiyat 105, tetiklenmemeli
+        engine.on_last_price_update(&quot;ADAUSDT&quot;, 105.0);
+        let pos = engine.positions.get(&quot;test&quot;).unwrap();
+        let p = pos.get(&quot;ADAUSDT_Long&quot;).unwrap();
+        assert_eq!(p.amount, 5.0, &quot;105&#x27;te TP tetiklenmemeli&quot;);
+        drop(p);
+        drop(pos);
+
+        // Fiyat 111 → TakeProfit Sell tetiklenmeli
+        engine.on_last_price_update(&quot;ADAUSDT&quot;, 111.0);
+        let pos = engine.positions.get(&quot;test&quot;).unwrap();
+        let p = pos.get(&quot;ADAUSDT_Long&quot;).unwrap();
+        println!(&quot;BUG TEST 9 - TP sonrası: amount={} (beklenen: 0)&quot;, p.amount);
+        assert_eq!(p.amount, 0.0, &quot;TakeProfit tetiklendikten sonra pozisyon kapanmalı&quot;);
+    }
+
+    // ============================================================
+    // BUG TEST 10: Çoklu likidasyon - iki farklı kullanıcı aynı anda
+    // ============================================================
+    #[test]
+    fn test_multi_user_liquidation() {
+        let engine = make_engine();
+        engine.create_account(&quot;user_a&quot;, 5000.0);
+        engine.create_account(&quot;user_b&quot;, 5000.0);
+
+        engine.latest_prices.insert(&quot;MATICUSDT&quot;.into(), 100.0);
+
+        // Her iki kullanıcı da aynı sembolde long aç
+        for user in &amp;[&quot;user_a&quot;, &quot;user_b&quot;] {
+            let o = Order {
+                id: format!(&quot;multi_{}&quot;, user),
+                user_id: user.to_string(),
+                symbol: &quot;MATICUSDT&quot;.into(),
+                side: OrderSide::Buy,
+                position_side: PositionSide::Long,
+                order_type: OrderType::Market,
+                price: 0.0,
+                stop_price: 0.0,
+                amount: 10.0,
+                leverage: 20.0,
+                executed: 0.0,
+                timestamp: 0,
+            };
+            engine.submit_order(user, o).unwrap();
+        }
+
+        // Likidasyon seviyesinin altına düşür
+        engine.on_mark_price_update(&quot;MATICUSDT&quot;, 94.0);
+
+        let acc_a = engine.accounts.get(&quot;user_a&quot;).unwrap();
+        let acc_b = engine.accounts.get(&quot;user_b&quot;).unwrap();
+
+        println!(&quot;BUG TEST 10 - user_a wallet: {} (beklenen: 4950)&quot;, acc_a.wallet_balance);
+        println!(&quot;BUG TEST 10 - user_b wallet: {} (beklenen: 4950)&quot;, acc_b.wallet_balance);
+
+        // Her iki kullanıcının da bakiyesi düşmüş olmalı
+        let a_lost = acc_a.wallet_balance &lt; 5000.0;
+        let b_lost = acc_b.wallet_balance &lt; 5000.0;
+
+        if !a_lost || !b_lost {
+            println!(&quot;❌ BUG BULUNDU: Çoklu likidasyon düzgün çalışmıyor! a_lost={} b_lost={}&quot;, a_lost, b_lost);
+        }
+        assert!(a_lost, &quot;user_a likide olmuş olmalı&quot;);
+        assert!(b_lost, &quot;user_b likide olmuş olmalı&quot;);
+    }
+}
+</code></pre>
+        </details>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            flowchart: { curve: 'basis' }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>lib.rs - Rust Analiz Dokümanı</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --border: #334155;
+            --code-bg: #090d16;
+            --verbal-bg: #131f37;
+            --analogy-bg: #1e1b4b;
+            --analogy-border: #818cf8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .back-link {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .back-link:hover { text-decoration: underline; }
+        h1 { font-size: 2rem; color: var(--accent); margin-bottom: 0.5rem; }
+        .file-path { font-family: 'Fira Code', monospace; color: var(--text-muted); font-size: 0.95rem; }
+        
+        .structs-container { margin: 1.5rem 0; }
+        .badge {
+            display: inline-block;
+            background: #0284c7;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-family: 'Fira Code', monospace;
+        }
+        .badge-struct { background: #7c3aed; }
+        
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .card h3 { color: var(--accent); margin-bottom: 0.5rem; font-size: 1.3rem; }
+        .card h4 { margin: 1.2rem 0 0.5rem 0; color: var(--text-muted); font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        .easy-analogy {
+            background: var(--analogy-bg);
+            border-left: 4px solid var(--analogy-border);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1rem;
+            color: #c7d2fe;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .verbal-explanation {
+            background: var(--verbal-bg);
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1.2rem;
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            margin-bottom: 1rem;
+        }
+        
+        .mermaid {
+            background: var(--code-bg);
+            padding: 1.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+        }
+        
+        details {
+            margin-top: 2rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Ana İndekse Dön</a>
+        <header>
+            <h1>lib.rs</h1>
+            <p class="file-path">crates/apps/interactive_shell/src/lib.rs</p>
+            <div class="structs-container">
+                <strong>Tanımlı Türler / Yapılar:</strong> Yok
+            </div>
+        </header>
+
+        <section>
+            <h2>Fonksiyon Analizleri & Basit Anlatımlar</h2>
+            
+        <div class="card">
+            <h3><span class="badge">fn</span> print_banner</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>Yok</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan hiçbir girdi almadan verisini alır, kendi kurallarına göre işler ve sonucunda gerekli işlemi tamamlayan adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. İşlemi tamamlayarak <code>()</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON print_banner() -&gt; ():
+    println!(&quot;{}{}╔══════════════════════════════════════════════════════════════════════════════╗{}&quot;, BRIGHT_CYAN, BOLD, RESET);
+    println!(&quot;{}{}║   🚀 CYCLE ORCHESTRATOR - HIGH FREQUENCY UNIFIED COMMAND SHELL               ║{}&quot;, BRIGHT_CYAN, BOLD, RESET);
+    println!(&quot;{}{}╚══════════════════════════════════════════════════════════════════════════════╝{}&quot;, BRIGHT_CYAN, BOLD, RESET);
+    println!(&quot;{}Type &#x27;{}{}{}help{}{}&#x27; to see command list. Type &#x27;{}{}{}exit{}{}&#x27; or &#x27;{}{}{}quit{}{}&#x27; to exit.{}\n&quot;,
+    GRAY, RESET, BRIGHT_YELLOW, BOLD, RESET, GRAY, RESET, RED, BOLD, RESET, GRAY, RESET, RED, BOLD, RESET, GRAY, RESET);</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: print_banner"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> get_plugin_dir</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>Yok</code> | <strong>Dönüş Tipi:</strong> <code>PathBuf</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan hiçbir girdi almadan verisini alır, kendi kurallarına göre işler ve sonucunda <code>PathBuf</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. İşlemi tamamlayarak <code>PathBuf</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON get_plugin_dir() -&gt; PathBuf:
+    let mut dir = std::env::current_exe().unwrap_or_else(|_| PathBuf::from(&quot;.&quot;));
+    dir.pop();
+    EĞER dir.ends_with(&quot;deps&quot;) İSE:
+        dir.pop();
+    dir</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: get_plugin_dir"])
+    Start --> Cond1{"dir.ends_with('deps')?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> scan_available_plugins</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>Yok</code> | <strong>Dönüş Tipi:</strong> <code>Vec&lt;String&gt;</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan hiçbir girdi almadan verisini alır, kendi kurallarına göre işler ve sonucunda <code>Vec&lt;String&gt;</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Listeyi veya veri kümesini sırayla döngüye alarak tarar.<br>4. İşlemi tamamlayarak <code>Vec&lt;String&gt;</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON scan_available_plugins() -&gt; Vec&lt;String&gt;:
+    let mut plugins = Vec::new();
+    let lib_dir = get_plugin_dir();
+    let prefix = if cfg!(target_os = &quot;windows&quot;) { &quot;&quot; } else { &quot;lib&quot; };
+    EĞER let Ok(entries) = std::fs::read_dir(&amp;lib_dir) İSE:
+        HER entry in entries.flatten() İÇİN DÖNGÜ:
+            let name = entry.file_name().to_string_lossy().into_owned();
+            EĞER name.starts_with(&amp;format!(&quot; İSE:
+                let ext_len = if name.ends_with(&quot;.so&quot;) { 3 } else if name.ends_with(&quot;.dll&quot;) { 4 } else { 6 };
+                let plugin_name = &amp;name[prefix.len()..name.len()-ext_len];
+                plugins.push(plugin_name.to_string());
+    plugins.sort();
+    plugins.dedup();
+    plugins</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: scan_available_plugins"])
+    Start --> Cond1{"cfg!(target_os = 'windows')?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"let Ok(entries) = std::fs::read_dir(&lib_dir)?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"name.starts_with(&format!('?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> Loop4["Döngü: entry in entries.flatten()"]
+    Loop4 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> format_help_menu</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>Yok</code> | <strong>Dönüş Tipi:</strong> <code>String</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan hiçbir girdi almadan verisini alır, kendi kurallarına göre işler ve sonucunda <code>String</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Listeyi veya veri kümesini sırayla döngüye alarak tarar.<br>3. İşlemi tamamlayarak <code>String</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON format_help_menu() -&gt; String:
+    let mut out = String::new();
+    out.push_str(&amp;format!(&quot;{}{}=== CYCLE ORCHESTRATOR UNIFIED SHELL COMMAND GUIDE ==={}\n&quot;, BRIGHT_CYAN, BOLD, RESET));
+    out.push_str(&amp;format!(&quot;\n{}{}⚙️ SYSTEM AND PLUGIN MANAGEMENT:{}\n&quot;, BRIGHT_YELLOW, BOLD, RESET));
+    out.push_str(&amp;format!(&quot;  {}help{}                   : Displays this help menu\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}list{}                   : Displays all loaded plugins, status, RAM (KB) and CPU (%) usage\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}available{}              : Lists compiled plugin (.so) libraries ready for loading on disk\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}status [plugin_id]{}     : Shows general system metrics or specific plugin details\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}metrics{}                : Displays detailed CPU, RAM memory and isolated core statistics\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}start &lt;id|all&gt;{}         : Starts specified plugin or the entire system\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}stop &lt;id|all&gt;{}          : Stops specified plugin or the entire system\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}load &lt;plugin_name&gt;{}     : Dynamically loads C-ABI dynamic library (.so) instantly\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}del &lt;plugin_id&gt;{}        : Completely unloads plugin from memory\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;\n{}{}📈 LIVE MARKET TELEMETRY QUERIES:{}\n&quot;, BRIGHT_YELLOW, BOLD, RESET));
+    out.push_str(&amp;format!(&quot;  {}fetch ticker &lt;symbol&gt;{}   : Queries live Best Bid/Ask and spread data for symbol\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}fetch depth &lt;symbol&gt;{}    : Shows live Orderbook depth snapshot data\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}fetch oi &lt;symbol&gt;{}       : Fetches and displays Open Interest data\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}fetch ohlcv &lt;symbol&gt;{}    : Lists live candlestick (Open, High, Low, Close, Volume) data\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}fetch amihud &lt;symbol&gt;{}   : Displays Amihud Illiquidity Ratio (liquidity/volume sensitivity) analysis\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;\n{}{}💾 DATABASE AND PAPER TRADING:{}\n&quot;, BRIGHT_YELLOW, BOLD, RESET));
+    out.push_str(&amp;format!(&quot;  {}tables{}                 : Displays all tables and record counts in SQLite database\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}schema &lt;table&gt;{}          : Displays table structure and column types\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}sql &lt;query&gt;{}            : Executes raw SQL query (e.g. sql SELECT * FROM mark_prices LIMIT 5)\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}buy &lt;sym&gt; &lt;qty&gt; &lt;price&gt; [lev]{}: Enters paper buy (Long) order (e.g. buy BTCUSDT 0.1 60000 20)\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}sell &lt;sym&gt; &lt;qty&gt; &lt;price&gt; [lev]{}: Enters paper sell (Short) order (e.g. sell ETHUSDT 1.5 3000 50)\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}cancel &lt;order_id&gt;{}       : Cancels pending order\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}cancelall [symbol]{}     : Cancels all pending orders or symbol-specific orders\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}deposit &lt;amount&gt;{}       : Deposits virtual balance (e.g. deposit 5000)\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}setbalance &lt;amount&gt;{}    : Directly sets paper wallet balance (e.g. setbalance 10000)\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}positions{}              : Lists open paper trading positions and PnL status\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}orders [symbol]{}        : Lists active pending orders\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}history [limit]{}         : Lists closed trade history with PnL and entry/exit prices\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}close &lt;symbol&gt;{}          : Closes open symbol position\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}closeall{}               : Instantly closes all open positions via market order\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;\n{}{}⚡ HFT BENCHMARK AND TOPOLOGY:{}\n&quot;, BRIGHT_YELLOW, BOLD, RESET));
+    out.push_str(&amp;format!(&quot;  {}bench [iterations]{}     : Measures Zero-copy C-ABI endpoint latency in nanoseconds (ns)\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}graph{} / {}routes{}         : Visualizes Flow Engine Directed Acyclic Graph (DAG)\n&quot;, GREEN, RESET, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;\n{}{}🖥️ OPERATING SYSTEM AND PC SHELL COMMANDS:{}\n&quot;, BRIGHT_YELLOW, BOLD, RESET));
+    out.push_str(&amp;format!(&quot;  {}cd &lt;path&gt;{}              : Changes working directory (e.g. cd /home)\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}pwd{}                    : Displays current working directory\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}sysinfo{} / {}pc{}           : Shows OS, kernel, CPU model, RAM and disk usage\n&quot;, GREEN, RESET, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}&lt;local commands&gt;{}         : Directly executes Linux/OS commands (e.g. ls, free -h, df -h, git status, ping)\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;\n{}{}🧮 CALCULATION AND FINANCIAL UTILITIES:{}\n&quot;, BRIGHT_YELLOW, BOLD, RESET));
+    out.push_str(&amp;format!(&quot;  {}calc &lt;expression&gt;{}        : Performs mathematical/financial calculations (e.g. calc 65000 * 0.1 * 20)\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}time{} / {}clock{}           : Displays nanosecond-precision live system clock (HH.MM.SS.mmm.uuu.nnn)\n&quot;, GREEN, RESET, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}ping [target]{}           : Measures Binance HFT API network latency (RTT ms)\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}tree{}                    : Visualizes project plugin and module directory tree\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;\n{}{}🛠️ CONTROL AND API LEVEL:{}\n&quot;, BRIGHT_YELLOW, BOLD, RESET));
+    out.push_str(&amp;format!(&quot;  {}dump &lt;plugin_id&gt; [max_bytes]{}: Dumps plugin&#x27;s FULL RAM buffer (Full Memory Hex Dump &amp; ASCII)\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}exportjson &lt;id&gt; [file]{}  : Saves plugin&#x27;s memory JSON output as a .json file (Aliases: dumpjson, savejson)\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}peek &lt;plugin_id&gt; [len]{}  : Inspects plugin&#x27;s initial RAM memory summary\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}web &lt;start|stop|status&gt;{} : Starts, stops or returns status of Port 8080 Web server\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}config [show|reload]{}   : Reads flow_config.json content or triggers hot-reload\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}clear{}                  : Clears screen\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}exit{} / {}quit{}            : Stops orchestrator and exits shell\n&quot;, RED, RESET, RED, RESET));
+    out</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: format_help_menu"])
+    Start --> Loop1["Döngü: loading on disk\n', GREEN, RESET));"]
+    Loop1 --> Loop2["Döngü: symbol\n', GREEN, RESET));"]
+    Loop2 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        </section>
+
+        <details>
+            <summary>Orijinal Rust Kaynak Kodunu Göster</summary>
+            <pre><code>use std::path::PathBuf;
+
+pub const RESET: &amp;str = &quot;\x1b[0m&quot;;
+pub const BOLD: &amp;str = &quot;\x1b[1m&quot;;
+pub const RED: &amp;str = &quot;\x1b[31m&quot;;
+pub const GREEN: &amp;str = &quot;\x1b[32m&quot;;
+pub const YELLOW: &amp;str = &quot;\x1b[33m&quot;;
+pub const BLUE: &amp;str = &quot;\x1b[34m&quot;;
+pub const MAGENTA: &amp;str = &quot;\x1b[35m&quot;;
+pub const CYAN: &amp;str = &quot;\x1b[36m&quot;;
+pub const WHITE: &amp;str = &quot;\x1b[37m&quot;;
+pub const GRAY: &amp;str = &quot;\x1b[90m&quot;;
+pub const BRIGHT_GREEN: &amp;str = &quot;\x1b[92m&quot;;
+pub const BRIGHT_CYAN: &amp;str = &quot;\x1b[96m&quot;;
+pub const BRIGHT_YELLOW: &amp;str = &quot;\x1b[93m&quot;;
+
+pub fn print_banner() {
+    println!(&quot;{}{}╔══════════════════════════════════════════════════════════════════════════════╗{}&quot;, BRIGHT_CYAN, BOLD, RESET);
+    println!(&quot;{}{}║   🚀 CYCLE ORCHESTRATOR - HIGH FREQUENCY UNIFIED COMMAND SHELL               ║{}&quot;, BRIGHT_CYAN, BOLD, RESET);
+    println!(&quot;{}{}╚══════════════════════════════════════════════════════════════════════════════╝{}&quot;, BRIGHT_CYAN, BOLD, RESET);
+    println!(&quot;{}Type &#x27;{}{}{}help{}{}&#x27; to see command list. Type &#x27;{}{}{}exit{}{}&#x27; or &#x27;{}{}{}quit{}{}&#x27; to exit.{}\n&quot;, 
+        GRAY, RESET, BRIGHT_YELLOW, BOLD, RESET, GRAY, RESET, RED, BOLD, RESET, GRAY, RESET, RED, BOLD, RESET, GRAY, RESET);
+}
+
+pub fn get_plugin_dir() -&gt; PathBuf {
+    let mut dir = std::env::current_exe().unwrap_or_else(|_| PathBuf::from(&quot;.&quot;));
+    dir.pop();
+    if dir.ends_with(&quot;deps&quot;) {
+        dir.pop();
+    }
+    dir
+}
+
+pub fn scan_available_plugins() -&gt; Vec&lt;String&gt; {
+    let mut plugins = Vec::new();
+    let lib_dir = get_plugin_dir();
+    let prefix = if cfg!(target_os = &quot;windows&quot;) { &quot;&quot; } else { &quot;lib&quot; };
+    if let Ok(entries) = std::fs::read_dir(&amp;lib_dir) {
+        for entry in entries.flatten() {
+            let name = entry.file_name().to_string_lossy().into_owned();
+            if name.starts_with(&amp;format!(&quot;{}plugin_&quot;, prefix)) &amp;&amp; (name.ends_with(&quot;.so&quot;) || name.ends_with(&quot;.dll&quot;) || name.ends_with(&quot;.dylib&quot;)) {
+                let ext_len = if name.ends_with(&quot;.so&quot;) { 3 } else if name.ends_with(&quot;.dll&quot;) { 4 } else { 6 };
+                let plugin_name = &amp;name[prefix.len()..name.len()-ext_len];
+                plugins.push(plugin_name.to_string());
+            }
+        }
+    }
+    plugins.sort();
+    plugins.dedup();
+    plugins
+}
+
+pub fn format_help_menu() -&gt; String {
+    let mut out = String::new();
+    out.push_str(&amp;format!(&quot;{}{}=== CYCLE ORCHESTRATOR UNIFIED SHELL COMMAND GUIDE ==={}\n&quot;, BRIGHT_CYAN, BOLD, RESET));
+    
+    out.push_str(&amp;format!(&quot;\n{}{}⚙️ SYSTEM AND PLUGIN MANAGEMENT:{}\n&quot;, BRIGHT_YELLOW, BOLD, RESET));
+    out.push_str(&amp;format!(&quot;  {}help{}                   : Displays this help menu\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}list{}                   : Displays all loaded plugins, status, RAM (KB) and CPU (%) usage\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}available{}              : Lists compiled plugin (.so) libraries ready for loading on disk\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}status [plugin_id]{}     : Shows general system metrics or specific plugin details\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}metrics{}                : Displays detailed CPU, RAM memory and isolated core statistics\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}start &lt;id|all&gt;{}         : Starts specified plugin or the entire system\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}stop &lt;id|all&gt;{}          : Stops specified plugin or the entire system\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}load &lt;plugin_name&gt;{}     : Dynamically loads C-ABI dynamic library (.so) instantly\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}del &lt;plugin_id&gt;{}        : Completely unloads plugin from memory\n&quot;, GREEN, RESET));
+
+    out.push_str(&amp;format!(&quot;\n{}{}📈 LIVE MARKET TELEMETRY QUERIES:{}\n&quot;, BRIGHT_YELLOW, BOLD, RESET));
+    out.push_str(&amp;format!(&quot;  {}fetch ticker &lt;symbol&gt;{}   : Queries live Best Bid/Ask and spread data for symbol\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}fetch depth &lt;symbol&gt;{}    : Shows live Orderbook depth snapshot data\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}fetch oi &lt;symbol&gt;{}       : Fetches and displays Open Interest data\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}fetch ohlcv &lt;symbol&gt;{}    : Lists live candlestick (Open, High, Low, Close, Volume) data\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}fetch amihud &lt;symbol&gt;{}   : Displays Amihud Illiquidity Ratio (liquidity/volume sensitivity) analysis\n&quot;, GREEN, RESET));
+
+    out.push_str(&amp;format!(&quot;\n{}{}💾 DATABASE AND PAPER TRADING:{}\n&quot;, BRIGHT_YELLOW, BOLD, RESET));
+    out.push_str(&amp;format!(&quot;  {}tables{}                 : Displays all tables and record counts in SQLite database\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}schema &lt;table&gt;{}          : Displays table structure and column types\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}sql &lt;query&gt;{}            : Executes raw SQL query (e.g. sql SELECT * FROM mark_prices LIMIT 5)\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}buy &lt;sym&gt; &lt;qty&gt; &lt;price&gt; [lev]{}: Enters paper buy (Long) order (e.g. buy BTCUSDT 0.1 60000 20)\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}sell &lt;sym&gt; &lt;qty&gt; &lt;price&gt; [lev]{}: Enters paper sell (Short) order (e.g. sell ETHUSDT 1.5 3000 50)\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}cancel &lt;order_id&gt;{}       : Cancels pending order\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}cancelall [symbol]{}     : Cancels all pending orders or symbol-specific orders\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}deposit &lt;amount&gt;{}       : Deposits virtual balance (e.g. deposit 5000)\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}setbalance &lt;amount&gt;{}    : Directly sets paper wallet balance (e.g. setbalance 10000)\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}positions{}              : Lists open paper trading positions and PnL status\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}orders [symbol]{}        : Lists active pending orders\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}history [limit]{}         : Lists closed trade history with PnL and entry/exit prices\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}close &lt;symbol&gt;{}          : Closes open symbol position\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}closeall{}               : Instantly closes all open positions via market order\n&quot;, GREEN, RESET));
+
+    out.push_str(&amp;format!(&quot;\n{}{}⚡ HFT BENCHMARK AND TOPOLOGY:{}\n&quot;, BRIGHT_YELLOW, BOLD, RESET));
+    out.push_str(&amp;format!(&quot;  {}bench [iterations]{}     : Measures Zero-copy C-ABI endpoint latency in nanoseconds (ns)\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}graph{} / {}routes{}         : Visualizes Flow Engine Directed Acyclic Graph (DAG)\n&quot;, GREEN, RESET, GREEN, RESET));
+
+    out.push_str(&amp;format!(&quot;\n{}{}🖥️ OPERATING SYSTEM AND PC SHELL COMMANDS:{}\n&quot;, BRIGHT_YELLOW, BOLD, RESET));
+    out.push_str(&amp;format!(&quot;  {}cd &lt;path&gt;{}              : Changes working directory (e.g. cd /home)\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}pwd{}                    : Displays current working directory\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}sysinfo{} / {}pc{}           : Shows OS, kernel, CPU model, RAM and disk usage\n&quot;, GREEN, RESET, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}&lt;local commands&gt;{}         : Directly executes Linux/OS commands (e.g. ls, free -h, df -h, git status, ping)\n&quot;, GREEN, RESET));
+
+    out.push_str(&amp;format!(&quot;\n{}{}🧮 CALCULATION AND FINANCIAL UTILITIES:{}\n&quot;, BRIGHT_YELLOW, BOLD, RESET));
+    out.push_str(&amp;format!(&quot;  {}calc &lt;expression&gt;{}        : Performs mathematical/financial calculations (e.g. calc 65000 * 0.1 * 20)\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}time{} / {}clock{}           : Displays nanosecond-precision live system clock (HH.MM.SS.mmm.uuu.nnn)\n&quot;, GREEN, RESET, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}ping [target]{}           : Measures Binance HFT API network latency (RTT ms)\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}tree{}                    : Visualizes project plugin and module directory tree\n&quot;, GREEN, RESET));
+
+    out.push_str(&amp;format!(&quot;\n{}{}🛠️ CONTROL AND API LEVEL:{}\n&quot;, BRIGHT_YELLOW, BOLD, RESET));
+    out.push_str(&amp;format!(&quot;  {}dump &lt;plugin_id&gt; [max_bytes]{}: Dumps plugin&#x27;s FULL RAM buffer (Full Memory Hex Dump &amp; ASCII)\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}exportjson &lt;id&gt; [file]{}  : Saves plugin&#x27;s memory JSON output as a .json file (Aliases: dumpjson, savejson)\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}peek &lt;plugin_id&gt; [len]{}  : Inspects plugin&#x27;s initial RAM memory summary\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}web &lt;start|stop|status&gt;{} : Starts, stops or returns status of Port 8080 Web server\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}config [show|reload]{}   : Reads flow_config.json content or triggers hot-reload\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}clear{}                  : Clears screen\n&quot;, GREEN, RESET));
+    out.push_str(&amp;format!(&quot;  {}exit{} / {}quit{}            : Stops orchestrator and exits shell\n&quot;, RED, RESET, RED, RESET));
+
+    out
+}
+</code></pre>
+        </details>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            flowchart: { curve: 'basis' }
+        });
+    </script>
+</body>
+</html>

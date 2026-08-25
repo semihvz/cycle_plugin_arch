@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>amihud_test.rs - Rust Analiz Dokümanı</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --border: #334155;
+            --code-bg: #090d16;
+            --verbal-bg: #131f37;
+            --analogy-bg: #1e1b4b;
+            --analogy-border: #818cf8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .back-link {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .back-link:hover { text-decoration: underline; }
+        h1 { font-size: 2rem; color: var(--accent); margin-bottom: 0.5rem; }
+        .file-path { font-family: 'Fira Code', monospace; color: var(--text-muted); font-size: 0.95rem; }
+        
+        .structs-container { margin: 1.5rem 0; }
+        .badge {
+            display: inline-block;
+            background: #0284c7;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-family: 'Fira Code', monospace;
+        }
+        .badge-struct { background: #7c3aed; }
+        
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .card h3 { color: var(--accent); margin-bottom: 0.5rem; font-size: 1.3rem; }
+        .card h4 { margin: 1.2rem 0 0.5rem 0; color: var(--text-muted); font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        .easy-analogy {
+            background: var(--analogy-bg);
+            border-left: 4px solid var(--analogy-border);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1rem;
+            color: #c7d2fe;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .verbal-explanation {
+            background: var(--verbal-bg);
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1.2rem;
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            margin-bottom: 1rem;
+        }
+        
+        .mermaid {
+            background: var(--code-bg);
+            padding: 1.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+        }
+        
+        details {
+            margin-top: 2rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Ana İndekse Dön</a>
+        <header>
+            <h1>amihud_test.rs</h1>
+            <p class="file-path">crates/plugins/analytics/plugin_amihud/tests/amihud_test.rs</p>
+            <div class="structs-container">
+                <strong>Tanımlı Türler / Yapılar:</strong> Yok
+            </div>
+        </header>
+
+        <section>
+            <h2>Fonksiyon Analizleri & Basit Anlatımlar</h2>
+            
+        <div class="card">
+            <h3><span class="badge">fn</span> test_cabi_plugin_lifecycle_and_inbox</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>Yok</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan hiçbir girdi almadan verisini alır, kendi kurallarına göre işler ve sonucunda gerekli işlemi tamamlayan adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. İşlemi tamamlayarak <code>()</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON test_cabi_plugin_lifecycle_and_inbox() -&gt; ():
+    unsafe {
+    let mut state_ptr: *mut c_void = std::ptr::null_mut();
+    let handle_fn = init_plugin(&amp;mut state_ptr);
+    assert!(!state_ptr.is_null());
+    // 1. IsWorking before Start -&gt; 0
+    let mut is_working_buf = [0u8; 1];
+    let res = handle_fn(state_ptr, 2, std::ptr::null(), 0, is_working_buf.as_mut_ptr(), 1);
+    assert_eq!(res, 1);
+    assert_eq!(is_working_buf[0], 0);
+    // 2. Start plugin (Endpoint 0)
+    let config_json = br#&quot;{&quot;plugin_params&quot;:{&quot;window_ms&quot;:30000}}&quot;#;
+    let res = handle_fn(state_ptr, 0, config_json.as_ptr(), config_json.len(), std::ptr::null_mut(), 0);
+    assert_eq!(res, 0);
+    // 3. IsWorking after Start -&gt; 1
+    let res = handle_fn(state_ptr, 2, std::ptr::null(), 0, is_working_buf.as_mut_ptr(), 1);
+    assert_eq!(res, 1);
+    assert_eq!(is_working_buf[0], 1);
+    // 4. Send payload to Inbox (Endpoint 6)
+    // Header: 32 bytes stream_id (&quot;stream_aggtrades&quot;) padded with 0
+    let mut payload = vec![0u8; 32];
+    let stream_id = b&quot;stream_aggtrades&quot;;
+    payload[..stream_id.len()].copy_from_slice(stream_id);
+    let trade_data = serde_json::json!({
+    &quot;MUBARAKUSDT&quot;: {
+    &quot;trade_id&quot;: 101,
+    &quot;price&quot;: &quot;1.25&quot;,
+    &quot;quantity&quot;: &quot;1000.0&quot;,
+    &quot;event_time&quot;: 1700000000000u64
+    });
+    let body = serde_json::to_vec(&amp;trade_data).unwrap();
+    payload.extend_from_slice(&amp;body);
+    let res = handle_fn(state_ptr, 6, payload.as_ptr(), payload.len(), std::ptr::null_mut(), 0);
+    assert_eq!(res, 0);
+    // 5. Query DataMonitor (Endpoint 4)
+    let mut out_buf = vec![0u8; 4096];
+    let read_bytes = handle_fn(state_ptr, 4, std::ptr::null(), 0, out_buf.as_mut_ptr(), out_buf.len());
+    assert!(read_bytes &gt; 0);
+    let output_str = String::from_utf8_lossy(&amp;out_buf[..read_bytes]);
+    assert!(output_str.contains(&quot;AMIHUD İLLİKİDİTE ANALİZİ&quot;));
+    assert!(output_str.contains(&quot;MUBARAKUSDT&quot;));
+    assert!(output_str.contains(&quot;1.2500&quot;));
+    // 6. Stop plugin (Endpoint 1)
+    let res = handle_fn(state_ptr, 1, std::ptr::null(), 0, std::ptr::null_mut(), 0);
+    assert_eq!(res, 0);
+    // Check working -&gt; 0
+    handle_fn(state_ptr, 2, std::ptr::null(), 0, is_working_buf.as_mut_ptr(), 1);
+    assert_eq!(is_working_buf[0], 0);</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: test_cabi_plugin_lifecycle_and_inbox"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        </section>
+
+        <details>
+            <summary>Orijinal Rust Kaynak Kodunu Göster</summary>
+            <pre><code>use plugin_amihud::init_plugin;
+use std::ffi::c_void;
+
+#[test]
+fn test_cabi_plugin_lifecycle_and_inbox() {
+    unsafe {
+        let mut state_ptr: *mut c_void = std::ptr::null_mut();
+        let handle_fn = init_plugin(&amp;mut state_ptr);
+
+        assert!(!state_ptr.is_null());
+
+        // 1. IsWorking before Start -&gt; 0
+        let mut is_working_buf = [0u8; 1];
+        let res = handle_fn(state_ptr, 2, std::ptr::null(), 0, is_working_buf.as_mut_ptr(), 1);
+        assert_eq!(res, 1);
+        assert_eq!(is_working_buf[0], 0);
+
+        // 2. Start plugin (Endpoint 0)
+        let config_json = br#&quot;{&quot;plugin_params&quot;:{&quot;window_ms&quot;:30000}}&quot;#;
+        let res = handle_fn(state_ptr, 0, config_json.as_ptr(), config_json.len(), std::ptr::null_mut(), 0);
+        assert_eq!(res, 0);
+
+        // 3. IsWorking after Start -&gt; 1
+        let res = handle_fn(state_ptr, 2, std::ptr::null(), 0, is_working_buf.as_mut_ptr(), 1);
+        assert_eq!(res, 1);
+        assert_eq!(is_working_buf[0], 1);
+
+        // 4. Send payload to Inbox (Endpoint 6)
+        // Header: 32 bytes stream_id (&quot;stream_aggtrades&quot;) padded with 0
+        let mut payload = vec![0u8; 32];
+        let stream_id = b&quot;stream_aggtrades&quot;;
+        payload[..stream_id.len()].copy_from_slice(stream_id);
+
+        let trade_data = serde_json::json!({
+            &quot;MUBARAKUSDT&quot;: {
+                &quot;trade_id&quot;: 101,
+                &quot;price&quot;: &quot;1.25&quot;,
+                &quot;quantity&quot;: &quot;1000.0&quot;,
+                &quot;event_time&quot;: 1700000000000u64
+            }
+        });
+        let body = serde_json::to_vec(&amp;trade_data).unwrap();
+        payload.extend_from_slice(&amp;body);
+
+        let res = handle_fn(state_ptr, 6, payload.as_ptr(), payload.len(), std::ptr::null_mut(), 0);
+        assert_eq!(res, 0);
+
+        // 5. Query DataMonitor (Endpoint 4)
+        let mut out_buf = vec![0u8; 4096];
+        let read_bytes = handle_fn(state_ptr, 4, std::ptr::null(), 0, out_buf.as_mut_ptr(), out_buf.len());
+        assert!(read_bytes &gt; 0);
+
+        let output_str = String::from_utf8_lossy(&amp;out_buf[..read_bytes]);
+        assert!(output_str.contains(&quot;AMIHUD İLLİKİDİTE ANALİZİ&quot;));
+        assert!(output_str.contains(&quot;MUBARAKUSDT&quot;));
+        assert!(output_str.contains(&quot;1.2500&quot;));
+
+        // 6. Stop plugin (Endpoint 1)
+        let res = handle_fn(state_ptr, 1, std::ptr::null(), 0, std::ptr::null_mut(), 0);
+        assert_eq!(res, 0);
+
+        // Check working -&gt; 0
+        handle_fn(state_ptr, 2, std::ptr::null(), 0, is_working_buf.as_mut_ptr(), 1);
+        assert_eq!(is_working_buf[0], 0);
+    }
+}
+</code></pre>
+        </details>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            flowchart: { curve: 'basis' }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>storage_reader.rs - Rust Analiz Dokümanı</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --border: #334155;
+            --code-bg: #090d16;
+            --verbal-bg: #131f37;
+            --analogy-bg: #1e1b4b;
+            --analogy-border: #818cf8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .back-link {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .back-link:hover { text-decoration: underline; }
+        h1 { font-size: 2rem; color: var(--accent); margin-bottom: 0.5rem; }
+        .file-path { font-family: 'Fira Code', monospace; color: var(--text-muted); font-size: 0.95rem; }
+        
+        .structs-container { margin: 1.5rem 0; }
+        .badge {
+            display: inline-block;
+            background: #0284c7;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-family: 'Fira Code', monospace;
+        }
+        .badge-struct { background: #7c3aed; }
+        
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .card h3 { color: var(--accent); margin-bottom: 0.5rem; font-size: 1.3rem; }
+        .card h4 { margin: 1.2rem 0 0.5rem 0; color: var(--text-muted); font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        .easy-analogy {
+            background: var(--analogy-bg);
+            border-left: 4px solid var(--analogy-border);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1rem;
+            color: #c7d2fe;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .verbal-explanation {
+            background: var(--verbal-bg);
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1.2rem;
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            margin-bottom: 1rem;
+        }
+        
+        .mermaid {
+            background: var(--code-bg);
+            padding: 1.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+        }
+        
+        details {
+            margin-top: 2rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Ana İndekse Dön</a>
+        <header>
+            <h1>storage_reader.rs</h1>
+            <p class="file-path">crates/plugins/storage/plugin_sqlite_query/src/storage_reader.rs</p>
+            <div class="structs-container">
+                <strong>Tanımlı Türler / Yapılar:</strong> <span class="badge badge-struct">QueryResult</span> <span class="badge badge-struct">StorageReader</span> 
+            </div>
+        </header>
+
+        <section>
+            <h2>Fonksiyon Analizleri & Basit Anlatımlar</h2>
+            
+        <div class="card">
+            <h3><span class="badge">fn</span> new</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>db_path: &amp;str</code> | <strong>Dönüş Tipi:</strong> <code>Result&lt;Self&gt;</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Dükkanı sabah açarken kasayı sıfırlama, rafları düzeltme ve tabelayı asma işlemidir. Her şey temiz bir başlangıç için hazır hale getirilir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Yapıcı (constructor) fonksiyon olarak nesnenin bellekte ilk durumları ve yapılandırmalarıyla başlatılmasını (instantiation) sağlar.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON new(db_path: &amp;str) -&gt; Result&lt;Self&gt;:
+    let conn = Connection::open(db_path)?;
+    // Enable WAL mode &amp; query_only optimization
+    let _ = conn.execute_batch(&quot;
+    PRAGMA journal_mode = WAL;
+    PRAGMA read_uncommitted = ON;
+    &quot;);
+    Ok(Self {
+    conn: Arc::new(Mutex::new(conn)),
+    db_path: db_path.to_string(),
+    })</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: new"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> execute_sql</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self, sql: &amp;str</code> | <strong>Dönüş Tipi:</strong> <code>Result&lt;QueryResult&gt;</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Gün içinde yapılan tüm alışverişleri ve harcamaları gün sonunda kaybolmaması için büyük ana kasa defterine kaydetme işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> İşlenmiş verileri veya emir kayıtlarını veritabanına (SQLite/Disk) kalıcı olarak yazar.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON execute_sql(&amp;self, sql: &amp;str) -&gt; Result&lt;QueryResult&gt;:
+    let start = Instant::now();
+    let conn = self.conn.lock().unwrap();
+    let mut stmt = conn.prepare(sql)?;
+    let col_names: Vec&lt;String&gt; = stmt.column_names().into_iter().map(|s| s.to_string()).collect();
+    let col_count = col_names.len();
+    let mut rows_data: Vec&lt;Vec&lt;String&gt;&gt; = Vec::new();
+    let mut rows_iter = stmt.query([])?;
+    WHILE let Some(row) = rows_iter.next()? DÖNGÜSÜ:
+        let mut row_vec = Vec::with_capacity(col_count);
+        HER i in 0..col_count İÇİN DÖNGÜ:
+            let val_ref = row.get_ref(i)?;
+            let val_str = match val_ref {
+            ValueRef::Null =&gt; &quot;NULL&quot;.to_string(),
+            ValueRef::Integer(i) =&gt; i.to_string(),
+            ValueRef::Real(f) =&gt; format!(&quot;{:.6}&quot;, f).trim_end_matches(&#x27;0&#x27;).trim_end_matches(&#x27;.&#x27;).to_string(),
+            ValueRef::Text(b) =&gt; String::from_utf8_lossy(b).into_owned(),
+            ValueRef::Blob(b) =&gt; format!(&quot;&lt;BLOB {}b&gt;&quot;, b.len()),
+            };
+            row_vec.push(val_str);
+        rows_data.push(row_vec);
+    let duration = start.elapsed().as_secs_f64() * 1000.0;
+    let formatted = format_ascii_table(&amp;col_names, &amp;rows_data, duration);
+    Ok(QueryResult {
+    columns: col_names,
+    row_count: rows_data.len(),
+    rows: rows_data,
+    execution_time_ms: duration,
+    formatted_output: formatted,
+    })</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: execute_sql"])
+    Start --> Loop1["Döngü: i in 0..col_count"]
+    Loop1 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> list_tables</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self</code> | <strong>Dönüş Tipi:</strong> <code>Result&lt;QueryResult&gt;</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Gün içinde yapılan tüm alışverişleri ve harcamaları gün sonunda kaybolmaması için büyük ana kasa defterine kaydetme işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> İşlenmiş verileri veya emir kayıtlarını veritabanına (SQLite/Disk) kalıcı olarak yazar.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON list_tables(&amp;self) -&gt; Result&lt;QueryResult&gt;:
+    self.execute_sql(&quot;SELECT name FROM sqlite_master WHERE type=&#x27;table&#x27; AND name NOT LIKE &#x27;sqlite_%&#x27; ORDER BY name&quot;)</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: list_tables"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> get_schema</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self, table_name: &amp;str</code> | <strong>Dönüş Tipi:</strong> <code>Result&lt;QueryResult&gt;</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Gün içinde yapılan tüm alışverişleri ve harcamaları gün sonunda kaybolmaması için büyük ana kasa defterine kaydetme işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> İşlenmiş verileri veya emir kayıtlarını veritabanına (SQLite/Disk) kalıcı olarak yazar.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON get_schema(&amp;self, table_name: &amp;str) -&gt; Result&lt;QueryResult&gt;:
+    // Sanitize table_name against dangerous chars
+    let clean_name = table_name.chars().filter(|c| c.is_alphanumeric() || *c == &#x27;_&#x27;).collect::&lt;String&gt;();
+    self.execute_sql(&amp;format!(&quot;PRAGMA table_info({})&quot;, clean_name))</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: get_schema"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> get_db_file_size</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self</code> | <strong>Dönüş Tipi:</strong> <code>u64</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Gün içinde yapılan tüm alışverişleri ve harcamaları gün sonunda kaybolmaması için büyük ana kasa defterine kaydetme işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> İşlenmiş verileri veya emir kayıtlarını veritabanına (SQLite/Disk) kalıcı olarak yazar.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON get_db_file_size(&amp;self) -&gt; u64:
+    std::fs::metadata(&amp;self.db_path).map(|m| m.len()).unwrap_or(0)</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: get_db_file_size"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> format_ascii_table</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>cols: &amp;[String], rows: &amp;[Vec&lt;String&gt;], duration_ms: f64</code> | <strong>Dönüş Tipi:</strong> <code>String</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Gün içinde yapılan tüm alışverişleri ve harcamaları gün sonunda kaybolmaması için büyük ana kasa defterine kaydetme işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> İşlenmiş verileri veya emir kayıtlarını veritabanına (SQLite/Disk) kalıcı olarak yazar.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON format_ascii_table(cols: &amp;[String], rows: &amp;[Vec&lt;String&gt;], duration_ms: f64) -&gt; String:
+    EĞER cols.is_empty() İSE:
+        DÖNDÜR format!(&quot;(0 rows returned, {:.2} ms)\n&quot;, duration_ms)
+    let mut col_widths: Vec&lt;usize&gt; = cols.iter().map(|c| c.len()).collect();
+    HER row in rows İÇİN DÖNGÜ:
+        HER (i, cell) in row.iter().enumerate() İÇİN DÖNGÜ:
+            EĞER i &lt; col_widths.len() İSE:
+                col_widths[i] = col_widths[i].max(cell.len());
+    let mut out = String::new();
+    // Header separator line
+    out.push(&#x27;+&#x27;);
+    HER &amp;w in &amp;col_widths İÇİN DÖNGÜ:
+        out.push_str(&amp;&quot;-&quot;.repeat(w + 2));
+        out.push(&#x27;+&#x27;);
+    out.push(&#x27;\n&#x27;);
+    // Header column names
+    out.push(&#x27;|&#x27;);
+    HER (i, c) in cols.iter().enumerate() İÇİN DÖNGÜ:
+        let w = col_widths[i];
+        out.push_str(&amp;format!(&quot; {:&lt;width$} |&quot;, c, width = w));
+    out.push(&#x27;\n&#x27;);
+    // Header separator line
+    out.push(&#x27;+&#x27;);
+    HER &amp;w in &amp;col_widths İÇİN DÖNGÜ:
+        out.push_str(&amp;&quot;-&quot;.repeat(w + 2));
+        out.push(&#x27;+&#x27;);
+    out.push(&#x27;\n&#x27;);
+    // Data rows
+    HER row in rows İÇİN DÖNGÜ:
+        out.push(&#x27;|&#x27;);
+        HER (i, cell) in row.iter().enumerate() İÇİN DÖNGÜ:
+            let w = col_widths.get(i).copied().unwrap_or(cell.len());
+            out.push_str(&amp;format!(&quot; {:&lt;width$} |&quot;, cell, width = w));
+        out.push(&#x27;\n&#x27;);
+    // Bottom separator line
+    out.push(&#x27;+&#x27;);
+    HER &amp;w in &amp;col_widths İÇİN DÖNGÜ:
+        out.push_str(&amp;&quot;-&quot;.repeat(w + 2));
+        out.push(&#x27;+&#x27;);
+    out.push(&#x27;\n&#x27;);
+    out.push_str(&amp;format!(&quot;({} rows returned in {:.2} ms)\n&quot;, rows.len(), duration_ms));
+    out</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: format_ascii_table"])
+    Start --> Cond1{"cols.is_empty()?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"i &lt; col_widths.len()?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Loop3["Döngü: row in rows"]
+    Loop3 --> Loop4["Döngü: (i, cell) in row.iter().enumerate()"]
+    Loop4 --> EndNode(["Döndür: format!('(0 rows returned, {:.2} ms)\n', duration_ms)"])
+            </div>
+        </div>
+        
+        </section>
+
+        <details>
+            <summary>Orijinal Rust Kaynak Kodunu Göster</summary>
+            <pre><code>use rusqlite::{Connection, Result, types::ValueRef};
+use std::sync::{Arc, Mutex};
+use std::time::Instant;
+
+pub struct QueryResult {
+    pub columns: Vec&lt;String&gt;,
+    pub rows: Vec&lt;Vec&lt;String&gt;&gt;,
+    pub row_count: usize,
+    pub execution_time_ms: f64,
+    pub formatted_output: String,
+}
+
+pub struct StorageReader {
+    conn: Arc&lt;Mutex&lt;Connection&gt;&gt;,
+    pub db_path: String,
+}
+
+impl StorageReader {
+    pub fn new(db_path: &amp;str) -&gt; Result&lt;Self&gt; {
+        let conn = Connection::open(db_path)?;
+        // Enable WAL mode &amp; query_only optimization
+        let _ = conn.execute_batch(&quot;
+            PRAGMA journal_mode = WAL;
+            PRAGMA read_uncommitted = ON;
+        &quot;);
+        Ok(Self {
+            conn: Arc::new(Mutex::new(conn)),
+            db_path: db_path.to_string(),
+        })
+    }
+
+    pub fn execute_sql(&amp;self, sql: &amp;str) -&gt; Result&lt;QueryResult&gt; {
+        let start = Instant::now();
+        let conn = self.conn.lock().unwrap();
+        
+        let mut stmt = conn.prepare(sql)?;
+        let col_names: Vec&lt;String&gt; = stmt.column_names().into_iter().map(|s| s.to_string()).collect();
+        let col_count = col_names.len();
+
+        let mut rows_data: Vec&lt;Vec&lt;String&gt;&gt; = Vec::new();
+        let mut rows_iter = stmt.query([])?;
+
+        while let Some(row) = rows_iter.next()? {
+            let mut row_vec = Vec::with_capacity(col_count);
+            for i in 0..col_count {
+                let val_ref = row.get_ref(i)?;
+                let val_str = match val_ref {
+                    ValueRef::Null =&gt; &quot;NULL&quot;.to_string(),
+                    ValueRef::Integer(i) =&gt; i.to_string(),
+                    ValueRef::Real(f) =&gt; format!(&quot;{:.6}&quot;, f).trim_end_matches(&#x27;0&#x27;).trim_end_matches(&#x27;.&#x27;).to_string(),
+                    ValueRef::Text(b) =&gt; String::from_utf8_lossy(b).into_owned(),
+                    ValueRef::Blob(b) =&gt; format!(&quot;&lt;BLOB {}b&gt;&quot;, b.len()),
+                };
+                row_vec.push(val_str);
+            }
+            rows_data.push(row_vec);
+        }
+
+        let duration = start.elapsed().as_secs_f64() * 1000.0;
+        let formatted = format_ascii_table(&amp;col_names, &amp;rows_data, duration);
+
+        Ok(QueryResult {
+            columns: col_names,
+            row_count: rows_data.len(),
+            rows: rows_data,
+            execution_time_ms: duration,
+            formatted_output: formatted,
+        })
+    }
+
+    pub fn list_tables(&amp;self) -&gt; Result&lt;QueryResult&gt; {
+        self.execute_sql(&quot;SELECT name FROM sqlite_master WHERE type=&#x27;table&#x27; AND name NOT LIKE &#x27;sqlite_%&#x27; ORDER BY name&quot;)
+    }
+
+    pub fn get_schema(&amp;self, table_name: &amp;str) -&gt; Result&lt;QueryResult&gt; {
+        // Sanitize table_name against dangerous chars
+        let clean_name = table_name.chars().filter(|c| c.is_alphanumeric() || *c == &#x27;_&#x27;).collect::&lt;String&gt;();
+        self.execute_sql(&amp;format!(&quot;PRAGMA table_info({})&quot;, clean_name))
+    }
+
+    pub fn get_db_file_size(&amp;self) -&gt; u64 {
+        std::fs::metadata(&amp;self.db_path).map(|m| m.len()).unwrap_or(0)
+    }
+}
+
+pub fn format_ascii_table(cols: &amp;[String], rows: &amp;[Vec&lt;String&gt;], duration_ms: f64) -&gt; String {
+    if cols.is_empty() {
+        return format!(&quot;(0 rows returned, {:.2} ms)\n&quot;, duration_ms);
+    }
+
+    let mut col_widths: Vec&lt;usize&gt; = cols.iter().map(|c| c.len()).collect();
+    for row in rows {
+        for (i, cell) in row.iter().enumerate() {
+            if i &lt; col_widths.len() {
+                col_widths[i] = col_widths[i].max(cell.len());
+            }
+        }
+    }
+
+    let mut out = String::new();
+    
+    // Header separator line
+    out.push(&#x27;+&#x27;);
+    for &amp;w in &amp;col_widths {
+        out.push_str(&amp;&quot;-&quot;.repeat(w + 2));
+        out.push(&#x27;+&#x27;);
+    }
+    out.push(&#x27;\n&#x27;);
+
+    // Header column names
+    out.push(&#x27;|&#x27;);
+    for (i, c) in cols.iter().enumerate() {
+        let w = col_widths[i];
+        out.push_str(&amp;format!(&quot; {:&lt;width$} |&quot;, c, width = w));
+    }
+    out.push(&#x27;\n&#x27;);
+
+    // Header separator line
+    out.push(&#x27;+&#x27;);
+    for &amp;w in &amp;col_widths {
+        out.push_str(&amp;&quot;-&quot;.repeat(w + 2));
+        out.push(&#x27;+&#x27;);
+    }
+    out.push(&#x27;\n&#x27;);
+
+    // Data rows
+    for row in rows {
+        out.push(&#x27;|&#x27;);
+        for (i, cell) in row.iter().enumerate() {
+            let w = col_widths.get(i).copied().unwrap_or(cell.len());
+            out.push_str(&amp;format!(&quot; {:&lt;width$} |&quot;, cell, width = w));
+        }
+        out.push(&#x27;\n&#x27;);
+    }
+
+    // Bottom separator line
+    out.push(&#x27;+&#x27;);
+    for &amp;w in &amp;col_widths {
+        out.push_str(&amp;&quot;-&quot;.repeat(w + 2));
+        out.push(&#x27;+&#x27;);
+    }
+    out.push(&#x27;\n&#x27;);
+
+    out.push_str(&amp;format!(&quot;({} rows returned in {:.2} ms)\n&quot;, rows.len(), duration_ms));
+    out
+}
+</code></pre>
+        </details>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            flowchart: { curve: 'basis' }
+        });
+    </script>
+</body>
+</html>

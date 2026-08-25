@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>lib.rs - Rust Analiz Dokümanı</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --border: #334155;
+            --code-bg: #090d16;
+            --verbal-bg: #131f37;
+            --analogy-bg: #1e1b4b;
+            --analogy-border: #818cf8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .back-link {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .back-link:hover { text-decoration: underline; }
+        h1 { font-size: 2rem; color: var(--accent); margin-bottom: 0.5rem; }
+        .file-path { font-family: 'Fira Code', monospace; color: var(--text-muted); font-size: 0.95rem; }
+        
+        .structs-container { margin: 1.5rem 0; }
+        .badge {
+            display: inline-block;
+            background: #0284c7;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-family: 'Fira Code', monospace;
+        }
+        .badge-struct { background: #7c3aed; }
+        
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .card h3 { color: var(--accent); margin-bottom: 0.5rem; font-size: 1.3rem; }
+        .card h4 { margin: 1.2rem 0 0.5rem 0; color: var(--text-muted); font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        .easy-analogy {
+            background: var(--analogy-bg);
+            border-left: 4px solid var(--analogy-border);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1rem;
+            color: #c7d2fe;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .verbal-explanation {
+            background: var(--verbal-bg);
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1.2rem;
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            margin-bottom: 1rem;
+        }
+        
+        .mermaid {
+            background: var(--code-bg);
+            padding: 1.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+        }
+        
+        details {
+            margin-top: 2rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Ana İndekse Dön</a>
+        <header>
+            <h1>lib.rs</h1>
+            <p class="file-path">crates/plugins/notifications/plugin_telegram_bot/src/lib.rs</p>
+            <div class="structs-container">
+                <strong>Tanımlı Türler / Yapılar:</strong> <span class="badge badge-struct">PluginState</span> <span class="badge badge-struct">TelegramBotConfig</span> <span class="badge badge-struct">TelegramBotStats</span> <span class="badge badge-struct">TelegramMessageRecord</span> 
+            </div>
+        </header>
+
+        <section>
+            <h2>Fonksiyon Analizleri & Basit Anlatımlar</h2>
+            
+        <div class="card">
+            <h3><span class="badge">fn</span> default</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>Yok</code> | <strong>Dönüş Tipi:</strong> <code>Self</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Dükkanda harika bir fırsat veya önemli bir durum gerçekleştiğinde dükkan sahibinin cep telefonuna SMS / WhatsApp bildirim mesajı atma işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Üretilen sinyal veya uyarı mesajını Telegram API veya ağ soketleri üzerinden ilgili kanal ve kullanıcılara iletir.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON default() -&gt; Self:
+    Self {
+    api_mode: &quot;telegram_api&quot;.to_string(),
+    bot_token: &quot;123456789:YOUR_TELEGRAM_BOT_TOKEN_HERE&quot;.to_string(),
+    chat_id: &quot;@your_channel_or_chat_id&quot;.to_string(),
+    admin_chat_ids: vec![&quot;123456789&quot;.to_string()],
+    webhook_port: 8085,
+    webhook_verify_token: &quot;CYCLE_ORC_TELEGRAM_VERIFY&quot;.to_string(),
+    auto_reply_enabled: true,</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: default"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> get_config_path</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>Yok</code> | <strong>Dönüş Tipi:</strong> <code>String</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Dükkanda harika bir fırsat veya önemli bir durum gerçekleştiğinde dükkan sahibinin cep telefonuna SMS / WhatsApp bildirim mesajı atma işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Üretilen sinyal veya uyarı mesajını Telegram API veya ağ soketleri üzerinden ilgili kanal ve kullanıcılara iletir.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON get_config_path() -&gt; String:
+    let paths = [
+    &quot;config/telegram_bot.cfg&quot;,
+    &quot;../config/telegram_bot.cfg&quot;,
+    &quot;../../config/telegram_bot.cfg&quot;,
+    &quot;telegram_bot.cfg&quot;,
+    ];
+    HER p in &amp;paths İÇİN DÖNGÜ:
+        EĞER Path::new(p).exists() İSE:
+            DÖNDÜR p.to_string()
+    &quot;config/telegram_bot.cfg&quot;.to_string()</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: get_config_path"])
+    Start --> Cond1{"Path::new(p).exists()?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Loop2["Döngü: p in &paths"]
+    Loop2 --> EndNode(["Döndür: p.to_string()"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> current_timestamp</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>Yok</code> | <strong>Dönüş Tipi:</strong> <code>u64</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Dükkanda harika bir fırsat veya önemli bir durum gerçekleştiğinde dükkan sahibinin cep telefonuna SMS / WhatsApp bildirim mesajı atma işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Üretilen sinyal veya uyarı mesajını Telegram API veya ağ soketleri üzerinden ilgili kanal ve kullanıcılara iletir.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON current_timestamp() -&gt; u64:
+    SystemTime::now()
+    .duration_since(UNIX_EPOCH)
+    .map(|d| d.as_secs())
+    .unwrap_or(0)</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: current_timestamp"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> init_plugin</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>state_out: *mut *mut c_void,</code> | <strong>Dönüş Tipi:</strong> <code>unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Dükkanda harika bir fırsat veya önemli bir durum gerçekleştiğinde dükkan sahibinin cep telefonuna SMS / WhatsApp bildirim mesajı atma işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Üretilen sinyal veya uyarı mesajını Telegram API veya ağ soketleri üzerinden ilgili kanal ve kullanıcılara iletir.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON init_plugin(state_out: *mut *mut c_void,) -&gt; unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize:
+    let runtime = tokio::runtime::Builder::new_multi_thread()
+    .worker_threads(2)
+    .enable_all()
+    .build()
+    .expect(&quot;Failed to initialize Tokio runtime for plugin_telegram_bot&quot;);
+    let cfg_path = get_config_path();
+    let config = if let Ok(content) = fs::read_to_string(&amp;cfg_path) {
+    serde_json::from_str::&lt;TelegramBotConfig&gt;(&amp;content).unwrap_or_default()
+    } else {
+    let _ = fs::create_dir_all(&quot;config&quot;);
+    let default_cfg = TelegramBotConfig::default();
+    let _ = fs::write(
+    &amp;cfg_path,
+    serde_json::to_string_pretty(&amp;default_cfg).unwrap_or_default(),
+    );
+    default_cfg
+    };
+    let initial_stats = TelegramBotStats {
+    sent_count: 0,
+    received_count: 0,
+    failed_count: 0,
+    last_incoming_cmd: &quot;None&quot;.to_string(),
+    last_outgoing_msg: &quot;None&quot;.to_string(),
+    server_status: &quot;Initialized&quot;.to_string(),
+    active_mode: config.api_mode.clone(),
+    webhook_port: config.webhook_port,
+    };
+    let initial_monitor = json!({
+    &quot;plugin&quot;: &quot;plugin_telegram_bot&quot;,
+    &quot;status&quot;: &quot;ready&quot;,
+    &quot;config&quot;: config,
+    &quot;stats&quot;: initial_stats,
+    &quot;recent_messages&quot;: []
+    })
+    .to_string();
+    let state = Box::new(PluginState {
+    runtime,
+    is_running: Arc::new(AtomicBool::new(false)),
+    config: Arc::new(Mutex::new(config)),
+    stats: Arc::new(Mutex::new(initial_stats)),
+    recent_messages: Arc::new(Mutex::new(Vec::new())),
+    outbox: Arc::new(Mutex::new(Vec::new())),
+    data: Arc::new(Mutex::new(initial_monitor.into_bytes())),
+    });
+    unsafe {
+    *state_out = Box::into_raw(state) as *mut c_void;
+    handle_endpoint</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: init_plugin"])
+    Start --> Cond1{"let Ok(content) = fs::read_to_string(&cfg_path)?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Loop2["Döngü: plugin_telegram_bot');"]
+    Loop2 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> handle_endpoint</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>plugin_state: *mut c_void,
+    endpoint_id: u32,
+    payload: *const u8,
+    payload_len: usize,
+    out_buf: *mut u8,
+    out_max_len: usize,</code> | <strong>Dönüş Tipi:</strong> <code>usize</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Dükkanda harika bir fırsat veya önemli bir durum gerçekleştiğinde dükkan sahibinin cep telefonuna SMS / WhatsApp bildirim mesajı atma işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Üretilen sinyal veya uyarı mesajını Telegram API veya ağ soketleri üzerinden ilgili kanal ve kullanıcılara iletir.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON handle_endpoint(plugin_state: *mut c_void,
+    endpoint_id: u32,
+    payload: *const u8,
+    payload_len: usize,
+    out_buf: *mut u8,
+    out_max_len: usize,) -&gt; usize:
+    let state = &amp;*(plugin_state as *const PluginState);
+    DURUM KONTROLÜ (endpoint_id):
+        0 =&gt; {
+        // Start
+        EĞER state.is_running.load(Ordering::Relaxed) İSE:
+            DÖNDÜR 0
+        state.is_running.store(true, Ordering::Relaxed);
+        // Re-read configuration if payload passed
+        EĞER payload_len &gt; 0 İSE:
+            let slice = std::slice::from_raw_parts(payload, payload_len);
+            EĞER let Ok(new_cfg) = serde_json::from_slice::&lt;TelegramBotConfig&gt;(slice) İSE:
+                let mut cfg_guard = state.config.lock().unwrap();
+                *cfg_guard = new_cfg;
+        let is_running = state.is_running.clone();
+        let config = state.config.clone();
+        let stats = state.stats.clone();
+        let recent = state.recent_messages.clone();
+        let outbox = state.outbox.clone();
+        let data = state.data.clone();
+        state.runtime.spawn(async move {
+        let (port, token) = {
+        let c = config.lock().unwrap();
+        (c.webhook_port, c.bot_token.clone())
+        };
+        {
+        let mut s = stats.lock().unwrap();
+        s.server_status = format!(&quot;Active on port {}&quot;, port);
+    // Start Webhook listener HTTP server
+    let listener = tokio::net::TcpListener::bind(format!(&quot;0.0.0.0:{}&quot;, port)).await;
+    DURUM KONTROLÜ (listener):
+        Ok(listener) =&gt; {
+        WHILE is_running.load(Ordering::Relaxed) DÖNGÜSÜ:
+            tokio::select! {
+            accept_res = listener.accept() =&gt; {
+            EĞER let Ok((mut stream, _addr)) = accept_res İSE:
+                let config_cloned = config.clone();
+                let stats_cloned = stats.clone();
+                let recent_cloned = recent.clone();
+                let outbox_cloned = outbox.clone();
+                let data_cloned = data.clone();
+                let token_cloned = token.clone();
+                tokio::spawn(async move {
+                let mut buf = vec![0u8; 8192];
+                use tokio::io::{AsyncReadExt, AsyncWriteExt};
+                EĞER let Ok(n) = stream.read(&amp;mut buf).await İSE:
+                    EĞER n &gt; 0 İSE:
+                        let req_str = String::from_utf8_lossy(&amp;buf[..n]);
+                        // Process incoming HTTP / Webhook request
+                        let (reply_body, status_code) = handle_http_request(
+                        &amp;req_str,
+                        &amp;config_cloned,
+                        &amp;stats_cloned,
+                        &amp;recent_cloned,
+                        &amp;outbox_cloned,
+                        &amp;token_cloned
+                        ).await;
+                        let response = format!(
+                        &quot;HTTP/1.1 {} OK\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}&quot;,
+                        status_code,
+                        reply_body.len(),
+                        reply_body
+                        );
+                        let _ = stream.write_all(response.as_bytes()).await;
+                        // Update DataMonitor payload
+                        update_monitor_data(&amp;config_cloned, &amp;stats_cloned, &amp;recent_cloned, &amp;data_cloned);
+                });
+        _ = tokio::time::sleep(tokio::time::Duration::from_millis(250)) =&gt; {}
+    Err(e) =&gt; {
+    let mut s = stats.lock().unwrap();
+    s.server_status = format!(&quot;Listener Error: {}&quot;, e);
+    });
+    0
+    1 =&gt; {
+    // Stop
+    state.is_running.store(false, Ordering::Relaxed);
+    let mut s = state.stats.lock().unwrap();
+    s.server_status = &quot;Stopped&quot;.to_string();
+    0
+    2 =&gt; {
+    // IsWorking
+    EĞER state.is_running.load(Ordering::Relaxed) İSE:
+    3 =&gt; {
+    // DataValid
+    1
+    4 | 5 =&gt; {
+    // DataMonitor / RawData
+    let guard = state.data.lock().unwrap();
+    let len = guard.len().min(out_max_len);
+    EĞER len &gt; 0 İSE:
+        std::ptr::copy_nonoverlapping(guard.as_ptr(), out_buf, len);
+    len
+    6 =&gt; {
+    // Inbox - Outbound Telegram dispatch or external commands
+    EĞER payload_len &gt; 0 İSE:
+        let slice = std::slice::from_raw_parts(payload, payload_len);
+        EĞER let Ok(msg) = serde_json::from_slice::&lt;serde_json::Value&gt;(slice) İSE:
+            let action = msg[&quot;action&quot;].as_str().unwrap_or(&quot;&quot;);
+            let config_cloned = state.config.clone();
+            let stats_cloned = state.stats.clone();
+            let recent_cloned = state.recent_messages.clone();
+            let data_cloned = state.data.clone();
+            EĞER action == &quot;send_message&quot; || action == &quot;notify&quot; || action == &quot;breakout_result&quot; İSE:
+                let target_chat = msg[&quot;chat_id&quot;]
+                .as_str()
+                .or_else(|| msg[&quot;target&quot;].as_str())
+                .unwrap_or(&quot;&quot;)
+                .to_string();
+                let text_content = if action == &quot;breakout_result&quot; {
+                let dir = msg[&quot;data&quot;][&quot;direction&quot;].as_str().unwrap_or(&quot;NONE&quot;);
+                let lvl = msg[&quot;data&quot;][&quot;broken_level&quot;].as_f64().unwrap_or(0.0);
+                let q = msg[&quot;data&quot;][&quot;breakout_quality&quot;].as_f64().unwrap_or(0.0);
+                let c = msg[&quot;data&quot;][&quot;certainty_percentage&quot;].as_f64().unwrap_or(0.0);
+                let f = msg[&quot;data&quot;][&quot;fake_percentage&quot;].as_f64().unwrap_or(0.0);
+                format!(
+                &quot;&lt;b&gt;🔥 KIRILIM UYARISI 🔥&lt;/b&gt;\n\n\
+                &lt;b&gt;Yön:&lt;/b&gt; {}\n\
+                &lt;b&gt;Seviye:&lt;/b&gt; {:.2}\n\
+                &lt;b&gt;Kalite Skoru:&lt;/b&gt; %{:.2}\n\
+                &lt;b&gt;Kesinlik Skoru:&lt;/b&gt; %{:.2}\n\
+                &lt;b&gt;Sahte İhtimali:&lt;/b&gt; %{:.2}&quot;,
+                EĞER dir == &quot;UP&quot; İSE:
+                    lvl, q, c, f
+                    )
+                    } else {
+                    msg[&quot;text&quot;].as_str().or_else(|| msg[&quot;content&quot;].as_str()).unwrap_or(&quot;Empty message&quot;).to_string()
+                    };
+                    state.runtime.spawn(async move {
+                    let (token, default_chat) = {
+                    let c = config_cloned.lock().unwrap();
+                    (c.bot_token.clone(), c.chat_id.clone())
+                    };
+                    let dest = if !target_chat.is_empty() { target_chat.clone() } else { default_chat };
+                    let res = send_telegram_message(&amp;token, &amp;dest, &amp;text_content).await;
+                    let mut s = stats_cloned.lock().unwrap();
+                    EĞER res İSE:
+                        s.sent_count += 1;
+                        s.last_outgoing_msg = text_content.clone();
+                        let mut r = recent_cloned.lock().unwrap();
+                        r.push(TelegramMessageRecord {
+                        direction: &quot;outbound&quot;.to_string(),
+                        sender: &quot;plugin_telegram_bot&quot;.to_string(),
+                        recipient: dest,
+                        content: text_content,
+                        timestamp: current_timestamp(),
+                        });
+                        EĞER r.len() &gt; 50 İSE:
+                            } else {
+                            s.failed_count += 1;
+                        update_monitor_data(&amp;config_cloned, &amp;stats_cloned, &amp;recent_cloned, &amp;data_cloned);
+                        });
+            0
+        7 =&gt; {
+        // Outbox Check
+        let mut out = state.outbox.lock().unwrap();
+        EĞER out.is_empty() İSE:
+            0
+            } else {
+            let msg = out.remove(0);
+            EĞER let Ok(json_str) = serde_json::to_string(&amp;msg) İSE:
+                let bytes = json_str.as_bytes();
+                let len = bytes.len().min(out_max_len);
+                std::ptr::copy_nonoverlapping(bytes.as_ptr(), out_buf, len);
+                len
+                } else {
+                0
+    _ =&gt; 0,</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: handle_endpoint"])
+    Start --> Cond1{"state.is_running.load(Ordering::Relaxed)?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"payload passed?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"payload_len &gt; 0?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> EndNode(["Döndür: 0"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> send_telegram_message</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>bot_token: &amp;str, chat_id: &amp;str, text: &amp;str</code> | <strong>Dönüş Tipi:</strong> <code>bool</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Dükkanda harika bir fırsat veya önemli bir durum gerçekleştiğinde dükkan sahibinin cep telefonuna SMS / WhatsApp bildirim mesajı atma işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Üretilen sinyal veya uyarı mesajını Telegram API veya ağ soketleri üzerinden ilgili kanal ve kullanıcılara iletir.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON send_telegram_message(bot_token: &amp;str, chat_id: &amp;str, text: &amp;str) -&gt; bool:
+    let url = format!(&quot;https://api.telegram.org/bot{}/sendMessage&quot;, bot_token);
+    let client = reqwest::Client::new();
+    let payload = json!({
+    &quot;chat_id&quot;: chat_id,
+    &quot;text&quot;: text,
+    &quot;parse_mode&quot;: &quot;HTML&quot;
+    });
+    DURUM KONTROLÜ (client.post(&amp;url).json(&amp;payload).send().await):
+        Ok(res) =&gt; res.status().is_success(),
+        Err(_) =&gt; false,</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: send_telegram_message"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> handle_http_request</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>raw_req: &amp;str,
+    config: &amp;Arc&lt;Mutex&lt;TelegramBotConfig&gt;&gt;,
+    stats: &amp;Arc&lt;Mutex&lt;TelegramBotStats&gt;&gt;,
+    recent: &amp;Arc&lt;Mutex&lt;Vec&lt;TelegramMessageRecord&gt;&gt;&gt;,
+    outbox: &amp;Arc&lt;Mutex&lt;Vec&lt;serde_json::Value&gt;&gt;&gt;,
+    bot_token: &amp;str,</code> | <strong>Dönüş Tipi:</strong> <code>(String, u16)</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Dükkanda harika bir fırsat veya önemli bir durum gerçekleştiğinde dükkan sahibinin cep telefonuna SMS / WhatsApp bildirim mesajı atma işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Üretilen sinyal veya uyarı mesajını Telegram API veya ağ soketleri üzerinden ilgili kanal ve kullanıcılara iletir.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON handle_http_request(raw_req: &amp;str,
+    config: &amp;Arc&lt;Mutex&lt;TelegramBotConfig&gt;&gt;,
+    stats: &amp;Arc&lt;Mutex&lt;TelegramBotStats&gt;&gt;,
+    recent: &amp;Arc&lt;Mutex&lt;Vec&lt;TelegramMessageRecord&gt;&gt;&gt;,
+    outbox: &amp;Arc&lt;Mutex&lt;Vec&lt;serde_json::Value&gt;&gt;&gt;,
+    bot_token: &amp;str,) -&gt; (String, u16):
+    let body = if let Some(idx) = raw_req.find(&quot;\r\n\r\n&quot;) {
+    &amp;raw_req[idx + 4..]
+    } else {
+    &quot;&quot;
+    };
+    EĞER body.is_empty() İSE:
+        DÖNDÜR (json!({&quot;status&quot;: &quot;telegram_bot_active&quot;}).to_string(), 200)
+    EĞER let Ok(update) = serde_json::from_str::&lt;serde_json::Value&gt;(body) İSE:
+        // Parse Telegram Update object
+        let message = &amp;update[&quot;message&quot;];
+        let text = message[&quot;text&quot;].as_str().unwrap_or(&quot;&quot;);
+        let chat_id = message[&quot;chat&quot;][&quot;id&quot;].as_i64().map(|id| id.to_string())
+        .or_else(|| message[&quot;chat&quot;][&quot;username&quot;].as_str().map(|u| format!(&quot;@{}&quot;, u)))
+        .unwrap_or_default();
+        let from_user = message[&quot;from&quot;][&quot;username&quot;].as_str()
+        .or_else(|| message[&quot;from&quot;][&quot;first_name&quot;].as_str())
+        .unwrap_or(&quot;Unknown&quot;);
+        EĞER !text.is_empty() İSE:
+            // Update stats
+            {
+            let mut s = stats.lock().unwrap();
+            s.received_count += 1;
+            s.last_incoming_cmd = text.to_string();
+            let mut r = recent.lock().unwrap();
+            r.push(TelegramMessageRecord {
+            direction: &quot;inbound&quot;.to_string(),
+            sender: from_user.to_string(),
+            recipient: chat_id.clone(),
+            content: text.to_string(),
+            timestamp: current_timestamp(),
+            });
+            EĞER r.len() &gt; 50 İSE:
+            // Command processing
+            let reply_text = match text.trim() {
+            &quot;/start&quot; | &quot;/help&quot; =&gt; {
+            &quot;&lt;b&gt;🤖 CYCLE-ORC TELEGRAM BOT&lt;/b&gt;\n\n\
+            Mevcut Komutlar:\n\
+            • &lt;b&gt;/status&lt;/b&gt; - Sistem durumunu gösterir\n\
+            • &lt;b&gt;/metrics&lt;/b&gt; - Eklenti metriklerini listeler\n\
+            • &lt;b&gt;/help&lt;/b&gt; - Yardım menüsü&quot;.to_string()
+        &quot;/status&quot; =&gt; {
+        &quot;&lt;b&gt;✅ Sistem Durumu:&lt;/b&gt; AKTİF\n\
+        &lt;b&gt;Eklenti:&lt;/b&gt; plugin_telegram_bot\n\
+        &lt;b&gt;Engine:&lt;/b&gt; Cycle-Orc Microstructure Architecture&quot;.to_string()
+    &quot;/metrics&quot; =&gt; {
+    let s = stats.lock().unwrap();
+    format!(
+    &quot;&lt;b&gt;📊 Bot İstatistikleri:&lt;/b&gt;\n\
+    • Gönderilen: {}\n\
+    • Alınan: {}\n\
+    • Hatalı: {}&quot;,
+    s.sent_count, s.received_count, s.failed_count
+    )
+    _ =&gt; {
+    EĞER text.starts_with(&#x27;/&#x27;) İSE:
+        &quot;⚠️ Bilinmeyen komut. /help yazarak komut listesini alabilirsiniz.&quot;.to_string()
+        } else {
+        &quot;📩 Mesajınız alındı.&quot;.to_string()
+    };
+    // Auto reply via Telegram API if enabled
+    let auto_reply = config.lock().unwrap().auto_reply_enabled;
+    EĞER auto_reply &amp;&amp; !chat_id.is_empty() İSE:
+        let token = bot_token.to_string();
+        let cid = chat_id.clone();
+        let rtext = reply_text.clone();
+        tokio::spawn(async move {
+        send_telegram_message(&amp;token, &amp;cid, &amp;rtext).await;
+        });
+    // Broadcast outbox signal
+    let mut out = outbox.lock().unwrap();
+    out.push(json!({
+    &quot;from&quot;: &quot;plugin_telegram_bot&quot;,
+    &quot;action&quot;: &quot;telegram_command&quot;,
+    &quot;chat_id&quot;: chat_id,
+    &quot;command&quot;: text,
+    &quot;sender&quot;: from_user
+    }));
+    DÖNDÜR (json!({&quot;status&quot;: &quot;ok&quot;, &quot;processed&quot;: true}).to_string(), 200)
+    (json!({&quot;status&quot;: &quot;telegram_bot_active&quot;}).to_string(), 200)</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: handle_http_request"])
+    Start --> Cond1{"let Some(idx) = raw_req.find('\r\n\r\n')?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"body.is_empty()?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"let Ok(update) = serde_json::from_str::&lt;serde_json::Value&gt;(body)?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> EndNode(["Döndür: (json!({'status': 'ok', 'processed': true}).to_string(), 200)"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> update_monitor_data</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>config: &amp;Arc&lt;Mutex&lt;TelegramBotConfig&gt;&gt;,
+    stats: &amp;Arc&lt;Mutex&lt;TelegramBotStats&gt;&gt;,
+    recent: &amp;Arc&lt;Mutex&lt;Vec&lt;TelegramMessageRecord&gt;&gt;&gt;,
+    data: &amp;Arc&lt;Mutex&lt;Vec&lt;u8&gt;&gt;&gt;,</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Dükkanda harika bir fırsat veya önemli bir durum gerçekleştiğinde dükkan sahibinin cep telefonuna SMS / WhatsApp bildirim mesajı atma işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Üretilen sinyal veya uyarı mesajını Telegram API veya ağ soketleri üzerinden ilgili kanal ve kullanıcılara iletir.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON update_monitor_data(config: &amp;Arc&lt;Mutex&lt;TelegramBotConfig&gt;&gt;,
+    stats: &amp;Arc&lt;Mutex&lt;TelegramBotStats&gt;&gt;,
+    recent: &amp;Arc&lt;Mutex&lt;Vec&lt;TelegramMessageRecord&gt;&gt;&gt;,
+    data: &amp;Arc&lt;Mutex&lt;Vec&lt;u8&gt;&gt;&gt;,) -&gt; ():
+    let cfg = config.lock().unwrap().clone();
+    let st = stats.lock().unwrap().clone();
+    let rec = recent.lock().unwrap().clone();
+    let json_val = json!({
+    &quot;plugin&quot;: &quot;plugin_telegram_bot&quot;,
+    &quot;status&quot;: if st.server_status.starts_with(&quot;Active&quot;) { &quot;active&quot; } else { &quot;inactive&quot; },
+    &quot;config&quot;: cfg,
+    &quot;stats&quot;: st,
+    &quot;recent_messages&quot;: rec
+    });
+    EĞER let Ok(bytes) = serde_json::to_vec(&amp;json_val) İSE:
+        let mut d = data.lock().unwrap();
+        *d = bytes;</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: update_monitor_data"])
+    Start --> Cond1{"st.server_status.starts_with('Active')?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"let Ok(bytes) = serde_json::to_vec(&json_val)?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> test_telegram_config_default</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>Yok</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Dükkanda harika bir fırsat veya önemli bir durum gerçekleştiğinde dükkan sahibinin cep telefonuna SMS / WhatsApp bildirim mesajı atma işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Üretilen sinyal veya uyarı mesajını Telegram API veya ağ soketleri üzerinden ilgili kanal ve kullanıcılara iletir.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON test_telegram_config_default() -&gt; ():
+    let cfg = TelegramBotConfig::default();
+    assert_eq!(cfg.api_mode, &quot;telegram_api&quot;);
+    assert_eq!(cfg.webhook_port, 8085);
+    assert!(cfg.auto_reply_enabled);</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: test_telegram_config_default"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        </section>
+
+        <details>
+            <summary>Orijinal Rust Kaynak Kodunu Göster</summary>
+            <pre><code>use std::ffi::c_void;
+use std::fs;
+use std::path::Path;
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::{Arc, Mutex};
+use std::time::{SystemTime, UNIX_EPOCH};
+
+use serde::{Deserialize, Serialize};
+use serde_json::json;
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct TelegramBotConfig {
+    pub api_mode: String,               // &quot;telegram_api&quot;, &quot;webhook&quot;
+    pub bot_token: String,              // Telegram Bot Token from @BotFather
+    pub chat_id: String,                // Default target recipient Chat ID or Channel Username
+    pub admin_chat_ids: Vec&lt;String&gt;,    // List of authorized admin chat IDs
+    pub webhook_port: u16,              // Port for receiving incoming Telegram webhooks
+    pub webhook_verify_token: String,    // Optional webhook verification token
+    pub auto_reply_enabled: bool,       // Automatically reply to commands via Telegram
+}
+
+impl Default for TelegramBotConfig {
+    fn default() -&gt; Self {
+        Self {
+            api_mode: &quot;telegram_api&quot;.to_string(),
+            bot_token: &quot;123456789:YOUR_TELEGRAM_BOT_TOKEN_HERE&quot;.to_string(),
+            chat_id: &quot;@your_channel_or_chat_id&quot;.to_string(),
+            admin_chat_ids: vec![&quot;123456789&quot;.to_string()],
+            webhook_port: 8085,
+            webhook_verify_token: &quot;CYCLE_ORC_TELEGRAM_VERIFY&quot;.to_string(),
+            auto_reply_enabled: true,
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct TelegramMessageRecord {
+    pub direction: String, // &quot;inbound&quot; or &quot;outbound&quot;
+    pub sender: String,
+    pub recipient: String,
+    pub content: String,
+    pub timestamp: u64,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct TelegramBotStats {
+    pub sent_count: usize,
+    pub received_count: usize,
+    pub failed_count: usize,
+    pub last_incoming_cmd: String,
+    pub last_outgoing_msg: String,
+    pub server_status: String,
+    pub active_mode: String,
+    pub webhook_port: u16,
+}
+
+struct PluginState {
+    runtime: tokio::runtime::Runtime,
+    is_running: Arc&lt;AtomicBool&gt;,
+    config: Arc&lt;Mutex&lt;TelegramBotConfig&gt;&gt;,
+    stats: Arc&lt;Mutex&lt;TelegramBotStats&gt;&gt;,
+    recent_messages: Arc&lt;Mutex&lt;Vec&lt;TelegramMessageRecord&gt;&gt;&gt;,
+    outbox: Arc&lt;Mutex&lt;Vec&lt;serde_json::Value&gt;&gt;&gt;,
+    data: Arc&lt;Mutex&lt;Vec&lt;u8&gt;&gt;&gt;,
+}
+
+fn get_config_path() -&gt; String {
+    let paths = [
+        &quot;config/telegram_bot.cfg&quot;,
+        &quot;../config/telegram_bot.cfg&quot;,
+        &quot;../../config/telegram_bot.cfg&quot;,
+        &quot;telegram_bot.cfg&quot;,
+    ];
+    for p in &amp;paths {
+        if Path::new(p).exists() {
+            return p.to_string();
+        }
+    }
+    &quot;config/telegram_bot.cfg&quot;.to_string()
+}
+
+fn current_timestamp() -&gt; u64 {
+    SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .map(|d| d.as_secs())
+        .unwrap_or(0)
+}
+
+#[no_mangle]
+pub unsafe extern &quot;C&quot; fn init_plugin(
+    state_out: *mut *mut c_void,
+) -&gt; unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize {
+    let runtime = tokio::runtime::Builder::new_multi_thread()
+        .worker_threads(2)
+        .enable_all()
+        .build()
+        .expect(&quot;Failed to initialize Tokio runtime for plugin_telegram_bot&quot;);
+
+    let cfg_path = get_config_path();
+    let config = if let Ok(content) = fs::read_to_string(&amp;cfg_path) {
+        serde_json::from_str::&lt;TelegramBotConfig&gt;(&amp;content).unwrap_or_default()
+    } else {
+        let _ = fs::create_dir_all(&quot;config&quot;);
+        let default_cfg = TelegramBotConfig::default();
+        let _ = fs::write(
+            &amp;cfg_path,
+            serde_json::to_string_pretty(&amp;default_cfg).unwrap_or_default(),
+        );
+        default_cfg
+    };
+
+    let initial_stats = TelegramBotStats {
+        sent_count: 0,
+        received_count: 0,
+        failed_count: 0,
+        last_incoming_cmd: &quot;None&quot;.to_string(),
+        last_outgoing_msg: &quot;None&quot;.to_string(),
+        server_status: &quot;Initialized&quot;.to_string(),
+        active_mode: config.api_mode.clone(),
+        webhook_port: config.webhook_port,
+    };
+
+    let initial_monitor = json!({
+        &quot;plugin&quot;: &quot;plugin_telegram_bot&quot;,
+        &quot;status&quot;: &quot;ready&quot;,
+        &quot;config&quot;: config,
+        &quot;stats&quot;: initial_stats,
+        &quot;recent_messages&quot;: []
+    })
+    .to_string();
+
+    let state = Box::new(PluginState {
+        runtime,
+        is_running: Arc::new(AtomicBool::new(false)),
+        config: Arc::new(Mutex::new(config)),
+        stats: Arc::new(Mutex::new(initial_stats)),
+        recent_messages: Arc::new(Mutex::new(Vec::new())),
+        outbox: Arc::new(Mutex::new(Vec::new())),
+        data: Arc::new(Mutex::new(initial_monitor.into_bytes())),
+    });
+
+    unsafe {
+        *state_out = Box::into_raw(state) as *mut c_void;
+    }
+
+    handle_endpoint
+}
+
+unsafe extern &quot;C&quot; fn handle_endpoint(
+    plugin_state: *mut c_void,
+    endpoint_id: u32,
+    payload: *const u8,
+    payload_len: usize,
+    out_buf: *mut u8,
+    out_max_len: usize,
+) -&gt; usize {
+    let state = &amp;*(plugin_state as *const PluginState);
+
+    match endpoint_id {
+        0 =&gt; {
+            // Start
+            if state.is_running.load(Ordering::Relaxed) {
+                return 0;
+            }
+            state.is_running.store(true, Ordering::Relaxed);
+
+            // Re-read configuration if payload passed
+            if payload_len &gt; 0 {
+                let slice = std::slice::from_raw_parts(payload, payload_len);
+                if let Ok(new_cfg) = serde_json::from_slice::&lt;TelegramBotConfig&gt;(slice) {
+                    let mut cfg_guard = state.config.lock().unwrap();
+                    *cfg_guard = new_cfg;
+                }
+            }
+
+            let is_running = state.is_running.clone();
+            let config = state.config.clone();
+            let stats = state.stats.clone();
+            let recent = state.recent_messages.clone();
+            let outbox = state.outbox.clone();
+            let data = state.data.clone();
+
+            state.runtime.spawn(async move {
+                let (port, token) = {
+                    let c = config.lock().unwrap();
+                    (c.webhook_port, c.bot_token.clone())
+                };
+
+                {
+                    let mut s = stats.lock().unwrap();
+                    s.server_status = format!(&quot;Active on port {}&quot;, port);
+                }
+
+                // Start Webhook listener HTTP server
+                let listener = tokio::net::TcpListener::bind(format!(&quot;0.0.0.0:{}&quot;, port)).await;
+                match listener {
+                    Ok(listener) =&gt; {
+                        while is_running.load(Ordering::Relaxed) {
+                            tokio::select! {
+                                accept_res = listener.accept() =&gt; {
+                                    if let Ok((mut stream, _addr)) = accept_res {
+                                        let config_cloned = config.clone();
+                                        let stats_cloned = stats.clone();
+                                        let recent_cloned = recent.clone();
+                                        let outbox_cloned = outbox.clone();
+                                        let data_cloned = data.clone();
+                                        let token_cloned = token.clone();
+
+                                        tokio::spawn(async move {
+                                            let mut buf = vec![0u8; 8192];
+                                            use tokio::io::{AsyncReadExt, AsyncWriteExt};
+                                            if let Ok(n) = stream.read(&amp;mut buf).await {
+                                                if n &gt; 0 {
+                                                    let req_str = String::from_utf8_lossy(&amp;buf[..n]);
+                                                    
+                                                    // Process incoming HTTP / Webhook request
+                                                    let (reply_body, status_code) = handle_http_request(
+                                                        &amp;req_str,
+                                                        &amp;config_cloned,
+                                                        &amp;stats_cloned,
+                                                        &amp;recent_cloned,
+                                                        &amp;outbox_cloned,
+                                                        &amp;token_cloned
+                                                    ).await;
+
+                                                    let response = format!(
+                                                        &quot;HTTP/1.1 {} OK\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}&quot;,
+                                                        status_code,
+                                                        reply_body.len(),
+                                                        reply_body
+                                                    );
+                                                    let _ = stream.write_all(response.as_bytes()).await;
+
+                                                    // Update DataMonitor payload
+                                                    update_monitor_data(&amp;config_cloned, &amp;stats_cloned, &amp;recent_cloned, &amp;data_cloned);
+                                                }
+                                            }
+                                        });
+                                    }
+                                }
+                                _ = tokio::time::sleep(tokio::time::Duration::from_millis(250)) =&gt; {}
+                            }
+                        }
+                    }
+                    Err(e) =&gt; {
+                        let mut s = stats.lock().unwrap();
+                        s.server_status = format!(&quot;Listener Error: {}&quot;, e);
+                    }
+                }
+            });
+
+            0
+        }
+        1 =&gt; {
+            // Stop
+            state.is_running.store(false, Ordering::Relaxed);
+            let mut s = state.stats.lock().unwrap();
+            s.server_status = &quot;Stopped&quot;.to_string();
+            0
+        }
+        2 =&gt; {
+            // IsWorking
+            if state.is_running.load(Ordering::Relaxed) { 1 } else { 0 }
+        }
+        3 =&gt; {
+            // DataValid
+            1
+        }
+        4 | 5 =&gt; {
+            // DataMonitor / RawData
+            let guard = state.data.lock().unwrap();
+            let len = guard.len().min(out_max_len);
+            if len &gt; 0 {
+                std::ptr::copy_nonoverlapping(guard.as_ptr(), out_buf, len);
+            }
+            len
+        }
+        6 =&gt; {
+            // Inbox - Outbound Telegram dispatch or external commands
+            if payload_len &gt; 0 {
+                let slice = std::slice::from_raw_parts(payload, payload_len);
+                if let Ok(msg) = serde_json::from_slice::&lt;serde_json::Value&gt;(slice) {
+                    let action = msg[&quot;action&quot;].as_str().unwrap_or(&quot;&quot;);
+                    let config_cloned = state.config.clone();
+                    let stats_cloned = state.stats.clone();
+                    let recent_cloned = state.recent_messages.clone();
+                    let data_cloned = state.data.clone();
+
+                    if action == &quot;send_message&quot; || action == &quot;notify&quot; || action == &quot;breakout_result&quot; {
+                        let target_chat = msg[&quot;chat_id&quot;]
+                            .as_str()
+                            .or_else(|| msg[&quot;target&quot;].as_str())
+                            .unwrap_or(&quot;&quot;)
+                            .to_string();
+
+                        let text_content = if action == &quot;breakout_result&quot; {
+                            let dir = msg[&quot;data&quot;][&quot;direction&quot;].as_str().unwrap_or(&quot;NONE&quot;);
+                            let lvl = msg[&quot;data&quot;][&quot;broken_level&quot;].as_f64().unwrap_or(0.0);
+                            let q = msg[&quot;data&quot;][&quot;breakout_quality&quot;].as_f64().unwrap_or(0.0);
+                            let c = msg[&quot;data&quot;][&quot;certainty_percentage&quot;].as_f64().unwrap_or(0.0);
+                            let f = msg[&quot;data&quot;][&quot;fake_percentage&quot;].as_f64().unwrap_or(0.0);
+
+                            format!(
+                                &quot;&lt;b&gt;🔥 KIRILIM UYARISI 🔥&lt;/b&gt;\n\n\
+                                &lt;b&gt;Yön:&lt;/b&gt; {}\n\
+                                &lt;b&gt;Seviye:&lt;/b&gt; {:.2}\n\
+                                &lt;b&gt;Kalite Skoru:&lt;/b&gt; %{:.2}\n\
+                                &lt;b&gt;Kesinlik Skoru:&lt;/b&gt; %{:.2}\n\
+                                &lt;b&gt;Sahte İhtimali:&lt;/b&gt; %{:.2}&quot;,
+                                if dir == &quot;UP&quot; { &quot;🚀 YUKARI&quot; } else if dir == &quot;DOWN&quot; { &quot;💥 AŞAĞI&quot; } else { &quot;Beklemede&quot; },
+                                lvl, q, c, f
+                            )
+                        } else {
+                            msg[&quot;text&quot;].as_str().or_else(|| msg[&quot;content&quot;].as_str()).unwrap_or(&quot;Empty message&quot;).to_string()
+                        };
+
+                        state.runtime.spawn(async move {
+                            let (token, default_chat) = {
+                                let c = config_cloned.lock().unwrap();
+                                (c.bot_token.clone(), c.chat_id.clone())
+                            };
+                            let dest = if !target_chat.is_empty() { target_chat.clone() } else { default_chat };
+
+                            let res = send_telegram_message(&amp;token, &amp;dest, &amp;text_content).await;
+
+                            let mut s = stats_cloned.lock().unwrap();
+                            if res {
+                                s.sent_count += 1;
+                                s.last_outgoing_msg = text_content.clone();
+                                let mut r = recent_cloned.lock().unwrap();
+                                r.push(TelegramMessageRecord {
+                                    direction: &quot;outbound&quot;.to_string(),
+                                    sender: &quot;plugin_telegram_bot&quot;.to_string(),
+                                    recipient: dest,
+                                    content: text_content,
+                                    timestamp: current_timestamp(),
+                                });
+                                if r.len() &gt; 50 { r.remove(0); }
+                            } else {
+                                s.failed_count += 1;
+                            }
+                            update_monitor_data(&amp;config_cloned, &amp;stats_cloned, &amp;recent_cloned, &amp;data_cloned);
+                        });
+                    }
+                }
+            }
+            0
+        }
+        7 =&gt; {
+            // Outbox Check
+            let mut out = state.outbox.lock().unwrap();
+            if out.is_empty() {
+                0
+            } else {
+                let msg = out.remove(0);
+                if let Ok(json_str) = serde_json::to_string(&amp;msg) {
+                    let bytes = json_str.as_bytes();
+                    let len = bytes.len().min(out_max_len);
+                    std::ptr::copy_nonoverlapping(bytes.as_ptr(), out_buf, len);
+                    len
+                } else {
+                    0
+                }
+            }
+        }
+        _ =&gt; 0,
+    }
+}
+
+async fn send_telegram_message(bot_token: &amp;str, chat_id: &amp;str, text: &amp;str) -&gt; bool {
+    let url = format!(&quot;https://api.telegram.org/bot{}/sendMessage&quot;, bot_token);
+    let client = reqwest::Client::new();
+    let payload = json!({
+        &quot;chat_id&quot;: chat_id,
+        &quot;text&quot;: text,
+        &quot;parse_mode&quot;: &quot;HTML&quot;
+    });
+
+    match client.post(&amp;url).json(&amp;payload).send().await {
+        Ok(res) =&gt; res.status().is_success(),
+        Err(_) =&gt; false,
+    }
+}
+
+async fn handle_http_request(
+    raw_req: &amp;str,
+    config: &amp;Arc&lt;Mutex&lt;TelegramBotConfig&gt;&gt;,
+    stats: &amp;Arc&lt;Mutex&lt;TelegramBotStats&gt;&gt;,
+    recent: &amp;Arc&lt;Mutex&lt;Vec&lt;TelegramMessageRecord&gt;&gt;&gt;,
+    outbox: &amp;Arc&lt;Mutex&lt;Vec&lt;serde_json::Value&gt;&gt;&gt;,
+    bot_token: &amp;str,
+) -&gt; (String, u16) {
+    let body = if let Some(idx) = raw_req.find(&quot;\r\n\r\n&quot;) {
+        &amp;raw_req[idx + 4..]
+    } else {
+        &quot;&quot;
+    };
+
+    if body.is_empty() {
+        return (json!({&quot;status&quot;: &quot;telegram_bot_active&quot;}).to_string(), 200);
+    }
+
+    if let Ok(update) = serde_json::from_str::&lt;serde_json::Value&gt;(body) {
+        // Parse Telegram Update object
+        let message = &amp;update[&quot;message&quot;];
+        let text = message[&quot;text&quot;].as_str().unwrap_or(&quot;&quot;);
+        let chat_id = message[&quot;chat&quot;][&quot;id&quot;].as_i64().map(|id| id.to_string())
+            .or_else(|| message[&quot;chat&quot;][&quot;username&quot;].as_str().map(|u| format!(&quot;@{}&quot;, u)))
+            .unwrap_or_default();
+        let from_user = message[&quot;from&quot;][&quot;username&quot;].as_str()
+            .or_else(|| message[&quot;from&quot;][&quot;first_name&quot;].as_str())
+            .unwrap_or(&quot;Unknown&quot;);
+
+        if !text.is_empty() {
+            // Update stats
+            {
+                let mut s = stats.lock().unwrap();
+                s.received_count += 1;
+                s.last_incoming_cmd = text.to_string();
+
+                let mut r = recent.lock().unwrap();
+                r.push(TelegramMessageRecord {
+                    direction: &quot;inbound&quot;.to_string(),
+                    sender: from_user.to_string(),
+                    recipient: chat_id.clone(),
+                    content: text.to_string(),
+                    timestamp: current_timestamp(),
+                });
+                if r.len() &gt; 50 { r.remove(0); }
+            }
+
+            // Command processing
+            let reply_text = match text.trim() {
+                &quot;/start&quot; | &quot;/help&quot; =&gt; {
+                    &quot;&lt;b&gt;🤖 CYCLE-ORC TELEGRAM BOT&lt;/b&gt;\n\n\
+                    Mevcut Komutlar:\n\
+                    • &lt;b&gt;/status&lt;/b&gt; - Sistem durumunu gösterir\n\
+                    • &lt;b&gt;/metrics&lt;/b&gt; - Eklenti metriklerini listeler\n\
+                    • &lt;b&gt;/help&lt;/b&gt; - Yardım menüsü&quot;.to_string()
+                }
+                &quot;/status&quot; =&gt; {
+                    &quot;&lt;b&gt;✅ Sistem Durumu:&lt;/b&gt; AKTİF\n\
+                    &lt;b&gt;Eklenti:&lt;/b&gt; plugin_telegram_bot\n\
+                    &lt;b&gt;Engine:&lt;/b&gt; Cycle-Orc Microstructure Architecture&quot;.to_string()
+                }
+                &quot;/metrics&quot; =&gt; {
+                    let s = stats.lock().unwrap();
+                    format!(
+                        &quot;&lt;b&gt;📊 Bot İstatistikleri:&lt;/b&gt;\n\
+                        • Gönderilen: {}\n\
+                        • Alınan: {}\n\
+                        • Hatalı: {}&quot;,
+                        s.sent_count, s.received_count, s.failed_count
+                    )
+                }
+                _ =&gt; {
+                    if text.starts_with(&#x27;/&#x27;) {
+                        &quot;⚠️ Bilinmeyen komut. /help yazarak komut listesini alabilirsiniz.&quot;.to_string()
+                    } else {
+                        &quot;📩 Mesajınız alındı.&quot;.to_string()
+                    }
+                }
+            };
+
+            // Auto reply via Telegram API if enabled
+            let auto_reply = config.lock().unwrap().auto_reply_enabled;
+            if auto_reply &amp;&amp; !chat_id.is_empty() {
+                let token = bot_token.to_string();
+                let cid = chat_id.clone();
+                let rtext = reply_text.clone();
+                tokio::spawn(async move {
+                    send_telegram_message(&amp;token, &amp;cid, &amp;rtext).await;
+                });
+            }
+
+            // Broadcast outbox signal
+            let mut out = outbox.lock().unwrap();
+            out.push(json!({
+                &quot;from&quot;: &quot;plugin_telegram_bot&quot;,
+                &quot;action&quot;: &quot;telegram_command&quot;,
+                &quot;chat_id&quot;: chat_id,
+                &quot;command&quot;: text,
+                &quot;sender&quot;: from_user
+            }));
+
+            return (json!({&quot;status&quot;: &quot;ok&quot;, &quot;processed&quot;: true}).to_string(), 200);
+        }
+    }
+
+    (json!({&quot;status&quot;: &quot;telegram_bot_active&quot;}).to_string(), 200)
+}
+
+fn update_monitor_data(
+    config: &amp;Arc&lt;Mutex&lt;TelegramBotConfig&gt;&gt;,
+    stats: &amp;Arc&lt;Mutex&lt;TelegramBotStats&gt;&gt;,
+    recent: &amp;Arc&lt;Mutex&lt;Vec&lt;TelegramMessageRecord&gt;&gt;&gt;,
+    data: &amp;Arc&lt;Mutex&lt;Vec&lt;u8&gt;&gt;&gt;,
+) {
+    let cfg = config.lock().unwrap().clone();
+    let st = stats.lock().unwrap().clone();
+    let rec = recent.lock().unwrap().clone();
+
+    let json_val = json!({
+        &quot;plugin&quot;: &quot;plugin_telegram_bot&quot;,
+        &quot;status&quot;: if st.server_status.starts_with(&quot;Active&quot;) { &quot;active&quot; } else { &quot;inactive&quot; },
+        &quot;config&quot;: cfg,
+        &quot;stats&quot;: st,
+        &quot;recent_messages&quot;: rec
+    });
+
+    if let Ok(bytes) = serde_json::to_vec(&amp;json_val) {
+        let mut d = data.lock().unwrap();
+        *d = bytes;
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_telegram_config_default() {
+        let cfg = TelegramBotConfig::default();
+        assert_eq!(cfg.api_mode, &quot;telegram_api&quot;);
+        assert_eq!(cfg.webhook_port, 8085);
+        assert!(cfg.auto_reply_enabled);
+    }
+}
+</code></pre>
+        </details>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            flowchart: { curve: 'basis' }
+        });
+    </script>
+</body>
+</html>

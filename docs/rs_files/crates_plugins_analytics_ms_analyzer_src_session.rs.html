@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>session.rs - Rust Analiz Dokümanı</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --border: #334155;
+            --code-bg: #090d16;
+            --verbal-bg: #131f37;
+            --analogy-bg: #1e1b4b;
+            --analogy-border: #818cf8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .back-link {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .back-link:hover { text-decoration: underline; }
+        h1 { font-size: 2rem; color: var(--accent); margin-bottom: 0.5rem; }
+        .file-path { font-family: 'Fira Code', monospace; color: var(--text-muted); font-size: 0.95rem; }
+        
+        .structs-container { margin: 1.5rem 0; }
+        .badge {
+            display: inline-block;
+            background: #0284c7;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-family: 'Fira Code', monospace;
+        }
+        .badge-struct { background: #7c3aed; }
+        
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .card h3 { color: var(--accent); margin-bottom: 0.5rem; font-size: 1.3rem; }
+        .card h4 { margin: 1.2rem 0 0.5rem 0; color: var(--text-muted); font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        .easy-analogy {
+            background: var(--analogy-bg);
+            border-left: 4px solid var(--analogy-border);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1rem;
+            color: #c7d2fe;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .verbal-explanation {
+            background: var(--verbal-bg);
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1.2rem;
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            margin-bottom: 1rem;
+        }
+        
+        .mermaid {
+            background: var(--code-bg);
+            padding: 1.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+        }
+        
+        details {
+            margin-top: 2rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Ana İndekse Dön</a>
+        <header>
+            <h1>session.rs</h1>
+            <p class="file-path">crates/plugins/analytics/ms_analyzer/src/session.rs</p>
+            <div class="structs-container">
+                <strong>Tanımlı Türler / Yapılar:</strong> <span class="badge badge-struct">SessionWindow</span> 
+            </div>
+        </header>
+
+        <section>
+            <h2>Fonksiyon Analizleri & Basit Anlatımlar</h2>
+            
+        <div class="card">
+            <h3><span class="badge">fn</span> weight</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self</code> | <strong>Dönüş Tipi:</strong> <code>Decimal</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>&amp;self</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>Decimal</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Farklı durum senaryolarına göre akışı uygun kola yönlendirir.<br>3. İşlemi tamamlayarak <code>Decimal</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON weight(&amp;self) -&gt; Decimal:
+    DURUM KONTROLÜ (self):
+        SessionWindow::Core =&gt; Decimal::from_str(&quot;0.40&quot;).unwrap(),
+        SessionWindow::Amplified =&gt; Decimal::from_str(&quot;0.30&quot;).unwrap(),
+        SessionWindow::Acute =&gt; Decimal::from_str(&quot;0.30&quot;).unwrap(),</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: weight"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> active_hours</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self</code> | <strong>Dönüş Tipi:</strong> <code>u64</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>&amp;self</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>u64</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Farklı durum senaryolarına göre akışı uygun kola yönlendirir.<br>3. İşlemi tamamlayarak <code>u64</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON active_hours(&amp;self) -&gt; u64:
+    DURUM KONTROLÜ (self):
+        SessionWindow::Core =&gt; 120,
+        SessionWindow::Amplified =&gt; 480,
+        SessionWindow::Acute =&gt; 24,</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: active_hours"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> utc_hour_from_timestamp</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>ts_ms: u64</code> | <strong>Dönüş Tipi:</strong> <code>u64</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>ts_ms: u64</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>u64</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. İşlemi tamamlayarak <code>u64</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON utc_hour_from_timestamp(ts_ms: u64) -&gt; u64:
+    (ts_ms / 3_600_000) % 24</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: utc_hour_from_timestamp"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> is_active_session</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>ts_ms: u64</code> | <strong>Dönüş Tipi:</strong> <code>bool</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>ts_ms: u64</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>bool</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. İşlemi tamamlayarak <code>bool</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON is_active_session(ts_ms: u64) -&gt; bool:
+    let hour = utc_hour_from_timestamp(ts_ms);
+    hour &gt;= 8 &amp;&amp; hour &lt; 16</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: is_active_session"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> session_weight</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>ts_ms: u64</code> | <strong>Dönüş Tipi:</strong> <code>Decimal</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>ts_ms: u64</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>Decimal</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. İşlemi tamamlayarak <code>Decimal</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON session_weight(ts_ms: u64) -&gt; Decimal:
+    EĞER is_active_session(ts_ms) İSE:
+        Decimal::ONE
+        } else {
+        Decimal::from_str(&quot;0.5&quot;).unwrap()</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: session_weight"])
+    Start --> Cond1{"is_active_session(ts_ms)?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> weighted_merge</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>core_score: Decimal, amp_score: Decimal, acute_score: Decimal</code> | <strong>Dönüş Tipi:</strong> <code>Decimal</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>core_score: Decimal, amp_score: Decimal, acute_score: Decimal</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>Decimal</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. İşlemi tamamlayarak <code>Decimal</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON weighted_merge(core_score: Decimal, amp_score: Decimal, acute_score: Decimal) -&gt; Decimal:
+    core_score * SessionWindow::Core.weight()
+    + amp_score * SessionWindow::Amplified.weight()
+    + acute_score * SessionWindow::Acute.weight()</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: weighted_merge"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> confluence_index</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>core_score: Decimal, amp_score: Decimal, acute_score: Decimal</code> | <strong>Dönüş Tipi:</strong> <code>Decimal</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>core_score: Decimal, amp_score: Decimal, acute_score: Decimal</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>Decimal</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. İşlemi tamamlayarak <code>Decimal</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON confluence_index(core_score: Decimal, amp_score: Decimal, acute_score: Decimal) -&gt; Decimal:
+    let scores = [core_score, amp_score, acute_score];
+    let positive_count = scores.iter().filter(|&amp;&amp;d| d &gt; Decimal::ZERO).count();
+    let negative_count = scores.iter().filter(|&amp;&amp;d| d &lt; Decimal::ZERO).count();
+    let dominant_count = positive_count.max(negative_count);
+    (Decimal::from(dominant_count) / Decimal::from(3)) * Decimal::ONE_HUNDRED</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: confluence_index"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        </section>
+
+        <details>
+            <summary>Orijinal Rust Kaynak Kodunu Göster</summary>
+            <pre><code>// ============================================================================
+// MSMP 2.0 — KATMAN 1: ZAMAN PENCERESİ (Session-Based &amp; Ağırlıklı)
+// ============================================================================
+// Sabit mum sayısı yerine Aktif İşlem Seansları (UTC 08:00-16:00) kullanılır.
+// 3 pencere: Core (%40), Amplified (%30), Acute (%30)
+// ============================================================================
+
+use ohlcv_engine::Kline;
+use rust_decimal::Decimal;
+use rust_decimal::prelude::*;
+
+/// Seans bazlı zaman pencereleri
+#[derive(Debug, Clone, Copy)]
+pub enum SessionWindow {
+    /// Son 5 İşlem Günü (120 Aktif Saat) — Ağırlık: %40
+    Core,
+    /// Son 20 İşlem Günü (480 Aktif Saat) — Ağırlık: %30
+    Amplified,
+    /// Son 24 Aktif Saat (Bugünkü Seans) — Ağırlık: %30
+    Acute,
+}
+
+impl SessionWindow {
+    /// Pencere ağırlık katsayısı
+    pub fn weight(&amp;self) -&gt; Decimal {
+        match self {
+            SessionWindow::Core =&gt; Decimal::from_str(&quot;0.40&quot;).unwrap(),
+            SessionWindow::Amplified =&gt; Decimal::from_str(&quot;0.30&quot;).unwrap(),
+            SessionWindow::Acute =&gt; Decimal::from_str(&quot;0.30&quot;).unwrap(),
+        }
+    }
+
+    /// Penceredeki aktif saat sayısı
+    pub fn active_hours(&amp;self) -&gt; u64 {
+        match self {
+            SessionWindow::Core =&gt; 120,
+            SessionWindow::Amplified =&gt; 480,
+            SessionWindow::Acute =&gt; 24,
+        }
+    }
+}
+
+/// UTC saatini milisaniye timestamp&#x27;ten çıkarır
+fn utc_hour_from_timestamp(ts_ms: u64) -&gt; u64 {
+    (ts_ms / 3_600_000) % 24
+}
+
+/// Londra + NY seansı aktif mi? (UTC 08:00 – 16:00)
+pub fn is_active_session(ts_ms: u64) -&gt; bool {
+    let hour = utc_hour_from_timestamp(ts_ms);
+    hour &gt;= 8 &amp;&amp; hour &lt; 16
+}
+
+/// Seans ağırlığı: Aktif seans mumlarına 1.0, dışına 0.5
+pub fn session_weight(ts_ms: u64) -&gt; Decimal {
+    if is_active_session(ts_ms) {
+        Decimal::ONE
+    } else {
+        Decimal::from_str(&quot;0.5&quot;).unwrap()
+    }
+}
+
+/// Kline&#x27;ları pencereye göre filtreler (zaman aralığına göre)
+pub fn filter_by_window&lt;&#x27;a&gt;(klines: &amp;&#x27;a [Kline], window: SessionWindow) -&gt; Vec&lt;&amp;&#x27;a Kline&gt; {
+    if klines.is_empty() {
+        return vec![];
+    }
+    let latest_time = klines.last().unwrap().close_time;
+    let window_ms = window.active_hours() * 3_600_000;
+
+    klines
+        .iter()
+        .filter(|k| latest_time.saturating_sub(k.open_time) &lt;= window_ms)
+        .collect()
+}
+
+/// 3 pencereden gelen skorları Ağırlıklı Ortalama ile birleştirir.
+/// Hiçbir pencere diğerini ezmez; matematiksel üstünlük sağlanır.
+pub fn weighted_merge(core_score: Decimal, amp_score: Decimal, acute_score: Decimal) -&gt; Decimal {
+    core_score * SessionWindow::Core.weight()
+        + amp_score * SessionWindow::Amplified.weight()
+        + acute_score * SessionWindow::Acute.weight()
+}
+
+/// Confluence Index: 3 pencerenin trend yönü uyum yüzdesi
+pub fn confluence_index(core_score: Decimal, amp_score: Decimal, acute_score: Decimal) -&gt; Decimal {
+    let scores = [core_score, amp_score, acute_score];
+    let positive_count = scores.iter().filter(|&amp;&amp;d| d &gt; Decimal::ZERO).count();
+    let negative_count = scores.iter().filter(|&amp;&amp;d| d &lt; Decimal::ZERO).count();
+
+    let dominant_count = positive_count.max(negative_count);
+    (Decimal::from(dominant_count) / Decimal::from(3)) * Decimal::ONE_HUNDRED
+}
+</code></pre>
+        </details>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            flowchart: { curve: 'basis' }
+        });
+    </script>
+</body>
+</html>

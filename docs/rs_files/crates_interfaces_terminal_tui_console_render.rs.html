@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>render.rs - Rust Analiz Dokümanı</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --border: #334155;
+            --code-bg: #090d16;
+            --verbal-bg: #131f37;
+            --analogy-bg: #1e1b4b;
+            --analogy-border: #818cf8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .back-link {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .back-link:hover { text-decoration: underline; }
+        h1 { font-size: 2rem; color: var(--accent); margin-bottom: 0.5rem; }
+        .file-path { font-family: 'Fira Code', monospace; color: var(--text-muted); font-size: 0.95rem; }
+        
+        .structs-container { margin: 1.5rem 0; }
+        .badge {
+            display: inline-block;
+            background: #0284c7;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-family: 'Fira Code', monospace;
+        }
+        .badge-struct { background: #7c3aed; }
+        
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .card h3 { color: var(--accent); margin-bottom: 0.5rem; font-size: 1.3rem; }
+        .card h4 { margin: 1.2rem 0 0.5rem 0; color: var(--text-muted); font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        .easy-analogy {
+            background: var(--analogy-bg);
+            border-left: 4px solid var(--analogy-border);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1rem;
+            color: #c7d2fe;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .verbal-explanation {
+            background: var(--verbal-bg);
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1.2rem;
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            margin-bottom: 1rem;
+        }
+        
+        .mermaid {
+            background: var(--code-bg);
+            padding: 1.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+        }
+        
+        details {
+            margin-top: 2rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Ana İndekse Dön</a>
+        <header>
+            <h1>render.rs</h1>
+            <p class="file-path">crates/interfaces/terminal/tui_console/render.rs</p>
+            <div class="structs-container">
+                <strong>Tanımlı Türler / Yapılar:</strong> Yok
+            </div>
+        </header>
+
+        <section>
+            <h2>Fonksiyon Analizleri & Basit Anlatımlar</h2>
+            
+        <div class="card">
+            <h3><span class="badge">fn</span> draw_ui</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>f: &amp;mut Frame, app: &amp;mut App&lt;&#x27;_&gt;</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>f: &amp;mut Frame, app: &amp;mut App&lt;&#x27;_&gt;</code> verisini alır, kendi kurallarına göre işler ve sonucunda gerekli işlemi tamamlayan adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Listeyi veya veri kümesini sırayla döngüye alarak tarar.<br>4. İşlemi tamamlayarak <code>()</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON draw_ui(f: &amp;mut Frame, app: &amp;mut App&lt;&#x27;_&gt;) -&gt; ():
+    let size = f.size();
+    let main_layout = Layout::default()
+    .direction(Direction::Vertical)
+    .constraints([
+    Constraint::Length(3),  // Tabs
+    Constraint::Length(3),  // Header / System Stats
+    Constraint::Min(10),    // Orta Alan (Tablo + Monitör)
+    Constraint::Length(if app.active_tab == 0 { 8 } else { 0 }),  // Loglar (Sadece Dashboard&#x27;da)
+    Constraint::Length(3),  // Komutlar (Footer)
+    ])
+    .split(size);
+    // 0. TABS
+    let titles = vec![&quot; DASHBOARD &quot;, &quot; SYSTEM LOGS &quot;, &quot; SETTINGS &quot;].into_iter().map(Line::from).collect();
+    let tabs = Tabs::new(titles)
+    .block(Block::default().borders(Borders::ALL).border_type(BorderType::Plain).title(&quot; NAVIGATION &quot;))
+    .select(app.active_tab)
+    .style(Style::default().fg(Color::DarkGray))
+    .highlight_style(Style::default().fg(Color::White).add_modifier(Modifier::BOLD))
+    .divider(&quot; | &quot;);
+    f.render_widget(tabs, main_layout[0]);
+    // 1. Header (Kaynak Kullanımı)
+    let pid = sysinfo::Pid::from_u32(std::process::id());
+    let (cpu_usage, used_mem) = if let Some(p) = app.sys.process(pid) {
+    (p.cpu_usage(), p.memory() / 1024 / 1024)
+    } else {
+    (0.0, 0)
+    };
+    let header_text = vec![
+    Line::from(vec![
+    Span::styled(&quot; ENTERPRISE ORCHESTRATION CONSOLE &quot;, Style::default().fg(Color::White).add_modifier(Modifier::BOLD)),
+    Span::styled(&quot; | CPU: &quot;, Style::default().fg(Color::DarkGray)),
+    Span::styled(format!(&quot;{:.1}% &quot;, cpu_usage), Style::default().fg(Color::White)),
+    Span::styled(&quot;| RAM: &quot;, Style::default().fg(Color::DarkGray)),
+    Span::styled(format!(&quot;{} MB &quot;, used_mem), Style::default().fg(Color::White)),
+    ])
+    ];
+    let header = Paragraph::new(header_text)
+    .block(Block::default().borders(Borders::ALL).border_type(BorderType::Plain).border_style(Style::default().fg(Color::DarkGray)))
+    .alignment(Alignment::Center);
+    f.render_widget(header, main_layout[1]);
+    EĞER app.active_tab == 0 İSE:
+        // DASHBOARD VIEW
+        let middle_layout = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([
+        Constraint::Percentage(app.systems_panel_width),
+        Constraint::Percentage(100 - app.systems_panel_width),
+        ])
+        .split(main_layout[2]);
+        let monitor_layout = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([
+        Constraint::Percentage(33),
+        Constraint::Percentage(33),
+        Constraint::Percentage(34),
+        ])
+        .split(middle_layout[1]);
+        // Sistem Listesi
+        let systems = app.orchestrator.list_systems();
+        let rows: Vec&lt;Row&gt; = systems.iter().enumerate().map(|(i, (id, _name, running))| {
+        let (bg, pointer) = if i == app.selected {
+        (Color::Rgb(30, 30, 60), &quot;▶ &quot;)
+        } else {
+        (Color::Reset, &quot;  &quot;)
+        };
+        let status = if *running { &quot;AKTİF&quot; } else { &quot;PASİF&quot; };
+        let status_color = if *running { Color::LightGreen } else { Color::LightRed };
+        let id_color = if *running { Color::White } else { Color::DarkGray };
+        let actions = Line::from(vec![
+        Span::styled(&quot; [ START ] &quot;, Style::default().fg(Color::White).bg(Color::DarkGray)),
+        Span::styled(&quot; &quot;, Style::default()),
+        Span::styled(&quot; [ STOP ] &quot;, Style::default().fg(Color::White).bg(Color::Rgb(60, 60, 60))),
+        Span::styled(&quot; &quot;, Style::default()),
+        Span::styled(&quot; [ VIEW ] &quot;, Style::default().fg(Color::White).bg(Color::DarkGray)),
+        Span::styled(&quot; &quot;, Style::default()),
+        Span::styled(&quot; [ DEL ] &quot;, Style::default().fg(Color::White).bg(Color::Rgb(60, 60, 60))),
+        ]);
+        Row::new(vec![
+        Cell::from(format!(&quot;{}{}&quot;, pointer, id)).style(Style::default().fg(id_color)),
+        Cell::from(status).style(Style::default().fg(status_color)),
+        Cell::from(actions),
+        ])
+        .style(Style::default().bg(bg))
+        }).collect();
+        let table = Table::new(rows)
+        .header(Row::new(vec![&quot; MODULE ID&quot;, &quot; STATUS&quot;, &quot; ACTIONS&quot;])
+        .style(Style::default().fg(Color::White).add_modifier(Modifier::BOLD))
+        .bottom_margin(1))
+        .block(Block::default()
+        .title(Span::styled(&quot; SYSTEM MODULES &quot;, Style::default().fg(Color::White).add_modifier(Modifier::BOLD)))
+        .borders(Borders::ALL)
+        .border_type(BorderType::Plain)
+        .border_style(Style::default().fg(if app.active_panel == ActivePanel::Systems { Color::Cyan } else if app.is_dragging_split { Color::White } else { Color::DarkGray }))
+        .padding(Padding::horizontal(1)))
+        .widths(&amp;[Constraint::Percentage(35), Constraint::Percentage(15), Constraint::Percentage(50)])
+        .column_spacing(1);
+        f.render_widget(table, middle_layout[0]);
+        // Data Inspector (Hex)
+        let hex_content = if let Some(data) = &amp;app.monitored_data {
+        EĞER data.is_empty() İSE:
+            vec![Line::from(Span::styled(&quot;Veri yok.&quot;, Style::default().fg(Color::DarkGray)))]
+            } else {
+            let mut lines = Vec::new();
+            lines.push(Line::from(Span::styled(format!(&quot;Boyut: {} bytes&quot;, data.len()), Style::default().fg(Color::Gray))));
+            lines.push(Line::from(&quot;&quot;));
+            HER chunk in data.chunks(16) İÇİN DÖNGÜ:
+                let hex: Vec&lt;String&gt; = chunk.iter().map(|b| format!(&quot;{:02x}&quot;, b)).collect();
+                let ascii: String = chunk.iter().map(|&amp;b| if b &gt;= 32 &amp;&amp; b &lt;= 126 { b as char } else { &#x27;.&#x27; }).collect();
+                lines.push(Line::from(vec![
+                Span::styled(format!(&quot;{:&lt;48} &quot;, hex.join(&quot; &quot;)), Style::default().fg(Color::Rgb(0, 255, 65))),
+                Span::styled(ascii, Style::default().fg(Color::Rgb(0, 255, 65))),
+                ]));
+            lines
+        } else {
+        vec![Line::from(Span::styled(&quot;İzlemek için sistem seçip &#x27;m&#x27; tuşuna basın.&quot;, Style::default().fg(Color::DarkGray)))]
+        };
+        let inspector = Paragraph::new(hex_content)
+        .scroll((app.hex_scroll, 0))
+        .block(Block::default()
+        .title(Span::styled(&quot; RAW DATA (HEX) &quot;, Style::default().fg(Color::White).add_modifier(Modifier::BOLD)))
+        .borders(Borders::ALL)
+        .border_type(BorderType::Plain)
+        .border_style(Style::default().fg(if app.active_panel == ActivePanel::Hex { Color::Cyan } else { Color::DarkGray }))
+        .padding(Padding::horizontal(1)));
+        f.render_widget(inspector, monitor_layout[0]);
+        // Data Inspector (Text)
+        let text_content = if let Some(data) = &amp;app.monitored_data {
+        EĞER data.is_empty() İSE:
+            vec![Line::from(Span::styled(&quot;Veri yok.&quot;, Style::default().fg(Color::DarkGray)))]
+            } else {
+            EĞER let Ok(json) = serde_json::from_slice::&lt;serde_json::Value&gt;(data) İSE:
+                // JSON ise güzelce formatla ve ekran gecikmesini hesapla
+                let mut lines = Vec::new();
+                let current_time = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_millis() as i64;
+                EĞER let Some(obj) = json.as_object() İSE:
+                    let symbol = obj.get(&quot;symbol&quot;).and_then(|v| v.as_str()).unwrap_or(&quot;UNKNOWN&quot;);
+                    lines.push(Line::from(Span::styled(format!(&quot;🚀 {} Canlı Veri&quot;, symbol), Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD))));
+                    lines.push(Line::from(&quot;&quot;));
+                    EĞER obj.contains_key(&quot;best_bid&quot;) İSE:
+                        let bid = obj.get(&quot;best_bid&quot;).and_then(|v| v.as_str()).unwrap_or(&quot;&quot;);
+                        let bid_qty = obj.get(&quot;best_bid_qty&quot;).and_then(|v| v.as_str()).unwrap_or(&quot;&quot;);
+                        let ask = obj.get(&quot;best_ask&quot;).and_then(|v| v.as_str()).unwrap_or(&quot;&quot;);
+                        let ask_qty = obj.get(&quot;best_ask_qty&quot;).and_then(|v| v.as_str()).unwrap_or(&quot;&quot;);
+                        let spread = obj.get(&quot;spread&quot;).and_then(|v| v.as_str()).unwrap_or(&quot;&quot;);
+                        lines.push(Line::from(vec![
+                        Span::raw(&quot;Alış : &quot;), Span::styled(format!(&quot;{} (Miktar: {})&quot;, bid, bid_qty), Style::default().fg(Color::Green)),
+                        ]));
+                        lines.push(Line::from(vec![
+                        Span::raw(&quot;Satış: &quot;), Span::styled(format!(&quot;{} (Miktar: {})&quot;, ask, ask_qty), Style::default().fg(Color::Red)),
+                        ]));
+                        lines.push(Line::from(vec![Span::raw(&quot;Fark : &quot;), Span::styled(spread.to_string(), Style::default().fg(Color::Cyan))]));
+                        } else if obj.contains_key(&quot;price&quot;) {
+                        let price = obj.get(&quot;price&quot;).and_then(|v| v.as_str()).unwrap_or(&quot;&quot;);
+                        let quantity = obj.get(&quot;quantity&quot;).and_then(|v| v.as_str()).unwrap_or(&quot;&quot;);
+                        let is_buyer_maker = obj.get(&quot;is_buyer_maker&quot;).and_then(|v| v.as_bool()).unwrap_or(false);
+                        let color = if is_buyer_maker { Color::Red } else { Color::Green };
+                        let side = if is_buyer_maker { &quot;SATIM&quot; } else { &quot;ALIM &quot; };
+                        lines.push(Line::from(vec![
+                        Span::raw(&quot;İşlem : &quot;), Span::styled(format!(&quot;{} @ {} (Miktar: {})&quot;, side, price, quantity), Style::default().fg(color)),
+                        ]));
+                        } else if obj.contains_key(&quot;mark_price&quot;) {
+                        let mark_price = obj.get(&quot;mark_price&quot;).and_then(|v| v.as_str()).unwrap_or(&quot;&quot;);
+                        let index_price = obj.get(&quot;index_price&quot;).and_then(|v| v.as_str()).unwrap_or(&quot;&quot;);
+                        let funding_rate = obj.get(&quot;funding_rate&quot;).and_then(|v| v.as_str()).unwrap_or(&quot;&quot;);
+                        lines.push(Line::from(vec![
+                        Span::raw(&quot;Mark Fiyatı : &quot;), Span::styled(mark_price.to_string(), Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)),
+                        ]));
+                        lines.push(Line::from(vec![
+                        Span::raw(&quot;Endeks Fiyat: &quot;), Span::styled(index_price.to_string(), Style::default().fg(Color::Cyan)),
+                        ]));
+                        lines.push(Line::from(vec![
+                        Span::raw(&quot;Fonlama Oranı: &quot;), Span::styled(funding_rate.to_string(), Style::default().fg(Color::LightMagenta)),
+                        ]));
+                        } else if obj.contains_key(&quot;type&quot;) &amp;&amp; obj.get(&quot;type&quot;).and_then(|v| v.as_str()) == Some(&quot;ohlcv&quot;) {
+                        let symbol = obj.get(&quot;symbol&quot;).and_then(|v| v.as_str()).unwrap_or(&quot;&quot;);
+                        let interval = obj.get(&quot;interval&quot;).and_then(|v| v.as_str()).unwrap_or(&quot;&quot;);
+                        lines.push(Line::from(vec![
+                        Span::raw(&quot;Veri Tipi: &quot;), Span::styled(&quot;OHLCV Mumları&quot;, Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)),
+                        ]));
+                        lines.push(Line::from(vec![
+                        Span::raw(&quot;Parametre: &quot;), Span::styled(format!(&quot;{} - {}&quot;, symbol, interval), Style::default().fg(Color::Cyan)),
+                        ]));
+                        EĞER let Some(arr) = obj.get(&quot;data&quot;).and_then(|v| v.as_array()) İSE:
+                            lines.push(Line::from(format!(&quot;{} adet mum çekildi.&quot;, arr.len())));
+                            HER (i, kline) in arr.iter().enumerate().take(5) İÇİN DÖNGÜ:
+                                EĞER let Some(k) = kline.as_array() İSE:
+                                    let open = k[1].as_str().unwrap_or(&quot;&quot;);
+                                    let high = k[2].as_str().unwrap_or(&quot;&quot;);
+                                    let low = k[3].as_str().unwrap_or(&quot;&quot;);
+                                    let close = k[4].as_str().unwrap_or(&quot;&quot;);
+                                    let volume = k[5].as_str().unwrap_or(&quot;&quot;);
+                                    lines.push(Line::from(format!(&quot;[{}] O:{} | H:{} | L:{} | C:{} | V:{}&quot;, i, open, high, low, close, volume)));
+                            EĞER arr.len() &gt; 5 İSE:
+                                lines.push(Line::from(&quot;...&quot;));
+                    lines.push(Line::from(&quot;&quot;));
+                    lines.push(Line::from(Span::styled(&quot;Ham JSON:&quot;, Style::default().fg(Color::DarkGray))));
+                    let pretty_json = serde_json::to_string_pretty(&amp;json).unwrap_or_default();
+                    HER l in pretty_json.lines() İÇİN DÖNGÜ:
+                        lines.push(Line::from(Span::styled(l.to_string(), Style::default().fg(Color::DarkGray))));
+                lines
+                } else {
+                let s = String::from_utf8_lossy(data);
+                s.lines().map(|l| Line::from(Span::styled(l.to_string(), Style::default().fg(Color::LightGreen)))).collect()
+        } else {
+        vec![Line::from(Span::styled(&quot;Bekleniyor...&quot;, Style::default().fg(Color::DarkGray)))]
+        };
+        let text_inspector = Paragraph::new(text_content)
+        .scroll((app.live_feed_scroll, 0))
+        .block(Block::default()
+        .title(Span::styled(&quot; LIVE DATA FEED &quot;, Style::default().fg(Color::White).add_modifier(Modifier::BOLD)))
+        .borders(Borders::ALL)
+        .border_type(BorderType::Plain)
+        .border_style(Style::default().fg(if app.active_panel == ActivePanel::LiveFeed { Color::Cyan } else { Color::DarkGray }))
+        .padding(Padding::horizontal(1)))
+        .wrap(ratatui::widgets::Wrap { trim: true });
+        f.render_widget(text_inspector, monitor_layout[1]);
+        // Shell (Komut İstemi) Sağ tarafta sabit
+        let shell_border_color = if app.active_panel == ActivePanel::Shell || app.mode == ViewMode::Shell { Color::Cyan } else { Color::DarkGray };
+        let shell_title_color = if app.active_panel == ActivePanel::Shell || app.mode == ViewMode::Shell { Color::Cyan } else { Color::White };
+        let mut shell_lines = Vec::new();
+        shell_lines.push(Line::from(&quot;&quot;));
+        let history_start = if app.shell_history.len() &gt; 10 { app.shell_history.len() - 10 } else { 0 };
+        HER cmd in app.shell_history.iter().skip(history_start) İÇİN DÖNGÜ:
+            shell_lines.push(Line::from(vec![
+            Span::styled(&quot; &gt; &quot;, Style::default().fg(Color::DarkGray)),
+            Span::raw(cmd)
+            ]));
+        shell_lines.push(Line::from(&quot;&quot;));
+        // Current input
+        shell_lines.push(Line::from(vec![
+        Span::styled(&quot; &gt; &quot;, Style::default().fg(if app.mode == ViewMode::Shell { Color::Green } else { Color::DarkGray }).add_modifier(Modifier::BOLD)),
+        Span::styled(format!(&quot;{}_&quot;, app.input_shell), Style::default().fg(Color::White)),
+        ]));
+        shell_lines.push(Line::from(&quot;&quot;));
+        shell_lines.push(Line::from(Span::styled(&quot; &#x27;i&#x27; ile Shell&#x27;e geç. Shell&#x27;deyken ESC ile çık.&quot;, Style::default().fg(Color::DarkGray))));
+        let p = Paragraph::new(shell_lines)
+        .block(Block::default()
+        .title(Span::styled(&quot; COMMAND SHELL &quot;, Style::default().fg(shell_title_color).add_modifier(Modifier::BOLD)))
+        .borders(Borders::ALL)
+        .border_type(if app.mode == ViewMode::Shell { BorderType::Rounded } else { BorderType::Plain })
+        .border_style(Style::default().fg(shell_border_color))
+        .padding(Padding::horizontal(1)))
+        .alignment(Alignment::Left)
+        .wrap(Wrap { trim: true });
+        f.render_widget(p, monitor_layout[2]);
+        // Loglar
+        let max_lines = main_layout[3].height.saturating_sub(2) as usize;
+        let base_skip = if app.logs.len() &gt; max_lines { app.logs.len() - max_lines } else { 0 };
+        let skip = base_skip.saturating_sub(app.logs_scroll as usize);
+        let take = max_lines.min(app.logs.len() - skip);
+        let logs_to_show = &amp;app.logs[skip..skip + take];
+        let log_items: Vec&lt;ListItem&gt; = logs_to_show.iter().map(|msg| {
+        ListItem::new(Line::from(Span::styled(msg, Style::default().fg(Color::Gray))))
+        }).collect();
+        let log_list = List::new(log_items)
+        .block(Block::default()
+        .title(Span::styled(&quot; SYSTEM EVENTS &quot;, Style::default().fg(Color::White).add_modifier(Modifier::BOLD)))
+        .borders(Borders::ALL)
+        .border_type(BorderType::Plain)
+        .border_style(Style::default().fg(if app.active_panel == ActivePanel::Logs { Color::Cyan } else { Color::DarkGray }))
+        .padding(Padding::horizontal(1)));
+        f.render_widget(log_list, main_layout[3]);
+        } else if app.active_tab == 1 {
+        // TAM EKRAN LOGLAR
+        let log_items: Vec&lt;ListItem&gt; = app.logs.iter().map(|msg| {
+        ListItem::new(Line::from(Span::styled(msg, Style::default().fg(Color::LightCyan))))
+        }).collect();
+        let log_list = List::new(log_items)
+        .block(Block::default()
+        .title(Span::styled(&quot; 📜 Detaylı Loglar &quot;, Style::default().fg(Color::LightMagenta).add_modifier(Modifier::BOLD)))
+        .borders(Borders::ALL)
+        .border_type(BorderType::Rounded)
+        .border_style(Style::default().fg(Color::DarkGray))
+        .padding(Padding::horizontal(2)));
+        f.render_widget(log_list, main_layout[2]);
+        } else {
+        // AYARLAR
+        let text = vec![
+        Line::from(Span::styled(&quot;⚙ Ayarlar &amp; Görsel JSON Düzenleyici&quot;, Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD))),
+        Line::from(&quot;&quot;),
+        Line::from(vec![
+        Span::raw(&quot; [E] &quot;),
+        Span::styled(&quot;Görsel JSON Studio (Web UI) - http://localhost:3030&quot;, Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD)),
+        ]),
+        Line::from(vec![
+        Span::raw(&quot; [T] &quot;),
+        Span::styled(&quot;Terminal İçi Metin Editörü (tui-textarea)&quot;, Style::default().fg(Color::Green)),
+        ]),
+        Line::from(&quot;&quot;),
+        Line::from(Span::styled(&quot;Görsel editörde eklentileri (plugins) sürükleyip birbirine bağlayabilir,&quot;, Style::default().fg(Color::White))),
+        Line::from(Span::styled(&quot;JSON yapısını canlı grafik ve ağaç üzerinde kolayca düzenleyebilirsiniz.&quot;, Style::default().fg(Color::White))),
+        Line::from(&quot;&quot;),
+        Line::from(Span::styled(&quot;Sistem çalışırken ayarları değiştirdiğinizde Hot-Reload ile motor anında güncellenir.&quot;, Style::default().fg(Color::DarkGray))),
+        ];
+        let p = Paragraph::new(text)
+        .block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).title(&quot; ⚙ Ayarlar &quot;))
+        .alignment(Alignment::Center);
+        f.render_widget(p, main_layout[2]);
+    // Config Editor Popup
+    EĞER app.mode == ViewMode::ConfigEditor İSE:
+        EĞER let Some(ref mut ta) = app.textarea İSE:
+            let popup_area = centered_rect(80, 80, size);
+            f.render_widget(Clear, popup_area);
+            ta.set_block(
+            Block::default()
+            .borders(Borders::ALL)
+            .border_type(BorderType::Thick)
+            .border_style(Style::default().fg(Color::Cyan))
+            .title(&quot; 📝 Config Editor (flow_config.json) &quot;)
+            );
+            ta.set_style(Style::default().fg(Color::White).bg(Color::Reset));
+            ta.set_cursor_line_style(Style::default().add_modifier(Modifier::UNDERLINED));
+            f.render_widget(ta.widget(), popup_area);
+            // Editor Help
+            let help_area = Rect {
+            x: popup_area.x,
+            y: popup_area.y + popup_area.height,
+            width: popup_area.width,
+            height: 1,
+            };
+            let help_text = Paragraph::new(Line::from(vec![
+            Span::styled(&quot; [Ctrl+S] Kaydet ve Uygula &quot;, Style::default().fg(Color::Black).bg(Color::Green).add_modifier(Modifier::BOLD)),
+            Span::raw(&quot;   &quot;),
+            Span::styled(&quot; [ESC] İptal &quot;, Style::default().fg(Color::White).bg(Color::Red).add_modifier(Modifier::BOLD)),
+            ])).alignment(Alignment::Center);
+            f.render_widget(help_text, help_area);
+    // Footer Layout
+    let footer_layout = Layout::default()
+    .direction(Direction::Horizontal)
+    .constraints([Constraint::Percentage(80), Constraint::Percentage(20)])
+    .split(main_layout[4]);
+    let help_line = Line::from(vec![
+    Span::styled(&quot;   &quot;, Style::default()), // offset x=3
+    Span::styled(&quot; [+ Yeni Eklenti Yükle] &quot;, Style::default().fg(Color::White).bg(Color::Rgb(150, 150, 40)).add_modifier(Modifier::BOLD)),
+    Span::styled(&quot;  &quot;, Style::default()),
+    Span::styled(&quot; [Q] Çıkış &quot;, Style::default().fg(Color::White).bg(Color::DarkGray).add_modifier(Modifier::BOLD)),
+    Span::styled(&quot;    (Tam GUI Kontrolü)&quot;, Style::default().fg(Color::DarkGray)),
+    ]);
+    let help = Paragraph::new(help_line)
+    .block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).border_style(Style::default().fg(Color::DarkGray)))
+    .alignment(Alignment::Left);
+    f.render_widget(help, footer_layout[0]);
+    let now = chrono::Local::now();
+    let time_str = format!(&quot; {} &quot;, now.format(&quot;%H.%M.%S&quot;));
+    let time_line = Line::from(Span::styled(time_str, Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD)));
+    let time_widget = Paragraph::new(time_line)
+    .block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).border_style(Style::default().fg(Color::DarkGray)))
+    .alignment(Alignment::Center);
+    f.render_widget(time_widget, footer_layout[1]);
+    // Popup (Eklenti Seçimi)
+    EĞER app.mode == ViewMode::PluginSelection İSE:
+        let popup_area = centered_rect(40, 60, size);
+        f.render_widget(Clear, popup_area);
+        let items: Vec&lt;ListItem&gt; = app.available_plugins.iter().enumerate().map(|(i, p)| {
+        let (bg, prefix) = if i == app.plugin_selected { (Color::Rgb(50, 50, 100), &quot;▶ &quot;) } else { (Color::Reset, &quot;  &quot;) };
+        ListItem::new(Line::from(vec![
+        Span::styled(prefix, Style::default().fg(Color::Yellow)),
+        Span::raw(p.clone())
+        ])).style(Style::default().bg(bg).fg(Color::White))
+        }).collect();
+        let list = List::new(items)
+        .block(Block::default().title(Span::styled(&quot; 📦 Eklenti Yükle (Sol Tık) &quot;, Style::default().fg(Color::LightYellow).add_modifier(Modifier::BOLD)))
+        .borders(Borders::ALL).border_type(BorderType::Thick).border_style(Style::default().fg(Color::LightYellow)).padding(Padding::new(2, 2, 1, 1)));
+        f.render_widget(list, popup_area);
+    // Onay Penceresi (Confirm Delete Modal)
+    EĞER let ViewMode::ConfirmDelete(ref sys_id) = app.mode İSE:
+        let modal_area = centered_rect(30, 20, size);
+        f.render_widget(Clear, modal_area);
+        let text = vec![
+        Line::from(Span::styled(format!(&quot;&#x27;{}&#x27;&quot;, sys_id), Style::default().fg(Color::LightRed).add_modifier(Modifier::BOLD))),
+        Line::from(&quot;Sistemini silmek istediğinize&quot;),
+        Line::from(&quot;emin misiniz?&quot;),
+        Line::from(&quot;&quot;),
+        Line::from(vec![
+        Span::styled(&quot;  [ EVET ]  &quot;, Style::default().fg(Color::White).bg(Color::Red).add_modifier(Modifier::BOLD)),
+        Span::raw(&quot;    &quot;),
+        Span::styled(&quot;  [ HAYIR ]  &quot;, Style::default().fg(Color::White).bg(Color::DarkGray).add_modifier(Modifier::BOLD)),
+        ]),
+        ];
+        let p = Paragraph::new(text)
+        .block(Block::default().title(&quot; ⚠️ Dikkat &quot;).borders(Borders::ALL).border_type(BorderType::Thick).border_style(Style::default().fg(Color::Red)).padding(Padding::vertical(1)))
+        .alignment(Alignment::Center);
+        f.render_widget(p, modal_area);
+    // Sağ Tık İçerik Menüsü (Context Menu)
+    EĞER let ViewMode::ContextMenu(ref id, cx, cy) = app.mode İSE:
+        // Small popup at cx, cy
+        let area = Rect {
+        x: cx,
+        y: cy,
+        width: 25,
+        height: 6,
+        };
+        // Ensure it doesn&#x27;t overflow screen
+        let area = Rect {
+        x: area.x.min(size.width.saturating_sub(25)),
+        y: area.y.min(size.height.saturating_sub(6)),
+        width: 25,
+        height: 6,
+        };
+        f.render_widget(Clear, area);
+        let text = vec![
+        Line::from(Span::styled(format!(&quot; ⚙ {}&quot;, id), Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD))),
+        Line::from(Span::styled(&quot;  ▶ Başlat &quot;, Style::default().fg(Color::White))),
+        Line::from(Span::styled(&quot;  ■ Durdur &quot;, Style::default().fg(Color::White))),
+        Line::from(Span::styled(&quot;  ✖ Sil &quot;, Style::default().fg(Color::White))),
+        ];
+        let p = Paragraph::new(text)
+        .block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).border_style(Style::default().fg(Color::DarkGray)).style(Style::default().bg(Color::Rgb(40,40,40))));
+        f.render_widget(p, area);</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: draw_ui"])
+    Start --> Cond1{"app.active_tab == 0?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"let Some(p) = app.sys.process(pid)?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"app.active_tab == 0?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> Loop4["Döngü: chunk in data.chunks(16)"]
+    Loop4 --> Loop5["Döngü: (i, kline) in arr.iter().enumerate().take(5)"]
+    Loop5 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> centered_rect</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>percent_x: u16, percent_y: u16, r: Rect</code> | <strong>Dönüş Tipi:</strong> <code>Rect</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>percent_x: u16, percent_y: u16, r: Rect</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>Rect</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. İşlemi tamamlayarak <code>Rect</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON centered_rect(percent_x: u16, percent_y: u16, r: Rect) -&gt; Rect:
+    let popup_layout = Layout::default()
+    .direction(Direction::Vertical)
+    .constraints([Constraint::Percentage((100 - percent_y) / 2), Constraint::Percentage(percent_y), Constraint::Percentage((100 - percent_y) / 2)])
+    .split(r);
+    Layout::default()
+    .direction(Direction::Horizontal)
+    .constraints([Constraint::Percentage((100 - percent_x) / 2), Constraint::Percentage(percent_x), Constraint::Percentage((100 - percent_x) / 2)])
+    .split(popup_layout[1])[1]</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: centered_rect"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        </section>
+
+        <details>
+            <summary>Orijinal Rust Kaynak Kodunu Göster</summary>
+            <pre><code>use ratatui::{
+    layout::{Constraint, Direction, Layout, Rect, Alignment},
+    style::{Color, Modifier, Style},
+    text::{Line, Span},
+    widgets::{Block, Borders, BorderType, Cell, Paragraph, Row, Table, List, ListItem, Clear, Padding, Tabs, Wrap},
+    Frame,
+};
+use super::app::{App, ViewMode, ActivePanel};
+
+pub fn draw_ui(f: &amp;mut Frame, app: &amp;mut App&lt;&#x27;_&gt;) {
+    let size = f.size();
+
+    let main_layout = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([
+            Constraint::Length(3),  // Tabs
+            Constraint::Length(3),  // Header / System Stats
+            Constraint::Min(10),    // Orta Alan (Tablo + Monitör)
+            Constraint::Length(if app.active_tab == 0 { 8 } else { 0 }),  // Loglar (Sadece Dashboard&#x27;da)
+            Constraint::Length(3),  // Komutlar (Footer)
+        ])
+        .split(size);
+
+    // 0. TABS
+    let titles = vec![&quot; DASHBOARD &quot;, &quot; SYSTEM LOGS &quot;, &quot; SETTINGS &quot;].into_iter().map(Line::from).collect();
+    let tabs = Tabs::new(titles)
+        .block(Block::default().borders(Borders::ALL).border_type(BorderType::Plain).title(&quot; NAVIGATION &quot;))
+        .select(app.active_tab)
+        .style(Style::default().fg(Color::DarkGray))
+        .highlight_style(Style::default().fg(Color::White).add_modifier(Modifier::BOLD))
+        .divider(&quot; | &quot;);
+    f.render_widget(tabs, main_layout[0]);
+
+    // 1. Header (Kaynak Kullanımı)
+    let pid = sysinfo::Pid::from_u32(std::process::id());
+    let (cpu_usage, used_mem) = if let Some(p) = app.sys.process(pid) {
+        (p.cpu_usage(), p.memory() / 1024 / 1024)
+    } else {
+        (0.0, 0)
+    };
+
+    let header_text = vec![
+        Line::from(vec![
+            Span::styled(&quot; ENTERPRISE ORCHESTRATION CONSOLE &quot;, Style::default().fg(Color::White).add_modifier(Modifier::BOLD)),
+            Span::styled(&quot; | CPU: &quot;, Style::default().fg(Color::DarkGray)),
+            Span::styled(format!(&quot;{:.1}% &quot;, cpu_usage), Style::default().fg(Color::White)),
+            Span::styled(&quot;| RAM: &quot;, Style::default().fg(Color::DarkGray)),
+            Span::styled(format!(&quot;{} MB &quot;, used_mem), Style::default().fg(Color::White)),
+        ])
+    ];
+
+    let header = Paragraph::new(header_text)
+        .block(Block::default().borders(Borders::ALL).border_type(BorderType::Plain).border_style(Style::default().fg(Color::DarkGray)))
+        .alignment(Alignment::Center);
+    f.render_widget(header, main_layout[1]);
+
+    if app.active_tab == 0 {
+        // DASHBOARD VIEW
+        let middle_layout = Layout::default()
+            .direction(Direction::Horizontal)
+            .constraints([
+                Constraint::Percentage(app.systems_panel_width), 
+                Constraint::Percentage(100 - app.systems_panel_width),
+            ])
+            .split(main_layout[2]);
+
+        let monitor_layout = Layout::default()
+            .direction(Direction::Horizontal)
+            .constraints([
+                Constraint::Percentage(33), 
+                Constraint::Percentage(33), 
+                Constraint::Percentage(34),
+            ])
+            .split(middle_layout[1]);
+            
+        // Sistem Listesi
+        let systems = app.orchestrator.list_systems();
+        let rows: Vec&lt;Row&gt; = systems.iter().enumerate().map(|(i, (id, _name, running))| {
+            let (bg, pointer) = if i == app.selected {
+                (Color::Rgb(30, 30, 60), &quot;▶ &quot;)
+            } else {
+                (Color::Reset, &quot;  &quot;)
+            };
+            
+            let status = if *running { &quot;AKTİF&quot; } else { &quot;PASİF&quot; };
+            let status_color = if *running { Color::LightGreen } else { Color::LightRed };
+            let id_color = if *running { Color::White } else { Color::DarkGray };
+            
+            let actions = Line::from(vec![
+                Span::styled(&quot; [ START ] &quot;, Style::default().fg(Color::White).bg(Color::DarkGray)),
+                Span::styled(&quot; &quot;, Style::default()),
+                Span::styled(&quot; [ STOP ] &quot;, Style::default().fg(Color::White).bg(Color::Rgb(60, 60, 60))),
+                Span::styled(&quot; &quot;, Style::default()),
+                Span::styled(&quot; [ VIEW ] &quot;, Style::default().fg(Color::White).bg(Color::DarkGray)),
+                Span::styled(&quot; &quot;, Style::default()),
+                Span::styled(&quot; [ DEL ] &quot;, Style::default().fg(Color::White).bg(Color::Rgb(60, 60, 60))),
+            ]);
+            
+            Row::new(vec![
+                Cell::from(format!(&quot;{}{}&quot;, pointer, id)).style(Style::default().fg(id_color)),
+                Cell::from(status).style(Style::default().fg(status_color)),
+                Cell::from(actions),
+            ])
+            .style(Style::default().bg(bg))
+        }).collect();
+
+        let table = Table::new(rows)
+            .header(Row::new(vec![&quot; MODULE ID&quot;, &quot; STATUS&quot;, &quot; ACTIONS&quot;])
+                .style(Style::default().fg(Color::White).add_modifier(Modifier::BOLD))
+                .bottom_margin(1))
+            .block(Block::default()
+                .title(Span::styled(&quot; SYSTEM MODULES &quot;, Style::default().fg(Color::White).add_modifier(Modifier::BOLD)))
+                .borders(Borders::ALL)
+                .border_type(BorderType::Plain)
+                .border_style(Style::default().fg(if app.active_panel == ActivePanel::Systems { Color::Cyan } else if app.is_dragging_split { Color::White } else { Color::DarkGray }))
+                .padding(Padding::horizontal(1)))
+            .widths(&amp;[Constraint::Percentage(35), Constraint::Percentage(15), Constraint::Percentage(50)])
+            .column_spacing(1);
+        f.render_widget(table, middle_layout[0]);
+
+        // Data Inspector (Hex)
+        let hex_content = if let Some(data) = &amp;app.monitored_data {
+            if data.is_empty() {
+                vec![Line::from(Span::styled(&quot;Veri yok.&quot;, Style::default().fg(Color::DarkGray)))]
+            } else {
+                let mut lines = Vec::new();
+                lines.push(Line::from(Span::styled(format!(&quot;Boyut: {} bytes&quot;, data.len()), Style::default().fg(Color::Gray))));
+                lines.push(Line::from(&quot;&quot;));
+                for chunk in data.chunks(16) {
+                    let hex: Vec&lt;String&gt; = chunk.iter().map(|b| format!(&quot;{:02x}&quot;, b)).collect();
+                    let ascii: String = chunk.iter().map(|&amp;b| if b &gt;= 32 &amp;&amp; b &lt;= 126 { b as char } else { &#x27;.&#x27; }).collect();
+                    lines.push(Line::from(vec![
+                        Span::styled(format!(&quot;{:&lt;48} &quot;, hex.join(&quot; &quot;)), Style::default().fg(Color::Rgb(0, 255, 65))),
+                        Span::styled(ascii, Style::default().fg(Color::Rgb(0, 255, 65))),
+                    ]));
+                }
+                lines
+            }
+        } else {
+            vec![Line::from(Span::styled(&quot;İzlemek için sistem seçip &#x27;m&#x27; tuşuna basın.&quot;, Style::default().fg(Color::DarkGray)))]
+        };
+        
+        let inspector = Paragraph::new(hex_content)
+            .scroll((app.hex_scroll, 0))
+            .block(Block::default()
+                .title(Span::styled(&quot; RAW DATA (HEX) &quot;, Style::default().fg(Color::White).add_modifier(Modifier::BOLD)))
+                .borders(Borders::ALL)
+                .border_type(BorderType::Plain)
+                .border_style(Style::default().fg(if app.active_panel == ActivePanel::Hex { Color::Cyan } else { Color::DarkGray }))
+                .padding(Padding::horizontal(1)));
+        f.render_widget(inspector, monitor_layout[0]);
+
+        // Data Inspector (Text)
+        let text_content = if let Some(data) = &amp;app.monitored_data {
+            if data.is_empty() {
+                vec![Line::from(Span::styled(&quot;Veri yok.&quot;, Style::default().fg(Color::DarkGray)))]
+            } else {
+                if let Ok(json) = serde_json::from_slice::&lt;serde_json::Value&gt;(data) {
+                    // JSON ise güzelce formatla ve ekran gecikmesini hesapla
+                    let mut lines = Vec::new();
+                    let current_time = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_millis() as i64;
+                    
+                    if let Some(obj) = json.as_object() {
+                        let symbol = obj.get(&quot;symbol&quot;).and_then(|v| v.as_str()).unwrap_or(&quot;UNKNOWN&quot;);
+                        lines.push(Line::from(Span::styled(format!(&quot;🚀 {} Canlı Veri&quot;, symbol), Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD))));
+                        lines.push(Line::from(&quot;&quot;));
+                        
+                        if obj.contains_key(&quot;best_bid&quot;) {
+                            let bid = obj.get(&quot;best_bid&quot;).and_then(|v| v.as_str()).unwrap_or(&quot;&quot;);
+                            let bid_qty = obj.get(&quot;best_bid_qty&quot;).and_then(|v| v.as_str()).unwrap_or(&quot;&quot;);
+                            let ask = obj.get(&quot;best_ask&quot;).and_then(|v| v.as_str()).unwrap_or(&quot;&quot;);
+                            let ask_qty = obj.get(&quot;best_ask_qty&quot;).and_then(|v| v.as_str()).unwrap_or(&quot;&quot;);
+                            let spread = obj.get(&quot;spread&quot;).and_then(|v| v.as_str()).unwrap_or(&quot;&quot;);
+                            
+                            lines.push(Line::from(vec![
+                                Span::raw(&quot;Alış : &quot;), Span::styled(format!(&quot;{} (Miktar: {})&quot;, bid, bid_qty), Style::default().fg(Color::Green)),
+                            ]));
+                            lines.push(Line::from(vec![
+                                Span::raw(&quot;Satış: &quot;), Span::styled(format!(&quot;{} (Miktar: {})&quot;, ask, ask_qty), Style::default().fg(Color::Red)),
+                            ]));
+                            lines.push(Line::from(vec![Span::raw(&quot;Fark : &quot;), Span::styled(spread.to_string(), Style::default().fg(Color::Cyan))]));
+                        } else if obj.contains_key(&quot;price&quot;) {
+                            let price = obj.get(&quot;price&quot;).and_then(|v| v.as_str()).unwrap_or(&quot;&quot;);
+                            let quantity = obj.get(&quot;quantity&quot;).and_then(|v| v.as_str()).unwrap_or(&quot;&quot;);
+                            let is_buyer_maker = obj.get(&quot;is_buyer_maker&quot;).and_then(|v| v.as_bool()).unwrap_or(false);
+                            
+                            let color = if is_buyer_maker { Color::Red } else { Color::Green };
+                            let side = if is_buyer_maker { &quot;SATIM&quot; } else { &quot;ALIM &quot; };
+                            
+                            lines.push(Line::from(vec![
+                                Span::raw(&quot;İşlem : &quot;), Span::styled(format!(&quot;{} @ {} (Miktar: {})&quot;, side, price, quantity), Style::default().fg(color)),
+                            ]));
+                        } else if obj.contains_key(&quot;mark_price&quot;) {
+                            let mark_price = obj.get(&quot;mark_price&quot;).and_then(|v| v.as_str()).unwrap_or(&quot;&quot;);
+                            let index_price = obj.get(&quot;index_price&quot;).and_then(|v| v.as_str()).unwrap_or(&quot;&quot;);
+                            let funding_rate = obj.get(&quot;funding_rate&quot;).and_then(|v| v.as_str()).unwrap_or(&quot;&quot;);
+                            
+                            lines.push(Line::from(vec![
+                                Span::raw(&quot;Mark Fiyatı : &quot;), Span::styled(mark_price.to_string(), Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)),
+                            ]));
+                            lines.push(Line::from(vec![
+                                Span::raw(&quot;Endeks Fiyat: &quot;), Span::styled(index_price.to_string(), Style::default().fg(Color::Cyan)),
+                            ]));
+                            lines.push(Line::from(vec![
+                                Span::raw(&quot;Fonlama Oranı: &quot;), Span::styled(funding_rate.to_string(), Style::default().fg(Color::LightMagenta)),
+                            ]));
+                        } else if obj.contains_key(&quot;type&quot;) &amp;&amp; obj.get(&quot;type&quot;).and_then(|v| v.as_str()) == Some(&quot;ohlcv&quot;) {
+                            let symbol = obj.get(&quot;symbol&quot;).and_then(|v| v.as_str()).unwrap_or(&quot;&quot;);
+                            let interval = obj.get(&quot;interval&quot;).and_then(|v| v.as_str()).unwrap_or(&quot;&quot;);
+                            
+                            lines.push(Line::from(vec![
+                                Span::raw(&quot;Veri Tipi: &quot;), Span::styled(&quot;OHLCV Mumları&quot;, Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)),
+                            ]));
+                            lines.push(Line::from(vec![
+                                Span::raw(&quot;Parametre: &quot;), Span::styled(format!(&quot;{} - {}&quot;, symbol, interval), Style::default().fg(Color::Cyan)),
+                            ]));
+                            
+                            if let Some(arr) = obj.get(&quot;data&quot;).and_then(|v| v.as_array()) {
+                                lines.push(Line::from(format!(&quot;{} adet mum çekildi.&quot;, arr.len())));
+                                for (i, kline) in arr.iter().enumerate().take(5) {
+                                    if let Some(k) = kline.as_array() {
+                                        let open = k[1].as_str().unwrap_or(&quot;&quot;);
+                                        let high = k[2].as_str().unwrap_or(&quot;&quot;);
+                                        let low = k[3].as_str().unwrap_or(&quot;&quot;);
+                                        let close = k[4].as_str().unwrap_or(&quot;&quot;);
+                                        let volume = k[5].as_str().unwrap_or(&quot;&quot;);
+                                        lines.push(Line::from(format!(&quot;[{}] O:{} | H:{} | L:{} | C:{} | V:{}&quot;, i, open, high, low, close, volume)));
+                                    }
+                                }
+                                if arr.len() &gt; 5 {
+                                    lines.push(Line::from(&quot;...&quot;));
+                                }
+                            }
+                        }
+                        lines.push(Line::from(&quot;&quot;));
+                        lines.push(Line::from(Span::styled(&quot;Ham JSON:&quot;, Style::default().fg(Color::DarkGray))));
+                        let pretty_json = serde_json::to_string_pretty(&amp;json).unwrap_or_default();
+                        for l in pretty_json.lines() {
+                            lines.push(Line::from(Span::styled(l.to_string(), Style::default().fg(Color::DarkGray))));
+                        }
+                    }
+                    lines
+                } else {
+                    let s = String::from_utf8_lossy(data);
+                    s.lines().map(|l| Line::from(Span::styled(l.to_string(), Style::default().fg(Color::LightGreen)))).collect()
+                }
+            }
+        } else {
+            vec![Line::from(Span::styled(&quot;Bekleniyor...&quot;, Style::default().fg(Color::DarkGray)))]
+        };
+        
+        let text_inspector = Paragraph::new(text_content)
+            .scroll((app.live_feed_scroll, 0))
+            .block(Block::default()
+                .title(Span::styled(&quot; LIVE DATA FEED &quot;, Style::default().fg(Color::White).add_modifier(Modifier::BOLD)))
+                .borders(Borders::ALL)
+                .border_type(BorderType::Plain)
+                .border_style(Style::default().fg(if app.active_panel == ActivePanel::LiveFeed { Color::Cyan } else { Color::DarkGray }))
+                .padding(Padding::horizontal(1)))
+            .wrap(ratatui::widgets::Wrap { trim: true });
+        f.render_widget(text_inspector, monitor_layout[1]);
+
+        // Shell (Komut İstemi) Sağ tarafta sabit
+        let shell_border_color = if app.active_panel == ActivePanel::Shell || app.mode == ViewMode::Shell { Color::Cyan } else { Color::DarkGray };
+        let shell_title_color = if app.active_panel == ActivePanel::Shell || app.mode == ViewMode::Shell { Color::Cyan } else { Color::White };
+        let mut shell_lines = Vec::new();
+        shell_lines.push(Line::from(&quot;&quot;));
+        
+        let history_start = if app.shell_history.len() &gt; 10 { app.shell_history.len() - 10 } else { 0 };
+        for cmd in app.shell_history.iter().skip(history_start) {
+            shell_lines.push(Line::from(vec![
+                Span::styled(&quot; &gt; &quot;, Style::default().fg(Color::DarkGray)),
+                Span::raw(cmd)
+            ]));
+        }
+        
+        shell_lines.push(Line::from(&quot;&quot;));
+        
+        // Current input
+        shell_lines.push(Line::from(vec![
+            Span::styled(&quot; &gt; &quot;, Style::default().fg(if app.mode == ViewMode::Shell { Color::Green } else { Color::DarkGray }).add_modifier(Modifier::BOLD)),
+            Span::styled(format!(&quot;{}_&quot;, app.input_shell), Style::default().fg(Color::White)),
+        ]));
+        
+        shell_lines.push(Line::from(&quot;&quot;));
+        shell_lines.push(Line::from(Span::styled(&quot; &#x27;i&#x27; ile Shell&#x27;e geç. Shell&#x27;deyken ESC ile çık.&quot;, Style::default().fg(Color::DarkGray))));
+
+        let p = Paragraph::new(shell_lines)
+            .block(Block::default()
+                .title(Span::styled(&quot; COMMAND SHELL &quot;, Style::default().fg(shell_title_color).add_modifier(Modifier::BOLD)))
+                .borders(Borders::ALL)
+                .border_type(if app.mode == ViewMode::Shell { BorderType::Rounded } else { BorderType::Plain })
+                .border_style(Style::default().fg(shell_border_color))
+                .padding(Padding::horizontal(1)))
+            .alignment(Alignment::Left)
+            .wrap(Wrap { trim: true });
+            
+        f.render_widget(p, monitor_layout[2]);
+
+        // Loglar
+        let max_lines = main_layout[3].height.saturating_sub(2) as usize; 
+        let base_skip = if app.logs.len() &gt; max_lines { app.logs.len() - max_lines } else { 0 };
+        let skip = base_skip.saturating_sub(app.logs_scroll as usize);
+        let take = max_lines.min(app.logs.len() - skip);
+        let logs_to_show = &amp;app.logs[skip..skip + take];
+        let log_items: Vec&lt;ListItem&gt; = logs_to_show.iter().map(|msg| {
+            ListItem::new(Line::from(Span::styled(msg, Style::default().fg(Color::Gray))))
+        }).collect();
+
+        let log_list = List::new(log_items)
+            .block(Block::default()
+                .title(Span::styled(&quot; SYSTEM EVENTS &quot;, Style::default().fg(Color::White).add_modifier(Modifier::BOLD)))
+                .borders(Borders::ALL)
+                .border_type(BorderType::Plain)
+                .border_style(Style::default().fg(if app.active_panel == ActivePanel::Logs { Color::Cyan } else { Color::DarkGray }))
+                .padding(Padding::horizontal(1)));
+        f.render_widget(log_list, main_layout[3]);
+        
+    } else if app.active_tab == 1 {
+        // TAM EKRAN LOGLAR
+        let log_items: Vec&lt;ListItem&gt; = app.logs.iter().map(|msg| {
+            ListItem::new(Line::from(Span::styled(msg, Style::default().fg(Color::LightCyan))))
+        }).collect();
+        let log_list = List::new(log_items)
+            .block(Block::default()
+                .title(Span::styled(&quot; 📜 Detaylı Loglar &quot;, Style::default().fg(Color::LightMagenta).add_modifier(Modifier::BOLD)))
+                .borders(Borders::ALL)
+                .border_type(BorderType::Rounded)
+                .border_style(Style::default().fg(Color::DarkGray))
+                .padding(Padding::horizontal(2)));
+        f.render_widget(log_list, main_layout[2]);
+    } else {
+        // AYARLAR
+        let text = vec![
+            Line::from(Span::styled(&quot;⚙ Ayarlar &amp; Görsel JSON Düzenleyici&quot;, Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD))),
+            Line::from(&quot;&quot;),
+            Line::from(vec![
+                Span::raw(&quot; [E] &quot;),
+                Span::styled(&quot;Görsel JSON Studio (Web UI) - http://localhost:3030&quot;, Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD)),
+            ]),
+            Line::from(vec![
+                Span::raw(&quot; [T] &quot;),
+                Span::styled(&quot;Terminal İçi Metin Editörü (tui-textarea)&quot;, Style::default().fg(Color::Green)),
+            ]),
+            Line::from(&quot;&quot;),
+            Line::from(Span::styled(&quot;Görsel editörde eklentileri (plugins) sürükleyip birbirine bağlayabilir,&quot;, Style::default().fg(Color::White))),
+            Line::from(Span::styled(&quot;JSON yapısını canlı grafik ve ağaç üzerinde kolayca düzenleyebilirsiniz.&quot;, Style::default().fg(Color::White))),
+            Line::from(&quot;&quot;),
+            Line::from(Span::styled(&quot;Sistem çalışırken ayarları değiştirdiğinizde Hot-Reload ile motor anında güncellenir.&quot;, Style::default().fg(Color::DarkGray))),
+        ];
+        let p = Paragraph::new(text)
+            .block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).title(&quot; ⚙ Ayarlar &quot;))
+            .alignment(Alignment::Center);
+        f.render_widget(p, main_layout[2]);
+    }
+
+    // Config Editor Popup
+    if app.mode == ViewMode::ConfigEditor {
+        if let Some(ref mut ta) = app.textarea {
+            let popup_area = centered_rect(80, 80, size);
+            f.render_widget(Clear, popup_area);
+            
+            ta.set_block(
+                Block::default()
+                    .borders(Borders::ALL)
+                    .border_type(BorderType::Thick)
+                    .border_style(Style::default().fg(Color::Cyan))
+                    .title(&quot; 📝 Config Editor (flow_config.json) &quot;)
+            );
+            ta.set_style(Style::default().fg(Color::White).bg(Color::Reset));
+            ta.set_cursor_line_style(Style::default().add_modifier(Modifier::UNDERLINED));
+            
+            f.render_widget(ta.widget(), popup_area);
+            
+            // Editor Help
+            let help_area = Rect {
+                x: popup_area.x,
+                y: popup_area.y + popup_area.height,
+                width: popup_area.width,
+                height: 1,
+            };
+            let help_text = Paragraph::new(Line::from(vec![
+                Span::styled(&quot; [Ctrl+S] Kaydet ve Uygula &quot;, Style::default().fg(Color::Black).bg(Color::Green).add_modifier(Modifier::BOLD)),
+                Span::raw(&quot;   &quot;),
+                Span::styled(&quot; [ESC] İptal &quot;, Style::default().fg(Color::White).bg(Color::Red).add_modifier(Modifier::BOLD)),
+            ])).alignment(Alignment::Center);
+            
+            f.render_widget(help_text, help_area);
+        }
+    }
+
+    // Footer Layout
+    let footer_layout = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(80), Constraint::Percentage(20)])
+        .split(main_layout[4]);
+
+    let help_line = Line::from(vec![
+        Span::styled(&quot;   &quot;, Style::default()), // offset x=3
+        Span::styled(&quot; [+ Yeni Eklenti Yükle] &quot;, Style::default().fg(Color::White).bg(Color::Rgb(150, 150, 40)).add_modifier(Modifier::BOLD)),
+        Span::styled(&quot;  &quot;, Style::default()),
+        Span::styled(&quot; [Q] Çıkış &quot;, Style::default().fg(Color::White).bg(Color::DarkGray).add_modifier(Modifier::BOLD)),
+        Span::styled(&quot;    (Tam GUI Kontrolü)&quot;, Style::default().fg(Color::DarkGray)),
+    ]);
+    let help = Paragraph::new(help_line)
+        .block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).border_style(Style::default().fg(Color::DarkGray)))
+        .alignment(Alignment::Left);
+    f.render_widget(help, footer_layout[0]);
+
+    let now = chrono::Local::now();
+    let time_str = format!(&quot; {} &quot;, now.format(&quot;%H.%M.%S&quot;));
+    let time_line = Line::from(Span::styled(time_str, Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD)));
+    let time_widget = Paragraph::new(time_line)
+        .block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).border_style(Style::default().fg(Color::DarkGray)))
+        .alignment(Alignment::Center);
+    
+    f.render_widget(time_widget, footer_layout[1]);
+
+    // Popup (Eklenti Seçimi)
+    if app.mode == ViewMode::PluginSelection {
+        let popup_area = centered_rect(40, 60, size);
+        f.render_widget(Clear, popup_area);
+        let items: Vec&lt;ListItem&gt; = app.available_plugins.iter().enumerate().map(|(i, p)| {
+            let (bg, prefix) = if i == app.plugin_selected { (Color::Rgb(50, 50, 100), &quot;▶ &quot;) } else { (Color::Reset, &quot;  &quot;) };
+            ListItem::new(Line::from(vec![
+                Span::styled(prefix, Style::default().fg(Color::Yellow)),
+                Span::raw(p.clone())
+            ])).style(Style::default().bg(bg).fg(Color::White))
+        }).collect();
+        let list = List::new(items)
+            .block(Block::default().title(Span::styled(&quot; 📦 Eklenti Yükle (Sol Tık) &quot;, Style::default().fg(Color::LightYellow).add_modifier(Modifier::BOLD)))
+                .borders(Borders::ALL).border_type(BorderType::Thick).border_style(Style::default().fg(Color::LightYellow)).padding(Padding::new(2, 2, 1, 1)));
+        f.render_widget(list, popup_area);
+    }
+    
+    // Onay Penceresi (Confirm Delete Modal)
+    if let ViewMode::ConfirmDelete(ref sys_id) = app.mode {
+        let modal_area = centered_rect(30, 20, size);
+        f.render_widget(Clear, modal_area);
+        let text = vec![
+            Line::from(Span::styled(format!(&quot;&#x27;{}&#x27;&quot;, sys_id), Style::default().fg(Color::LightRed).add_modifier(Modifier::BOLD))),
+            Line::from(&quot;Sistemini silmek istediğinize&quot;),
+            Line::from(&quot;emin misiniz?&quot;),
+            Line::from(&quot;&quot;),
+            Line::from(vec![
+                Span::styled(&quot;  [ EVET ]  &quot;, Style::default().fg(Color::White).bg(Color::Red).add_modifier(Modifier::BOLD)),
+                Span::raw(&quot;    &quot;),
+                Span::styled(&quot;  [ HAYIR ]  &quot;, Style::default().fg(Color::White).bg(Color::DarkGray).add_modifier(Modifier::BOLD)),
+            ]),
+        ];
+        let p = Paragraph::new(text)
+            .block(Block::default().title(&quot; ⚠️ Dikkat &quot;).borders(Borders::ALL).border_type(BorderType::Thick).border_style(Style::default().fg(Color::Red)).padding(Padding::vertical(1)))
+            .alignment(Alignment::Center);
+        f.render_widget(p, modal_area);
+    }
+    
+
+
+    
+    // Sağ Tık İçerik Menüsü (Context Menu)
+    if let ViewMode::ContextMenu(ref id, cx, cy) = app.mode {
+        // Small popup at cx, cy
+        let area = Rect {
+            x: cx,
+            y: cy,
+            width: 25,
+            height: 6,
+        };
+        // Ensure it doesn&#x27;t overflow screen
+        let area = Rect {
+            x: area.x.min(size.width.saturating_sub(25)),
+            y: area.y.min(size.height.saturating_sub(6)),
+            width: 25,
+            height: 6,
+        };
+        f.render_widget(Clear, area);
+        let text = vec![
+            Line::from(Span::styled(format!(&quot; ⚙ {}&quot;, id), Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD))),
+            Line::from(Span::styled(&quot;  ▶ Başlat &quot;, Style::default().fg(Color::White))),
+            Line::from(Span::styled(&quot;  ■ Durdur &quot;, Style::default().fg(Color::White))),
+            Line::from(Span::styled(&quot;  ✖ Sil &quot;, Style::default().fg(Color::White))),
+        ];
+        let p = Paragraph::new(text)
+            .block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).border_style(Style::default().fg(Color::DarkGray)).style(Style::default().bg(Color::Rgb(40,40,40))));
+        f.render_widget(p, area);
+    }
+}
+
+fn centered_rect(percent_x: u16, percent_y: u16, r: Rect) -&gt; Rect {
+    let popup_layout = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Percentage((100 - percent_y) / 2), Constraint::Percentage(percent_y), Constraint::Percentage((100 - percent_y) / 2)])
+        .split(r);
+    Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage((100 - percent_x) / 2), Constraint::Percentage(percent_x), Constraint::Percentage((100 - percent_x) / 2)])
+        .split(popup_layout[1])[1]
+}
+</code></pre>
+        </details>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            flowchart: { curve: 'basis' }
+        });
+    </script>
+</body>
+</html>

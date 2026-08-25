@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>integration_test.rs - Rust Analiz Dokümanı</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --border: #334155;
+            --code-bg: #090d16;
+            --verbal-bg: #131f37;
+            --analogy-bg: #1e1b4b;
+            --analogy-border: #818cf8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .back-link {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .back-link:hover { text-decoration: underline; }
+        h1 { font-size: 2rem; color: var(--accent); margin-bottom: 0.5rem; }
+        .file-path { font-family: 'Fira Code', monospace; color: var(--text-muted); font-size: 0.95rem; }
+        
+        .structs-container { margin: 1.5rem 0; }
+        .badge {
+            display: inline-block;
+            background: #0284c7;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-family: 'Fira Code', monospace;
+        }
+        .badge-struct { background: #7c3aed; }
+        
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .card h3 { color: var(--accent); margin-bottom: 0.5rem; font-size: 1.3rem; }
+        .card h4 { margin: 1.2rem 0 0.5rem 0; color: var(--text-muted); font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        .easy-analogy {
+            background: var(--analogy-bg);
+            border-left: 4px solid var(--analogy-border);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1rem;
+            color: #c7d2fe;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .verbal-explanation {
+            background: var(--verbal-bg);
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1.2rem;
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            margin-bottom: 1rem;
+        }
+        
+        .mermaid {
+            background: var(--code-bg);
+            padding: 1.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+        }
+        
+        details {
+            margin-top: 2rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Ana İndekse Dön</a>
+        <header>
+            <h1>integration_test.rs</h1>
+            <p class="file-path">crates/plugins/execution/plugin_paper_exchange/tests/integration_test.rs</p>
+            <div class="structs-container">
+                <strong>Tanımlı Türler / Yapılar:</strong> Yok
+            </div>
+        </header>
+
+        <section>
+            <h2>Fonksiyon Analizleri & Basit Anlatımlar</h2>
+            
+        <div class="card">
+            <h3><span class="badge">fn</span> test_commands_working</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>Yok</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Gerçek para harcamadan önce Monopoly oyunundaki sanal para ile alışveriş yapıp taktiklerin çalışıp çalışmadığını test etme işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Gerçek piyasa emir defteri verisini alarak gecikme, komisyon ve kuyruk sırasını hesaba katan sanal alım-satım infazını gerçekleştirir.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON test_commands_working() -&gt; ():
+    use std::sync::Arc;
+    let storage = Arc::new(plugin_paper_exchange::storage::Storage::new(&quot;:memory:&quot;).unwrap());
+    let engine = PaperEngine::new(storage);
+    engine.create_account(&quot;admin&quot;, 10000.0);
+    // 1. Send Buy Order (Long)
+    let order_json = serde_json::json!({
+    &quot;id&quot;: &quot;test_1&quot;,
+    &quot;user_id&quot;: &quot;admin&quot;,
+    &quot;symbol&quot;: &quot;BTCUSDT&quot;,
+    &quot;side&quot;: &quot;Buy&quot;,
+    &quot;position_side&quot;: &quot;Long&quot;,
+    &quot;order_type&quot;: &quot;Limit&quot;,
+    &quot;price&quot;: 60000.0,
+    &quot;stop_price&quot;: 0.0,
+    &quot;amount&quot;: 0.1,
+    &quot;leverage&quot;: 20.0,
+    &quot;executed&quot;: 0.0,
+    &quot;timestamp&quot;: 0
+    });
+    let order: Order = serde_json::from_value(order_json).unwrap();
+    engine.submit_order(&quot;admin&quot;, order).unwrap();
+    // Engine should have 1 active order
+    assert_eq!(engine.active_orders.get(&quot;BTCUSDT&quot;).unwrap().len(), 1);
+    // 2. Trigger execution with last price
+    engine.on_last_price_update(&quot;BTCUSDT&quot;, 59000.0);
+    // Order should be executed, position opened
+    assert_eq!(engine.active_orders.get(&quot;BTCUSDT&quot;).unwrap().len(), 0);
+    {
+    let pos = engine.positions.get(&quot;admin&quot;).unwrap();
+    let btc_pos = pos.get(&quot;BTCUSDT_Long&quot;).unwrap();
+    assert_eq!(btc_pos.amount, 0.1);
+    assert_eq!(btc_pos.side, PositionSide::Long);
+    assert_eq!(btc_pos.leverage, 20.0);
+    assert!(btc_pos.liquidation_price &gt; 0.0);
+    // 3. Send Close Command (emulated by TUI payload)
+    // TUI creates a market order in opposite direction
+    let close_order = Order {
+    id: &quot;test_2&quot;.to_string(),
+    user_id: &quot;admin&quot;.to_string(),
+    symbol: &quot;BTCUSDT&quot;.to_string(),
+    side: OrderSide::Sell,
+    position_side: PositionSide::Long,
+    order_type: OrderType::Market,
+    price: 0.0,
+    stop_price: 0.0,
+    amount: 0.1,
+    leverage: 20.0,
+    executed: 0.0,
+    timestamp: 0,
+    };
+    engine.submit_order(&quot;admin&quot;, close_order).unwrap();
+    let pos_after = engine.positions.get(&quot;admin&quot;).unwrap();
+    let btc_pos_after = pos_after.get(&quot;BTCUSDT_Long&quot;).unwrap();
+    assert_eq!(btc_pos_after.amount, 0.0);</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: test_commands_working"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        </section>
+
+        <details>
+            <summary>Orijinal Rust Kaynak Kodunu Göster</summary>
+            <pre><code>use plugin_paper_exchange::models::{Order, OrderSide, OrderType, PositionSide};
+use plugin_paper_exchange::engine::PaperEngine;
+
+#[test]
+fn test_commands_working() {
+    use std::sync::Arc;
+    let storage = Arc::new(plugin_paper_exchange::storage::Storage::new(&quot;:memory:&quot;).unwrap());
+    let engine = PaperEngine::new(storage);
+    engine.create_account(&quot;admin&quot;, 10000.0);
+    
+    // 1. Send Buy Order (Long)
+    let order_json = serde_json::json!({
+        &quot;id&quot;: &quot;test_1&quot;,
+        &quot;user_id&quot;: &quot;admin&quot;,
+        &quot;symbol&quot;: &quot;BTCUSDT&quot;,
+        &quot;side&quot;: &quot;Buy&quot;,
+        &quot;position_side&quot;: &quot;Long&quot;,
+        &quot;order_type&quot;: &quot;Limit&quot;,
+        &quot;price&quot;: 60000.0,
+        &quot;stop_price&quot;: 0.0,
+        &quot;amount&quot;: 0.1,
+        &quot;leverage&quot;: 20.0,
+        &quot;executed&quot;: 0.0,
+        &quot;timestamp&quot;: 0
+    });
+    let order: Order = serde_json::from_value(order_json).unwrap();
+    engine.submit_order(&quot;admin&quot;, order).unwrap();
+    
+    // Engine should have 1 active order
+    assert_eq!(engine.active_orders.get(&quot;BTCUSDT&quot;).unwrap().len(), 1);
+    
+    // 2. Trigger execution with last price
+    engine.on_last_price_update(&quot;BTCUSDT&quot;, 59000.0);
+    
+    // Order should be executed, position opened
+    assert_eq!(engine.active_orders.get(&quot;BTCUSDT&quot;).unwrap().len(), 0);
+    {
+        let pos = engine.positions.get(&quot;admin&quot;).unwrap();
+        let btc_pos = pos.get(&quot;BTCUSDT_Long&quot;).unwrap();
+        assert_eq!(btc_pos.amount, 0.1);
+        assert_eq!(btc_pos.side, PositionSide::Long);
+        assert_eq!(btc_pos.leverage, 20.0);
+        assert!(btc_pos.liquidation_price &gt; 0.0);
+    }
+    
+    // 3. Send Close Command (emulated by TUI payload)
+    // TUI creates a market order in opposite direction
+    let close_order = Order {
+        id: &quot;test_2&quot;.to_string(),
+        user_id: &quot;admin&quot;.to_string(),
+        symbol: &quot;BTCUSDT&quot;.to_string(),
+        side: OrderSide::Sell,
+        position_side: PositionSide::Long,
+        order_type: OrderType::Market,
+        price: 0.0,
+        stop_price: 0.0,
+        amount: 0.1,
+        leverage: 20.0,
+        executed: 0.0,
+        timestamp: 0,
+    };
+    engine.submit_order(&quot;admin&quot;, close_order).unwrap();
+    
+    let pos_after = engine.positions.get(&quot;admin&quot;).unwrap();
+    let btc_pos_after = pos_after.get(&quot;BTCUSDT_Long&quot;).unwrap();
+    assert_eq!(btc_pos_after.amount, 0.0);
+}
+</code></pre>
+        </details>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            flowchart: { curve: 'basis' }
+        });
+    </script>
+</body>
+</html>

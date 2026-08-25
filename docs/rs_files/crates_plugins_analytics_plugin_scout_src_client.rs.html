@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>client.rs - Rust Analiz Dokümanı</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --border: #334155;
+            --code-bg: #090d16;
+            --verbal-bg: #131f37;
+            --analogy-bg: #1e1b4b;
+            --analogy-border: #818cf8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .back-link {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .back-link:hover { text-decoration: underline; }
+        h1 { font-size: 2rem; color: var(--accent); margin-bottom: 0.5rem; }
+        .file-path { font-family: 'Fira Code', monospace; color: var(--text-muted); font-size: 0.95rem; }
+        
+        .structs-container { margin: 1.5rem 0; }
+        .badge {
+            display: inline-block;
+            background: #0284c7;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-family: 'Fira Code', monospace;
+        }
+        .badge-struct { background: #7c3aed; }
+        
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .card h3 { color: var(--accent); margin-bottom: 0.5rem; font-size: 1.3rem; }
+        .card h4 { margin: 1.2rem 0 0.5rem 0; color: var(--text-muted); font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        .easy-analogy {
+            background: var(--analogy-bg);
+            border-left: 4px solid var(--analogy-border);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1rem;
+            color: #c7d2fe;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .verbal-explanation {
+            background: var(--verbal-bg);
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1.2rem;
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            margin-bottom: 1rem;
+        }
+        
+        .mermaid {
+            background: var(--code-bg);
+            padding: 1.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+        }
+        
+        details {
+            margin-top: 2rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Ana İndekse Dön</a>
+        <header>
+            <h1>client.rs</h1>
+            <p class="file-path">crates/plugins/analytics/plugin_scout/src/client.rs</p>
+            <div class="structs-container">
+                <strong>Tanımlı Türler / Yapılar:</strong> <span class="badge badge-struct">BinanceClient</span> 
+            </div>
+        </header>
+
+        <section>
+            <h2>Fonksiyon Analizleri & Basit Anlatımlar</h2>
+            
+        <div class="card">
+            <h3><span class="badge">fn</span> new</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>Yok</code> | <strong>Dönüş Tipi:</strong> <code>Self</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Dükkanı sabah açarken kasayı sıfırlama, rafları düzeltme ve tabelayı asma işlemidir. Her şey temiz bir başlangıç için hazır hale getirilir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Yapıcı (constructor) fonksiyon olarak nesnenin bellekte ilk durumları ve yapılandırmalarıyla başlatılmasını (instantiation) sağlar.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON new() -&gt; Self:
+    let http = reqwest::Client::builder()
+    .pool_max_idle_per_host(8)
+    .build()
+    .expect(&quot;reqwest client build failed&quot;);
+    Self { http }</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: new"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> fetch_symbols</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self</code> | <strong>Dönüş Tipi:</strong> <code>Result&lt;Vec&lt;String&gt;, reqwest::Error&gt;</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>&amp;self</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>Result&lt;Vec&lt;String&gt;, reqwest::Error&gt;</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. İşlemi tamamlayarak <code>Result&lt;Vec&lt;String&gt;, reqwest::Error&gt;</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON fetch_symbols(&amp;self) -&gt; Result&lt;Vec&lt;String&gt;, reqwest::Error&gt;:
+    let url = format!(&quot;{}/fapi/v1/exchangeInfo&quot;, config::BINANCE_REST);
+    let data: Value = self.http.get(&amp;url).send().await?.json().await?;
+    let mut symbols: Vec&lt;String&gt; = data[&quot;symbols&quot;]
+    .as_array()
+    .map(|arr| {
+    arr.iter()
+    .filter(|sym| {
+    sym[&quot;symbol&quot;].as_str().map_or(false, |s| s.ends_with(&quot;USDT&quot;))
+    &amp;&amp; sym[&quot;status&quot;].as_str() == Some(&quot;TRADING&quot;)
+    &amp;&amp; sym[&quot;contractType&quot;].as_str() == Some(&quot;PERPETUAL&quot;)
+    })
+    .filter_map(|sym| sym[&quot;symbol&quot;].as_str().map(String::from))
+    .collect()
+    })
+    .unwrap_or_default();
+    symbols.sort();
+    Ok(symbols)</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: fetch_symbols"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> stream_book_tickers</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self, symbols: &amp;[String], handler: Handler</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>&amp;self, symbols: &amp;[String], handler: Handler</code> verisini alır, kendi kurallarına göre işler ve sonucunda gerekli işlemi tamamlayan adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. İşlemi tamamlayarak <code>()</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON stream_book_tickers(&amp;self, symbols: &amp;[String], handler: Handler) -&gt; ():
+    let streams: Vec&lt;String&gt; = symbols
+    .iter()
+    .map(|s| format!(&quot;{}@bookTicker&quot;, s.to_lowercase()))
+    .collect();
+    let url = format!(&quot;{}/stream?streams={}&quot;, config::BINANCE_WS, streams.join(&quot;/&quot;));
+    self.stream_loop(url, &quot;bookTicker&quot;, handler).await;</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: stream_book_tickers"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> stream_partial_depths</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self, symbols: &amp;[String], handler: Handler</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>&amp;self, symbols: &amp;[String], handler: Handler</code> verisini alır, kendi kurallarına göre işler ve sonucunda gerekli işlemi tamamlayan adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. İşlemi tamamlayarak <code>()</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON stream_partial_depths(&amp;self, symbols: &amp;[String], handler: Handler) -&gt; ():
+    let suffix = format!(&quot;depth{}@{}&quot;, config::DEPTH_LEVELS, config::DEPTH_UPDATE_SPEED);
+    let streams: Vec&lt;String&gt; = symbols
+    .iter()
+    .map(|s| format!(&quot;{}@{}&quot;, s.to_lowercase(), suffix))
+    .collect();
+    let url = format!(&quot;{}/stream?streams={}&quot;, config::BINANCE_WS, streams.join(&quot;/&quot;));
+    self.stream_loop(url, &quot;partialDepth&quot;, handler).await;</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: stream_partial_depths"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> stream_loop</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self, url: String, stream_name: &amp;&#x27;static str, mut handler: Handler</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>&amp;self, url: String, stream_name: &amp;&#x27;static str, mut handler: Handler</code> verisini alır, kendi kurallarına göre işler ve sonucunda gerekli işlemi tamamlayan adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Listeyi veya veri kümesini sırayla döngüye alarak tarar.<br>4. Farklı durum senaryolarına göre akışı uygun kola yönlendirir.<br>5. İşlemi tamamlayarak <code>()</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON stream_loop(&amp;self, url: String, stream_name: &amp;&#x27;static str, mut handler: Handler) -&gt; ():
+    let mut backoff = config::WS_BACKOFF_BASE_SECS;
+    loop {
+    DURUM KONTROLÜ (connect_async(&amp;url).await):
+        Ok((mut ws, _)) =&gt; {
+        backoff = config::WS_BACKOFF_BASE_SECS;
+        let mut heartbeat = tokio::time::interval(Duration::from_secs(config::WS_HEARTBEAT_SECS));
+        heartbeat.set_missed_tick_behavior(tokio::time::MissedTickBehavior::Delay);
+        loop {
+        tokio::select! {
+        _ = heartbeat.tick() =&gt; {
+        EĞER ws.send(Message::Ping(Vec::new().into())).await.is_err() İSE:
+            break;
+    msg = ws.next() =&gt; {
+    DURUM KONTROLÜ (msg):
+        Some(Ok(Message::Text(text))) =&gt; {
+        let payload = parse_json(&amp;text);
+        let data = payload.get(&quot;data&quot;).cloned().unwrap_or(payload);
+        handler(data).await;
+    Some(Ok(Message::Ping(p))) =&gt; {
+    EĞER ws.send(Message::Pong(p)).await.is_err() İSE:
+        break;
+    Some(Ok(Message::Close(_))) | Some(Err(_)) | None =&gt; break,
+    _ =&gt; {}
+    Err(err) =&gt; {
+    tracing::error!(&quot;{} stream hatasi: {}&quot;, stream_name, err);
+    let jitter: f64 = rand::thread_rng().gen_range(0.0..0.5);
+    let sleep_for = (backoff + jitter).min(config::WS_BACKOFF_CAP_SECS);
+    tokio::time::sleep(Duration::from_secs_f64(sleep_for)).await;
+    backoff = (backoff * 2.0).min(config::WS_BACKOFF_CAP_SECS);</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: stream_loop"])
+    Start --> Cond1{"ws.send(Message::Ping(Vec::new().into())).await.is_err()?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"ws.send(Message::Pong(p)).await.is_err()?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Loop3["Döngü: = (backoff + jitter).min(config::WS_BACKOFF_CAP_SECS);"]
+    Loop3 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        </section>
+
+        <details>
+            <summary>Orijinal Rust Kaynak Kodunu Göster</summary>
+            <pre><code>use std::future::Future;
+use std::pin::Pin;
+use std::time::Duration;
+
+use futures_util::{SinkExt, StreamExt};
+use rand::Rng;
+use serde_json::Value;
+use tokio_tungstenite::connect_async;
+use tokio_tungstenite::tungstenite::Message;
+
+use crate::config;
+use crate::utils::parse_json;
+
+pub type Handler = Box&lt;dyn FnMut(Value) -&gt; Pin&lt;Box&lt;dyn Future&lt;Output = ()&gt; + Send&gt;&gt; + Send&gt;;
+
+pub struct BinanceClient {
+    http: reqwest::Client,
+}
+
+impl BinanceClient {
+    pub fn new() -&gt; Self {
+        let http = reqwest::Client::builder()
+            .pool_max_idle_per_host(8)
+            .build()
+            .expect(&quot;reqwest client build failed&quot;);
+        Self { http }
+    }
+
+    pub async fn fetch_symbols(&amp;self) -&gt; Result&lt;Vec&lt;String&gt;, reqwest::Error&gt; {
+        let url = format!(&quot;{}/fapi/v1/exchangeInfo&quot;, config::BINANCE_REST);
+        let data: Value = self.http.get(&amp;url).send().await?.json().await?;
+
+        let mut symbols: Vec&lt;String&gt; = data[&quot;symbols&quot;]
+            .as_array()
+            .map(|arr| {
+                arr.iter()
+                    .filter(|sym| {
+                        sym[&quot;symbol&quot;].as_str().map_or(false, |s| s.ends_with(&quot;USDT&quot;))
+                            &amp;&amp; sym[&quot;status&quot;].as_str() == Some(&quot;TRADING&quot;)
+                            &amp;&amp; sym[&quot;contractType&quot;].as_str() == Some(&quot;PERPETUAL&quot;)
+                    })
+                    .filter_map(|sym| sym[&quot;symbol&quot;].as_str().map(String::from))
+                    .collect()
+            })
+            .unwrap_or_default();
+
+        symbols.sort();
+        Ok(symbols)
+    }
+
+    pub async fn stream_book_tickers(&amp;self, symbols: &amp;[String], handler: Handler) {
+        let streams: Vec&lt;String&gt; = symbols
+            .iter()
+            .map(|s| format!(&quot;{}@bookTicker&quot;, s.to_lowercase()))
+            .collect();
+        let url = format!(&quot;{}/stream?streams={}&quot;, config::BINANCE_WS, streams.join(&quot;/&quot;));
+        self.stream_loop(url, &quot;bookTicker&quot;, handler).await;
+    }
+
+    pub async fn stream_partial_depths(&amp;self, symbols: &amp;[String], handler: Handler) {
+        let suffix = format!(&quot;depth{}@{}&quot;, config::DEPTH_LEVELS, config::DEPTH_UPDATE_SPEED);
+        let streams: Vec&lt;String&gt; = symbols
+            .iter()
+            .map(|s| format!(&quot;{}@{}&quot;, s.to_lowercase(), suffix))
+            .collect();
+        let url = format!(&quot;{}/stream?streams={}&quot;, config::BINANCE_WS, streams.join(&quot;/&quot;));
+        self.stream_loop(url, &quot;partialDepth&quot;, handler).await;
+    }
+
+    async fn stream_loop(&amp;self, url: String, stream_name: &amp;&#x27;static str, mut handler: Handler) {
+        let mut backoff = config::WS_BACKOFF_BASE_SECS;
+
+        loop {
+            match connect_async(&amp;url).await {
+                Ok((mut ws, _)) =&gt; {
+                    backoff = config::WS_BACKOFF_BASE_SECS;
+                    let mut heartbeat = tokio::time::interval(Duration::from_secs(config::WS_HEARTBEAT_SECS));
+                    heartbeat.set_missed_tick_behavior(tokio::time::MissedTickBehavior::Delay);
+
+                    loop {
+                        tokio::select! {
+                            _ = heartbeat.tick() =&gt; {
+                                if ws.send(Message::Ping(Vec::new().into())).await.is_err() {
+                                    break;
+                                }
+                            }
+                            msg = ws.next() =&gt; {
+                                match msg {
+                                    Some(Ok(Message::Text(text))) =&gt; {
+                                        let payload = parse_json(&amp;text);
+                                        let data = payload.get(&quot;data&quot;).cloned().unwrap_or(payload);
+                                        handler(data).await;
+                                    }
+                                    Some(Ok(Message::Ping(p))) =&gt; {
+                                        if ws.send(Message::Pong(p)).await.is_err() {
+                                            break;
+                                        }
+                                    }
+                                    Some(Ok(Message::Close(_))) | Some(Err(_)) | None =&gt; break,
+                                    _ =&gt; {}
+                                }
+                            }
+                        }
+                    }
+                }
+                Err(err) =&gt; {
+                    tracing::error!(&quot;{} stream hatasi: {}&quot;, stream_name, err);
+                }
+            }
+
+            let jitter: f64 = rand::thread_rng().gen_range(0.0..0.5);
+            let sleep_for = (backoff + jitter).min(config::WS_BACKOFF_CAP_SECS);
+            tokio::time::sleep(Duration::from_secs_f64(sleep_for)).await;
+            backoff = (backoff * 2.0).min(config::WS_BACKOFF_CAP_SECS);
+        }
+    }
+}
+</code></pre>
+        </details>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            flowchart: { curve: 'basis' }
+        });
+    </script>
+</body>
+</html>

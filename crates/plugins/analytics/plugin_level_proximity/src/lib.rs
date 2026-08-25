@@ -6,7 +6,7 @@ use std::time::{SystemTime, UNIX_EPOCH};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
-/// Level Proximity Evaluation for a single level (Support or Resistance)
+/// Direct Level Evaluation: Calculates L - ATR_last for Support and Resistance levels
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub struct LevelProximityMetrics {
     pub symbol: String,
@@ -14,26 +14,19 @@ pub struct LevelProximityMetrics {
     pub best_bid: f64,
     pub best_ask: f64,
     pub last_atr: f64,
-    pub threshold_k: f64,
 
-    // Support Level Proximity
+    // Support Level & Direct Calculation (L_s - ATR_last)
     pub support_level: Option<f64>,
-    pub support_distance_d: Option<f64>,  // D = |mid_price - L_s| / last_atr
-    pub support_signal_val: Option<f64>,  // If D < k => L_s - D
-    pub support_alert_active: bool,
+    pub support_level_minus_atr: Option<f64>,
 
-    // Resistance Level Proximity
+    // Resistance Level & Direct Calculation (L_r - ATR_last)
     pub resistance_level: Option<f64>,
-    pub resistance_distance_d: Option<f64>,// D = |mid_price - L_r| / last_atr
-    pub resistance_signal_val: Option<f64>,// If D < k => L_r - D
-    pub resistance_alert_active: bool,
+    pub resistance_level_minus_atr: Option<f64>,
 
     pub last_updated_ms: u64,
 }
 
 pub struct LevelProximityEngine {
-    pub threshold_k: f64,
-
     pub mid_prices: Mutex<HashMap<String, (f64, f64, f64, u64)>>, // (bid, ask, mid, ts)
     pub atr_values: Mutex<HashMap<String, (f64, u64)>>,           // (atr, ts)
     pub support_levels: Mutex<HashMap<String, (f64, u64)>>,       // (level, ts)
@@ -44,18 +37,11 @@ pub struct LevelProximityEngine {
 impl LevelProximityEngine {
     pub fn new() -> Self {
         Self {
-            threshold_k: 0.5, // Default k = 0.5
             mid_prices: Mutex::new(HashMap::new()),
             atr_values: Mutex::new(HashMap::new()),
             support_levels: Mutex::new(HashMap::new()),
             resistance_levels: Mutex::new(HashMap::new()),
             symbol_metrics: Mutex::new(HashMap::new()),
-        }
-    }
-
-    pub fn set_k_threshold(&mut self, k: f64) {
-        if k > 0.0 {
-            self.threshold_k = k;
         }
     }
 
@@ -195,8 +181,6 @@ impl LevelProximityEngine {
         let res_guard = self.resistance_levels.lock().unwrap();
         let mut metrics_guard = self.symbol_metrics.lock().unwrap();
 
-        let k = self.threshold_k;
-
         let mut symbols_set: std::collections::BTreeSet<String> = std::collections::BTreeSet::new();
         symbols_set.insert("TACUSDT".to_string()); // Default target symbol
         for k_sym in mid_guard.keys() { symbols_set.insert(k_sym.clone()); }
@@ -205,9 +189,7 @@ impl LevelProximityEngine {
 
         let mut report = String::new();
         report.push_str("============================================================\n");
-        report.push_str(&format!(
-            "🎯 KEY LEVEL PROXIMITY PANEL [k = {:.2}]\n", k
-        ));
+        report.push_str("🎯 KEY LEVEL ATR CALCULATOR (L - ATR_last)\n");
         report.push_str("============================================================\n");
 
         for symbol in &symbols_set {
@@ -219,39 +201,15 @@ impl LevelProximityEngine {
             let support_lvl = sup_guard.get(symbol).map(|&(s, _)| s);
             let resistance_lvl = res_guard.get(symbol).map(|&(r, _)| r);
 
-            // Support Calculations
-            let mut sup_d: Option<f64> = None;
-            let mut sup_sig: Option<f64> = None;
-            let mut sup_alert = false;
+            // Direct L_s - ATR_last calculation
+            let sup_minus_atr = support_lvl.and_then(|l_s| {
+                if last_atr > 0.0 { Some(l_s - last_atr) } else { None }
+            });
 
-            if let Some(l_s) = support_lvl {
-                if last_atr > 0.0 && mid_price > 0.0 {
-                    let d = (mid_price - l_s).abs() / last_atr;
-                    sup_d = Some(d);
-                    if d < k {
-                        let sig = l_s - last_atr; // Formula: If D < k => L_s - ATR_last
-                        sup_sig = Some(sig);
-                        sup_alert = true;
-                    }
-                }
-            }
-
-            // Resistance Calculations
-            let mut res_d: Option<f64> = None;
-            let mut res_sig: Option<f64> = None;
-            let mut res_alert = false;
-
-            if let Some(l_r) = resistance_lvl {
-                if last_atr > 0.0 && mid_price > 0.0 {
-                    let d = (mid_price - l_r).abs() / last_atr;
-                    res_d = Some(d);
-                    if d < k {
-                        let sig = l_r - last_atr; // Formula: If D < k => L_r - ATR_last
-                        res_sig = Some(sig);
-                        res_alert = true;
-                    }
-                }
-            }
+            // Direct L_r - ATR_last calculation
+            let res_minus_atr = resistance_lvl.and_then(|l_r| {
+                if last_atr > 0.0 { Some(l_r - last_atr) } else { None }
+            });
 
             let metrics = LevelProximityMetrics {
                 symbol: symbol.clone(),
@@ -259,15 +217,10 @@ impl LevelProximityEngine {
                 best_bid,
                 best_ask,
                 last_atr,
-                threshold_k: k,
                 support_level: support_lvl,
-                support_distance_d: sup_d,
-                support_signal_val: sup_sig,
-                support_alert_active: sup_alert,
+                support_level_minus_atr: sup_minus_atr,
                 resistance_level: resistance_lvl,
-                resistance_distance_d: res_d,
-                resistance_signal_val: res_sig,
-                resistance_alert_active: res_alert,
+                resistance_level_minus_atr: res_minus_atr,
                 last_updated_ms: now_ms,
             };
 
@@ -284,40 +237,28 @@ impl LevelProximityEngine {
             // Support Display
             report.push_str(" ├─► 🟢 DESTEK SEVİYESİ (SUPPORT)\n");
             if let Some(l_s) = support_lvl {
-                report.push_str(&format!(" │    ├─► Seviye (L_s)   : {:.8}\n", l_s));
-                if let Some(d) = sup_d {
-                    report.push_str(&format!(" │    ├─► Mesafe D (ATR) : {:.8} ATR\n", d));
-                    if sup_alert {
-                        let sig = sup_sig.unwrap_or(0.0);
-                        report.push_str(&format!(" │    └─► Sinyal Durumu  : 🟢 YAKIN SEVİYE UYARISI (D < {:.2}) => L - ATR = {:.8}\n", k, sig));
-                    } else {
-                        report.push_str(&format!(" │    └─► Sinyal Durumu  : ⚪ UZAK (D >= {:.2})\n", k));
-                    }
+                report.push_str(&format!(" │    ├─► Seviye (L_s)       : {:.8}\n", l_s));
+                if let Some(val) = sup_minus_atr {
+                    report.push_str(&format!(" │    └─► L_s - ATR_last     : {:.8}\n", val));
                 } else {
-                    report.push_str(" │    └─► Sinyal Durumu  : ⏳ ATR Bekleniyor...\n");
+                    report.push_str(" │    └─► L_s - ATR_last     : ⏳ ATR Bekleniyor...\n");
                 }
             } else {
-                report.push_str(" │    └─► Seviye (L_s)   : ⏳ MS Analyzer Verisi Bekleniyor...\n");
+                report.push_str(" │    └─► Seviye (L_s)       : ⏳ MS Analyzer Verisi Bekleniyor...\n");
             }
             report.push_str(" │\n");
 
             // Resistance Display
             report.push_str(" └─► 🔴 DİRENÇ SEVİYESİ (RESISTANCE)\n");
             if let Some(l_r) = resistance_lvl {
-                report.push_str(&format!("      ├─► Seviye (L_r)   : {:.8}\n", l_r));
-                if let Some(d) = res_d {
-                    report.push_str(&format!("      ├─► Mesafe D (ATR) : {:.8} ATR\n", d));
-                    if res_alert {
-                        let sig = res_sig.unwrap_or(0.0);
-                        report.push_str(&format!("      └─► Sinyal Durumu  : 🔴 YAKIN SEVİYE UYARISI (D < {:.2}) => L - ATR = {:.8}\n", k, sig));
-                    } else {
-                        report.push_str(&format!("      └─► Sinyal Durumu  : ⚪ UZAK (D >= {:.2})\n", k));
-                    }
+                report.push_str(&format!("      ├─► Seviye (L_r)       : {:.8}\n", l_r));
+                if let Some(val) = res_minus_atr {
+                    report.push_str(&format!("      └─► L_r - ATR_last     : {:.8}\n", val));
                 } else {
-                    report.push_str("      └─► Sinyal Durumu  : ⏳ ATR Bekleniyor...\n");
+                    report.push_str("      └─► L_r - ATR_last     : ⏳ ATR Bekleniyor...\n");
                 }
             } else {
-                report.push_str("      └─► Seviye (L_r)   : ⏳ MS Analyzer Verisi Bekleniyor...\n");
+                report.push_str("      └─► Seviye (L_r)       : ⏳ MS Analyzer Verisi Bekleniyor...\n");
             }
             report.push('\n');
         }
@@ -375,16 +316,6 @@ pub unsafe extern "C" fn handle_endpoint(
     match endpoint_id {
         0 => { // Start
             state.is_running.store(true, Ordering::Relaxed);
-            if payload_len > 0 && !payload.is_null() {
-                let slice = std::slice::from_raw_parts(payload, payload_len);
-                if let Ok(config) = serde_json::from_slice::<Value>(slice) {
-                    let params = config.get("plugin_params").unwrap_or(&config);
-                    if let Some(k_val) = params.get("k").and_then(|v| v.as_f64()) {
-                        let mut engine = state.engine.lock().unwrap();
-                        engine.set_k_threshold(k_val);
-                    }
-                }
-            }
             0
         }
         1 => { // Stop

@@ -3,9 +3,8 @@ use serde_json::json;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 #[test]
-fn test_proximity_formula_calculation() {
-    let mut engine = LevelProximityEngine::new();
-    engine.set_k_threshold(0.5);
+fn test_direct_level_minus_atr_calculation() {
+    let engine = LevelProximityEngine::new();
 
     let now = SystemTime::now()
         .duration_since(UNIX_EPOCH)
@@ -30,8 +29,7 @@ fn test_proximity_formula_calculation() {
     ]);
     engine.ingest_atr(&atr_payload, now);
 
-    // 3. Ingest MS Analyzer Levels for TACUSDT
-    // Support: 0.1230, Resistance: 0.1250
+    // 3. Ingest MS Analyzer Levels for TACUSDT (Support: 0.1230, Resistance: 0.1250)
     let ms_payload = json!({
         "symbol": "TACUSDT",
         "current_price": "0.12350000",
@@ -41,7 +39,7 @@ fn test_proximity_formula_calculation() {
     engine.ingest_ms_analyzer(&ms_payload, now);
 
     let report = engine.generate_report(now);
-    assert!(report.contains("KEY LEVEL PROXIMITY PANEL"));
+    assert!(report.contains("KEY LEVEL ATR CALCULATOR"));
     assert!(report.contains("TACUSDT"));
 
     let metrics_guard = engine.symbol_metrics.lock().unwrap();
@@ -52,20 +50,13 @@ fn test_proximity_formula_calculation() {
     assert_eq!(tac.support_level, Some(0.1230));
     assert_eq!(tac.resistance_level, Some(0.1250));
 
-    // Support Distance: D_s = |0.1235 - 0.1230| / 0.0020 = 0.0005 / 0.0020 = 0.25 ATR
-    // Since D_s (0.25) < k (0.5) => Alert Active! Formula: L_s - ATR_last = 0.1230 - 0.0020 = 0.1210
-    let expected_sup_d = 0.25;
-    assert!((tac.support_distance_d.unwrap() - expected_sup_d).abs() < 1e-5);
-    assert!(tac.support_alert_active);
-    let expected_sig = 0.1230 - 0.0020;
-    assert!((tac.support_signal_val.unwrap() - expected_sig).abs() < 1e-5);
+    // Direct Support Formula: L_s - ATR_last = 0.1230 - 0.0020 = 0.1210
+    let expected_sup_val = 0.1230 - 0.0020;
+    assert!((tac.support_level_minus_atr.unwrap() - expected_sup_val).abs() < 1e-5);
 
-    // Resistance Distance: D_r = |0.1235 - 0.1250| / 0.0020 = 0.0015 / 0.0020 = 0.75 ATR
-    // Since D_r (0.75) >= k (0.5) => Alert Inactive!
-    let expected_res_d = 0.75;
-    assert!((tac.resistance_distance_d.unwrap() - expected_res_d).abs() < 1e-5);
-    assert!(!tac.resistance_alert_active);
-    assert_eq!(tac.resistance_signal_val, None);
+    // Direct Resistance Formula: L_r - ATR_last = 0.1250 - 0.0020 = 0.1230
+    let expected_res_val = 0.1250 - 0.0020;
+    assert!((tac.resistance_level_minus_atr.unwrap() - expected_res_val).abs() < 1e-5);
 }
 
 #[test]
@@ -81,12 +72,8 @@ fn test_c_abi_handle_endpoint() {
             .unwrap_or_default()
             .as_millis() as u64;
 
-        // 1. Start plugin with k = 0.5
-        let start_config = json!({
-            "plugin_params": {
-                "k": 0.5
-            }
-        });
+        // 1. Start plugin
+        let start_config = json!({});
         let config_bytes = serde_json::to_vec(&start_config).unwrap();
         let res = endpoint_fn(state_ptr, 0, config_bytes.as_ptr(), config_bytes.len(), std::ptr::null_mut(), 0);
         assert_eq!(res, 0);
@@ -123,7 +110,7 @@ fn test_c_abi_handle_endpoint() {
         assert!(bytes_read > 0);
 
         let report_str = String::from_utf8_lossy(&out_buf[..bytes_read]);
-        assert!(report_str.contains("KEY LEVEL PROXIMITY PANEL"));
+        assert!(report_str.contains("KEY LEVEL ATR CALCULATOR"));
         assert!(report_str.contains("TACUSDT"));
 
         // 5. Stop plugin

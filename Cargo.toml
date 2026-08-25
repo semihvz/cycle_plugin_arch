@@ -27,6 +27,7 @@ members = [
     "crates/plugins/analytics/plugin_atr",
     "crates/plugins/analytics/plugin_price_impact",
     "crates/plugins/analytics/plugin_level_proximity",
+    "crates/plugins/analytics/plugin_rsi",
 
     # Execution
     "crates/plugins/execution/binance_trader",

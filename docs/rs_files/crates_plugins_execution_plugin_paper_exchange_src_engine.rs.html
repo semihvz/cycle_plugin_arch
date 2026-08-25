@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>engine.rs - Rust Analiz Dokümanı</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --border: #334155;
+            --code-bg: #090d16;
+            --verbal-bg: #131f37;
+            --analogy-bg: #1e1b4b;
+            --analogy-border: #818cf8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .back-link {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .back-link:hover { text-decoration: underline; }
+        h1 { font-size: 2rem; color: var(--accent); margin-bottom: 0.5rem; }
+        .file-path { font-family: 'Fira Code', monospace; color: var(--text-muted); font-size: 0.95rem; }
+        
+        .structs-container { margin: 1.5rem 0; }
+        .badge {
+            display: inline-block;
+            background: #0284c7;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-family: 'Fira Code', monospace;
+        }
+        .badge-struct { background: #7c3aed; }
+        
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .card h3 { color: var(--accent); margin-bottom: 0.5rem; font-size: 1.3rem; }
+        .card h4 { margin: 1.2rem 0 0.5rem 0; color: var(--text-muted); font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        .easy-analogy {
+            background: var(--analogy-bg);
+            border-left: 4px solid var(--analogy-border);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1rem;
+            color: #c7d2fe;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .verbal-explanation {
+            background: var(--verbal-bg);
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1.2rem;
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            margin-bottom: 1rem;
+        }
+        
+        .mermaid {
+            background: var(--code-bg);
+            padding: 1.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+        }
+        
+        details {
+            margin-top: 2rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Ana İndekse Dön</a>
+        <header>
+            <h1>engine.rs</h1>
+            <p class="file-path">crates/plugins/execution/plugin_paper_exchange/src/engine.rs</p>
+            <div class="structs-container">
+                <strong>Tanımlı Türler / Yapılar:</strong> <span class="badge badge-struct">PaperEngine</span> 
+            </div>
+        </header>
+
+        <section>
+            <h2>Fonksiyon Analizleri & Basit Anlatımlar</h2>
+            
+        <div class="card">
+            <h3><span class="badge">fn</span> new</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>storage: Arc&lt;Storage&gt;</code> | <strong>Dönüş Tipi:</strong> <code>Self</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Dükkanı sabah açarken kasayı sıfırlama, rafları düzeltme ve tabelayı asma işlemidir. Her şey temiz bir başlangıç için hazır hale getirilir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Yapıcı (constructor) fonksiyon olarak nesnenin bellekte ilk durumları ve yapılandırmalarıyla başlatılmasını (instantiation) sağlar.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON new(storage: Arc&lt;Storage&gt;) -&gt; Self:
+    Self {
+    accounts: DashMap::new(),
+    positions: DashMap::new(),
+    active_orders: DashMap::new(),
+    latest_prices: DashMap::new(),
+    mark_prices: DashMap::new(),
+    storage,
+    system_messages: std::sync::Mutex::new(std::collections::VecDeque::new()),</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: new"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> log_msg</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self, msg: String</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Gerçek para harcamadan önce Monopoly oyunundaki sanal para ile alışveriş yapıp taktiklerin çalışıp çalışmadığını test etme işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Gerçek piyasa emir defteri verisini alarak gecikme, komisyon ve kuyruk sırasını hesaba katan sanal alım-satım infazını gerçekleştirir.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON log_msg(&amp;self, msg: String) -&gt; ():
+    EĞER let Ok(mut msgs) = self.system_messages.lock() İSE:
+        msgs.push_back(format!(&quot;{} - {}&quot;, std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap_or_default().as_secs(), msg));
+        EĞER msgs.len() &gt; 10 İSE:
+            msgs.pop_front();</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: log_msg"])
+    Start --> Cond1{"let Ok(mut msgs) = self.system_messages.lock()?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"msgs.len() &gt; 10?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> create_account</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self, user_id: &amp;str, initial_balance: f64</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Gerçek para harcamadan önce Monopoly oyunundaki sanal para ile alışveriş yapıp taktiklerin çalışıp çalışmadığını test etme işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Gerçek piyasa emir defteri verisini alarak gecikme, komisyon ve kuyruk sırasını hesaba katan sanal alım-satım infazını gerçekleştirir.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON create_account(&amp;self, user_id: &amp;str, initial_balance: f64) -&gt; ():
+    self.accounts.insert(user_id.to_string(), Account::new(initial_balance));
+    self.positions.insert(user_id.to_string(), DashMap::new());</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: create_account"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> deposit</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self, user_id: &amp;str, amount: f64</code> | <strong>Dönüş Tipi:</strong> <code>Result&lt;f64, String&gt;</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Gerçek para harcamadan önce Monopoly oyunundaki sanal para ile alışveriş yapıp taktiklerin çalışıp çalışmadığını test etme işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Gerçek piyasa emir defteri verisini alarak gecikme, komisyon ve kuyruk sırasını hesaba katan sanal alım-satım infazını gerçekleştirir.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON deposit(&amp;self, user_id: &amp;str, amount: f64) -&gt; Result&lt;f64, String&gt;:
+    let mut account = self.accounts.entry(user_id.to_string()).or_insert_with(|| {
+    self.positions.entry(user_id.to_string()).or_insert_with(DashMap::new);
+    Account::new(0.0)
+    });
+    account.wallet_balance += amount;
+    account.margin_balance += amount;
+    self.log_msg(format!(&quot;DEPOSIT: {} USDT credited to user {}&quot;, amount, user_id));
+    Ok(account.wallet_balance)</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: deposit"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> set_balance</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self, user_id: &amp;str, amount: f64</code> | <strong>Dönüş Tipi:</strong> <code>Result&lt;f64, String&gt;</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Gerçek para harcamadan önce Monopoly oyunundaki sanal para ile alışveriş yapıp taktiklerin çalışıp çalışmadığını test etme işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Gerçek piyasa emir defteri verisini alarak gecikme, komisyon ve kuyruk sırasını hesaba katan sanal alım-satım infazını gerçekleştirir.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON set_balance(&amp;self, user_id: &amp;str, amount: f64) -&gt; Result&lt;f64, String&gt;:
+    let mut account = self.accounts.entry(user_id.to_string()).or_insert_with(|| {
+    self.positions.entry(user_id.to_string()).or_insert_with(DashMap::new);
+    Account::new(amount)
+    });
+    account.wallet_balance = amount;
+    account.margin_balance = amount;
+    self.log_msg(format!(&quot;SET_BALANCE: User {} wallet balance set to {} USDT&quot;, user_id, amount));
+    Ok(account.wallet_balance)</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: set_balance"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> cancel_order</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self, order_id: &amp;str</code> | <strong>Dönüş Tipi:</strong> <code>bool</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Gerçek para harcamadan önce Monopoly oyunundaki sanal para ile alışveriş yapıp taktiklerin çalışıp çalışmadığını test etme işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Gerçek piyasa emir defteri verisini alarak gecikme, komisyon ve kuyruk sırasını hesaba katan sanal alım-satım infazını gerçekleştirir.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON cancel_order(&amp;self, order_id: &amp;str) -&gt; bool:
+    let mut removed = false;
+    HER mut entry in self.active_orders.iter_mut() İÇİN DÖNGÜ:
+        let symbol_orders = entry.value_mut();
+        let orig_len = symbol_orders.len();
+        symbol_orders.retain(|o| o.id != order_id);
+        EĞER symbol_orders.len() &lt; orig_len İSE:
+            removed = true;
+            self.log_msg(format!(&quot;CANCEL_ORDER: Order {} cancelled&quot;, order_id));
+            break;
+    removed</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: cancel_order"])
+    Start --> Cond1{"symbol_orders.len() &lt; orig_len?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Loop2["Döngü: mut entry in self.active_orders.iter_mut()"]
+    Loop2 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> cancel_all_orders</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self, symbol_opt: Option&lt;&amp;str&gt;</code> | <strong>Dönüş Tipi:</strong> <code>usize</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Gerçek para harcamadan önce Monopoly oyunundaki sanal para ile alışveriş yapıp taktiklerin çalışıp çalışmadığını test etme işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Gerçek piyasa emir defteri verisini alarak gecikme, komisyon ve kuyruk sırasını hesaba katan sanal alım-satım infazını gerçekleştirir.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON cancel_all_orders(&amp;self, symbol_opt: Option&lt;&amp;str&gt;) -&gt; usize:
+    let mut count = 0;
+    EĞER let Some(symbol) = symbol_opt İSE:
+        EĞER let Some(mut symbol_orders) = self.active_orders.get_mut(symbol) İSE:
+            count = symbol_orders.len();
+            symbol_orders.clear();
+            self.log_msg(format!(&quot;CANCEL_ALL: Cleared {} orders for {}&quot;, count, symbol));
+        } else {
+        HER mut entry in self.active_orders.iter_mut() İÇİN DÖNGÜ:
+            count += entry.value().len();
+            entry.value_mut().clear();
+        self.log_msg(format!(&quot;CANCEL_ALL: Cleared all {} orders across symbols&quot;, count));
+    count</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: cancel_all_orders"])
+    Start --> Cond1{"let Some(symbol) = symbol_opt?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"let Some(mut symbol_orders) = self.active_orders.get_mut(symbol)?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Loop3["Döngü: mut entry in self.active_orders.iter_mut()"]
+    Loop3 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> close_all_positions</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self, user_id: &amp;str</code> | <strong>Dönüş Tipi:</strong> <code>Result&lt;usize, String&gt;</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Gerçek para harcamadan önce Monopoly oyunundaki sanal para ile alışveriş yapıp taktiklerin çalışıp çalışmadığını test etme işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Gerçek piyasa emir defteri verisini alarak gecikme, komisyon ve kuyruk sırasını hesaba katan sanal alım-satım infazını gerçekleştirir.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON close_all_positions(&amp;self, user_id: &amp;str) -&gt; Result&lt;usize, String&gt;:
+    let mut to_submit = Vec::new();
+    EĞER let Some(user_pos) = self.positions.get(user_id) İSE:
+        HER pos_ref in user_pos.iter() İÇİN DÖNGÜ:
+            let pos = pos_ref.value();
+            EĞER pos.amount &gt; 0.0 İSE:
+                let rev_side = if pos.side == PositionSide::Long { OrderSide::Sell } else { OrderSide::Buy };
+                let rev_pos = pos.side.clone();
+                to_submit.push(Order {
+                id: format!(&quot;closeall_{}&quot;, std::time::SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_nanos()),
+                user_id: user_id.to_string(),
+                symbol: pos.symbol.clone(),
+                side: rev_side,
+                position_side: rev_pos,
+                order_type: OrderType::Market,
+                price: 0.0,
+                stop_price: 0.0,
+                amount: pos.amount,
+                leverage: pos.leverage,
+                executed: 0.0,
+                timestamp: 0,
+                });
+    let count = to_submit.len();
+    HER order in to_submit İÇİN DÖNGÜ:
+        let _ = self.submit_order(user_id, order);
+    self.log_msg(format!(&quot;CLOSE_ALL: Closed {} positions for {}&quot;, count, user_id));
+    Ok(count)</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: close_all_positions"])
+    Start --> Cond1{"let Some(user_pos) = self.positions.get(user_id)?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"pos.amount &gt; 0.0?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"pos.side == PositionSide::Long?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> Loop4["Döngü: pos_ref in user_pos.iter()"]
+    Loop4 --> Loop5["Döngü: order in to_submit"]
+    Loop5 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> submit_order</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self, user_id: &amp;str, mut order: Order</code> | <strong>Dönüş Tipi:</strong> <code>Result&lt;(), String&gt;</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Gerçek para harcamadan önce Monopoly oyunundaki sanal para ile alışveriş yapıp taktiklerin çalışıp çalışmadığını test etme işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Gerçek piyasa emir defteri verisini alarak gecikme, komisyon ve kuyruk sırasını hesaba katan sanal alım-satım infazını gerçekleştirir.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON submit_order(&amp;self, user_id: &amp;str, mut order: Order) -&gt; Result&lt;(), String&gt;:
+    let wallet_balance = self.accounts.get(user_id).map(|a| a.wallet_balance).ok_or(&quot;Account not found&quot;)?;
+    let now = SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_millis() as i64;
+    order.timestamp = now;
+    order.user_id = user_id.to_string();
+    let mut current_last_price = self.latest_prices.get(&amp;order.symbol).map(|v| *v).unwrap_or(0.0);
+    // HACK for testing: If no price feed is active but user manually provided a price in the form for a Market order,
+    // we use that price as a simulated market price to allow testing the system.
+    EĞER current_last_price == 0.0 &amp;&amp; order.price &gt; 0.0 İSE:
+        current_last_price = order.price;
+        self.latest_prices.insert(order.symbol.clone(), current_last_price);
+        self.log_msg(format!(&quot;TEST MODU: Manuel girilen fiyat ({}) piyasa fiyatı kabul edildi.&quot;, current_last_price));
+    // Margin check
+    let cost = (order.amount * order.price) / order.leverage;
+    EĞER wallet_balance &lt; cost &amp;&amp; order.order_type == OrderType::Market &amp;&amp; cost &gt; 0.0 İSE:
+        // Optional warning or error
+    EĞER order.order_type == OrderType::Market İSE:
+        EĞER current_last_price &gt; 0.0 İSE:
+            order.price = current_last_price;
+            order.executed = order.amount;
+            self.execute_order(&amp;order, current_last_price)?;
+            let _ = self.storage.insert_order(&amp;order);
+            self.log_msg(format!(&quot;Market order executed for {} at {}&quot;, order.symbol, current_last_price));
+            DÖNDÜR Ok(())
+            } else {
+            let err_msg = format!(&quot;No market price available to execute Market order for {}&quot;, order.symbol);
+            self.log_msg(err_msg.clone());
+            DÖNDÜR Err(err_msg)
+        } else {
+        // Limit and Stop orders
+        let mut symbol_orders = self.active_orders.entry(order.symbol.clone()).or_insert_with(Vec::new);
+        symbol_orders.push(order.clone());
+        self.log_msg(format!(&quot;Pending order added for {}: {:?}&quot;, order.symbol, order.order_type));
+    self.storage.insert_order(&amp;order).map_err(|e| e.to_string())?;
+    Ok(())</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: submit_order"])
+    Start --> Cond1{"current_last_price == 0.0 && order.price &gt; 0.0?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"wallet_balance &lt; cost && order.order_type == OrderType::Market && cost &gt; 0.0?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"order.order_type == OrderType::Market?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> Loop4["Döngü: testing: If no price feed is active but user manually provided a price in the form for a Market order,"]
+    Loop4 --> EndNode(["Döndür: Err(err_msg)"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> on_last_price_update</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self, symbol: &amp;str, last_price: f64</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Gerçek para harcamadan önce Monopoly oyunundaki sanal para ile alışveriş yapıp taktiklerin çalışıp çalışmadığını test etme işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Gerçek piyasa emir defteri verisini alarak gecikme, komisyon ve kuyruk sırasını hesaba katan sanal alım-satım infazını gerçekleştirir.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON on_last_price_update(&amp;self, symbol: &amp;str, last_price: f64) -&gt; ():
+    self.latest_prices.insert(symbol.to_string(), last_price);
+    // Update PnL of active positions on last price if mark price isn&#x27;t set yet
+    EĞER !self.mark_prices.contains_key(symbol) İSE:
+        HER user_ref in self.positions.iter() İÇİN DÖNGÜ:
+            HER mut pos in user_ref.value().iter_mut() İÇİN DÖNGÜ:
+                EĞER pos.symbol == symbol İSE:
+                    pos.update_pnl(last_price);
+    // Match pending orders
+    EĞER let Some(mut symbol_orders) = self.active_orders.get_mut(symbol) İSE:
+        let mut executed_orders = Vec::new();
+        symbol_orders.retain_mut(|order| {
+        let mut should_execute = false;
+        DURUM KONTROLÜ (order.order_type):
+            OrderType::Limit =&gt; {
+            should_execute = match order.side {
+            OrderSide::Buy =&gt; last_price &lt;= order.price,
+            OrderSide::Sell =&gt; last_price &gt;= order.price,
+            };
+        OrderType::StopMarket | OrderType::StopLimit =&gt; {
+        should_execute = match order.side {
+        OrderSide::Buy =&gt; last_price &gt;= order.stop_price,
+        OrderSide::Sell =&gt; last_price &lt;= order.stop_price,
+        };
+    OrderType::TakeProfitMarket | OrderType::TakeProfitLimit =&gt; {
+    should_execute = match order.side {
+    OrderSide::Buy =&gt; last_price &lt;= order.stop_price,
+    OrderSide::Sell =&gt; last_price &gt;= order.stop_price,
+    };
+    OrderType::TrailingStop =&gt; {
+    // Dynamically update trailing stop price if distance is specified in order.price
+    let offset = order.price;
+    EĞER offset &gt; 0.0 İSE:
+        DURUM KONTROLÜ (order.side):
+            OrderSide::Sell =&gt; {
+            EĞER order.stop_price == 0.0 || last_price - offset &gt; order.stop_price İSE:
+                order.stop_price = last_price - offset;
+            should_execute = last_price &lt;= order.stop_price;
+        OrderSide::Buy =&gt; {
+        EĞER order.stop_price == 0.0 || last_price + offset &lt; order.stop_price İSE:
+            order.stop_price = last_price + offset;
+        should_execute = last_price &gt;= order.stop_price;
+    } else {
+    should_execute = match order.side {
+    OrderSide::Buy =&gt; last_price &gt;= order.stop_price,
+    OrderSide::Sell =&gt; last_price &lt;= order.stop_price,
+    };
+    _ =&gt; {}
+    EĞER should_execute İSE:
+        order.executed = order.amount;
+        executed_orders.push(order.clone());
+        false // remove from active
+        } else {
+        true // keep
+    });
+    // Execute the triggered orders without holding the dashmap lock
+    HER executed_order in executed_orders İÇİN DÖNGÜ:
+        let exec_price = if executed_order.order_type == OrderType::Limit || executed_order.order_type == OrderType::StopLimit || executed_order.order_type == OrderType::TakeProfitLimit {
+        executed_order.price
+        } else {
+        last_price // Market execution
+        };
+        let _ = self.execute_order(&amp;executed_order, exec_price);
+        let _ = self.storage.insert_order(&amp;executed_order);</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: on_last_price_update"])
+    Start --> Cond1{"mark price isn't set yet?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"!self.mark_prices.contains_key(symbol)?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"pos.symbol == symbol?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> Loop4["Döngü: user_ref in self.positions.iter()"]
+    Loop4 --> Loop5["Döngü: mut pos in user_ref.value().iter_mut()"]
+    Loop5 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> execute_order</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self, order: &amp;Order, exec_price: f64</code> | <strong>Dönüş Tipi:</strong> <code>Result&lt;(), String&gt;</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Gerçek para harcamadan önce Monopoly oyunundaki sanal para ile alışveriş yapıp taktiklerin çalışıp çalışmadığını test etme işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Gerçek piyasa emir defteri verisini alarak gecikme, komisyon ve kuyruk sırasını hesaba katan sanal alım-satım infazını gerçekleştirir.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON execute_order(&amp;self, order: &amp;Order, exec_price: f64) -&gt; Result&lt;(), String&gt;:
+    let pos_key = format!(&quot;{}_{:?}&quot;, order.symbol, order.position_side);
+    let user_positions = self.positions.get(&amp;order.user_id).ok_or(&quot;User positions map not found&quot;)?;
+    let mut position = user_positions.entry(pos_key).or_insert_with(|| {
+    Position::new(order.symbol.clone(), order.position_side, order.leverage)
+    });
+    let is_increase = match (order.position_side, order.side) {
+    (PositionSide::Long, OrderSide::Buy) =&gt; true,
+    (PositionSide::Long, OrderSide::Sell) =&gt; false,
+    (PositionSide::Short, OrderSide::Sell) =&gt; true,
+    (PositionSide::Short, OrderSide::Buy) =&gt; false,
+    };
+    EĞER is_increase İSE:
+        EĞER position.amount &gt; 0.0 İSE:
+            let total_cost = (position.amount * position.entry_price) + (order.amount * exec_price);
+            position.amount += order.amount;
+            position.entry_price = total_cost / position.amount;
+            position.leverage = order.leverage;
+            } else {
+            position.amount = order.amount;
+            position.entry_price = exec_price;
+            position.leverage = order.leverage;
+        } else {
+        // Decrease position (close/reduce)
+        EĞER position.amount &gt; 0.0 İSE:
+            let closed_amount = order.amount.min(position.amount);
+            // Calculate Realized PnL
+            let realized_pnl = match position.side {
+            PositionSide::Long =&gt; (exec_price - position.entry_price) * closed_amount,
+            PositionSide::Short =&gt; (position.entry_price - exec_price) * closed_amount,
+            };
+            position.amount -= closed_amount;
+            // Credit/Debit wallet_balance and margin_balance
+            EĞER let Some(mut account) = self.accounts.get_mut(&amp;order.user_id) İSE:
+                account.wallet_balance += realized_pnl;
+                account.margin_balance += realized_pnl;
+            // Save closed position record
+            let side_str = format!(&quot;{:?}&quot;, position.side);
+            let _ = self.storage.insert_closed_position(
+            &amp;position.symbol,
+            &amp;side_str,
+            closed_amount,
+            position.entry_price,
+            exec_price,
+            realized_pnl,
+            order.timestamp,
+            );
+            EĞER position.amount &lt;= 0.000001 İSE:
+                position.amount = 0.0;
+                position.entry_price = 0.0;
+                position.liquidation_price = 0.0;
+                position.unrealized_pnl = 0.0;
+    EĞER position.amount &gt; 0.0 İSE:
+        let maintenance_margin = 0.005; // 0.5%
+        DURUM KONTROLÜ (position.side):
+            PositionSide::Long =&gt; {
+            position.liquidation_price = position.entry_price * (1.0 - (1.0 / position.leverage) + maintenance_margin);
+        PositionSide::Short =&gt; {
+        position.liquidation_price = position.entry_price * (1.0 + (1.0 / position.leverage) - maintenance_margin);
+    let mark = self.mark_prices.get(&amp;order.symbol).map(|v| *v).unwrap_or(exec_price);
+    position.update_pnl(mark);
+    Ok(())</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: execute_order"])
+    Start --> Cond1{"is_increase?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"position.amount &gt; 0.0?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"position.amount &gt; 0.0?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> on_mark_price_update</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self, symbol: &amp;str, mark_price: f64</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Gerçek para harcamadan önce Monopoly oyunundaki sanal para ile alışveriş yapıp taktiklerin çalışıp çalışmadığını test etme işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Gerçek piyasa emir defteri verisini alarak gecikme, komisyon ve kuyruk sırasını hesaba katan sanal alım-satım infazını gerçekleştirir.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON on_mark_price_update(&amp;self, symbol: &amp;str, mark_price: f64) -&gt; ():
+    self.mark_prices.insert(symbol.to_string(), mark_price);
+    // Update PnL and process liquidations for each user independently
+    HER user_ref in self.positions.iter() İÇİN DÖNGÜ:
+        let user_id = user_ref.key();
+        let user_positions = user_ref.value();
+        let mut total_upnl = 0.0;
+        let mut to_liquidate = Vec::new();
+        let mut user_liquidated_loss = 0.0;
+        HER mut pos_ref in user_positions.iter_mut() İÇİN DÖNGÜ:
+            EĞER pos_ref.symbol == symbol İSE:
+                pos_ref.update_pnl(mark_price);
+                EĞER pos_ref.amount &gt; 0.0 İSE:
+                    let is_liquidated = match pos_ref.side {
+                    PositionSide::Long =&gt; mark_price &lt;= pos_ref.liquidation_price,
+                    PositionSide::Short =&gt; mark_price &gt;= pos_ref.liquidation_price,
+                    };
+                    EĞER is_liquidated İSE:
+                        to_liquidate.push(pos_ref.key().clone());
+                        let loss = (pos_ref.amount * pos_ref.entry_price) / pos_ref.leverage;
+                        user_liquidated_loss += loss;
+                        self.log_msg(format!(&quot;LIQUIDATED! {} {} position closed at Mark Price: {}&quot;, user_id, symbol, mark_price));
+            EĞER !to_liquidate.contains(pos_ref.key()) İSE:
+                total_upnl += pos_ref.unrealized_pnl;
+        HER key in &amp;to_liquidate İÇİN DÖNGÜ:
+            EĞER let Some(mut p) = user_positions.get_mut(key) İSE:
+                let side_str = format!(&quot;{:?}&quot;, p.side);
+                let loss_pnl = -((p.amount * p.entry_price) / p.leverage);
+                let _ = self.storage.insert_closed_position(
+                &amp;p.symbol,
+                &amp;side_str,
+                p.amount,
+                p.entry_price,
+                mark_price,
+                loss_pnl,
+                SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_millis() as i64,
+                );
+                p.amount = 0.0;
+                p.unrealized_pnl = 0.0;
+                p.entry_price = 0.0;
+                p.liquidation_price = 0.0;
+        // Update Account Balance per user
+        EĞER let Some(mut account) = self.accounts.get_mut(user_id) İSE:
+            EĞER user_liquidated_loss &gt; 0.0 İSE:
+                account.wallet_balance -= user_liquidated_loss;
+            account.margin_balance = account.wallet_balance + total_upnl;</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: on_mark_price_update"])
+    Start --> Cond1{"pos_ref.symbol == symbol?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"pos_ref.amount &gt; 0.0?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"is_liquidated?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> Loop4["Döngü: each user independently"]
+    Loop4 --> Loop5["Döngü: user_ref in self.positions.iter()"]
+    Loop5 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        </section>
+
+        <details>
+            <summary>Orijinal Rust Kaynak Kodunu Göster</summary>
+            <pre><code>use std::sync::Arc;
+use dashmap::DashMap;
+use crate::models::{Account, Order, Position, OrderType, OrderSide, PositionSide};
+use crate::storage::Storage;
+use std::time::{SystemTime, UNIX_EPOCH};
+
+pub struct PaperEngine {
+    pub accounts: DashMap&lt;String, Account&gt;,
+    pub positions: DashMap&lt;String, DashMap&lt;String, Position&gt;&gt;, // user_id -&gt; symbol_side -&gt; Position
+    pub active_orders: DashMap&lt;String, Vec&lt;Order&gt;&gt;, // symbol -&gt; Orders
+    pub latest_prices: DashMap&lt;String, f64&gt;,
+    pub mark_prices: DashMap&lt;String, f64&gt;,
+    pub storage: Arc&lt;Storage&gt;,
+    pub system_messages: std::sync::Mutex&lt;std::collections::VecDeque&lt;String&gt;&gt;,
+}
+
+impl PaperEngine {
+    pub fn new(storage: Arc&lt;Storage&gt;) -&gt; Self {
+        Self {
+            accounts: DashMap::new(),
+            positions: DashMap::new(),
+            active_orders: DashMap::new(),
+            latest_prices: DashMap::new(),
+            mark_prices: DashMap::new(),
+            storage,
+            system_messages: std::sync::Mutex::new(std::collections::VecDeque::new()),
+        }
+    }
+
+    pub fn log_msg(&amp;self, msg: String) {
+        if let Ok(mut msgs) = self.system_messages.lock() {
+            msgs.push_back(format!(&quot;{} - {}&quot;, std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap_or_default().as_secs(), msg));
+            if msgs.len() &gt; 10 {
+                msgs.pop_front();
+            }
+        }
+    }
+
+    pub fn create_account(&amp;self, user_id: &amp;str, initial_balance: f64) {
+        self.accounts.insert(user_id.to_string(), Account::new(initial_balance));
+        self.positions.insert(user_id.to_string(), DashMap::new());
+    }
+
+    pub fn deposit(&amp;self, user_id: &amp;str, amount: f64) -&gt; Result&lt;f64, String&gt; {
+        let mut account = self.accounts.entry(user_id.to_string()).or_insert_with(|| {
+            self.positions.entry(user_id.to_string()).or_insert_with(DashMap::new);
+            Account::new(0.0)
+        });
+        account.wallet_balance += amount;
+        account.margin_balance += amount;
+        self.log_msg(format!(&quot;DEPOSIT: {} USDT credited to user {}&quot;, amount, user_id));
+        Ok(account.wallet_balance)
+    }
+
+    pub fn set_balance(&amp;self, user_id: &amp;str, amount: f64) -&gt; Result&lt;f64, String&gt; {
+        let mut account = self.accounts.entry(user_id.to_string()).or_insert_with(|| {
+            self.positions.entry(user_id.to_string()).or_insert_with(DashMap::new);
+            Account::new(amount)
+        });
+        account.wallet_balance = amount;
+        account.margin_balance = amount;
+        self.log_msg(format!(&quot;SET_BALANCE: User {} wallet balance set to {} USDT&quot;, user_id, amount));
+        Ok(account.wallet_balance)
+    }
+
+    pub fn cancel_order(&amp;self, order_id: &amp;str) -&gt; bool {
+        let mut removed = false;
+        for mut entry in self.active_orders.iter_mut() {
+            let symbol_orders = entry.value_mut();
+            let orig_len = symbol_orders.len();
+            symbol_orders.retain(|o| o.id != order_id);
+            if symbol_orders.len() &lt; orig_len {
+                removed = true;
+                self.log_msg(format!(&quot;CANCEL_ORDER: Order {} cancelled&quot;, order_id));
+                break;
+            }
+        }
+        removed
+    }
+
+    pub fn cancel_all_orders(&amp;self, symbol_opt: Option&lt;&amp;str&gt;) -&gt; usize {
+        let mut count = 0;
+        if let Some(symbol) = symbol_opt {
+            if let Some(mut symbol_orders) = self.active_orders.get_mut(symbol) {
+                count = symbol_orders.len();
+                symbol_orders.clear();
+                self.log_msg(format!(&quot;CANCEL_ALL: Cleared {} orders for {}&quot;, count, symbol));
+            }
+        } else {
+            for mut entry in self.active_orders.iter_mut() {
+                count += entry.value().len();
+                entry.value_mut().clear();
+            }
+            self.log_msg(format!(&quot;CANCEL_ALL: Cleared all {} orders across symbols&quot;, count));
+        }
+        count
+    }
+
+    pub fn close_all_positions(&amp;self, user_id: &amp;str) -&gt; Result&lt;usize, String&gt; {
+        let mut to_submit = Vec::new();
+        if let Some(user_pos) = self.positions.get(user_id) {
+            for pos_ref in user_pos.iter() {
+                let pos = pos_ref.value();
+                if pos.amount &gt; 0.0 {
+                    let rev_side = if pos.side == PositionSide::Long { OrderSide::Sell } else { OrderSide::Buy };
+                    let rev_pos = pos.side.clone();
+                    to_submit.push(Order {
+                        id: format!(&quot;closeall_{}&quot;, std::time::SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_nanos()),
+                        user_id: user_id.to_string(),
+                        symbol: pos.symbol.clone(),
+                        side: rev_side,
+                        position_side: rev_pos,
+                        order_type: OrderType::Market,
+                        price: 0.0,
+                        stop_price: 0.0,
+                        amount: pos.amount,
+                        leverage: pos.leverage,
+                        executed: 0.0,
+                        timestamp: 0,
+                    });
+                }
+            }
+        }
+
+        let count = to_submit.len();
+        for order in to_submit {
+            let _ = self.submit_order(user_id, order);
+        }
+        self.log_msg(format!(&quot;CLOSE_ALL: Closed {} positions for {}&quot;, count, user_id));
+        Ok(count)
+    }
+
+    pub fn submit_order(&amp;self, user_id: &amp;str, mut order: Order) -&gt; Result&lt;(), String&gt; {
+        let wallet_balance = self.accounts.get(user_id).map(|a| a.wallet_balance).ok_or(&quot;Account not found&quot;)?;
+        
+        let now = SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_millis() as i64;
+        order.timestamp = now;
+        order.user_id = user_id.to_string();
+
+        let mut current_last_price = self.latest_prices.get(&amp;order.symbol).map(|v| *v).unwrap_or(0.0);
+
+        // HACK for testing: If no price feed is active but user manually provided a price in the form for a Market order,
+        // we use that price as a simulated market price to allow testing the system.
+        if current_last_price == 0.0 &amp;&amp; order.price &gt; 0.0 {
+            current_last_price = order.price;
+            self.latest_prices.insert(order.symbol.clone(), current_last_price);
+            self.log_msg(format!(&quot;TEST MODU: Manuel girilen fiyat ({}) piyasa fiyatı kabul edildi.&quot;, current_last_price));
+        }
+
+        // Margin check
+        let cost = (order.amount * order.price) / order.leverage;
+        if wallet_balance &lt; cost &amp;&amp; order.order_type == OrderType::Market &amp;&amp; cost &gt; 0.0 {
+            // Optional warning or error
+        }
+
+        if order.order_type == OrderType::Market {
+            if current_last_price &gt; 0.0 {
+                order.price = current_last_price;
+                order.executed = order.amount;
+                self.execute_order(&amp;order, current_last_price)?;
+                let _ = self.storage.insert_order(&amp;order);
+                self.log_msg(format!(&quot;Market order executed for {} at {}&quot;, order.symbol, current_last_price));
+                return Ok(());
+            } else {
+                let err_msg = format!(&quot;No market price available to execute Market order for {}&quot;, order.symbol);
+                self.log_msg(err_msg.clone());
+                return Err(err_msg);
+            }
+        } else {
+            // Limit and Stop orders
+            let mut symbol_orders = self.active_orders.entry(order.symbol.clone()).or_insert_with(Vec::new);
+            symbol_orders.push(order.clone());
+            self.log_msg(format!(&quot;Pending order added for {}: {:?}&quot;, order.symbol, order.order_type));
+        }
+
+        self.storage.insert_order(&amp;order).map_err(|e| e.to_string())?;
+
+        Ok(())
+    }
+
+    pub fn on_last_price_update(&amp;self, symbol: &amp;str, last_price: f64) {
+        self.latest_prices.insert(symbol.to_string(), last_price);
+        
+        // Update PnL of active positions on last price if mark price isn&#x27;t set yet
+        if !self.mark_prices.contains_key(symbol) {
+            for user_ref in self.positions.iter() {
+                for mut pos in user_ref.value().iter_mut() {
+                    if pos.symbol == symbol {
+                        pos.update_pnl(last_price);
+                    }
+                }
+            }
+        }
+
+        // Match pending orders
+        if let Some(mut symbol_orders) = self.active_orders.get_mut(symbol) {
+            let mut executed_orders = Vec::new();
+
+            symbol_orders.retain_mut(|order| {
+                let mut should_execute = false;
+                
+                match order.order_type {
+                    OrderType::Limit =&gt; {
+                        should_execute = match order.side {
+                            OrderSide::Buy =&gt; last_price &lt;= order.price,
+                            OrderSide::Sell =&gt; last_price &gt;= order.price,
+                        };
+                    }
+                    OrderType::StopMarket | OrderType::StopLimit =&gt; {
+                        should_execute = match order.side {
+                            OrderSide::Buy =&gt; last_price &gt;= order.stop_price,
+                            OrderSide::Sell =&gt; last_price &lt;= order.stop_price,
+                        };
+                    }
+                    OrderType::TakeProfitMarket | OrderType::TakeProfitLimit =&gt; {
+                        should_execute = match order.side {
+                            OrderSide::Buy =&gt; last_price &lt;= order.stop_price,
+                            OrderSide::Sell =&gt; last_price &gt;= order.stop_price,
+                        };
+                    }
+                    OrderType::TrailingStop =&gt; {
+                        // Dynamically update trailing stop price if distance is specified in order.price
+                        let offset = order.price;
+                        if offset &gt; 0.0 {
+                            match order.side {
+                                OrderSide::Sell =&gt; {
+                                    if order.stop_price == 0.0 || last_price - offset &gt; order.stop_price {
+                                        order.stop_price = last_price - offset;
+                                    }
+                                    should_execute = last_price &lt;= order.stop_price;
+                                }
+                                OrderSide::Buy =&gt; {
+                                    if order.stop_price == 0.0 || last_price + offset &lt; order.stop_price {
+                                        order.stop_price = last_price + offset;
+                                    }
+                                    should_execute = last_price &gt;= order.stop_price;
+                                }
+                            }
+                        } else {
+                            should_execute = match order.side {
+                                OrderSide::Buy =&gt; last_price &gt;= order.stop_price,
+                                OrderSide::Sell =&gt; last_price &lt;= order.stop_price,
+                            };
+                        }
+                    }
+                    _ =&gt; {}
+                }
+
+                if should_execute {
+                    order.executed = order.amount;
+                    executed_orders.push(order.clone());
+                    false // remove from active
+                } else {
+                    true // keep
+                }
+            });
+            
+            // Execute the triggered orders without holding the dashmap lock
+            for executed_order in executed_orders {
+                let exec_price = if executed_order.order_type == OrderType::Limit || executed_order.order_type == OrderType::StopLimit || executed_order.order_type == OrderType::TakeProfitLimit {
+                    executed_order.price
+                } else {
+                    last_price // Market execution
+                };
+                
+                let _ = self.execute_order(&amp;executed_order, exec_price);
+                let _ = self.storage.insert_order(&amp;executed_order);
+            }
+        }
+    }
+
+    fn execute_order(&amp;self, order: &amp;Order, exec_price: f64) -&gt; Result&lt;(), String&gt; {
+        let pos_key = format!(&quot;{}_{:?}&quot;, order.symbol, order.position_side);
+        
+        let user_positions = self.positions.get(&amp;order.user_id).ok_or(&quot;User positions map not found&quot;)?;
+        let mut position = user_positions.entry(pos_key).or_insert_with(|| {
+            Position::new(order.symbol.clone(), order.position_side, order.leverage)
+        });
+
+        let is_increase = match (order.position_side, order.side) {
+            (PositionSide::Long, OrderSide::Buy) =&gt; true,
+            (PositionSide::Long, OrderSide::Sell) =&gt; false,
+            (PositionSide::Short, OrderSide::Sell) =&gt; true,
+            (PositionSide::Short, OrderSide::Buy) =&gt; false,
+        };
+
+        if is_increase {
+            if position.amount &gt; 0.0 {
+                let total_cost = (position.amount * position.entry_price) + (order.amount * exec_price);
+                position.amount += order.amount;
+                position.entry_price = total_cost / position.amount;
+                position.leverage = order.leverage;
+            } else {
+                position.amount = order.amount;
+                position.entry_price = exec_price;
+                position.leverage = order.leverage;
+            }
+        } else {
+            // Decrease position (close/reduce)
+            if position.amount &gt; 0.0 {
+                let closed_amount = order.amount.min(position.amount);
+                
+                // Calculate Realized PnL
+                let realized_pnl = match position.side {
+                    PositionSide::Long =&gt; (exec_price - position.entry_price) * closed_amount,
+                    PositionSide::Short =&gt; (position.entry_price - exec_price) * closed_amount,
+                };
+
+                position.amount -= closed_amount;
+
+                // Credit/Debit wallet_balance and margin_balance
+                if let Some(mut account) = self.accounts.get_mut(&amp;order.user_id) {
+                    account.wallet_balance += realized_pnl;
+                    account.margin_balance += realized_pnl;
+                }
+
+                // Save closed position record
+                let side_str = format!(&quot;{:?}&quot;, position.side);
+                let _ = self.storage.insert_closed_position(
+                    &amp;position.symbol,
+                    &amp;side_str,
+                    closed_amount,
+                    position.entry_price,
+                    exec_price,
+                    realized_pnl,
+                    order.timestamp,
+                );
+
+                if position.amount &lt;= 0.000001 {
+                    position.amount = 0.0;
+                    position.entry_price = 0.0;
+                    position.liquidation_price = 0.0;
+                    position.unrealized_pnl = 0.0;
+                }
+            }
+        }
+
+        if position.amount &gt; 0.0 {
+            let maintenance_margin = 0.005; // 0.5%
+            match position.side {
+                PositionSide::Long =&gt; {
+                    position.liquidation_price = position.entry_price * (1.0 - (1.0 / position.leverage) + maintenance_margin);
+                }
+                PositionSide::Short =&gt; {
+                    position.liquidation_price = position.entry_price * (1.0 + (1.0 / position.leverage) - maintenance_margin);
+                }
+            }
+            let mark = self.mark_prices.get(&amp;order.symbol).map(|v| *v).unwrap_or(exec_price);
+            position.update_pnl(mark);
+        }
+
+        Ok(())
+    }
+
+    pub fn on_mark_price_update(&amp;self, symbol: &amp;str, mark_price: f64) {
+        self.mark_prices.insert(symbol.to_string(), mark_price);
+        
+        // Update PnL and process liquidations for each user independently
+        for user_ref in self.positions.iter() {
+            let user_id = user_ref.key();
+            let user_positions = user_ref.value();
+            
+            let mut total_upnl = 0.0;
+            let mut to_liquidate = Vec::new();
+            let mut user_liquidated_loss = 0.0;
+
+            for mut pos_ref in user_positions.iter_mut() {
+                if pos_ref.symbol == symbol {
+                    pos_ref.update_pnl(mark_price);
+                    
+                    if pos_ref.amount &gt; 0.0 {
+                        let is_liquidated = match pos_ref.side {
+                            PositionSide::Long =&gt; mark_price &lt;= pos_ref.liquidation_price,
+                            PositionSide::Short =&gt; mark_price &gt;= pos_ref.liquidation_price,
+                        };
+                        
+                        if is_liquidated {
+                            to_liquidate.push(pos_ref.key().clone());
+                            let loss = (pos_ref.amount * pos_ref.entry_price) / pos_ref.leverage;
+                            user_liquidated_loss += loss;
+                            self.log_msg(format!(&quot;LIQUIDATED! {} {} position closed at Mark Price: {}&quot;, user_id, symbol, mark_price));
+                        }
+                    }
+                }
+                
+                if !to_liquidate.contains(pos_ref.key()) {
+                    total_upnl += pos_ref.unrealized_pnl;
+                }
+            }
+            
+            for key in &amp;to_liquidate {
+                if let Some(mut p) = user_positions.get_mut(key) {
+                    let side_str = format!(&quot;{:?}&quot;, p.side);
+                    let loss_pnl = -((p.amount * p.entry_price) / p.leverage);
+                    let _ = self.storage.insert_closed_position(
+                        &amp;p.symbol,
+                        &amp;side_str,
+                        p.amount,
+                        p.entry_price,
+                        mark_price,
+                        loss_pnl,
+                        SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_millis() as i64,
+                    );
+                    p.amount = 0.0;
+                    p.unrealized_pnl = 0.0;
+                    p.entry_price = 0.0;
+                    p.liquidation_price = 0.0;
+                }
+            }
+
+            // Update Account Balance per user
+            if let Some(mut account) = self.accounts.get_mut(user_id) {
+                if user_liquidated_loss &gt; 0.0 {
+                    account.wallet_balance -= user_liquidated_loss;
+                }
+                account.margin_balance = account.wallet_balance + total_upnl;
+            }
+        }
+    }
+}
+
+</code></pre>
+        </details>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            flowchart: { curve: 'basis' }
+        });
+    </script>
+</body>
+</html>

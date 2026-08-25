@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>lib.rs - Rust Analiz Dokümanı</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --border: #334155;
+            --code-bg: #090d16;
+            --verbal-bg: #131f37;
+            --analogy-bg: #1e1b4b;
+            --analogy-border: #818cf8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .back-link {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .back-link:hover { text-decoration: underline; }
+        h1 { font-size: 2rem; color: var(--accent); margin-bottom: 0.5rem; }
+        .file-path { font-family: 'Fira Code', monospace; color: var(--text-muted); font-size: 0.95rem; }
+        
+        .structs-container { margin: 1.5rem 0; }
+        .badge {
+            display: inline-block;
+            background: #0284c7;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-family: 'Fira Code', monospace;
+        }
+        .badge-struct { background: #7c3aed; }
+        
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .card h3 { color: var(--accent); margin-bottom: 0.5rem; font-size: 1.3rem; }
+        .card h4 { margin: 1.2rem 0 0.5rem 0; color: var(--text-muted); font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        .easy-analogy {
+            background: var(--analogy-bg);
+            border-left: 4px solid var(--analogy-border);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1rem;
+            color: #c7d2fe;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .verbal-explanation {
+            background: var(--verbal-bg);
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1.2rem;
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            margin-bottom: 1rem;
+        }
+        
+        .mermaid {
+            background: var(--code-bg);
+            padding: 1.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+        }
+        
+        details {
+            margin-top: 2rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Ana İndekse Dön</a>
+        <header>
+            <h1>lib.rs</h1>
+            <p class="file-path">crates/plugins/execution/plugin_paper_exchange/src/lib.rs</p>
+            <div class="structs-container">
+                <strong>Tanımlı Türler / Yapılar:</strong> <span class="badge badge-struct">PluginState</span> 
+            </div>
+        </header>
+
+        <section>
+            <h2>Fonksiyon Analizleri & Basit Anlatımlar</h2>
+            
+        <div class="card">
+            <h3><span class="badge">fn</span> init_plugin</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>state_out: *mut *mut c_void</code> | <strong>Dönüş Tipi:</strong> <code>unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Gerçek para harcamadan önce Monopoly oyunundaki sanal para ile alışveriş yapıp taktiklerin çalışıp çalışmadığını test etme işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Gerçek piyasa emir defteri verisini alarak gecikme, komisyon ve kuyruk sırasını hesaba katan sanal alım-satım infazını gerçekleştirir.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON init_plugin(state_out: *mut *mut c_void) -&gt; unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize:
+    let db_path = &quot;data/paper_exchange.db&quot;;
+    let storage_inst = Storage::new(db_path).expect(&quot;Could not init SQLite storage&quot;);
+    let paper_engine = PaperEngine::new(Arc::new(storage_inst));
+    // Test account
+    paper_engine.create_account(&quot;admin&quot;, 10000.0);
+    let state = Box::new(PluginState {
+    is_running: Arc::new(AtomicBool::new(false)),
+    engine: Arc::new(paper_engine),
+    data: Arc::new(Mutex::new(b&quot;Paper Exchange HAZIR.&quot;.to_vec())),
+    outbox: Arc::new(Mutex::new(Vec::new())),
+    });
+    unsafe {
+    *state_out = Box::into_raw(state) as *mut c_void;
+    handle_endpoint</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: init_plugin"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> handle_endpoint</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>plugin_state: *mut c_void,
+    endpoint_id: u32,
+    payload: *const u8,
+    payload_len: usize,
+    out_buf: *mut u8,
+    out_max_len: usize,</code> | <strong>Dönüş Tipi:</strong> <code>usize</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Gerçek para harcamadan önce Monopoly oyunundaki sanal para ile alışveriş yapıp taktiklerin çalışıp çalışmadığını test etme işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Gerçek piyasa emir defteri verisini alarak gecikme, komisyon ve kuyruk sırasını hesaba katan sanal alım-satım infazını gerçekleştirir.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON handle_endpoint(plugin_state: *mut c_void,
+    endpoint_id: u32,
+    payload: *const u8,
+    payload_len: usize,
+    out_buf: *mut u8,
+    out_max_len: usize,) -&gt; usize:
+    let state = &amp;*(plugin_state as *const PluginState);
+    DURUM KONTROLÜ (endpoint_id):
+        0 =&gt; { // Start
+        state.is_running.store(true, Ordering::Relaxed);
+        0
+    1 =&gt; { // Stop
+    state.is_running.store(false, Ordering::Relaxed);
+    0
+    2 =&gt; { // IsWorking
+    EĞER state.is_running.load(Ordering::Relaxed) İSE:
+    3 =&gt; { // DataValid (Stream from ms_analyzer or others)
+    0
+    4 =&gt; { // DataMonitor (TUI M key view)
+    let mut report = String::new();
+    report.push_str(&quot;=== PAPER EXCHANGE STATUS ===\n\n&quot;);
+    EĞER let Some(acc) = state.engine.accounts.get(&quot;admin&quot;) İSE:
+        report.push_str(&amp;format!(&quot;[ Balance ]\nWallet: {:.2} USDT | Margin: {:.2} USDT\n\n&quot;, acc.wallet_balance, acc.margin_balance));
+    report.push_str(&quot;[ Market Data ]\n&quot;);
+    let mut has_prices = false;
+    HER price_entry in state.engine.latest_prices.iter() İÇİN DÖNGÜ:
+        let sym = price_entry.key();
+        let last_price = price_entry.value();
+        let mark_price = state.engine.mark_prices.get(sym).map(|v| *v).unwrap_or(0.0);
+        report.push_str(&amp;format!(&quot;- {}: Last/Best: {} | Mark: {}\n&quot;, sym, last_price, mark_price));
+        has_prices = true;
+    EĞER !has_prices İSE:
+        report.push_str(&quot;No market data received yet.\n&quot;);
+    report.push_str(&quot;\n&quot;);
+    report.push_str(&quot;[ Open Positions ]\n&quot;);
+    let mut has_pos = false;
+    EĞER let Some(user_pos) = state.engine.positions.get(&quot;admin&quot;) İSE:
+        HER pos in user_pos.iter() İÇİN DÖNGÜ:
+            let p = pos.value();
+            EĞER p.amount &gt; 0.0 İSE:
+                has_pos = true;
+                let side_str = if p.side == PositionSide::Long { &quot;LONG&quot; } else { &quot;SHORT&quot; };
+                report.push_str(&amp;format!(&quot;- {} {} | Qty: {:.3} | Entry: {:.2} | Leverage: {:.0}x | Liq Price: {:.2} | PnL: {:.2} USDT\n&quot;,
+                p.symbol, side_str, p.amount, p.entry_price, p.leverage, p.liquidation_price, p.unrealized_pnl));
+    EĞER !has_pos İSE:
+        report.push_str(&quot;\n&quot;);
+        report.push_str(&quot;[ Active Pending Orders ]\n&quot;);
+        let mut has_order = false;
+        HER orders in state.engine.active_orders.iter() İÇİN DÖNGÜ:
+            HER o in orders.value().iter() İÇİN DÖNGÜ:
+                has_order = true;
+                let type_str = format!(&quot;{:?}&quot;, o.order_type);
+                let side_str = format!(&quot;{:?}&quot;, o.side);
+                report.push_str(&amp;format!(&quot;- {} {} {} | Price: {} | Stop: {} | Qty: {}\n&quot;,
+                o.symbol, side_str, type_str, o.price, o.stop_price, o.amount));
+        EĞER !has_order İSE:
+            report.push_str(&quot;\n&quot;);
+            report.push_str(&quot;[ System Logs ]\n&quot;);
+            EĞER let Ok(msgs) = state.engine.system_messages.lock() İSE:
+                HER msg in msgs.iter() İÇİN DÖNGÜ:
+                    report.push_str(&amp;format!(&quot;* {}\n&quot;, msg));
+            report.push_str(&quot;=============================\n&quot;);
+            let data = report.into_bytes();
+            let len = data.len().min(out_max_len);
+            std::ptr::copy_nonoverlapping(data.as_ptr(), out_buf, len);
+            len
+        6 =&gt; { // Inbox
+        EĞER payload_len &gt; 0 İSE:
+            let slice = std::slice::from_raw_parts(payload, payload_len);
+            let mut parsed_msg = serde_json::from_slice::&lt;serde_json::Value&gt;(slice);
+            let mut stream_id_opt = None;
+            EĞER parsed_msg.is_err() &amp;&amp; payload_len &gt; 32 İSE:
+                // It might be from FlowEngine which prepends a 32-byte stream_id header
+                let header = &amp;slice[0..32];
+                stream_id_opt = Some(std::str::from_utf8(header).unwrap_or(&quot;&quot;).trim_matches(char::from(0)).to_string());
+                parsed_msg = serde_json::from_slice::&lt;serde_json::Value&gt;(&amp;slice[32..]);
+            EĞER let Ok(msg) = parsed_msg İSE:
+                EĞER let Some(stream_id) = stream_id_opt İSE:
+                    // Data from FlowEngine streams
+                    EĞER stream_id == &quot;stream_bestprice&quot; İSE:
+                        EĞER let Some(obj) = msg.as_object() İSE:
+                            HER (symbol, data) in obj.iter() İÇİN DÖNGÜ:
+                                let ask = data.get(&quot;best_ask&quot;).and_then(|v| v.as_str()).unwrap_or(&quot;0&quot;).parse::&lt;f64&gt;().unwrap_or(0.0);
+                                EĞER ask &gt; 0.0 İSE:
+                                    state.engine.on_last_price_update(symbol, ask);
+                        } else if stream_id == &quot;stream_markprice&quot; {
+                        EĞER let Some(obj) = msg.as_object() İSE:
+                            HER (symbol, data) in obj.iter() İÇİN DÖNGÜ:
+                                let mark = data.get(&quot;mark_price&quot;).and_then(|v| v.as_str()).unwrap_or(&quot;0&quot;).parse::&lt;f64&gt;().unwrap_or(0.0);
+                                EĞER mark &gt; 0.0 İSE:
+                                    state.engine.on_mark_price_update(symbol, mark);
+                    } else {
+                    // Manual input from TUI
+                    EĞER let Some(action) = msg.get(&quot;action&quot;).and_then(|v| v.as_str()) İSE:
+                        EĞER action == &quot;submit_order&quot; İSE:
+                            DURUM KONTROLÜ (serde_json::from_value::&lt;Order&gt;(msg[&quot;data&quot;].clone())):
+                                Ok(order) =&gt; {
+                                let user_id = msg.get(&quot;user_id&quot;).and_then(|v| v.as_str()).unwrap_or(&quot;admin&quot;);
+                                EĞER let Err(e) = state.engine.submit_order(user_id, order) İSE:
+                                    state.engine.log_msg(format!(&quot;Order submit error: {}&quot;, e));
+                            Err(e) =&gt; {
+                            state.engine.log_msg(format!(&quot;Order parse error: {}&quot;, e));
+                    } else if action == &quot;close_position&quot; {
+                    let user_id = msg.get(&quot;user_id&quot;).and_then(|v| v.as_str()).unwrap_or(&quot;admin&quot;);
+                    let symbol = msg.get(&quot;symbol&quot;).and_then(|v| v.as_str()).unwrap_or(&quot;&quot;);
+                    // Submit reverse market orders for all matching positions
+                    let mut to_submit = Vec::new();
+                    EĞER let Some(user_pos) = state.engine.positions.get(user_id) İSE:
+                        HER pos_ref in user_pos.iter() İÇİN DÖNGÜ:
+                            let pos = pos_ref.value();
+                            EĞER pos.symbol == symbol &amp;&amp; pos.amount &gt; 0.0 İSE:
+                                let rev_side = if pos.side == crate::models::PositionSide::Long { crate::models::OrderSide::Sell } else { crate::models::OrderSide::Buy };
+                                let rev_pos = pos.side.clone();
+                                to_submit.push(Order {
+                                id: format!(&quot;pos_{}&quot;, std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap_or_default().as_nanos()),
+                                user_id: user_id.to_string(),
+                                symbol: symbol.to_string(),
+                                side: rev_side,
+                                position_side: rev_pos,
+                                order_type: crate::models::OrderType::Market,
+                                price: 0.0,
+                                stop_price: 0.0,
+                                amount: pos.amount,
+                                leverage: pos.leverage,
+                                executed: 0.0,
+                                timestamp: 0,
+                                });
+                    EĞER !to_submit.is_empty() İSE:
+                        HER order in to_submit İÇİN DÖNGÜ:
+                            EĞER let Err(e) = state.engine.submit_order(user_id, order) İSE:
+                                state.engine.log_msg(format!(&quot;Close Position error: {}&quot;, e));
+                        } else {
+                        state.engine.log_msg(format!(&quot;No open position for {} to close&quot;, symbol));
+                    } else if action == &quot;cancel_order&quot; {
+                    EĞER let Some(order_id) = msg.get(&quot;order_id&quot;).and_then(|v| v.as_str()) İSE:
+                        let ok = state.engine.cancel_order(order_id);
+                        let mut out = state.outbox.lock().unwrap();
+                        out.push(serde_json::json!({ &quot;action&quot;: &quot;cancel_order_response&quot;, &quot;order_id&quot;: order_id, &quot;success&quot;: ok }));
+                    } else if action == &quot;cancel_all_orders&quot; {
+                    let symbol_opt = msg.get(&quot;symbol&quot;).and_then(|v| v.as_str());
+                    let count = state.engine.cancel_all_orders(symbol_opt);
+                    let mut out = state.outbox.lock().unwrap();
+                    out.push(serde_json::json!({ &quot;action&quot;: &quot;cancel_all_orders_response&quot;, &quot;count&quot;: count }));
+                    } else if action == &quot;deposit&quot; {
+                    let user_id = msg.get(&quot;user_id&quot;).and_then(|v| v.as_str()).unwrap_or(&quot;admin&quot;);
+                    let amount = msg.get(&quot;amount&quot;).and_then(|v| v.as_f64()).unwrap_or(0.0);
+                    EĞER let Ok(new_bal) = state.engine.deposit(user_id, amount) İSE:
+                        let mut out = state.outbox.lock().unwrap();
+                        out.push(serde_json::json!({ &quot;action&quot;: &quot;deposit_response&quot;, &quot;user_id&quot;: user_id, &quot;wallet_balance&quot;: new_bal }));
+                    } else if action == &quot;set_balance&quot; {
+                    let user_id = msg.get(&quot;user_id&quot;).and_then(|v| v.as_str()).unwrap_or(&quot;admin&quot;);
+                    let amount = msg.get(&quot;amount&quot;).and_then(|v| v.as_f64()).unwrap_or(10000.0);
+                    EĞER let Ok(new_bal) = state.engine.set_balance(user_id, amount) İSE:
+                        let mut out = state.outbox.lock().unwrap();
+                        out.push(serde_json::json!({ &quot;action&quot;: &quot;set_balance_response&quot;, &quot;user_id&quot;: user_id, &quot;wallet_balance&quot;: new_bal }));
+                    } else if action == &quot;close_all_positions&quot; {
+                    let user_id = msg.get(&quot;user_id&quot;).and_then(|v| v.as_str()).unwrap_or(&quot;admin&quot;);
+                    EĞER let Ok(count) = state.engine.close_all_positions(user_id) İSE:
+                        let mut out = state.outbox.lock().unwrap();
+                        out.push(serde_json::json!({ &quot;action&quot;: &quot;close_all_positions_response&quot;, &quot;count&quot;: count }));
+                    } else if action == &quot;get_orders&quot; {
+                    let symbol_filter = msg.get(&quot;symbol&quot;).and_then(|v| v.as_str());
+                    let mut list = Vec::new();
+                    HER entry in state.engine.active_orders.iter() İÇİN DÖNGÜ:
+                        let sym = entry.key();
+                        EĞER symbol_filter.is_none() || symbol_filter == Some(sym.as_str()) İSE:
+                            HER order in entry.value().iter() İÇİN DÖNGÜ:
+                                list.push(order.clone());
+                    let mut out = state.outbox.lock().unwrap();
+                    out.push(serde_json::json!({ &quot;action&quot;: &quot;get_orders_response&quot;, &quot;orders&quot;: list }));
+                    } else if action == &quot;get_history&quot; {
+                    let limit = msg.get(&quot;limit&quot;).and_then(|v| v.as_u64()).unwrap_or(20) as usize;
+                    EĞER let Ok(history) = state.engine.storage.get_closed_positions(limit) İSE:
+                        let mut out = state.outbox.lock().unwrap();
+                        out.push(serde_json::json!({ &quot;action&quot;: &quot;get_history_response&quot;, &quot;history&quot;: history }));
+    0
+    7 =&gt; { // Outbox
+    let mut out = state.outbox.lock().unwrap();
+    EĞER out.is_empty() İSE:
+        0
+        } else {
+        let msg = out.remove(0);
+        EĞER let Ok(json_str) = serde_json::to_string(&amp;msg) İSE:
+            let bytes = json_str.as_bytes();
+            let len = bytes.len().min(out_max_len);
+            std::ptr::copy_nonoverlapping(bytes.as_ptr(), out_buf, len);
+            len
+            } else {
+            0
+    _ =&gt; 0,</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: handle_endpoint"])
+    Start --> Cond1{"state.is_running.load(Ordering::Relaxed)?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"let Some(acc) = state.engine.accounts.get('admin')?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"!has_prices?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> Loop4["Döngü: price_entry in state.engine.latest_prices.iter()"]
+    Loop4 --> Loop5["Döngü: pos in user_pos.iter()"]
+    Loop5 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        </section>
+
+        <details>
+            <summary>Orijinal Rust Kaynak Kodunu Göster</summary>
+            <pre><code>pub mod models;
+pub mod storage;
+pub mod engine;
+
+pub use models::*;
+pub use storage::*;
+pub use engine::*;
+
+use std::ffi::c_void;
+use std::sync::{Arc, Mutex};
+use std::sync::atomic::{AtomicBool, Ordering};
+use serde_json::Value;
+
+#[allow(dead_code)]
+struct PluginState {
+    is_running: Arc&lt;AtomicBool&gt;,
+    engine: Arc&lt;PaperEngine&gt;,
+    data: Arc&lt;Mutex&lt;Vec&lt;u8&gt;&gt;&gt;,
+    outbox: Arc&lt;Mutex&lt;Vec&lt;Value&gt;&gt;&gt;,
+}
+
+#[no_mangle]
+pub unsafe extern &quot;C&quot; fn init_plugin(state_out: *mut *mut c_void) -&gt; unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize {
+    
+    let db_path = &quot;data/paper_exchange.db&quot;;
+    let storage_inst = Storage::new(db_path).expect(&quot;Could not init SQLite storage&quot;);
+    let paper_engine = PaperEngine::new(Arc::new(storage_inst));
+    
+    // Test account
+    paper_engine.create_account(&quot;admin&quot;, 10000.0);
+
+    let state = Box::new(PluginState {
+        is_running: Arc::new(AtomicBool::new(false)),
+        engine: Arc::new(paper_engine),
+        data: Arc::new(Mutex::new(b&quot;Paper Exchange HAZIR.&quot;.to_vec())),
+        outbox: Arc::new(Mutex::new(Vec::new())),
+    });
+
+    unsafe {
+        *state_out = Box::into_raw(state) as *mut c_void;
+    }
+
+    handle_endpoint
+}
+
+unsafe extern &quot;C&quot; fn handle_endpoint(
+    plugin_state: *mut c_void,
+    endpoint_id: u32,
+    payload: *const u8,
+    payload_len: usize,
+    out_buf: *mut u8,
+    out_max_len: usize,
+) -&gt; usize {
+    let state = &amp;*(plugin_state as *const PluginState);
+
+    match endpoint_id {
+        0 =&gt; { // Start
+            state.is_running.store(true, Ordering::Relaxed);
+            0
+        }
+        1 =&gt; { // Stop
+            state.is_running.store(false, Ordering::Relaxed);
+            0
+        }
+        2 =&gt; { // IsWorking
+            if state.is_running.load(Ordering::Relaxed) { 1 } else { 0 }
+        }
+        3 =&gt; { // DataValid (Stream from ms_analyzer or others)
+            0
+        }
+        4 =&gt; { // DataMonitor (TUI M key view)
+            let mut report = String::new();
+            report.push_str(&quot;=== PAPER EXCHANGE STATUS ===\n\n&quot;);
+            
+            if let Some(acc) = state.engine.accounts.get(&quot;admin&quot;) {
+                report.push_str(&amp;format!(&quot;[ Balance ]\nWallet: {:.2} USDT | Margin: {:.2} USDT\n\n&quot;, acc.wallet_balance, acc.margin_balance));
+            }
+            
+            report.push_str(&quot;[ Market Data ]\n&quot;);
+            let mut has_prices = false;
+            for price_entry in state.engine.latest_prices.iter() {
+                let sym = price_entry.key();
+                let last_price = price_entry.value();
+                let mark_price = state.engine.mark_prices.get(sym).map(|v| *v).unwrap_or(0.0);
+                report.push_str(&amp;format!(&quot;- {}: Last/Best: {} | Mark: {}\n&quot;, sym, last_price, mark_price));
+                has_prices = true;
+            }
+            if !has_prices {
+                report.push_str(&quot;No market data received yet.\n&quot;);
+            }
+            report.push_str(&quot;\n&quot;);
+            
+            report.push_str(&quot;[ Open Positions ]\n&quot;);
+            let mut has_pos = false;
+            if let Some(user_pos) = state.engine.positions.get(&quot;admin&quot;) {
+                for pos in user_pos.iter() {
+                    let p = pos.value();
+                    if p.amount &gt; 0.0 {
+                        has_pos = true;
+                        let side_str = if p.side == PositionSide::Long { &quot;LONG&quot; } else { &quot;SHORT&quot; };
+                        report.push_str(&amp;format!(&quot;- {} {} | Qty: {:.3} | Entry: {:.2} | Leverage: {:.0}x | Liq Price: {:.2} | PnL: {:.2} USDT\n&quot;, 
+                            p.symbol, side_str, p.amount, p.entry_price, p.leverage, p.liquidation_price, p.unrealized_pnl));
+                    }
+                }
+            }
+            if !has_pos { report.push_str(&quot;None\n&quot;); }
+            report.push_str(&quot;\n&quot;);
+            
+            report.push_str(&quot;[ Active Pending Orders ]\n&quot;);
+            let mut has_order = false;
+            for orders in state.engine.active_orders.iter() {
+                for o in orders.value().iter() {
+                    has_order = true;
+                    let type_str = format!(&quot;{:?}&quot;, o.order_type);
+                    let side_str = format!(&quot;{:?}&quot;, o.side);
+                    report.push_str(&amp;format!(&quot;- {} {} {} | Price: {} | Stop: {} | Qty: {}\n&quot;,
+                        o.symbol, side_str, type_str, o.price, o.stop_price, o.amount));
+                }
+            }
+            if !has_order { report.push_str(&quot;None\n&quot;); }
+            report.push_str(&quot;\n&quot;);
+            
+            report.push_str(&quot;[ System Logs ]\n&quot;);
+            if let Ok(msgs) = state.engine.system_messages.lock() {
+                for msg in msgs.iter() {
+                    report.push_str(&amp;format!(&quot;* {}\n&quot;, msg));
+                }
+            }
+            
+            report.push_str(&quot;=============================\n&quot;);
+            
+            let data = report.into_bytes();
+            let len = data.len().min(out_max_len);
+            std::ptr::copy_nonoverlapping(data.as_ptr(), out_buf, len);
+            len
+        }
+        6 =&gt; { // Inbox
+            if payload_len &gt; 0 {
+                let slice = std::slice::from_raw_parts(payload, payload_len);
+                
+                let mut parsed_msg = serde_json::from_slice::&lt;serde_json::Value&gt;(slice);
+                let mut stream_id_opt = None;
+                
+                if parsed_msg.is_err() &amp;&amp; payload_len &gt; 32 {
+                    // It might be from FlowEngine which prepends a 32-byte stream_id header
+                    let header = &amp;slice[0..32];
+                    stream_id_opt = Some(std::str::from_utf8(header).unwrap_or(&quot;&quot;).trim_matches(char::from(0)).to_string());
+                    parsed_msg = serde_json::from_slice::&lt;serde_json::Value&gt;(&amp;slice[32..]);
+                }
+
+                if let Ok(msg) = parsed_msg {
+                    if let Some(stream_id) = stream_id_opt {
+                        // Data from FlowEngine streams
+                        if stream_id == &quot;stream_bestprice&quot; {
+                            if let Some(obj) = msg.as_object() {
+                                for (symbol, data) in obj.iter() {
+                                    let ask = data.get(&quot;best_ask&quot;).and_then(|v| v.as_str()).unwrap_or(&quot;0&quot;).parse::&lt;f64&gt;().unwrap_or(0.0);
+                                    if ask &gt; 0.0 {
+                                        state.engine.on_last_price_update(symbol, ask);
+                                    }
+                                }
+                            }
+                        } else if stream_id == &quot;stream_markprice&quot; {
+                            if let Some(obj) = msg.as_object() {
+                                for (symbol, data) in obj.iter() {
+                                    let mark = data.get(&quot;mark_price&quot;).and_then(|v| v.as_str()).unwrap_or(&quot;0&quot;).parse::&lt;f64&gt;().unwrap_or(0.0);
+                                    if mark &gt; 0.0 {
+                                        state.engine.on_mark_price_update(symbol, mark);
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        // Manual input from TUI
+                        if let Some(action) = msg.get(&quot;action&quot;).and_then(|v| v.as_str()) {
+                            if action == &quot;submit_order&quot; {
+                                match serde_json::from_value::&lt;Order&gt;(msg[&quot;data&quot;].clone()) {
+                                    Ok(order) =&gt; {
+                                        let user_id = msg.get(&quot;user_id&quot;).and_then(|v| v.as_str()).unwrap_or(&quot;admin&quot;);
+                                        if let Err(e) = state.engine.submit_order(user_id, order) {
+                                            state.engine.log_msg(format!(&quot;Order submit error: {}&quot;, e));
+                                        }
+                                    }
+                                    Err(e) =&gt; {
+                                        state.engine.log_msg(format!(&quot;Order parse error: {}&quot;, e));
+                                    }
+                                }
+                            } else if action == &quot;close_position&quot; {
+                                let user_id = msg.get(&quot;user_id&quot;).and_then(|v| v.as_str()).unwrap_or(&quot;admin&quot;);
+                                let symbol = msg.get(&quot;symbol&quot;).and_then(|v| v.as_str()).unwrap_or(&quot;&quot;);
+                                
+                                // Submit reverse market orders for all matching positions
+                                let mut to_submit = Vec::new();
+                                if let Some(user_pos) = state.engine.positions.get(user_id) {
+                                    for pos_ref in user_pos.iter() {
+                                        let pos = pos_ref.value();
+                                        if pos.symbol == symbol &amp;&amp; pos.amount &gt; 0.0 {
+                                            let rev_side = if pos.side == crate::models::PositionSide::Long { crate::models::OrderSide::Sell } else { crate::models::OrderSide::Buy };
+                                            let rev_pos = pos.side.clone();
+                                            to_submit.push(Order {
+                                                id: format!(&quot;pos_{}&quot;, std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap_or_default().as_nanos()),
+                                                user_id: user_id.to_string(),
+                                                symbol: symbol.to_string(),
+                                                side: rev_side,
+                                                position_side: rev_pos,
+                                                order_type: crate::models::OrderType::Market,
+                                                price: 0.0,
+                                                stop_price: 0.0,
+                                                amount: pos.amount,
+                                                leverage: pos.leverage,
+                                                executed: 0.0,
+                                                timestamp: 0,
+                                            });
+                                        }
+                                    }
+                                }
+                                
+                                if !to_submit.is_empty() {
+                                    for order in to_submit {
+                                        if let Err(e) = state.engine.submit_order(user_id, order) {
+                                            state.engine.log_msg(format!(&quot;Close Position error: {}&quot;, e));
+                                        }
+                                    }
+                                } else {
+                                    state.engine.log_msg(format!(&quot;No open position for {} to close&quot;, symbol));
+                                }
+                            } else if action == &quot;cancel_order&quot; {
+                                if let Some(order_id) = msg.get(&quot;order_id&quot;).and_then(|v| v.as_str()) {
+                                    let ok = state.engine.cancel_order(order_id);
+                                    let mut out = state.outbox.lock().unwrap();
+                                    out.push(serde_json::json!({ &quot;action&quot;: &quot;cancel_order_response&quot;, &quot;order_id&quot;: order_id, &quot;success&quot;: ok }));
+                                }
+                            } else if action == &quot;cancel_all_orders&quot; {
+                                let symbol_opt = msg.get(&quot;symbol&quot;).and_then(|v| v.as_str());
+                                let count = state.engine.cancel_all_orders(symbol_opt);
+                                let mut out = state.outbox.lock().unwrap();
+                                out.push(serde_json::json!({ &quot;action&quot;: &quot;cancel_all_orders_response&quot;, &quot;count&quot;: count }));
+                            } else if action == &quot;deposit&quot; {
+                                let user_id = msg.get(&quot;user_id&quot;).and_then(|v| v.as_str()).unwrap_or(&quot;admin&quot;);
+                                let amount = msg.get(&quot;amount&quot;).and_then(|v| v.as_f64()).unwrap_or(0.0);
+                                if let Ok(new_bal) = state.engine.deposit(user_id, amount) {
+                                    let mut out = state.outbox.lock().unwrap();
+                                    out.push(serde_json::json!({ &quot;action&quot;: &quot;deposit_response&quot;, &quot;user_id&quot;: user_id, &quot;wallet_balance&quot;: new_bal }));
+                                }
+                            } else if action == &quot;set_balance&quot; {
+                                let user_id = msg.get(&quot;user_id&quot;).and_then(|v| v.as_str()).unwrap_or(&quot;admin&quot;);
+                                let amount = msg.get(&quot;amount&quot;).and_then(|v| v.as_f64()).unwrap_or(10000.0);
+                                if let Ok(new_bal) = state.engine.set_balance(user_id, amount) {
+                                    let mut out = state.outbox.lock().unwrap();
+                                    out.push(serde_json::json!({ &quot;action&quot;: &quot;set_balance_response&quot;, &quot;user_id&quot;: user_id, &quot;wallet_balance&quot;: new_bal }));
+                                }
+                            } else if action == &quot;close_all_positions&quot; {
+                                let user_id = msg.get(&quot;user_id&quot;).and_then(|v| v.as_str()).unwrap_or(&quot;admin&quot;);
+                                if let Ok(count) = state.engine.close_all_positions(user_id) {
+                                    let mut out = state.outbox.lock().unwrap();
+                                    out.push(serde_json::json!({ &quot;action&quot;: &quot;close_all_positions_response&quot;, &quot;count&quot;: count }));
+                                }
+                            } else if action == &quot;get_orders&quot; {
+                                let symbol_filter = msg.get(&quot;symbol&quot;).and_then(|v| v.as_str());
+                                let mut list = Vec::new();
+                                for entry in state.engine.active_orders.iter() {
+                                    let sym = entry.key();
+                                    if symbol_filter.is_none() || symbol_filter == Some(sym.as_str()) {
+                                        for order in entry.value().iter() {
+                                            list.push(order.clone());
+                                        }
+                                    }
+                                }
+                                let mut out = state.outbox.lock().unwrap();
+                                out.push(serde_json::json!({ &quot;action&quot;: &quot;get_orders_response&quot;, &quot;orders&quot;: list }));
+                            } else if action == &quot;get_history&quot; {
+                                let limit = msg.get(&quot;limit&quot;).and_then(|v| v.as_u64()).unwrap_or(20) as usize;
+                                if let Ok(history) = state.engine.storage.get_closed_positions(limit) {
+                                    let mut out = state.outbox.lock().unwrap();
+                                    out.push(serde_json::json!({ &quot;action&quot;: &quot;get_history_response&quot;, &quot;history&quot;: history }));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            0
+        }
+        7 =&gt; { // Outbox
+            let mut out = state.outbox.lock().unwrap();
+            if out.is_empty() {
+                0
+            } else {
+                let msg = out.remove(0);
+                if let Ok(json_str) = serde_json::to_string(&amp;msg) {
+                    let bytes = json_str.as_bytes();
+                    let len = bytes.len().min(out_max_len);
+                    std::ptr::copy_nonoverlapping(bytes.as_ptr(), out_buf, len);
+                    len
+                } else {
+                    0
+                }
+            }
+        }
+        _ =&gt; 0,
+    }
+}
+</code></pre>
+        </details>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            flowchart: { curve: 'basis' }
+        });
+    </script>
+</body>
+</html>

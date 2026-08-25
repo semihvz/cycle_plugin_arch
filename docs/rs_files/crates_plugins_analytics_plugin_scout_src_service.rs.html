@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>service.rs - Rust Analiz Dokümanı</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --border: #334155;
+            --code-bg: #090d16;
+            --verbal-bg: #131f37;
+            --analogy-bg: #1e1b4b;
+            --analogy-border: #818cf8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .back-link {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .back-link:hover { text-decoration: underline; }
+        h1 { font-size: 2rem; color: var(--accent); margin-bottom: 0.5rem; }
+        .file-path { font-family: 'Fira Code', monospace; color: var(--text-muted); font-size: 0.95rem; }
+        
+        .structs-container { margin: 1.5rem 0; }
+        .badge {
+            display: inline-block;
+            background: #0284c7;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-family: 'Fira Code', monospace;
+        }
+        .badge-struct { background: #7c3aed; }
+        
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .card h3 { color: var(--accent); margin-bottom: 0.5rem; font-size: 1.3rem; }
+        .card h4 { margin: 1.2rem 0 0.5rem 0; color: var(--text-muted); font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        .easy-analogy {
+            background: var(--analogy-bg);
+            border-left: 4px solid var(--analogy-border);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1rem;
+            color: #c7d2fe;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .verbal-explanation {
+            background: var(--verbal-bg);
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1.2rem;
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            margin-bottom: 1rem;
+        }
+        
+        .mermaid {
+            background: var(--code-bg);
+            padding: 1.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+        }
+        
+        details {
+            margin-top: 2rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Ana İndekse Dön</a>
+        <header>
+            <h1>service.rs</h1>
+            <p class="file-path">crates/plugins/analytics/plugin_scout/src/service.rs</p>
+            <div class="structs-container">
+                <strong>Tanımlı Türler / Yapılar:</strong> <span class="badge badge-struct">OpportunityLogger</span> <span class="badge badge-struct">ScoutService</span> 
+            </div>
+        </header>
+
+        <section>
+            <h2>Fonksiyon Analizleri & Basit Anlatımlar</h2>
+            
+        <div class="card">
+            <h3><span class="badge">fn</span> lock</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>market: &amp;Arc&lt;Mutex&lt;MarketState&gt;&gt;</code> | <strong>Dönüş Tipi:</strong> <code>std::sync::MutexGuard&lt;&#x27;_, MarketState&gt;</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>market: &amp;Arc&lt;Mutex&lt;MarketState&gt;&gt;</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>std::sync::MutexGuard&lt;&#x27;_, MarketState&gt;</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. İşlemi tamamlayarak <code>std::sync::MutexGuard&lt;&#x27;_, MarketState&gt;</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON lock(market: &amp;Arc&lt;Mutex&lt;MarketState&gt;&gt;) -&gt; std::sync::MutexGuard&lt;&#x27;_, MarketState&gt;:
+    market.lock().unwrap_or_else(|poisoned| poisoned.into_inner())</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: lock"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> new</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>data: Arc&lt;Mutex&lt;Vec&lt;u8&gt;&gt;&gt;</code> | <strong>Dönüş Tipi:</strong> <code>Self</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Dükkanı sabah açarken kasayı sıfırlama, rafları düzeltme ve tabelayı asma işlemidir. Her şey temiz bir başlangıç için hazır hale getirilir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Yapıcı (constructor) fonksiyon olarak nesnenin bellekte ilk durumları ve yapılandırmalarıyla başlatılmasını (instantiation) sağlar.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON new(data: Arc&lt;Mutex&lt;Vec&lt;u8&gt;&gt;&gt;) -&gt; Self:
+    Self {
+    last_symbol: None,
+    last_verdict: None,
+    data,</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: new"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> log</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;mut self, opp: &amp;Opportunity</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>&amp;mut self, opp: &amp;Opportunity</code> verisini alır, kendi kurallarına göre işler ve sonucunda gerekli işlemi tamamlayan adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. İşlemi tamamlayarak <code>()</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON log(&amp;mut self, opp: &amp;Opportunity) -&gt; ():
+    EĞER self.last_symbol.as_deref() == Some(opp.symbol.as_str()) İSE:
+        &amp;&amp; self.last_verdict == Some(opp.verdict)
+        {
+        let msg = format!(
+        &quot;FIRSAT DEVAM: {} | {} | score={:.2} | eff={:.4} | spread={:.2}&quot;,
+        opp.symbol,
+        opp.verdict.as_str(),
+        opp.score,
+        opp.efficiency,
+        opp.spread_bps,
+        );
+        tracing::info!(&quot;{}&quot;, msg);
+        *self.data.lock().unwrap() = msg.into_bytes();
+        return;
+    self.last_symbol = Some(opp.symbol.clone());
+    self.last_verdict = Some(opp.verdict);
+    let msg = format!(
+    &quot;FIRSAT BULUNDU: {} | {} | score={:.2} | eff={:.4} | p_bps={:.2} | ticks={:.2} | ob_changes={:.2} | spread={:.2}&quot;,
+    opp.symbol,
+    opp.verdict.as_str(),
+    opp.score,
+    opp.efficiency,
+    opp.price_bps_per_s,
+    opp.price_ticks_per_s,
+    opp.ob_changes_per_s,
+    opp.spread_bps,
+    );
+    tracing::info!(&quot;{}&quot;, msg);
+    *self.data.lock().unwrap() = msg.into_bytes();</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: log"])
+    Start --> Cond1{"self.last_symbol.as_deref() == Some(opp.symbol.as_str())?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> new</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>data: Arc&lt;Mutex&lt;Vec&lt;u8&gt;&gt;&gt;</code> | <strong>Dönüş Tipi:</strong> <code>Self</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Dükkanı sabah açarken kasayı sıfırlama, rafları düzeltme ve tabelayı asma işlemidir. Her şey temiz bir başlangıç için hazır hale getirilir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Yapıcı (constructor) fonksiyon olarak nesnenin bellekte ilk durumları ve yapılandırmalarıyla başlatılmasını (instantiation) sağlar.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON new(data: Arc&lt;Mutex&lt;Vec&lt;u8&gt;&gt;&gt;) -&gt; Self:
+    Self {
+    client: Arc::new(BinanceClient::new()),
+    market: Arc::new(Mutex::new(MarketState::new(Vec::new()))),
+    running: Arc::new(AtomicBool::new(false)),
+    book_ticker_tasks: Vec::new(),
+    depth_tasks: Arc::new(Mutex::new(Vec::new())),
+    depth_manager_task: None,
+    analysis_task: None,
+    data,</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: new"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> start</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;mut self</code> | <strong>Dönüş Tipi:</strong> <code>Result&lt;(), reqwest::Error&gt;</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>&amp;mut self</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>Result&lt;(), reqwest::Error&gt;</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Listeyi veya veri kümesini sırayla döngüye alarak tarar.<br>3. İşlemi tamamlayarak <code>Result&lt;(), reqwest::Error&gt;</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON start(&amp;mut self) -&gt; Result&lt;(), reqwest::Error&gt;:
+    self.running.store(true, Ordering::SeqCst);
+    let symbols = self.client.fetch_symbols().await?;
+    self.market = Arc::new(Mutex::new(MarketState::new(symbols.clone())));
+    tracing::info!(&quot;{} sembol taraniyor...&quot;, symbols.len());
+    HER chunk in chunked(&amp;symbols, config::BOOK_TICKER_CHUNK_SIZE) İÇİN DÖNGÜ:
+        let client = Arc::clone(&amp;self.client);
+        let market = Arc::clone(&amp;self.market);
+        let handler: Handler = Box::new(move |data| {
+        let market = Arc::clone(&amp;market);
+        Box::pin(async move {
+        Self::handle_book_ticker(&amp;market, data).await;
+        })
+        });
+        self.book_ticker_tasks.push(tokio::spawn(async move {
+        client.stream_book_tickers(&amp;chunk, handler).await;
+        }));
+    let market = Arc::clone(&amp;self.market);
+    let client = Arc::clone(&amp;self.client);
+    let depth_tasks = Arc::clone(&amp;self.depth_tasks);
+    self.depth_manager_task = Some(tokio::spawn(async move {
+    Self::depth_manager_loop(&amp;market, &amp;client, &amp;depth_tasks).await;
+    }));
+    let market = Arc::clone(&amp;self.market);
+    let data = Arc::clone(&amp;self.data);
+    self.analysis_task = Some(tokio::spawn(async move {
+    Self::analysis_loop(&amp;market, data).await;
+    }));
+    Ok(())</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: start"])
+    Start --> Loop1["Döngü: chunk in chunked(&symbols, config::BOOK_TICKER_CHUNK_SIZE)"]
+    Loop1 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> handle_book_ticker</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>market: &amp;Arc&lt;Mutex&lt;MarketState&gt;&gt;, data: Value</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>market: &amp;Arc&lt;Mutex&lt;MarketState&gt;&gt;, data: Value</code> verisini alır, kendi kurallarına göre işler ve sonucunda gerekli işlemi tamamlayan adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. İşlemi tamamlayarak <code>()</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON handle_book_ticker(market: &amp;Arc&lt;Mutex&lt;MarketState&gt;&gt;, data: Value) -&gt; ():
+    let Some(symbol) = data[&quot;s&quot;].as_str() else { return };
+    let ts = event_ts(&amp;data);
+    let bid = data[&quot;b&quot;].as_str().and_then(|v| v.parse().ok()).unwrap_or(0.0);
+    let ask = data[&quot;a&quot;].as_str().and_then(|v| v.parse().ok()).unwrap_or(0.0);
+    let mut m = lock(market);
+    EĞER let Some(state) = m.states.get_mut(symbol) İSE:
+        state.update_book_ticker(ts, bid, ask);</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: handle_book_ticker"])
+    Start --> Cond1{"let Some(state) = m.states.get_mut(symbol)?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> EndNode(["Döndür: }"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> handle_depth</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>market: &amp;Arc&lt;Mutex&lt;MarketState&gt;&gt;, data: Value</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>market: &amp;Arc&lt;Mutex&lt;MarketState&gt;&gt;, data: Value</code> verisini alır, kendi kurallarına göre işler ve sonucunda gerekli işlemi tamamlayan adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. İşlemi tamamlayarak <code>()</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON handle_depth(market: &amp;Arc&lt;Mutex&lt;MarketState&gt;&gt;, data: Value) -&gt; ():
+    let Some(symbol) = data[&quot;s&quot;].as_str() else { return };
+    let ts = event_ts(&amp;data);
+    let bids = parse_levels(&amp;data[&quot;b&quot;]);
+    let asks = parse_levels(&amp;data[&quot;a&quot;]);
+    let mut m = lock(market);
+    EĞER !m.depth_symbols.contains(symbol) İSE:
+        return;
+    EĞER let Some(state) = m.states.get_mut(symbol) İSE:
+        state.update_depth(ts, &amp;bids, &amp;asks);</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: handle_depth"])
+    Start --> Cond1{"!m.depth_symbols.contains(symbol)?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"let Some(state) = m.states.get_mut(symbol)?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> EndNode(["Döndür: }"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> depth_manager_loop</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>market: &amp;Arc&lt;Mutex&lt;MarketState&gt;&gt;,
+        client: &amp;Arc&lt;BinanceClient&gt;,
+        depth_tasks: &amp;Arc&lt;Mutex&lt;Vec&lt;JoinHandle&lt;()&gt;&gt;&gt;&gt;,</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>market: &amp;Arc&lt;Mutex&lt;MarketState&gt;&gt;,
+        client: &amp;Arc&lt;BinanceClient&gt;,
+        depth_tasks: &amp;Arc&lt;Mutex&lt;Vec&lt;JoinHandle&lt;()&gt;&gt;&gt;&gt;,</code> verisini alır, kendi kurallarına göre işler ve sonucunda gerekli işlemi tamamlayan adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Listeyi veya veri kümesini sırayla döngüye alarak tarar.<br>4. İşlemi tamamlayarak <code>()</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON depth_manager_loop(market: &amp;Arc&lt;Mutex&lt;MarketState&gt;&gt;,
+        client: &amp;Arc&lt;BinanceClient&gt;,
+        depth_tasks: &amp;Arc&lt;Mutex&lt;Vec&lt;JoinHandle&lt;()&gt;&gt;&gt;&gt;,) -&gt; ():
+    let analyzer = OrderbookFluxAnalyzer::new();
+    let mut last_rebalance = 0.0f64;
+    loop {
+    let candidates: HashSet&lt;String&gt; = {
+    let mut m = lock(market);
+    analyzer.get_depth_candidates(&amp;mut m).into_iter().collect()
+    };
+    let depth_empty = lock(market).depth_symbols.is_empty();
+    EĞER candidates.is_empty() &amp;&amp; !depth_empty İSE:
+        tokio::time::sleep(Duration::from_secs(config::ANALYSIS_INTERVAL_SECS)).await;
+        continue;
+    let now = now_ts();
+    let mut should_rebalance = depth_empty;
+    EĞER !should_rebalance &amp;&amp; now - last_rebalance &gt;= config::DEPTH_REBALANCE_SECS İSE:
+        let current: HashSet&lt;String&gt; =
+        lock(market).depth_symbols.iter().cloned().collect();
+        should_rebalance = candidates != current;
+    EĞER should_rebalance İSE:
+        {
+        let mut tasks = depth_tasks.lock().unwrap_or_else(|p| p.into_inner());
+        HER task in tasks.drain(..) İÇİN DÖNGÜ:
+            task.abort();
+    lock(market).depth_symbols = candidates.clone();
+    last_rebalance = now;
+    EĞER !candidates.is_empty() İSE:
+        let mut sorted: Vec&lt;String&gt; = candidates.into_iter().collect();
+        sorted.sort();
+        tracing::info!(&quot;Depth izleme guncellendi: {} sembol&quot;, sorted.len());
+        HER chunk in chunked(&amp;sorted, config::DEPTH_STREAM_CHUNK_SIZE) İÇİN DÖNGÜ:
+            let market = Arc::clone(market);
+            let client = Arc::clone(client);
+            let handler: Handler = Box::new(move |data| {
+            let market = Arc::clone(&amp;market);
+            Box::pin(async move {
+            Self::handle_depth(&amp;market, data).await;
+            })
+            });
+            let handle = tokio::spawn(async move {
+            client.stream_partial_depths(&amp;chunk, handler).await;
+            });
+            depth_tasks
+            .lock()
+            .unwrap_or_else(|p| p.into_inner())
+            .push(handle);
+    tokio::time::sleep(Duration::from_secs(config::ANALYSIS_INTERVAL_SECS)).await;</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: depth_manager_loop"])
+    Start --> Cond1{"candidates.is_empty() && !depth_empty?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"!should_rebalance && now - last_rebalance &gt;= config::DEPTH_REBALANCE_SECS?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"should_rebalance?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> Loop4["Döngü: task in tasks.drain(..)"]
+    Loop4 --> Loop5["Döngü: chunk in chunked(&sorted, config::DEPTH_STREAM_CHUNK_SIZE)"]
+    Loop5 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> analysis_loop</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>market: &amp;Arc&lt;Mutex&lt;MarketState&gt;&gt;, data: Arc&lt;Mutex&lt;Vec&lt;u8&gt;&gt;&gt;</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>market: &amp;Arc&lt;Mutex&lt;MarketState&gt;&gt;, data: Arc&lt;Mutex&lt;Vec&lt;u8&gt;&gt;&gt;</code> verisini alır, kendi kurallarına göre işler ve sonucunda gerekli işlemi tamamlayan adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. İşlemi tamamlayarak <code>()</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON analysis_loop(market: &amp;Arc&lt;Mutex&lt;MarketState&gt;&gt;, data: Arc&lt;Mutex&lt;Vec&lt;u8&gt;&gt;&gt;) -&gt; ():
+    tracing::info!(
+    &quot;Isinma suresi ({}s) bekleniyor...&quot;,
+    config::WINDOW_SECONDS as u32
+    );
+    tokio::time::sleep(Duration::from_secs_f64(config::WINDOW_SECONDS)).await;
+    let analyzer = OrderbookFluxAnalyzer::new();
+    let mut logger = OpportunityLogger::new(data);
+    loop {
+    let best = {
+    let mut m = lock(market);
+    analyzer.get_best_opportunity(&amp;mut m)
+    };
+    EĞER let Some(opp) = best İSE:
+        logger.log(&amp;opp);
+    tokio::time::sleep(Duration::from_secs(config::ANALYSIS_INTERVAL_SECS)).await;</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: analysis_loop"])
+    Start --> Cond1{"let Some(opp) = best?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> stop</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;mut self</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>&amp;mut self</code> verisini alır, kendi kurallarına göre işler ve sonucunda gerekli işlemi tamamlayan adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Listeyi veya veri kümesini sırayla döngüye alarak tarar.<br>4. İşlemi tamamlayarak <code>()</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON stop(&amp;mut self) -&gt; ():
+    self.running.store(false, Ordering::SeqCst);
+    HER task in self.book_ticker_tasks.drain(..) İÇİN DÖNGÜ:
+        task.abort();
+    {
+    let mut tasks = self.depth_tasks.lock().unwrap_or_else(|p| p.into_inner());
+    HER task in tasks.drain(..) İÇİN DÖNGÜ:
+        task.abort();
+    EĞER let Some(task) = self.depth_manager_task.take() İSE:
+        task.abort();
+    EĞER let Some(task) = self.analysis_task.take() İSE:
+        task.abort();</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: stop"])
+    Start --> Cond1{"let Some(task) = self.depth_manager_task.take()?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"let Some(task) = self.analysis_task.take()?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Loop3["Döngü: task in self.book_ticker_tasks.drain(..)"]
+    Loop3 --> Loop4["Döngü: task in tasks.drain(..)"]
+    Loop4 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> parse_levels</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>value: &amp;Value</code> | <strong>Dönüş Tipi:</strong> <code>Vec&lt;(f64, f64)&gt;</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>value: &amp;Value</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>Vec&lt;(f64, f64)&gt;</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. İşlemi tamamlayarak <code>Vec&lt;(f64, f64)&gt;</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON parse_levels(value: &amp;Value) -&gt; Vec&lt;(f64, f64)&gt;:
+    value
+    .as_array()
+    .map(|arr| {
+    arr.iter()
+    .filter_map(|level| {
+    let price = level[0].as_str()?.parse().ok()?;
+    let qty = level[1].as_str()?.parse().ok()?;
+    Some((price, qty))
+    })
+    .collect()
+    })
+    .unwrap_or_default()</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: parse_levels"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        </section>
+
+        <details>
+            <summary>Orijinal Rust Kaynak Kodunu Göster</summary>
+            <pre><code>use std::collections::HashSet;
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::{Arc, Mutex};
+use std::time::Duration;
+
+use serde_json::Value;
+use tokio::task::JoinHandle;
+
+use crate::analyzer::OrderbookFluxAnalyzer;
+use crate::client::{BinanceClient, Handler};
+use crate::config;
+use crate::models::{MarketState, Opportunity, Verdict};
+use crate::utils::{chunked, event_ts, now_ts};
+
+fn lock(market: &amp;Arc&lt;Mutex&lt;MarketState&gt;&gt;) -&gt; std::sync::MutexGuard&lt;&#x27;_, MarketState&gt; {
+    market.lock().unwrap_or_else(|poisoned| poisoned.into_inner())
+}
+
+pub struct OpportunityLogger {
+    last_symbol: Option&lt;String&gt;,
+    last_verdict: Option&lt;Verdict&gt;,
+    data: Arc&lt;Mutex&lt;Vec&lt;u8&gt;&gt;&gt;,
+}
+
+impl OpportunityLogger {
+    pub fn new(data: Arc&lt;Mutex&lt;Vec&lt;u8&gt;&gt;&gt;) -&gt; Self {
+        Self {
+            last_symbol: None,
+            last_verdict: None,
+            data,
+        }
+    }
+
+    pub fn log(&amp;mut self, opp: &amp;Opportunity) {
+        if self.last_symbol.as_deref() == Some(opp.symbol.as_str())
+            &amp;&amp; self.last_verdict == Some(opp.verdict)
+        {
+            let msg = format!(
+                &quot;FIRSAT DEVAM: {} | {} | score={:.2} | eff={:.4} | spread={:.2}&quot;,
+                opp.symbol,
+                opp.verdict.as_str(),
+                opp.score,
+                opp.efficiency,
+                opp.spread_bps,
+            );
+            tracing::info!(&quot;{}&quot;, msg);
+            *self.data.lock().unwrap() = msg.into_bytes();
+            return;
+        }
+
+        self.last_symbol = Some(opp.symbol.clone());
+        self.last_verdict = Some(opp.verdict);
+        let msg = format!(
+            &quot;FIRSAT BULUNDU: {} | {} | score={:.2} | eff={:.4} | p_bps={:.2} | ticks={:.2} | ob_changes={:.2} | spread={:.2}&quot;,
+            opp.symbol,
+            opp.verdict.as_str(),
+            opp.score,
+            opp.efficiency,
+            opp.price_bps_per_s,
+            opp.price_ticks_per_s,
+            opp.ob_changes_per_s,
+            opp.spread_bps,
+        );
+        tracing::info!(&quot;{}&quot;, msg);
+        *self.data.lock().unwrap() = msg.into_bytes();
+    }
+}
+
+pub struct ScoutService {
+    client: Arc&lt;BinanceClient&gt;,
+    market: Arc&lt;Mutex&lt;MarketState&gt;&gt;,
+    running: Arc&lt;AtomicBool&gt;,
+    book_ticker_tasks: Vec&lt;JoinHandle&lt;()&gt;&gt;,
+    depth_tasks: Arc&lt;Mutex&lt;Vec&lt;JoinHandle&lt;()&gt;&gt;&gt;&gt;,
+    depth_manager_task: Option&lt;JoinHandle&lt;()&gt;&gt;,
+    analysis_task: Option&lt;JoinHandle&lt;()&gt;&gt;,
+    data: Arc&lt;Mutex&lt;Vec&lt;u8&gt;&gt;&gt;,
+}
+
+impl ScoutService {
+    pub fn new(data: Arc&lt;Mutex&lt;Vec&lt;u8&gt;&gt;&gt;) -&gt; Self {
+        Self {
+            client: Arc::new(BinanceClient::new()),
+            market: Arc::new(Mutex::new(MarketState::new(Vec::new()))),
+            running: Arc::new(AtomicBool::new(false)),
+            book_ticker_tasks: Vec::new(),
+            depth_tasks: Arc::new(Mutex::new(Vec::new())),
+            depth_manager_task: None,
+            analysis_task: None,
+            data,
+        }
+    }
+
+    pub async fn start(&amp;mut self) -&gt; Result&lt;(), reqwest::Error&gt; {
+        self.running.store(true, Ordering::SeqCst);
+
+        let symbols = self.client.fetch_symbols().await?;
+        self.market = Arc::new(Mutex::new(MarketState::new(symbols.clone())));
+        tracing::info!(&quot;{} sembol taraniyor...&quot;, symbols.len());
+
+        for chunk in chunked(&amp;symbols, config::BOOK_TICKER_CHUNK_SIZE) {
+            let client = Arc::clone(&amp;self.client);
+            let market = Arc::clone(&amp;self.market);
+
+            let handler: Handler = Box::new(move |data| {
+                let market = Arc::clone(&amp;market);
+                Box::pin(async move {
+                    Self::handle_book_ticker(&amp;market, data).await;
+                })
+            });
+
+            self.book_ticker_tasks.push(tokio::spawn(async move {
+                client.stream_book_tickers(&amp;chunk, handler).await;
+            }));
+        }
+
+        let market = Arc::clone(&amp;self.market);
+        let client = Arc::clone(&amp;self.client);
+        let depth_tasks = Arc::clone(&amp;self.depth_tasks);
+        self.depth_manager_task = Some(tokio::spawn(async move {
+            Self::depth_manager_loop(&amp;market, &amp;client, &amp;depth_tasks).await;
+        }));
+
+        let market = Arc::clone(&amp;self.market);
+        let data = Arc::clone(&amp;self.data);
+        self.analysis_task = Some(tokio::spawn(async move {
+            Self::analysis_loop(&amp;market, data).await;
+        }));
+
+        Ok(())
+    }
+
+    async fn handle_book_ticker(market: &amp;Arc&lt;Mutex&lt;MarketState&gt;&gt;, data: Value) {
+        let Some(symbol) = data[&quot;s&quot;].as_str() else { return };
+        let ts = event_ts(&amp;data);
+        let bid = data[&quot;b&quot;].as_str().and_then(|v| v.parse().ok()).unwrap_or(0.0);
+        let ask = data[&quot;a&quot;].as_str().and_then(|v| v.parse().ok()).unwrap_or(0.0);
+
+        let mut m = lock(market);
+        if let Some(state) = m.states.get_mut(symbol) {
+            state.update_book_ticker(ts, bid, ask);
+        }
+    }
+
+    async fn handle_depth(market: &amp;Arc&lt;Mutex&lt;MarketState&gt;&gt;, data: Value) {
+        let Some(symbol) = data[&quot;s&quot;].as_str() else { return };
+        let ts = event_ts(&amp;data);
+
+        let bids = parse_levels(&amp;data[&quot;b&quot;]);
+        let asks = parse_levels(&amp;data[&quot;a&quot;]);
+
+        let mut m = lock(market);
+        if !m.depth_symbols.contains(symbol) {
+            return;
+        }
+        if let Some(state) = m.states.get_mut(symbol) {
+            state.update_depth(ts, &amp;bids, &amp;asks);
+        }
+    }
+
+    async fn depth_manager_loop(
+        market: &amp;Arc&lt;Mutex&lt;MarketState&gt;&gt;,
+        client: &amp;Arc&lt;BinanceClient&gt;,
+        depth_tasks: &amp;Arc&lt;Mutex&lt;Vec&lt;JoinHandle&lt;()&gt;&gt;&gt;&gt;,
+    ) {
+        let analyzer = OrderbookFluxAnalyzer::new();
+        let mut last_rebalance = 0.0f64;
+
+        loop {
+            let candidates: HashSet&lt;String&gt; = {
+                let mut m = lock(market);
+                analyzer.get_depth_candidates(&amp;mut m).into_iter().collect()
+            };
+
+            let depth_empty = lock(market).depth_symbols.is_empty();
+            if candidates.is_empty() &amp;&amp; !depth_empty {
+                tokio::time::sleep(Duration::from_secs(config::ANALYSIS_INTERVAL_SECS)).await;
+                continue;
+            }
+
+            let now = now_ts();
+            let mut should_rebalance = depth_empty;
+            if !should_rebalance &amp;&amp; now - last_rebalance &gt;= config::DEPTH_REBALANCE_SECS {
+                let current: HashSet&lt;String&gt; =
+                    lock(market).depth_symbols.iter().cloned().collect();
+                should_rebalance = candidates != current;
+            }
+
+            if should_rebalance {
+                {
+                    let mut tasks = depth_tasks.lock().unwrap_or_else(|p| p.into_inner());
+                    for task in tasks.drain(..) {
+                        task.abort();
+                    }
+                }
+
+                lock(market).depth_symbols = candidates.clone();
+                last_rebalance = now;
+
+                if !candidates.is_empty() {
+                    let mut sorted: Vec&lt;String&gt; = candidates.into_iter().collect();
+                    sorted.sort();
+                    tracing::info!(&quot;Depth izleme guncellendi: {} sembol&quot;, sorted.len());
+
+                    for chunk in chunked(&amp;sorted, config::DEPTH_STREAM_CHUNK_SIZE) {
+                        let market = Arc::clone(market);
+                        let client = Arc::clone(client);
+                        let handler: Handler = Box::new(move |data| {
+                            let market = Arc::clone(&amp;market);
+                            Box::pin(async move {
+                                Self::handle_depth(&amp;market, data).await;
+                            })
+                        });
+                        let handle = tokio::spawn(async move {
+                            client.stream_partial_depths(&amp;chunk, handler).await;
+                        });
+                        depth_tasks
+                            .lock()
+                            .unwrap_or_else(|p| p.into_inner())
+                            .push(handle);
+                    }
+                }
+            }
+
+            tokio::time::sleep(Duration::from_secs(config::ANALYSIS_INTERVAL_SECS)).await;
+        }
+    }
+
+    async fn analysis_loop(market: &amp;Arc&lt;Mutex&lt;MarketState&gt;&gt;, data: Arc&lt;Mutex&lt;Vec&lt;u8&gt;&gt;&gt;) {
+        tracing::info!(
+            &quot;Isinma suresi ({}s) bekleniyor...&quot;,
+            config::WINDOW_SECONDS as u32
+        );
+        tokio::time::sleep(Duration::from_secs_f64(config::WINDOW_SECONDS)).await;
+
+        let analyzer = OrderbookFluxAnalyzer::new();
+        let mut logger = OpportunityLogger::new(data);
+
+        loop {
+            let best = {
+                let mut m = lock(market);
+                analyzer.get_best_opportunity(&amp;mut m)
+            };
+            if let Some(opp) = best {
+                logger.log(&amp;opp);
+            }
+            tokio::time::sleep(Duration::from_secs(config::ANALYSIS_INTERVAL_SECS)).await;
+        }
+    }
+
+    pub async fn stop(&amp;mut self) {
+        self.running.store(false, Ordering::SeqCst);
+
+        for task in self.book_ticker_tasks.drain(..) {
+            task.abort();
+        }
+        {
+            let mut tasks = self.depth_tasks.lock().unwrap_or_else(|p| p.into_inner());
+            for task in tasks.drain(..) {
+                task.abort();
+            }
+        }
+        if let Some(task) = self.depth_manager_task.take() {
+            task.abort();
+        }
+        if let Some(task) = self.analysis_task.take() {
+            task.abort();
+        }
+    }
+}
+
+fn parse_levels(value: &amp;Value) -&gt; Vec&lt;(f64, f64)&gt; {
+    value
+        .as_array()
+        .map(|arr| {
+            arr.iter()
+                .filter_map(|level| {
+                    let price = level[0].as_str()?.parse().ok()?;
+                    let qty = level[1].as_str()?.parse().ok()?;
+                    Some((price, qty))
+                })
+                .collect()
+        })
+        .unwrap_or_default()
+}
+</code></pre>
+        </details>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            flowchart: { curve: 'basis' }
+        });
+    </script>
+</body>
+</html>

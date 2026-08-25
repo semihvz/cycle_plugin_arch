@@ -1,0 +1,1787 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>lib.rs - Rust Analiz Dokümanı</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --border: #334155;
+            --code-bg: #090d16;
+            --verbal-bg: #131f37;
+            --analogy-bg: #1e1b4b;
+            --analogy-border: #818cf8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .back-link {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .back-link:hover { text-decoration: underline; }
+        h1 { font-size: 2rem; color: var(--accent); margin-bottom: 0.5rem; }
+        .file-path { font-family: 'Fira Code', monospace; color: var(--text-muted); font-size: 0.95rem; }
+        
+        .structs-container { margin: 1.5rem 0; }
+        .badge {
+            display: inline-block;
+            background: #0284c7;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-family: 'Fira Code', monospace;
+        }
+        .badge-struct { background: #7c3aed; }
+        
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .card h3 { color: var(--accent); margin-bottom: 0.5rem; font-size: 1.3rem; }
+        .card h4 { margin: 1.2rem 0 0.5rem 0; color: var(--text-muted); font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        .easy-analogy {
+            background: var(--analogy-bg);
+            border-left: 4px solid var(--analogy-border);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1rem;
+            color: #c7d2fe;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .verbal-explanation {
+            background: var(--verbal-bg);
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1.2rem;
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            margin-bottom: 1rem;
+        }
+        
+        .mermaid {
+            background: var(--code-bg);
+            padding: 1.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+        }
+        
+        details {
+            margin-top: 2rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Ana İndekse Dön</a>
+        <header>
+            <h1>lib.rs</h1>
+            <p class="file-path">crates/plugins/analytics/plugin_absorption/src/lib.rs</p>
+            <div class="structs-container">
+                <strong>Tanımlı Türler / Yapılar:</strong> <span class="badge badge-struct">AbsorptionEngine</span> <span class="badge badge-struct">AbsorptionEvent</span> <span class="badge badge-struct">PluginState</span> <span class="badge badge-struct">SymbolAbsorptionMetrics</span> <span class="badge badge-struct">TradeRecord</span> <span class="badge badge-struct">WallState</span> 
+            </div>
+        </header>
+
+        <section>
+            <h2>Fonksiyon Analizleri & Basit Anlatımlar</h2>
+            
+        <div class="card">
+            <h3><span class="badge">fn</span> new</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>Yok</code> | <strong>Dönüş Tipi:</strong> <code>Self</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Dükkanı sabah açarken kasayı sıfırlama, rafları düzeltme ve tabelayı asma işlemidir. Her şey temiz bir başlangıç için hazır hale getirilir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Yapıcı (constructor) fonksiyon olarak nesnenin bellekte ilk durumları ve yapılandırmalarıyla başlatılmasını (instantiation) sağlar.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON new() -&gt; Self:
+    Self {
+    min_absorption_usdt: AtomicU64::new(50000),   // $50,000 USDT default
+    min_wall_usdt: AtomicU64::new(40000),         // $40,000 USDT wall size
+    max_price_move_x1000: AtomicU64::new(50),     // 0.05% max price move
+    window_ms: AtomicU64::new(60000),             // 60 seconds
+    tracked_walls: Mutex::new(HashMap::new()),
+    trade_history: Mutex::new(HashMap::new()),
+    absorption_events: Mutex::new(VecDeque::new()),
+    symbol_metrics: Mutex::new(HashMap::new()),
+    event_counter: AtomicU64::new(1),</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: new"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> configure</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self, min_abs_usdt: Option&lt;u64&gt;, min_wall: Option&lt;u64&gt;, max_move_x1000: Option&lt;u64&gt;, window_ms: Option&lt;u64&gt;</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>&amp;self, min_abs_usdt: Option&lt;u64&gt;, min_wall: Option&lt;u64&gt;, max_move_x1000: Option&lt;u64&gt;, window_ms: Option&lt;u64&gt;</code> verisini alır, kendi kurallarına göre işler ve sonucunda gerekli işlemi tamamlayan adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. İşlemi tamamlayarak <code>()</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON configure(&amp;self, min_abs_usdt: Option&lt;u64&gt;, min_wall: Option&lt;u64&gt;, max_move_x1000: Option&lt;u64&gt;, window_ms: Option&lt;u64&gt;) -&gt; ():
+    EĞER let Some(u) = min_abs_usdt İSE:
+        EĞER u &gt; 0 İSE:
+            self.min_absorption_usdt.store(u, Ordering::Relaxed);
+    EĞER let Some(w) = min_wall İSE:
+        EĞER w &gt; 0 İSE:
+            self.min_wall_usdt.store(w, Ordering::Relaxed);
+    EĞER let Some(m) = max_move_x1000 İSE:
+        self.max_price_move_x1000.store(m, Ordering::Relaxed);
+    EĞER let Some(win) = window_ms İSE:
+        EĞER win &gt;= 5000 İSE:
+            self.window_ms.store(win, Ordering::Relaxed);</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: configure"])
+    Start --> Cond1{"let Some(u) = min_abs_usdt?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"u &gt; 0?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"let Some(w) = min_wall?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> process_trade_payload</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self, json_data: &amp;Value, now_ms: u64</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Gerçek para harcamadan önce Monopoly oyunundaki sanal para ile alışveriş yapıp taktiklerin çalışıp çalışmadığını test etme işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Gerçek piyasa emir defteri verisini alarak gecikme, komisyon ve kuyruk sırasını hesaba katan sanal alım-satım infazını gerçekleştirir.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON process_trade_payload(&amp;self, json_data: &amp;Value, now_ms: u64) -&gt; ():
+    let mut trades_guard = self.trade_history.lock().unwrap();
+    let mut walls_guard = self.tracked_walls.lock().unwrap();
+    EĞER let Some(obj) = json_data.as_object() İSE:
+        HER (symbol, item) in obj.iter() İÇİN DÖNGÜ:
+            let trade_id = parse_i64(&amp;item[&quot;trade_id&quot;]);
+            let price = parse_f64(&amp;item[&quot;price&quot;]);
+            let quantity = parse_f64(&amp;item[&quot;quantity&quot;]);
+            let is_buyer_maker = item[&quot;buyer_is_maker&quot;].as_bool().unwrap_or(false);
+            let event_time = parse_u64(&amp;item[&quot;event_time&quot;])
+            .or_else(|| parse_u64(&amp;item[&quot;local_recv_time_ms&quot;]))
+            .unwrap_or(now_ms);
+            EĞER price &gt; 0.0 &amp;&amp; quantity &gt; 0.0 İSE:
+                let usdt_val = price * quantity;
+                let deque = trades_guard.entry(symbol.clone()).or_insert_with(VecDeque::new);
+                EĞER deque.back().map_or(true, |last| last.trade_id != trade_id || trade_id == 0) İSE:
+                    deque.push_back(TradeRecord {
+                    trade_id,
+                    price,
+                    quantity,
+                    usdt_value: usdt_val,
+                    is_buyer_maker,
+                    timestamp_ms: event_time,
+                    });
+                    EĞER deque.len() &gt; 1000 İSE:
+                        deque.pop_front();
+                    // Attribute executed trade to matching wall price levels
+                    EĞER let Some(symbol_walls) = walls_guard.get_mut(symbol) İSE:
+                        let tolerance = price * 0.0005; // 0.05% band
+                        HER wall in symbol_walls.values_mut() İÇİN DÖNGÜ:
+                            EĞER (wall.price - price).abs() &lt;= tolerance İSE:
+                                wall.executed_qty += quantity;
+                                wall.executed_usdt += usdt_val;
+                                wall.last_seen_ms = event_time;</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: process_trade_payload"])
+    Start --> Cond1{"let Some(obj) = json_data.as_object()?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"price &gt; 0.0 && quantity &gt; 0.0?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"deque.back().map_or(true, |last| last.trade_id != trade_id || trade_id == 0)?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> Loop4["Döngü: (symbol, item) in obj.iter()"]
+    Loop4 --> Loop5["Döngü: wall in symbol_walls.values_mut()"]
+    Loop5 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> process_depth_payload</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self, json_data: &amp;Value, now_ms: u64</code> | <strong>Dönüş Tipi:</strong> <code>String</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>&amp;self, json_data: &amp;Value, now_ms: u64</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>String</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Listeyi veya veri kümesini sırayla döngüye alarak tarar.<br>4. İşlemi tamamlayarak <code>String</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON process_depth_payload(&amp;self, json_data: &amp;Value, now_ms: u64) -&gt; String:
+    let min_abs_usdt = self.min_absorption_usdt.load(Ordering::Relaxed) as f64;
+    let min_wall_usdt = self.min_wall_usdt.load(Ordering::Relaxed) as f64;
+    let max_move_pct = self.max_price_move_x1000.load(Ordering::Relaxed) as f64 / 1000.0;
+    let window_ms = self.window_ms.load(Ordering::Relaxed);
+    let mut walls_guard = self.tracked_walls.lock().unwrap();
+    let mut events_guard = self.absorption_events.lock().unwrap();
+    let mut metrics_guard = self.symbol_metrics.lock().unwrap();
+    EĞER let Some(obj) = json_data.as_object() İSE:
+        HER (symbol, depth_item) in obj.iter() İÇİN DÖNGÜ:
+            let event_time = parse_u64(&amp;depth_item[&quot;event_time&quot;])
+            .or_else(|| parse_u64(&amp;depth_item[&quot;local_recv_time_ms&quot;]))
+            .unwrap_or(now_ms);
+            let window_start_ms = event_time.saturating_sub(window_ms);
+            let bids_arr = depth_item[&quot;bids&quot;].as_array();
+            let asks_arr = depth_item[&quot;asks&quot;].as_array();
+            let mut current_snapshot_keys = std::collections::HashSet::new();
+            let symbol_walls = walls_guard.entry(symbol.clone()).or_insert_with(HashMap::new);
+            // Prune old tracked walls
+            symbol_walls.retain(|_, w| w.last_seen_ms &gt;= window_start_ms);
+            // Ingest Bids
+            EĞER let Some(bids) = bids_arr İSE:
+                HER item in bids İÇİN DÖNGÜ:
+                    EĞER let Some((p, q)) = parse_price_qty(item) İSE:
+                        let usdt_val = p * q;
+                        let key = format!(&quot;BID_{:.6}&quot;, p);
+                        EĞER usdt_val &gt;= min_wall_usdt İSE:
+                            current_snapshot_keys.insert(key.clone());
+                            update_or_insert_wall(
+                            symbol_walls,
+                            key,
+                            symbol.clone(),
+                            &quot;BID&quot;.to_string(),
+                            p,
+                            q,
+                            event_time,
+                            );
+            // Ingest Asks
+            EĞER let Some(asks) = asks_arr İSE:
+                HER item in asks İÇİN DÖNGÜ:
+                    EĞER let Some((p, q)) = parse_price_qty(item) İSE:
+                        let usdt_val = p * q;
+                        let key = format!(&quot;ASK_{:.6}&quot;, p);
+                        EĞER usdt_val &gt;= min_wall_usdt İSE:
+                            current_snapshot_keys.insert(key.clone());
+                            update_or_insert_wall(
+                            symbol_walls,
+                            key,
+                            symbol.clone(),
+                            &quot;ASK&quot;.to_string(),
+                            p,
+                            q,
+                            event_time,
+                            );
+            // Evaluate Absorption &amp; Wall Confirmation
+            let mut evaluated_keys = Vec::new();
+            HER (key, wall) in symbol_walls.iter_mut() İÇİN DÖNGÜ:
+                let is_present = current_snapshot_keys.contains(key);
+                // Confirmation Condition: Heavy trade volume executed against the wall (e.g. $50,000+)
+                EĞER wall.executed_usdt &gt;= min_abs_usdt İSE:
+                    EĞER is_present &amp;&amp; !wall.is_alerted İSE:
+                        // Wall survived market attacks and absorbed volume -&gt; CONFIRMED GENUINE WALL
+                        wall.wall_status = &quot;CONFIRMED_GENUINE&quot;.to_string();
+                        wall.is_alerted = true;
+                        let side = if wall.side == &quot;BID&quot; {
+                        &quot;BID_ABSORPTION&quot; // Market Sells absorbed by Bid (Bullish Support confirmed)
+                        } else {
+                        &quot;ASK_ABSORPTION&quot; // Market Buys absorbed by Ask (Bearish Resistance confirmed)
+                        };
+                        let score = calculate_absorption_score(wall.executed_usdt, wall.initial_usdt);
+                        let alert_level = classify_alert_level(score, wall.executed_usdt);
+                        let event_id = self.event_counter.fetch_add(1, Ordering::Relaxed);
+                        let desc = format!(
+                        &quot;GENUINE WALL ABSORPTION: Aggressive trades hit the wall at price {:.4} with ${:.0} volume, but the wall WAS NOT BROKEN and was absorbed! ({})&quot;,
+                        wall.price,
+                        wall.executed_usdt,
+                        side
+                        );
+                        let event = AbsorptionEvent {
+                        id: event_id,
+                        symbol: symbol.clone(),
+                        side: side.to_string(),
+                        price: wall.price,
+                        absorbed_qty: wall.executed_qty,
+                        absorbed_usdt: wall.executed_usdt,
+                        wall_status: &quot;CONFIRMED_GENUINE&quot;.to_string(),
+                        price_change_pct: max_move_pct,
+                        absorption_score: score,
+                        alert_level,
+                        event_time_ms: event_time,
+                        description: desc,
+                        };
+                        events_guard.push_back(event);
+                        EĞER events_guard.len() &gt; 50 İSE:
+                            events_guard.pop_front();
+                        let m = metrics_guard.entry(symbol.clone()).or_insert_with(|| SymbolAbsorptionMetrics {
+                        symbol: symbol.clone(),
+                        ..Default::default()
+                        });
+                        m.total_absorption_events += 1;
+                        m.confirmed_walls_count += 1;
+                        EĞER side == &quot;BID_ABSORPTION&quot; İSE:
+                            m.total_bid_absorptions += 1;
+                            } else {
+                            m.total_ask_absorptions += 1;
+                        m.total_absorbed_usdt += wall.executed_usdt;
+                        m.last_event_time_ms = event_time;
+                // Handles walls that disappeared/vanished
+                EĞER !is_present İSE:
+                    evaluated_keys.push(key.clone());
+                    EĞER wall.executed_qty &gt;= wall.initial_qty * 0.8 İSE:
+                        wall.wall_status = &quot;BROKEN&quot;.to_string(); // Wall was eaten / broken by market orders
+                        } else {
+                        wall.wall_status = &quot;SPOOFED&quot;.to_string(); // Wall was pulled before being executed
+            // Remove vanished walls
+            HER k in evaluated_keys İÇİN DÖNGÜ:
+                symbol_walls.remove(&amp;k);
+    // Update active walls metrics
+    HER (symbol, symbol_walls) in walls_guard.iter() İÇİN DÖNGÜ:
+        let active_count = symbol_walls.len();
+        let confirmed_count = symbol_walls.values().filter(|w| w.wall_status == &quot;CONFIRMED_GENUINE&quot;).count();
+        let m = metrics_guard.entry(symbol.clone()).or_insert_with(|| SymbolAbsorptionMetrics {
+        symbol: symbol.clone(),
+        ..Default::default()
+        });
+        m.active_walls_count = active_count;
+        m.confirmed_walls_count = confirmed_count;
+    // Safely drop all mutex locks before formatting report
+    drop(metrics_guard);
+    drop(events_guard);
+    drop(walls_guard);
+    self.get_formatted_report()</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: process_depth_payload"])
+    Start --> Cond1{"let Some(obj) = json_data.as_object()?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"let Some(bids) = bids_arr?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"let Some((p, q)) = parse_price_qty(item)?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> Loop4["Döngü: (symbol, depth_item) in obj.iter()"]
+    Loop4 --> Loop5["Döngü: item in bids"]
+    Loop5 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> get_formatted_report</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self</code> | <strong>Dönüş Tipi:</strong> <code>String</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>&amp;self</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>String</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Listeyi veya veri kümesini sırayla döngüye alarak tarar.<br>4. Farklı durum senaryolarına göre akışı uygun kola yönlendirir.<br>5. İşlemi tamamlayarak <code>String</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON get_formatted_report(&amp;self) -&gt; String:
+    let metrics_guard = self.symbol_metrics.lock().unwrap();
+    let events_guard = self.absorption_events.lock().unwrap();
+    let walls_guard = self.tracked_walls.lock().unwrap();
+    let min_abs_usdt = self.min_absorption_usdt.load(Ordering::Relaxed);
+    let min_wall_usdt = self.min_wall_usdt.load(Ordering::Relaxed);
+    let mut sorted_symbols: Vec&lt;String&gt; = metrics_guard.keys().cloned().collect();
+    sorted_symbols.sort();
+    let mut report = String::new();
+    report.push_str(&quot;============================================================\n&quot;);
+    report.push_str(&amp;format!(
+    &quot;🛡️ BINANCE FUTURES ABSORPTION &amp; WALL CONFIRMATION PANEL\n\
+    ├─ Min Absorption Vol: ${} USDT | Min Wall Size: ${} USDT\n&quot;,
+    min_abs_usdt, min_wall_usdt
+    ));
+    report.push_str(&quot;============================================================\n&quot;);
+    EĞER sorted_symbols.is_empty() İSE:
+        report.push_str(&quot;No absorption or confirmed genuine walls detected yet.\n&quot;);
+        } else {
+        HER symbol in &amp;sorted_symbols İÇİN DÖNGÜ:
+            EĞER let Some(m) = metrics_guard.get(symbol) İSE:
+                let active_count = walls_guard.get(symbol).map(|w| w.len()).unwrap_or(0);
+                report.push_str(&amp;format!(
+                &quot;[{}]  Tracked Walls: {} (Confirmed Genuine: {}) | Total Absorption: {} (Bullish: {} | Bearish: {})\n\
+                ├─ Total Absorbed Vol: ${:.2}\n\n&quot;,
+                symbol,
+                active_count,
+                m.confirmed_walls_count,
+                m.total_absorption_events,
+                m.total_bid_absorptions,
+                m.total_ask_absorptions,
+                m.total_absorbed_usdt
+                ));
+    report.push_str(&quot;------------------------------------------------------------\n&quot;);
+    report.push_str(&quot;🛡️ RECENT CONFIRMED ABSORPTION &amp; WALL ALERTS (Last 5 Events):\n&quot;);
+    report.push_str(&quot;------------------------------------------------------------\n&quot;);
+    EĞER events_guard.is_empty() İSE:
+        report.push_str(&quot;No confirmed wall absorption events recorded yet.\n&quot;);
+        } else {
+        HER ev in events_guard.iter().rev().take(5) İÇİN DÖNGÜ:
+            let badge = match ev.alert_level.as_str() {
+            &quot;CRITICAL&quot; =&gt; &quot;🛑 [CRITICAL]&quot;,
+            &quot;HIGH&quot; =&gt; &quot;🔴 [HIGH]&quot;,
+            &quot;MEDIUM&quot; =&gt; &quot;🟠 [MEDIUM]&quot;,
+            _ =&gt; &quot;🟡 [INFO]&quot;,
+            };
+            let side_label = if ev.side == &quot;BID_ABSORPTION&quot; {
+            &quot;🟢 BULLISH ABSORPTION (Buy Support Confirmed)&quot;
+            } else {
+            &quot;🔴 BEARISH ABSORPTION (Sell Resistance Confirmed)&quot;
+            };
+            report.push_str(&amp;format!(
+            &quot;{} #{} [{}] {} Price: {:.8}\n\
+            │   ├─ Absorbed Aggressive Vol: ${:.8} | Status: {}\n\
+            │   ├─ Absorption Score: {:.8}\n\
+            │   └─ Description: {}\n&quot;,
+            badge,
+            ev.id,
+            ev.symbol,
+            side_label,
+            ev.price,
+            ev.absorbed_usdt,
+            ev.wall_status,
+            ev.absorption_score,
+            ev.description
+            ));
+    report.push_str(&quot;============================================================\n&quot;);
+    report</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: get_formatted_report"])
+    Start --> Cond1{"sorted_symbols.is_empty()?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"let Some(m) = metrics_guard.get(symbol)?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"events_guard.is_empty()?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> Loop4["Döngü: symbol in &sorted_symbols"]
+    Loop4 --> Loop5["Döngü: ev in events_guard.iter().rev().take(5)"]
+    Loop5 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> get_metrics_json</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self</code> | <strong>Dönüş Tipi:</strong> <code>String</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>&amp;self</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>String</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. İşlemi tamamlayarak <code>String</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON get_metrics_json(&amp;self) -&gt; String:
+    let metrics_guard = self.symbol_metrics.lock().unwrap();
+    let events_guard = self.absorption_events.lock().unwrap();
+    let json_out = serde_json::json!({
+    &quot;metrics&quot;: *metrics_guard,
+    &quot;recent_events&quot;: *events_guard,
+    });
+    serde_json::to_string_pretty(&amp;json_out).unwrap_or_else(|_| &quot;{}&quot;.to_string())</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: get_metrics_json"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> update_or_insert_wall</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>symbol_walls: &amp;mut HashMap&lt;String, WallState&gt;,
+    key: String,
+    symbol: String,
+    side: String,
+    price: f64,
+    visible_qty: f64,
+    now_ms: u64,</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>symbol_walls: &amp;mut HashMap&lt;String, WallState&gt;,
+    key: String,
+    symbol: String,
+    side: String,
+    price: f64,
+    visible_qty: f64,
+    now_ms: u64,</code> verisini alır, kendi kurallarına göre işler ve sonucunda gerekli işlemi tamamlayan adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. İşlemi tamamlayarak <code>()</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON update_or_insert_wall(symbol_walls: &amp;mut HashMap&lt;String, WallState&gt;,
+    key: String,
+    symbol: String,
+    side: String,
+    price: f64,
+    visible_qty: f64,
+    now_ms: u64,) -&gt; ():
+    let visible_usdt = price * visible_qty;
+    symbol_walls.entry(key).and_modify(|wall| {
+    wall.current_qty = visible_qty;
+    wall.current_usdt = visible_usdt;
+    wall.last_seen_ms = now_ms;
+    }).or_insert(WallState {
+    symbol,
+    side,
+    price,
+    initial_qty: visible_qty,
+    initial_usdt: visible_usdt,
+    current_qty: visible_qty,
+    current_usdt: visible_usdt,
+    executed_qty: 0.0,
+    executed_usdt: 0.0,
+    first_seen_ms: now_ms,
+    last_seen_ms: now_ms,
+    wall_status: &quot;TESTING&quot;.to_string(),
+    is_alerted: false,
+    });</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: update_or_insert_wall"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> calculate_absorption_score</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>executed_usdt: f64, initial_usdt: f64</code> | <strong>Dönüş Tipi:</strong> <code>f64</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>executed_usdt: f64, initial_usdt: f64</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>f64</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. İşlemi tamamlayarak <code>f64</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON calculate_absorption_score(executed_usdt: f64, initial_usdt: f64) -&gt; f64:
+    let exec_factor = (executed_usdt / 200_000.0).clamp(0.2, 1.0);
+    let size_factor = (initial_usdt / 100_000.0).clamp(0.2, 1.0);
+    (exec_factor * 0.6 + size_factor * 0.4).clamp(0.0, 1.0)</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: calculate_absorption_score"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> classify_alert_level</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>score: f64, executed_usdt: f64</code> | <strong>Dönüş Tipi:</strong> <code>String</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>score: f64, executed_usdt: f64</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>String</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. İşlemi tamamlayarak <code>String</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON classify_alert_level(score: f64, executed_usdt: f64) -&gt; String:
+    EĞER score &gt;= 0.85 || executed_usdt &gt;= 400_000.0 İSE:
+        &quot;CRITICAL&quot;.to_string()
+        } else if score &gt;= 0.65 || executed_usdt &gt;= 150_000.0 {
+        &quot;HIGH&quot;.to_string()
+        } else if score &gt;= 0.45 {
+        &quot;MEDIUM&quot;.to_string()
+        } else {
+        &quot;INFO&quot;.to_string()</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: classify_alert_level"])
+    Start --> Cond1{"score &gt;= 0.85 || executed_usdt &gt;= 400_000.0?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"score &gt;= 0.65 || executed_usdt &gt;= 150_000.0?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"score &gt;= 0.45?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> parse_f64</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>val: &amp;Value</code> | <strong>Dönüş Tipi:</strong> <code>f64</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>val: &amp;Value</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>f64</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Farklı durum senaryolarına göre akışı uygun kola yönlendirir.<br>3. İşlemi tamamlayarak <code>f64</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON parse_f64(val: &amp;Value) -&gt; f64:
+    DURUM KONTROLÜ (val):
+        Value::Number(n) =&gt; n.as_f64().unwrap_or(0.0),
+        Value::String(s) =&gt; s.parse::&lt;f64&gt;().unwrap_or(0.0),
+        _ =&gt; 0.0,</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: parse_f64"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> parse_i64</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>val: &amp;Value</code> | <strong>Dönüş Tipi:</strong> <code>i64</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>val: &amp;Value</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>i64</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Farklı durum senaryolarına göre akışı uygun kola yönlendirir.<br>3. İşlemi tamamlayarak <code>i64</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON parse_i64(val: &amp;Value) -&gt; i64:
+    DURUM KONTROLÜ (val):
+        Value::Number(n) =&gt; n.as_i64().unwrap_or(0),
+        Value::String(s) =&gt; s.parse::&lt;i64&gt;().unwrap_or(0),
+        _ =&gt; 0,</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: parse_i64"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> parse_u64</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>val: &amp;Value</code> | <strong>Dönüş Tipi:</strong> <code>Option&lt;u64&gt;</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>val: &amp;Value</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>Option&lt;u64&gt;</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Farklı durum senaryolarına göre akışı uygun kola yönlendirir.<br>3. İşlemi tamamlayarak <code>Option&lt;u64&gt;</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON parse_u64(val: &amp;Value) -&gt; Option&lt;u64&gt;:
+    DURUM KONTROLÜ (val):
+        Value::Number(n) =&gt; n.as_u64(),
+        Value::String(s) =&gt; s.parse::&lt;u64&gt;().ok(),
+        _ =&gt; None,</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: parse_u64"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> parse_price_qty</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>item: &amp;Value</code> | <strong>Dönüş Tipi:</strong> <code>Option&lt;(f64, f64)&gt;</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>item: &amp;Value</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>Option&lt;(f64, f64)&gt;</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. İşlemi tamamlayarak <code>Option&lt;(f64, f64)&gt;</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON parse_price_qty(item: &amp;Value) -&gt; Option&lt;(f64, f64)&gt;:
+    EĞER let Some(arr) = item.as_array() İSE:
+        EĞER arr.len() &gt;= 2 İSE:
+            let p = parse_f64(&amp;arr[0]);
+            let q = parse_f64(&amp;arr[1]);
+            EĞER p &gt; 0.0 &amp;&amp; q &gt; 0.0 İSE:
+                DÖNDÜR Some((p, q))
+    None</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: parse_price_qty"])
+    Start --> Cond1{"let Some(arr) = item.as_array()?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"arr.len() &gt;= 2?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"p &gt; 0.0 && q &gt; 0.0?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> EndNode(["Döndür: Some((p, q))"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> init_plugin</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>state_out: *mut *mut c_void,</code> | <strong>Dönüş Tipi:</strong> <code>unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>state_out: *mut *mut c_void,</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. İşlemi tamamlayarak <code>unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON init_plugin(state_out: *mut *mut c_void,) -&gt; unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize:
+    let engine = Arc::new(AbsorptionEngine::new());
+    let initial_report = engine.get_formatted_report();
+    let state = Box::new(PluginState {
+    is_running: Arc::new(AtomicBool::new(false)),
+    engine,
+    data: Arc::new(Mutex::new(initial_report.into_bytes())),
+    });
+    *state_out = Box::into_raw(state) as *mut c_void;
+    handle_endpoint</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: init_plugin"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> handle_endpoint</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>plugin_state: *mut c_void,
+    endpoint_id: u32,
+    payload: *const u8,
+    payload_len: usize,
+    out_buf: *mut u8,
+    out_max_len: usize,</code> | <strong>Dönüş Tipi:</strong> <code>usize</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>plugin_state: *mut c_void,
+    endpoint_id: u32,
+    payload: *const u8,
+    payload_len: usize,
+    out_buf: *mut u8,
+    out_max_len: usize,</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>usize</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Farklı durum senaryolarına göre akışı uygun kola yönlendirir.<br>4. İşlemi tamamlayarak <code>usize</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON handle_endpoint(plugin_state: *mut c_void,
+    endpoint_id: u32,
+    payload: *const u8,
+    payload_len: usize,
+    out_buf: *mut u8,
+    out_max_len: usize,) -&gt; usize:
+    EĞER plugin_state.is_null() İSE:
+        DÖNDÜR 0
+    let state = &amp;*(plugin_state as *const PluginState);
+    DURUM KONTROLÜ (endpoint_id):
+        0 =&gt; { // Start
+        state.is_running.store(true, Ordering::Relaxed);
+        EĞER payload_len &gt; 0 &amp;&amp; !payload.is_null() İSE:
+            let slice = std::slice::from_raw_parts(payload, payload_len);
+            EĞER let Ok(config) = serde_json::from_slice::&lt;Value&gt;(slice) İSE:
+                let params = config.get(&quot;plugin_params&quot;).unwrap_or(&amp;config);
+                let min_abs_usdt = params.get(&quot;min_absorption_usdt&quot;).and_then(|v| v.as_u64());
+                let min_wall = params.get(&quot;min_wall_usdt&quot;).and_then(|v| v.as_u64());
+                let max_move = params.get(&quot;max_price_move_x1000&quot;).and_then(|v| v.as_u64());
+                let window_ms = params.get(&quot;window_ms&quot;).and_then(|v| v.as_u64());
+                state.engine.configure(min_abs_usdt, min_wall, max_move, window_ms);
+        0
+    1 =&gt; { // Stop
+    state.is_running.store(false, Ordering::Relaxed);
+    0
+    2 =&gt; { // IsWorking
+    let running = state.is_running.load(Ordering::Relaxed);
+    EĞER out_max_len &gt;= 1 &amp;&amp; !out_buf.is_null() İSE:
+        *out_buf = if running { 1 } else { 0 };
+        1
+        } else {
+        EĞER running İSE:
+    3 =&gt; { // DataValid
+    1
+    4 | 5 =&gt; { // DataMonitor (4) / RawData (5)
+    let guard = state.data.lock().unwrap();
+    let len = guard.len().min(out_max_len);
+    EĞER len &gt; 0 &amp;&amp; !out_buf.is_null() İSE:
+        std::ptr::copy_nonoverlapping(guard.as_ptr(), out_buf, len);
+    len
+    6 =&gt; { // Inbox (Data routed from FlowEngine)
+    EĞER !state.is_running.load(Ordering::Relaxed) İSE:
+        DÖNDÜR 0
+    EĞER payload_len &gt; 32 &amp;&amp; !payload.is_null() İSE:
+        let slice = std::slice::from_raw_parts(payload, payload_len);
+        let header = &amp;slice[0..32];
+        let stream_id = std::str::from_utf8(header)
+        .unwrap_or(&quot;&quot;)
+        .trim_matches(char::from(0))
+        .trim()
+        .to_string();
+        let now_ms = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap_or_default()
+        .as_millis() as u64;
+        EĞER stream_id.contains(&quot;trades&quot;) || stream_id.contains(&quot;aggtrades&quot;) İSE:
+            EĞER let Ok(json_data) = serde_json::from_slice::&lt;Value&gt;(&amp;slice[32..]) İSE:
+                state.engine.process_trade_payload(&amp;json_data, now_ms);
+            } else if stream_id.contains(&quot;depth&quot;) {
+            EĞER let Ok(json_data) = serde_json::from_slice::&lt;Value&gt;(&amp;slice[32..]) İSE:
+                let report = state.engine.process_depth_payload(&amp;json_data, now_ms);
+                let mut data_guard = state.data.lock().unwrap();
+                *data_guard = report.into_bytes();
+    0
+    _ =&gt; 0,</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: handle_endpoint"])
+    Start --> Cond1{"plugin_state.is_null()?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"payload_len &gt; 0 && !payload.is_null()?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"let Ok(config) = serde_json::from_slice::&lt;Value&gt;(slice)?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> EndNode(["Döndür: 0"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> test_absorption_and_wall_confirmation_simulation</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>Yok</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan hiçbir girdi almadan verisini alır, kendi kurallarına göre işler ve sonucunda gerekli işlemi tamamlayan adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. İşlemi tamamlayarak <code>()</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON test_absorption_and_wall_confirmation_simulation() -&gt; ():
+    let engine = AbsorptionEngine::new();
+    engine.configure(Some(50000), Some(40000), Some(50), Some(60000));
+    let t0 = 1000000u64;
+    // Step 1: Initial Depth Snapshot -&gt; Bid Wall at 100.0 ($100,000 USDT)
+    let depth_snap1 = serde_json::json!({
+    &quot;BTCUSDT&quot;: {
+    &quot;bids&quot;: [
+    [&quot;100.0&quot;, &quot;1000.0&quot;] // $100,000 USDT wall
+    ],
+    &quot;asks&quot;: [
+    [&quot;100.5&quot;, &quot;10.0&quot;]
+    ],
+    &quot;event_time&quot;: t0
+    });
+    engine.process_depth_payload(&amp;depth_snap1, t0);
+    // Verify tracked wall status
+    {
+    let walls = engine.tracked_walls.lock().unwrap();
+    let btc_walls = walls.get(&quot;BTCUSDT&quot;).unwrap();
+    assert_eq!(btc_walls.len(), 1);
+    assert_eq!(btc_walls.get(&quot;BID_100.000000&quot;).unwrap().wall_status, &quot;TESTING&quot;);
+    // Step 2: Ingest aggressive Market Sells hitting 100.0 ($60,000 USDT executed)
+    let trade_data = serde_json::json!({
+    &quot;BTCUSDT&quot;: {
+    &quot;trade_id&quot;: 301,
+    &quot;price&quot;: &quot;100.0&quot;,
+    &quot;quantity&quot;: &quot;600.0&quot;, // $60,000 executed &gt;= $50,000 min
+    &quot;buyer_is_maker&quot;: true,
+    &quot;event_time&quot;: t0 + 100
+    });
+    engine.process_trade_payload(&amp;trade_data, t0 + 100);
+    // Step 3: Ingest Depth Snapshot 2 -&gt; Bid Wall at 100.0 STILL SURVIVES!
+    let depth_snap2 = serde_json::json!({
+    &quot;BTCUSDT&quot;: {
+    &quot;bids&quot;: [
+    [&quot;100.0&quot;, &quot;400.0&quot;] // Remaining $40,000 USDT wall
+    ],
+    &quot;asks&quot;: [
+    [&quot;100.5&quot;, &quot;10.0&quot;]
+    ],
+    &quot;event_time&quot;: t0 + 200
+    });
+    let report = engine.process_depth_payload(&amp;depth_snap2, t0 + 200);
+    assert!(report.contains(&quot;BINANCE FUTURES ABSORPTION &amp; WALL CONFIRMATION PANEL&quot;));
+    assert!(report.contains(&quot;BTCUSDT&quot;));
+    // Check absorption event and confirmed status
+    let events = engine.absorption_events.lock().unwrap();
+    assert_eq!(events.len(), 1);
+    let event = &amp;events[0];
+    assert_eq!(event.symbol, &quot;BTCUSDT&quot;);
+    assert_eq!(event.side, &quot;BID_ABSORPTION&quot;);
+    assert_eq!(event.price, 100.0);
+    assert_eq!(event.absorbed_usdt, 60000.0);
+    assert_eq!(event.wall_status, &quot;CONFIRMED_GENUINE&quot;);
+    assert!(event.absorption_score &gt; 0.5);</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: test_absorption_and_wall_confirmation_simulation"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        </section>
+
+        <details>
+            <summary>Orijinal Rust Kaynak Kodunu Göster</summary>
+            <pre><code>use std::collections::{HashMap, VecDeque};
+use std::ffi::c_void;
+use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
+use std::sync::{Arc, Mutex};
+use std::time::{SystemTime, UNIX_EPOCH};
+use serde::{Deserialize, Serialize};
+use serde_json::Value;
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct TradeRecord {
+    pub trade_id: i64,
+    pub price: f64,
+    pub quantity: f64,
+    pub usdt_value: f64,
+    pub is_buyer_maker: bool,
+    pub timestamp_ms: u64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct WallState {
+    pub symbol: String,
+    pub side: String, // &quot;BID&quot; (Alım) or &quot;ASK&quot; (Satış)
+    pub price: f64,
+    pub initial_qty: f64,
+    pub initial_usdt: f64,
+    pub current_qty: f64,
+    pub current_usdt: f64,
+    pub executed_qty: f64,
+    pub executed_usdt: f64,
+    pub first_seen_ms: u64,
+    pub last_seen_ms: u64,
+    pub wall_status: String, // &quot;TESTING&quot;, &quot;CONFIRMED_GENUINE&quot;, &quot;BROKEN&quot;, &quot;SPOOFED&quot;
+    pub is_alerted: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AbsorptionEvent {
+    pub id: u64,
+    pub symbol: String,
+    pub side: String, // &quot;BID_ABSORPTION&quot; (Boğa Emilimi/Destek Teyidi) or &quot;ASK_ABSORPTION&quot; (Ayı Emilimi/Direnç Teyidi)
+    pub price: f64,
+    pub absorbed_qty: f64,
+    pub absorbed_usdt: f64,
+    pub wall_status: String, // &quot;CONFIRMED_GENUINE&quot;, &quot;BROKEN&quot;, &quot;SPOOFED&quot;, &quot;TESTING&quot;
+    pub price_change_pct: f64,
+    pub absorption_score: f64, // 0.0 to 1.0
+    pub alert_level: String, // &quot;INFO&quot;, &quot;MEDIUM&quot;, &quot;HIGH&quot;, &quot;CRITICAL&quot;
+    pub event_time_ms: u64,
+    pub description: String,
+}
+
+#[derive(Debug, Default, Clone, Serialize, Deserialize)]
+pub struct SymbolAbsorptionMetrics {
+    pub symbol: String,
+    pub active_walls_count: usize,
+    pub confirmed_walls_count: usize,
+    pub total_absorption_events: usize,
+    pub total_bid_absorptions: usize,
+    pub total_ask_absorptions: usize,
+    pub total_absorbed_usdt: f64,
+    pub last_event_time_ms: u64,
+}
+
+pub struct AbsorptionEngine {
+    pub min_absorption_usdt: AtomicU64,   // Min executed USDT absorbed (e.g. $50,000)
+    pub min_wall_usdt: AtomicU64,         // Min wall size USDT to track (e.g. $40,000)
+    pub max_price_move_x1000: AtomicU64,  // Max price change % x1000 during absorption (e.g. 50 = 0.05%)
+    pub window_ms: AtomicU64,             // Sliding tracking window (e.g. 60,000 ms)
+
+    pub tracked_walls: Mutex&lt;HashMap&lt;String, HashMap&lt;String, WallState&gt;&gt;&gt;,
+    pub trade_history: Mutex&lt;HashMap&lt;String, VecDeque&lt;TradeRecord&gt;&gt;&gt;,
+    pub absorption_events: Mutex&lt;VecDeque&lt;AbsorptionEvent&gt;&gt;,
+    pub symbol_metrics: Mutex&lt;HashMap&lt;String, SymbolAbsorptionMetrics&gt;&gt;,
+    pub event_counter: AtomicU64,
+}
+
+impl AbsorptionEngine {
+    pub fn new() -&gt; Self {
+        Self {
+            min_absorption_usdt: AtomicU64::new(50000),   // $50,000 USDT default
+            min_wall_usdt: AtomicU64::new(40000),         // $40,000 USDT wall size
+            max_price_move_x1000: AtomicU64::new(50),     // 0.05% max price move
+            window_ms: AtomicU64::new(60000),             // 60 seconds
+            tracked_walls: Mutex::new(HashMap::new()),
+            trade_history: Mutex::new(HashMap::new()),
+            absorption_events: Mutex::new(VecDeque::new()),
+            symbol_metrics: Mutex::new(HashMap::new()),
+            event_counter: AtomicU64::new(1),
+        }
+    }
+
+    pub fn configure(&amp;self, min_abs_usdt: Option&lt;u64&gt;, min_wall: Option&lt;u64&gt;, max_move_x1000: Option&lt;u64&gt;, window_ms: Option&lt;u64&gt;) {
+        if let Some(u) = min_abs_usdt {
+            if u &gt; 0 {
+                self.min_absorption_usdt.store(u, Ordering::Relaxed);
+            }
+        }
+        if let Some(w) = min_wall {
+            if w &gt; 0 {
+                self.min_wall_usdt.store(w, Ordering::Relaxed);
+            }
+        }
+        if let Some(m) = max_move_x1000 {
+            self.max_price_move_x1000.store(m, Ordering::Relaxed);
+        }
+        if let Some(win) = window_ms {
+            if win &gt;= 5000 {
+                self.window_ms.store(win, Ordering::Relaxed);
+            }
+        }
+    }
+
+    pub fn process_trade_payload(&amp;self, json_data: &amp;Value, now_ms: u64) {
+        let mut trades_guard = self.trade_history.lock().unwrap();
+        let mut walls_guard = self.tracked_walls.lock().unwrap();
+
+        if let Some(obj) = json_data.as_object() {
+            for (symbol, item) in obj.iter() {
+                let trade_id = parse_i64(&amp;item[&quot;trade_id&quot;]);
+                let price = parse_f64(&amp;item[&quot;price&quot;]);
+                let quantity = parse_f64(&amp;item[&quot;quantity&quot;]);
+                let is_buyer_maker = item[&quot;buyer_is_maker&quot;].as_bool().unwrap_or(false);
+                let event_time = parse_u64(&amp;item[&quot;event_time&quot;])
+                    .or_else(|| parse_u64(&amp;item[&quot;local_recv_time_ms&quot;]))
+                    .unwrap_or(now_ms);
+
+                if price &gt; 0.0 &amp;&amp; quantity &gt; 0.0 {
+                    let usdt_val = price * quantity;
+                    let deque = trades_guard.entry(symbol.clone()).or_insert_with(VecDeque::new);
+
+                    if deque.back().map_or(true, |last| last.trade_id != trade_id || trade_id == 0) {
+                        deque.push_back(TradeRecord {
+                            trade_id,
+                            price,
+                            quantity,
+                            usdt_value: usdt_val,
+                            is_buyer_maker,
+                            timestamp_ms: event_time,
+                        });
+
+                        if deque.len() &gt; 1000 {
+                            deque.pop_front();
+                        }
+
+                        // Attribute executed trade to matching wall price levels
+                        if let Some(symbol_walls) = walls_guard.get_mut(symbol) {
+                            let tolerance = price * 0.0005; // 0.05% band
+                            for wall in symbol_walls.values_mut() {
+                                if (wall.price - price).abs() &lt;= tolerance {
+                                    wall.executed_qty += quantity;
+                                    wall.executed_usdt += usdt_val;
+                                    wall.last_seen_ms = event_time;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    pub fn process_depth_payload(&amp;self, json_data: &amp;Value, now_ms: u64) -&gt; String {
+        let min_abs_usdt = self.min_absorption_usdt.load(Ordering::Relaxed) as f64;
+        let min_wall_usdt = self.min_wall_usdt.load(Ordering::Relaxed) as f64;
+        let max_move_pct = self.max_price_move_x1000.load(Ordering::Relaxed) as f64 / 1000.0;
+        let window_ms = self.window_ms.load(Ordering::Relaxed);
+
+        let mut walls_guard = self.tracked_walls.lock().unwrap();
+        let mut events_guard = self.absorption_events.lock().unwrap();
+        let mut metrics_guard = self.symbol_metrics.lock().unwrap();
+
+        if let Some(obj) = json_data.as_object() {
+            for (symbol, depth_item) in obj.iter() {
+                let event_time = parse_u64(&amp;depth_item[&quot;event_time&quot;])
+                    .or_else(|| parse_u64(&amp;depth_item[&quot;local_recv_time_ms&quot;]))
+                    .unwrap_or(now_ms);
+
+                let window_start_ms = event_time.saturating_sub(window_ms);
+                let bids_arr = depth_item[&quot;bids&quot;].as_array();
+                let asks_arr = depth_item[&quot;asks&quot;].as_array();
+
+                let mut current_snapshot_keys = std::collections::HashSet::new();
+
+                let symbol_walls = walls_guard.entry(symbol.clone()).or_insert_with(HashMap::new);
+
+                // Prune old tracked walls
+                symbol_walls.retain(|_, w| w.last_seen_ms &gt;= window_start_ms);
+
+                // Ingest Bids
+                if let Some(bids) = bids_arr {
+                    for item in bids {
+                        if let Some((p, q)) = parse_price_qty(item) {
+                            let usdt_val = p * q;
+                            let key = format!(&quot;BID_{:.6}&quot;, p);
+                            if usdt_val &gt;= min_wall_usdt {
+                                current_snapshot_keys.insert(key.clone());
+                                update_or_insert_wall(
+                                    symbol_walls,
+                                    key,
+                                    symbol.clone(),
+                                    &quot;BID&quot;.to_string(),
+                                    p,
+                                    q,
+                                    event_time,
+                                );
+                            }
+                        }
+                    }
+                }
+
+                // Ingest Asks
+                if let Some(asks) = asks_arr {
+                    for item in asks {
+                        if let Some((p, q)) = parse_price_qty(item) {
+                            let usdt_val = p * q;
+                            let key = format!(&quot;ASK_{:.6}&quot;, p);
+                            if usdt_val &gt;= min_wall_usdt {
+                                current_snapshot_keys.insert(key.clone());
+                                update_or_insert_wall(
+                                    symbol_walls,
+                                    key,
+                                    symbol.clone(),
+                                    &quot;ASK&quot;.to_string(),
+                                    p,
+                                    q,
+                                    event_time,
+                                );
+                            }
+                        }
+                    }
+                }
+
+                // Evaluate Absorption &amp; Wall Confirmation
+                let mut evaluated_keys = Vec::new();
+
+                for (key, wall) in symbol_walls.iter_mut() {
+                    let is_present = current_snapshot_keys.contains(key);
+
+                    // Confirmation Condition: Heavy trade volume executed against the wall (e.g. $50,000+)
+                    if wall.executed_usdt &gt;= min_abs_usdt {
+                        if is_present &amp;&amp; !wall.is_alerted {
+                            // Wall survived market attacks and absorbed volume -&gt; CONFIRMED GENUINE WALL
+                            wall.wall_status = &quot;CONFIRMED_GENUINE&quot;.to_string();
+                            wall.is_alerted = true;
+
+                            let side = if wall.side == &quot;BID&quot; {
+                                &quot;BID_ABSORPTION&quot; // Market Sells absorbed by Bid (Bullish Support confirmed)
+                            } else {
+                                &quot;ASK_ABSORPTION&quot; // Market Buys absorbed by Ask (Bearish Resistance confirmed)
+                            };
+
+                            let score = calculate_absorption_score(wall.executed_usdt, wall.initial_usdt);
+                            let alert_level = classify_alert_level(score, wall.executed_usdt);
+
+                            let event_id = self.event_counter.fetch_add(1, Ordering::Relaxed);
+                            let desc = format!(
+                                &quot;GENUINE WALL ABSORPTION: Aggressive trades hit the wall at price {:.4} with ${:.0} volume, but the wall WAS NOT BROKEN and was absorbed! ({})&quot;,
+                                wall.price,
+                                wall.executed_usdt,
+                                side
+                            );
+
+                            let event = AbsorptionEvent {
+                                id: event_id,
+                                symbol: symbol.clone(),
+                                side: side.to_string(),
+                                price: wall.price,
+                                absorbed_qty: wall.executed_qty,
+                                absorbed_usdt: wall.executed_usdt,
+                                wall_status: &quot;CONFIRMED_GENUINE&quot;.to_string(),
+                                price_change_pct: max_move_pct,
+                                absorption_score: score,
+                                alert_level,
+                                event_time_ms: event_time,
+                                description: desc,
+                            };
+
+                            events_guard.push_back(event);
+                            if events_guard.len() &gt; 50 {
+                                events_guard.pop_front();
+                            }
+
+                            let m = metrics_guard.entry(symbol.clone()).or_insert_with(|| SymbolAbsorptionMetrics {
+                                symbol: symbol.clone(),
+                                ..Default::default()
+                            });
+                            m.total_absorption_events += 1;
+                            m.confirmed_walls_count += 1;
+                            if side == &quot;BID_ABSORPTION&quot; {
+                                m.total_bid_absorptions += 1;
+                            } else {
+                                m.total_ask_absorptions += 1;
+                            }
+                            m.total_absorbed_usdt += wall.executed_usdt;
+                            m.last_event_time_ms = event_time;
+                        }
+                    }
+
+                    // Handles walls that disappeared/vanished
+                    if !is_present {
+                        evaluated_keys.push(key.clone());
+                        if wall.executed_qty &gt;= wall.initial_qty * 0.8 {
+                            wall.wall_status = &quot;BROKEN&quot;.to_string(); // Wall was eaten / broken by market orders
+                        } else {
+                            wall.wall_status = &quot;SPOOFED&quot;.to_string(); // Wall was pulled before being executed
+                        }
+                    }
+                }
+
+                // Remove vanished walls
+                for k in evaluated_keys {
+                    symbol_walls.remove(&amp;k);
+                }
+            }
+        }
+
+        // Update active walls metrics
+        for (symbol, symbol_walls) in walls_guard.iter() {
+            let active_count = symbol_walls.len();
+            let confirmed_count = symbol_walls.values().filter(|w| w.wall_status == &quot;CONFIRMED_GENUINE&quot;).count();
+            let m = metrics_guard.entry(symbol.clone()).or_insert_with(|| SymbolAbsorptionMetrics {
+                symbol: symbol.clone(),
+                ..Default::default()
+            });
+            m.active_walls_count = active_count;
+            m.confirmed_walls_count = confirmed_count;
+        }
+
+        // Safely drop all mutex locks before formatting report
+        drop(metrics_guard);
+        drop(events_guard);
+        drop(walls_guard);
+
+        self.get_formatted_report()
+    }
+
+    pub fn get_formatted_report(&amp;self) -&gt; String {
+        let metrics_guard = self.symbol_metrics.lock().unwrap();
+        let events_guard = self.absorption_events.lock().unwrap();
+        let walls_guard = self.tracked_walls.lock().unwrap();
+
+        let min_abs_usdt = self.min_absorption_usdt.load(Ordering::Relaxed);
+        let min_wall_usdt = self.min_wall_usdt.load(Ordering::Relaxed);
+
+        let mut sorted_symbols: Vec&lt;String&gt; = metrics_guard.keys().cloned().collect();
+        sorted_symbols.sort();
+
+        let mut report = String::new();
+        report.push_str(&quot;============================================================\n&quot;);
+        report.push_str(&amp;format!(
+            &quot;🛡️ BINANCE FUTURES ABSORPTION &amp; WALL CONFIRMATION PANEL\n\
+             ├─ Min Absorption Vol: ${} USDT | Min Wall Size: ${} USDT\n&quot;,
+            min_abs_usdt, min_wall_usdt
+        ));
+        report.push_str(&quot;============================================================\n&quot;);
+
+        if sorted_symbols.is_empty() {
+            report.push_str(&quot;No absorption or confirmed genuine walls detected yet.\n&quot;);
+        } else {
+            for symbol in &amp;sorted_symbols {
+                if let Some(m) = metrics_guard.get(symbol) {
+                    let active_count = walls_guard.get(symbol).map(|w| w.len()).unwrap_or(0);
+                    report.push_str(&amp;format!(
+                        &quot;[{}]  Tracked Walls: {} (Confirmed Genuine: {}) | Total Absorption: {} (Bullish: {} | Bearish: {})\n\
+                         ├─ Total Absorbed Vol: ${:.2}\n\n&quot;,
+                        symbol,
+                        active_count,
+                        m.confirmed_walls_count,
+                        m.total_absorption_events,
+                        m.total_bid_absorptions,
+                        m.total_ask_absorptions,
+                        m.total_absorbed_usdt
+                    ));
+                }
+            }
+        }
+
+        report.push_str(&quot;------------------------------------------------------------\n&quot;);
+        report.push_str(&quot;🛡️ RECENT CONFIRMED ABSORPTION &amp; WALL ALERTS (Last 5 Events):\n&quot;);
+        report.push_str(&quot;------------------------------------------------------------\n&quot;);
+
+        if events_guard.is_empty() {
+            report.push_str(&quot;No confirmed wall absorption events recorded yet.\n&quot;);
+        } else {
+            for ev in events_guard.iter().rev().take(5) {
+                let badge = match ev.alert_level.as_str() {
+                    &quot;CRITICAL&quot; =&gt; &quot;🛑 [CRITICAL]&quot;,
+                    &quot;HIGH&quot; =&gt; &quot;🔴 [HIGH]&quot;,
+                    &quot;MEDIUM&quot; =&gt; &quot;🟠 [MEDIUM]&quot;,
+                    _ =&gt; &quot;🟡 [INFO]&quot;,
+                };
+
+                let side_label = if ev.side == &quot;BID_ABSORPTION&quot; {
+                    &quot;🟢 BULLISH ABSORPTION (Buy Support Confirmed)&quot;
+                } else {
+                    &quot;🔴 BEARISH ABSORPTION (Sell Resistance Confirmed)&quot;
+                };
+
+                report.push_str(&amp;format!(
+                    &quot;{} #{} [{}] {} Price: {:.8}\n\
+                     │   ├─ Absorbed Aggressive Vol: ${:.8} | Status: {}\n\
+                     │   ├─ Absorption Score: {:.8}\n\
+                     │   └─ Description: {}\n&quot;,
+                    badge,
+                    ev.id,
+                    ev.symbol,
+                    side_label,
+                    ev.price,
+                    ev.absorbed_usdt,
+                    ev.wall_status,
+                    ev.absorption_score,
+                    ev.description
+                ));
+            }
+        }
+
+        report.push_str(&quot;============================================================\n&quot;);
+        report
+    }
+
+    pub fn get_metrics_json(&amp;self) -&gt; String {
+        let metrics_guard = self.symbol_metrics.lock().unwrap();
+        let events_guard = self.absorption_events.lock().unwrap();
+
+        let json_out = serde_json::json!({
+            &quot;metrics&quot;: *metrics_guard,
+            &quot;recent_events&quot;: *events_guard,
+        });
+
+        serde_json::to_string_pretty(&amp;json_out).unwrap_or_else(|_| &quot;{}&quot;.to_string())
+    }
+}
+
+fn update_or_insert_wall(
+    symbol_walls: &amp;mut HashMap&lt;String, WallState&gt;,
+    key: String,
+    symbol: String,
+    side: String,
+    price: f64,
+    visible_qty: f64,
+    now_ms: u64,
+) {
+    let visible_usdt = price * visible_qty;
+
+    symbol_walls.entry(key).and_modify(|wall| {
+        wall.current_qty = visible_qty;
+        wall.current_usdt = visible_usdt;
+        wall.last_seen_ms = now_ms;
+    }).or_insert(WallState {
+        symbol,
+        side,
+        price,
+        initial_qty: visible_qty,
+        initial_usdt: visible_usdt,
+        current_qty: visible_qty,
+        current_usdt: visible_usdt,
+        executed_qty: 0.0,
+        executed_usdt: 0.0,
+        first_seen_ms: now_ms,
+        last_seen_ms: now_ms,
+        wall_status: &quot;TESTING&quot;.to_string(),
+        is_alerted: false,
+    });
+}
+
+fn calculate_absorption_score(executed_usdt: f64, initial_usdt: f64) -&gt; f64 {
+    let exec_factor = (executed_usdt / 200_000.0).clamp(0.2, 1.0);
+    let size_factor = (initial_usdt / 100_000.0).clamp(0.2, 1.0);
+
+    (exec_factor * 0.6 + size_factor * 0.4).clamp(0.0, 1.0)
+}
+
+fn classify_alert_level(score: f64, executed_usdt: f64) -&gt; String {
+    if score &gt;= 0.85 || executed_usdt &gt;= 400_000.0 {
+        &quot;CRITICAL&quot;.to_string()
+    } else if score &gt;= 0.65 || executed_usdt &gt;= 150_000.0 {
+        &quot;HIGH&quot;.to_string()
+    } else if score &gt;= 0.45 {
+        &quot;MEDIUM&quot;.to_string()
+    } else {
+        &quot;INFO&quot;.to_string()
+    }
+}
+
+fn parse_f64(val: &amp;Value) -&gt; f64 {
+    match val {
+        Value::Number(n) =&gt; n.as_f64().unwrap_or(0.0),
+        Value::String(s) =&gt; s.parse::&lt;f64&gt;().unwrap_or(0.0),
+        _ =&gt; 0.0,
+    }
+}
+
+fn parse_i64(val: &amp;Value) -&gt; i64 {
+    match val {
+        Value::Number(n) =&gt; n.as_i64().unwrap_or(0),
+        Value::String(s) =&gt; s.parse::&lt;i64&gt;().unwrap_or(0),
+        _ =&gt; 0,
+    }
+}
+
+fn parse_u64(val: &amp;Value) -&gt; Option&lt;u64&gt; {
+    match val {
+        Value::Number(n) =&gt; n.as_u64(),
+        Value::String(s) =&gt; s.parse::&lt;u64&gt;().ok(),
+        _ =&gt; None,
+    }
+}
+
+fn parse_price_qty(item: &amp;Value) -&gt; Option&lt;(f64, f64)&gt; {
+    if let Some(arr) = item.as_array() {
+        if arr.len() &gt;= 2 {
+            let p = parse_f64(&amp;arr[0]);
+            let q = parse_f64(&amp;arr[1]);
+            if p &gt; 0.0 &amp;&amp; q &gt; 0.0 {
+                return Some((p, q));
+            }
+        }
+    }
+    None
+}
+
+// C ABI Plugin Integration
+struct PluginState {
+    is_running: Arc&lt;AtomicBool&gt;,
+    engine: Arc&lt;AbsorptionEngine&gt;,
+    data: Arc&lt;Mutex&lt;Vec&lt;u8&gt;&gt;&gt;,
+}
+
+#[no_mangle]
+pub unsafe extern &quot;C&quot; fn init_plugin(
+    state_out: *mut *mut c_void,
+) -&gt; unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize {
+    let engine = Arc::new(AbsorptionEngine::new());
+    let initial_report = engine.get_formatted_report();
+
+    let state = Box::new(PluginState {
+        is_running: Arc::new(AtomicBool::new(false)),
+        engine,
+        data: Arc::new(Mutex::new(initial_report.into_bytes())),
+    });
+
+    *state_out = Box::into_raw(state) as *mut c_void;
+    handle_endpoint
+}
+
+unsafe extern &quot;C&quot; fn handle_endpoint(
+    plugin_state: *mut c_void,
+    endpoint_id: u32,
+    payload: *const u8,
+    payload_len: usize,
+    out_buf: *mut u8,
+    out_max_len: usize,
+) -&gt; usize {
+    if plugin_state.is_null() {
+        return 0;
+    }
+    let state = &amp;*(plugin_state as *const PluginState);
+
+    match endpoint_id {
+        0 =&gt; { // Start
+            state.is_running.store(true, Ordering::Relaxed);
+
+            if payload_len &gt; 0 &amp;&amp; !payload.is_null() {
+                let slice = std::slice::from_raw_parts(payload, payload_len);
+                if let Ok(config) = serde_json::from_slice::&lt;Value&gt;(slice) {
+                    let params = config.get(&quot;plugin_params&quot;).unwrap_or(&amp;config);
+                    let min_abs_usdt = params.get(&quot;min_absorption_usdt&quot;).and_then(|v| v.as_u64());
+                    let min_wall = params.get(&quot;min_wall_usdt&quot;).and_then(|v| v.as_u64());
+                    let max_move = params.get(&quot;max_price_move_x1000&quot;).and_then(|v| v.as_u64());
+                    let window_ms = params.get(&quot;window_ms&quot;).and_then(|v| v.as_u64());
+
+                    state.engine.configure(min_abs_usdt, min_wall, max_move, window_ms);
+                }
+            }
+            0
+        }
+        1 =&gt; { // Stop
+            state.is_running.store(false, Ordering::Relaxed);
+            0
+        }
+        2 =&gt; { // IsWorking
+            let running = state.is_running.load(Ordering::Relaxed);
+            if out_max_len &gt;= 1 &amp;&amp; !out_buf.is_null() {
+                *out_buf = if running { 1 } else { 0 };
+                1
+            } else {
+                if running { 1 } else { 0 }
+            }
+        }
+        3 =&gt; { // DataValid
+            1
+        }
+        4 | 5 =&gt; { // DataMonitor (4) / RawData (5)
+            let guard = state.data.lock().unwrap();
+            let len = guard.len().min(out_max_len);
+            if len &gt; 0 &amp;&amp; !out_buf.is_null() {
+                std::ptr::copy_nonoverlapping(guard.as_ptr(), out_buf, len);
+            }
+            len
+        }
+        6 =&gt; { // Inbox (Data routed from FlowEngine)
+            if !state.is_running.load(Ordering::Relaxed) {
+                return 0;
+            }
+
+            if payload_len &gt; 32 &amp;&amp; !payload.is_null() {
+                let slice = std::slice::from_raw_parts(payload, payload_len);
+                let header = &amp;slice[0..32];
+                let stream_id = std::str::from_utf8(header)
+                    .unwrap_or(&quot;&quot;)
+                    .trim_matches(char::from(0))
+                    .trim()
+                    .to_string();
+
+                let now_ms = SystemTime::now()
+                    .duration_since(UNIX_EPOCH)
+                    .unwrap_or_default()
+                    .as_millis() as u64;
+
+                if stream_id.contains(&quot;trades&quot;) || stream_id.contains(&quot;aggtrades&quot;) {
+                    if let Ok(json_data) = serde_json::from_slice::&lt;Value&gt;(&amp;slice[32..]) {
+                        state.engine.process_trade_payload(&amp;json_data, now_ms);
+                    }
+                } else if stream_id.contains(&quot;depth&quot;) {
+                    if let Ok(json_data) = serde_json::from_slice::&lt;Value&gt;(&amp;slice[32..]) {
+                        let report = state.engine.process_depth_payload(&amp;json_data, now_ms);
+
+                        let mut data_guard = state.data.lock().unwrap();
+                        *data_guard = report.into_bytes();
+                    }
+                }
+            }
+            0
+        }
+        _ =&gt; 0,
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_absorption_and_wall_confirmation_simulation() {
+        let engine = AbsorptionEngine::new();
+        engine.configure(Some(50000), Some(40000), Some(50), Some(60000));
+
+        let t0 = 1000000u64;
+
+        // Step 1: Initial Depth Snapshot -&gt; Bid Wall at 100.0 ($100,000 USDT)
+        let depth_snap1 = serde_json::json!({
+            &quot;BTCUSDT&quot;: {
+                &quot;bids&quot;: [
+                    [&quot;100.0&quot;, &quot;1000.0&quot;] // $100,000 USDT wall
+                ],
+                &quot;asks&quot;: [
+                    [&quot;100.5&quot;, &quot;10.0&quot;]
+                ],
+                &quot;event_time&quot;: t0
+            }
+        });
+        engine.process_depth_payload(&amp;depth_snap1, t0);
+
+        // Verify tracked wall status
+        {
+            let walls = engine.tracked_walls.lock().unwrap();
+            let btc_walls = walls.get(&quot;BTCUSDT&quot;).unwrap();
+            assert_eq!(btc_walls.len(), 1);
+            assert_eq!(btc_walls.get(&quot;BID_100.000000&quot;).unwrap().wall_status, &quot;TESTING&quot;);
+        }
+
+        // Step 2: Ingest aggressive Market Sells hitting 100.0 ($60,000 USDT executed)
+        let trade_data = serde_json::json!({
+            &quot;BTCUSDT&quot;: {
+                &quot;trade_id&quot;: 301,
+                &quot;price&quot;: &quot;100.0&quot;,
+                &quot;quantity&quot;: &quot;600.0&quot;, // $60,000 executed &gt;= $50,000 min
+                &quot;buyer_is_maker&quot;: true,
+                &quot;event_time&quot;: t0 + 100
+            }
+        });
+        engine.process_trade_payload(&amp;trade_data, t0 + 100);
+
+        // Step 3: Ingest Depth Snapshot 2 -&gt; Bid Wall at 100.0 STILL SURVIVES!
+        let depth_snap2 = serde_json::json!({
+            &quot;BTCUSDT&quot;: {
+                &quot;bids&quot;: [
+                    [&quot;100.0&quot;, &quot;400.0&quot;] // Remaining $40,000 USDT wall
+                ],
+                &quot;asks&quot;: [
+                    [&quot;100.5&quot;, &quot;10.0&quot;]
+                ],
+                &quot;event_time&quot;: t0 + 200
+            }
+        });
+
+        let report = engine.process_depth_payload(&amp;depth_snap2, t0 + 200);
+
+        assert!(report.contains(&quot;BINANCE FUTURES ABSORPTION &amp; WALL CONFIRMATION PANEL&quot;));
+        assert!(report.contains(&quot;BTCUSDT&quot;));
+
+        // Check absorption event and confirmed status
+        let events = engine.absorption_events.lock().unwrap();
+        assert_eq!(events.len(), 1);
+
+        let event = &amp;events[0];
+        assert_eq!(event.symbol, &quot;BTCUSDT&quot;);
+        assert_eq!(event.side, &quot;BID_ABSORPTION&quot;);
+        assert_eq!(event.price, 100.0);
+        assert_eq!(event.absorbed_usdt, 60000.0);
+        assert_eq!(event.wall_status, &quot;CONFIRMED_GENUINE&quot;);
+        assert!(event.absorption_score &gt; 0.5);
+    }
+}
+</code></pre>
+        </details>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            flowchart: { curve: 'basis' }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1856 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>lib.rs - Rust Analiz Dokümanı</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --border: #334155;
+            --code-bg: #090d16;
+            --verbal-bg: #131f37;
+            --analogy-bg: #1e1b4b;
+            --analogy-border: #818cf8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .back-link {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .back-link:hover { text-decoration: underline; }
+        h1 { font-size: 2rem; color: var(--accent); margin-bottom: 0.5rem; }
+        .file-path { font-family: 'Fira Code', monospace; color: var(--text-muted); font-size: 0.95rem; }
+        
+        .structs-container { margin: 1.5rem 0; }
+        .badge {
+            display: inline-block;
+            background: #0284c7;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-family: 'Fira Code', monospace;
+        }
+        .badge-struct { background: #7c3aed; }
+        
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .card h3 { color: var(--accent); margin-bottom: 0.5rem; font-size: 1.3rem; }
+        .card h4 { margin: 1.2rem 0 0.5rem 0; color: var(--text-muted); font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        .easy-analogy {
+            background: var(--analogy-bg);
+            border-left: 4px solid var(--analogy-border);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1rem;
+            color: #c7d2fe;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .verbal-explanation {
+            background: var(--verbal-bg);
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.2rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1.2rem;
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            margin-bottom: 1rem;
+        }
+        
+        .mermaid {
+            background: var(--code-bg);
+            padding: 1.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+        }
+        
+        details {
+            margin-top: 2rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Ana İndekse Dön</a>
+        <header>
+            <h1>lib.rs</h1>
+            <p class="file-path">crates/plugins/analytics/plugin_spoofing/src/lib.rs</p>
+            <div class="structs-container">
+                <strong>Tanımlı Türler / Yapılar:</strong> <span class="badge badge-struct">ActiveWall</span> <span class="badge badge-struct">PluginState</span> <span class="badge badge-struct">SpoofDetectorEngine</span> <span class="badge badge-struct">SpoofEvent</span> <span class="badge badge-struct">SymbolSpoofMetrics</span> <span class="badge badge-struct">TradeRecord</span> 
+            </div>
+        </header>
+
+        <section>
+            <h2>Fonksiyon Analizleri & Basit Anlatımlar</h2>
+            
+        <div class="card">
+            <h3><span class="badge">fn</span> new</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>Yok</code> | <strong>Dönüş Tipi:</strong> <code>Self</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Dükkanı sabah açarken kasayı sıfırlama, rafları düzeltme ve tabelayı asma işlemidir. Her şey temiz bir başlangıç için hazır hale getirilir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Yapıcı (constructor) fonksiyon olarak nesnenin bellekte ilk durumları ve yapılandırmalarıyla başlatılmasını (instantiation) sağlar.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON new() -&gt; Self:
+    Self {
+    min_wall_usdt: AtomicU64::new(50000),      // $50,000 default threshold
+    max_lifespan_ms: AtomicU64::new(15000),    // 15 seconds
+    min_cancel_ratio_pct: AtomicU64::new(70),  // 70% canceled
+    active_walls: Mutex::new(HashMap::new()),
+    trade_history: Mutex::new(HashMap::new()),
+    spoof_events: Mutex::new(VecDeque::new()),
+    symbol_metrics: Mutex::new(HashMap::new()),
+    event_counter: AtomicU64::new(1),</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: new"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> configure</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self, min_usdt: Option&lt;u64&gt;, max_lifespan: Option&lt;u64&gt;, min_cancel_pct: Option&lt;u64&gt;</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>&amp;self, min_usdt: Option&lt;u64&gt;, max_lifespan: Option&lt;u64&gt;, min_cancel_pct: Option&lt;u64&gt;</code> verisini alır, kendi kurallarına göre işler ve sonucunda gerekli işlemi tamamlayan adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. İşlemi tamamlayarak <code>()</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON configure(&amp;self, min_usdt: Option&lt;u64&gt;, max_lifespan: Option&lt;u64&gt;, min_cancel_pct: Option&lt;u64&gt;) -&gt; ():
+    EĞER let Some(u) = min_usdt İSE:
+        EĞER u &gt; 0 İSE:
+            self.min_wall_usdt.store(u, Ordering::Relaxed);
+    EĞER let Some(l) = max_lifespan İSE:
+        EĞER l &gt;= 500 İSE:
+            self.max_lifespan_ms.store(l, Ordering::Relaxed);
+    EĞER let Some(c) = min_cancel_pct İSE:
+        EĞER c &lt;= 100 İSE:
+            self.min_cancel_ratio_pct.store(c, Ordering::Relaxed);</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: configure"])
+    Start --> Cond1{"let Some(u) = min_usdt?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"u &gt; 0?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"let Some(l) = max_lifespan?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> process_trade_payload</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self, json_data: &amp;Value, now_ms: u64</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Gerçek para harcamadan önce Monopoly oyunundaki sanal para ile alışveriş yapıp taktiklerin çalışıp çalışmadığını test etme işlemidir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b> Gerçek piyasa emir defteri verisini alarak gecikme, komisyon ve kuyruk sırasını hesaba katan sanal alım-satım infazını gerçekleştirir.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON process_trade_payload(&amp;self, json_data: &amp;Value, now_ms: u64) -&gt; ():
+    let mut trades_guard = self.trade_history.lock().unwrap();
+    EĞER let Some(obj) = json_data.as_object() İSE:
+        HER (symbol, item) in obj.iter() İÇİN DÖNGÜ:
+            let trade_id = parse_i64(&amp;item[&quot;trade_id&quot;]);
+            let price = parse_f64(&amp;item[&quot;price&quot;]);
+            let quantity = parse_f64(&amp;item[&quot;quantity&quot;]);
+            let is_buyer_maker = item[&quot;buyer_is_maker&quot;].as_bool().unwrap_or(false);
+            let event_time = parse_u64(&amp;item[&quot;event_time&quot;])
+            .or_else(|| parse_u64(&amp;item[&quot;local_recv_time_ms&quot;]))
+            .unwrap_or(now_ms);
+            EĞER price &gt; 0.0 &amp;&amp; quantity &gt; 0.0 İSE:
+                let usdt_val = price * quantity;
+                let deque = trades_guard.entry(symbol.clone()).or_insert_with(VecDeque::new);
+                // Prevent duplicates
+                EĞER deque.back().map_or(true, |last| last.trade_id != trade_id || trade_id == 0) İSE:
+                    deque.push_back(TradeRecord {
+                    trade_id,
+                    price,
+                    quantity,
+                    usdt_value: usdt_val,
+                    is_buyer_maker,
+                    timestamp_ms: event_time,
+                    });
+                    // Keep up to 1,000 trades per symbol
+                    EĞER deque.len() &gt; 1000 İSE:
+                        deque.pop_front();</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: process_trade_payload"])
+    Start --> Cond1{"let Some(obj) = json_data.as_object()?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"price &gt; 0.0 && quantity &gt; 0.0?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"deque.back().map_or(true, |last| last.trade_id != trade_id || trade_id == 0)?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> Loop4["Döngü: (symbol, item) in obj.iter()"]
+    Loop4 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> process_depth_payload</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self, json_data: &amp;Value, now_ms: u64</code> | <strong>Dönüş Tipi:</strong> <code>String</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>&amp;self, json_data: &amp;Value, now_ms: u64</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>String</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Listeyi veya veri kümesini sırayla döngüye alarak tarar.<br>4. İşlemi tamamlayarak <code>String</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON process_depth_payload(&amp;self, json_data: &amp;Value, now_ms: u64) -&gt; String:
+    let min_usdt = self.min_wall_usdt.load(Ordering::Relaxed) as f64;
+    let max_lifespan = self.max_lifespan_ms.load(Ordering::Relaxed);
+    let min_cancel_pct = self.min_cancel_ratio_pct.load(Ordering::Relaxed) as f64 / 100.0;
+    let mut walls_guard = self.active_walls.lock().unwrap();
+    let trades_guard = self.trade_history.lock().unwrap();
+    let mut events_guard = self.spoof_events.lock().unwrap();
+    let mut metrics_guard = self.symbol_metrics.lock().unwrap();
+    EĞER let Some(obj) = json_data.as_object() İSE:
+        HER (symbol, depth_item) in obj.iter() İÇİN DÖNGÜ:
+            let event_time = parse_u64(&amp;depth_item[&quot;event_time&quot;])
+            .or_else(|| parse_u64(&amp;depth_item[&quot;local_recv_time_ms&quot;]))
+            .unwrap_or(now_ms);
+            let bids_arr = depth_item[&quot;bids&quot;].as_array();
+            let asks_arr = depth_item[&quot;asks&quot;].as_array();
+            let mut current_snapshot_keys = std::collections::HashSet::new();
+            // Process Bids (Alım Duvarları)
+            EĞER let Some(bids) = bids_arr İSE:
+                let avg_qty = compute_avg_qty(bids);
+                HER item in bids İÇİN DÖNGÜ:
+                    EĞER let Some((p, q)) = parse_price_qty(item) İSE:
+                        let usdt_val = p * q;
+                        let price_key = format!(&quot;BID_{:.6}&quot;, p);
+                        // Wall condition: exceeds min_usdt and is at least 2.5x avg quantity
+                        EĞER usdt_val &gt;= min_usdt || (avg_qty &gt; 0.0 &amp;&amp; q &gt;= avg_qty * 2.5) İSE:
+                            current_snapshot_keys.insert(price_key.clone());
+                            let symbol_walls = walls_guard.entry(symbol.clone()).or_insert_with(HashMap::new);
+                            symbol_walls.entry(price_key).and_modify(|w| {
+                            w.current_qty = q;
+                            w.current_usdt = usdt_val;
+                            w.last_seen_time_ms = event_time;
+                            }).or_insert(ActiveWall {
+                            symbol: symbol.clone(),
+                            side: &quot;BID&quot;.to_string(),
+                            price: p,
+                            initial_qty: q,
+                            initial_usdt: usdt_val,
+                            current_qty: q,
+                            current_usdt: usdt_val,
+                            appear_time_ms: event_time,
+                            last_seen_time_ms: event_time,
+                            });
+            // Process Asks (Satış Duvarları)
+            EĞER let Some(asks) = asks_arr İSE:
+                let avg_qty = compute_avg_qty(asks);
+                HER item in asks İÇİN DÖNGÜ:
+                    EĞER let Some((p, q)) = parse_price_qty(item) İSE:
+                        let usdt_val = p * q;
+                        let price_key = format!(&quot;ASK_{:.6}&quot;, p);
+                        EĞER usdt_val &gt;= min_usdt || (avg_qty &gt; 0.0 &amp;&amp; q &gt;= avg_qty * 2.5) İSE:
+                            current_snapshot_keys.insert(price_key.clone());
+                            let symbol_walls = walls_guard.entry(symbol.clone()).or_insert_with(HashMap::new);
+                            symbol_walls.entry(price_key).and_modify(|w| {
+                            w.current_qty = q;
+                            w.current_usdt = usdt_val;
+                            w.last_seen_time_ms = event_time;
+                            }).or_insert(ActiveWall {
+                            symbol: symbol.clone(),
+                            side: &quot;ASK&quot;.to_string(),
+                            price: p,
+                            initial_qty: q,
+                            initial_usdt: usdt_val,
+                            current_qty: q,
+                            current_usdt: usdt_val,
+                            appear_time_ms: event_time,
+                            last_seen_time_ms: event_time,
+                            });
+            // Inspect missing or significantly reduced walls for Spoofing Detection
+            EĞER let Some(symbol_walls) = walls_guard.get_mut(symbol) İSE:
+                let mut evaluated_keys = Vec::new();
+                HER (key, wall) in symbol_walls.iter() İÇİN DÖNGÜ:
+                    let is_missing = !current_snapshot_keys.contains(key);
+                    let qty_dropped = wall.current_qty &lt;= wall.initial_qty * 0.30; // Dropped by 70%+
+                    EĞER is_missing || qty_dropped İSE:
+                        evaluated_keys.push(key.clone());
+                        let effective_current_qty = if is_missing { 0.0 } else { wall.current_qty };
+                        let lifespan = event_time.saturating_sub(wall.appear_time_ms);
+                        EĞER lifespan &lt;= max_lifespan &amp;&amp; lifespan &gt;= 100 İSE:
+                            // Calculate executed volume around this price level during wall lifespan
+                            let executed_qty = calculate_executed_qty_at_price(
+                            trades_guard.get(symbol),
+                            wall.price,
+                            wall.appear_time_ms,
+                            event_time,
+                            );
+                            let raw_canceled = (wall.initial_qty - effective_current_qty) - executed_qty;
+                            let canceled_qty = raw_canceled.max(0.0);
+                            let cancel_ratio = if wall.initial_qty &gt; 0.0 {
+                            canceled_qty / wall.initial_qty
+                            } else {
+                            0.0
+                            };
+                            EĞER cancel_ratio &gt;= min_cancel_pct İSE:
+                                let canceled_usdt = canceled_qty * wall.price;
+                                let executed_usdt = executed_qty * wall.price;
+                                let spoof_score = calculate_spoof_score(
+                                wall.initial_usdt,
+                                lifespan,
+                                cancel_ratio,
+                                );
+                                let alert_level = classify_alert_level(spoof_score, wall.initial_usdt, lifespan);
+                                let event_id = self.event_counter.fetch_add(1, Ordering::Relaxed);
+                                let desc = format!(
+                                &quot;SPOOF ORDER (Fake Wall): {} wall at price {:.4} with ${:.0} size was CANCELED within {} ms before {:.1}% was filled!&quot;,
+                                wall.side,
+                                wall.price,
+                                wall.initial_usdt,
+                                lifespan,
+                                cancel_ratio * 100.0
+                                );
+                                let spoof_event = SpoofEvent {
+                                id: event_id,
+                                symbol: symbol.clone(),
+                                side: wall.side.clone(),
+                                price: wall.price,
+                                initial_usdt: wall.initial_usdt,
+                                canceled_qty,
+                                canceled_usdt,
+                                executed_qty,
+                                executed_usdt,
+                                lifespan_ms: lifespan,
+                                cancel_ratio,
+                                spoof_score,
+                                alert_level,
+                                event_time_ms: event_time,
+                                description: desc,
+                                };
+                                events_guard.push_back(spoof_event);
+                                EĞER events_guard.len() &gt; 50 İSE:
+                                    events_guard.pop_front();
+                                // Update metrics
+                                let m = metrics_guard.entry(symbol.clone()).or_insert_with(|| SymbolSpoofMetrics {
+                                symbol: symbol.clone(),
+                                ..Default::default()
+                                });
+                                m.total_spoof_events += 1;
+                                EĞER wall.side == &quot;BID&quot; İSE:
+                                    m.total_bid_spoofs += 1;
+                                    } else {
+                                    m.total_ask_spoofs += 1;
+                                m.total_phantom_usdt += canceled_usdt;
+                                m.last_spoof_time_ms = event_time;
+                // Remove processed walls
+                HER k in evaluated_keys İÇİN DÖNGÜ:
+                    symbol_walls.remove(&amp;k);
+    // Update active walls count in metrics
+    HER (symbol, symbol_walls) in walls_guard.iter() İÇİN DÖNGÜ:
+        let m = metrics_guard.entry(symbol.clone()).or_insert_with(|| SymbolSpoofMetrics {
+        symbol: symbol.clone(),
+        ..Default::default()
+        });
+        m.active_walls_count = symbol_walls.len();
+    drop(metrics_guard);
+    drop(events_guard);
+    drop(trades_guard);
+    drop(walls_guard);
+    self.get_formatted_report()</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: process_depth_payload"])
+    Start --> Cond1{"let Some(obj) = json_data.as_object()?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"let Some(bids) = bids_arr?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"let Some((p, q)) = parse_price_qty(item)?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> Loop4["Döngü: (symbol, depth_item) in obj.iter()"]
+    Loop4 --> Loop5["Döngü: item in bids"]
+    Loop5 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> get_formatted_report</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self</code> | <strong>Dönüş Tipi:</strong> <code>String</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>&amp;self</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>String</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Listeyi veya veri kümesini sırayla döngüye alarak tarar.<br>4. Farklı durum senaryolarına göre akışı uygun kola yönlendirir.<br>5. İşlemi tamamlayarak <code>String</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON get_formatted_report(&amp;self) -&gt; String:
+    let metrics_guard = self.symbol_metrics.lock().unwrap();
+    let events_guard = self.spoof_events.lock().unwrap();
+    let walls_guard = self.active_walls.lock().unwrap();
+    let min_usdt = self.min_wall_usdt.load(Ordering::Relaxed);
+    let max_lifespan = self.max_lifespan_ms.load(Ordering::Relaxed);
+    let mut sorted_symbols: Vec&lt;String&gt; = metrics_guard.keys().cloned().collect();
+    sorted_symbols.sort();
+    let mut report = String::new();
+    report.push_str(&quot;============================================================\n&quot;);
+    report.push_str(&amp;format!(
+    &quot;🕵️ BINANCE FUTURES SPOOFING (FAKE ORDER) DETECTION PANEL\n\
+    ├─ Wall Threshold: ${} USDT | Max Lifespan: {} ms\n&quot;,
+    min_usdt, max_lifespan
+    ));
+    report.push_str(&quot;============================================================\n&quot;);
+    EĞER sorted_symbols.is_empty() İSE:
+        report.push_str(&quot;No spoofing (fake orders) or active walls detected yet.\n&quot;);
+        } else {
+        HER symbol in &amp;sorted_symbols İÇİN DÖNGÜ:
+            EĞER let Some(m) = metrics_guard.get(symbol) İSE:
+                let wall_count = walls_guard.get(symbol).map(|w| w.len()).unwrap_or(0);
+                report.push_str(&amp;format!(
+                &quot;[{}]  Active Walls: {} | Total Spoof Events: {} (Buy/Long Bait: {} | Sell/Short Bait: {})\n\
+                ├─ Total Phantom/Pulled Liquidity: ${:.2}\n\n&quot;,
+                symbol,
+                wall_count,
+                m.total_spoof_events,
+                m.total_bid_spoofs,
+                m.total_ask_spoofs,
+                m.total_phantom_usdt
+                ));
+    report.push_str(&quot;------------------------------------------------------------\n&quot;);
+    report.push_str(&quot;🚨 RECENT SPOOFING ALERTS (Last 5 Events):\n&quot;);
+    report.push_str(&quot;------------------------------------------------------------\n&quot;);
+    EĞER events_guard.is_empty() İSE:
+        report.push_str(&quot;No suspicious spoof order cancellations detected yet.\n&quot;);
+        } else {
+        HER ev in events_guard.iter().rev().take(5) İÇİN DÖNGÜ:
+            let badge = match ev.alert_level.as_str() {
+            &quot;CRITICAL&quot; =&gt; &quot;🛑 [CRITICAL]&quot;,
+            &quot;HIGH&quot; =&gt; &quot;🔴 [HIGH]&quot;,
+            &quot;MEDIUM&quot; =&gt; &quot;🟠 [MEDIUM]&quot;,
+            _ =&gt; &quot;🟡 [INFO]&quot;,
+            };
+            report.push_str(&amp;format!(
+            &quot;{} #{} [{}] {} Price: {:.4} | Fake Vol: ${:.0} (Canceled: {:.1}%)\n\
+            │   ├─ Lifespan: {} ms | Executed: ${:.0} | Score: {:.2}\n\
+            │   └─ Description: {}\n&quot;,
+            badge,
+            ev.id,
+            ev.symbol,
+            ev.side,
+            ev.price,
+            ev.initial_usdt,
+            ev.cancel_ratio * 100.0,
+            ev.lifespan_ms,
+            ev.executed_usdt,
+            ev.spoof_score,
+            ev.description
+            ));
+    report.push_str(&quot;============================================================\n&quot;);
+    report</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: get_formatted_report"])
+    Start --> Cond1{"sorted_symbols.is_empty()?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"let Some(m) = metrics_guard.get(symbol)?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"events_guard.is_empty()?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> Loop4["Döngü: symbol in &sorted_symbols"]
+    Loop4 --> Loop5["Döngü: ev in events_guard.iter().rev().take(5)"]
+    Loop5 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> get_metrics_json</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>&amp;self</code> | <strong>Dönüş Tipi:</strong> <code>String</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>&amp;self</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>String</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. İşlemi tamamlayarak <code>String</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON get_metrics_json(&amp;self) -&gt; String:
+    let metrics_guard = self.symbol_metrics.lock().unwrap();
+    let events_guard = self.spoof_events.lock().unwrap();
+    let json_out = serde_json::json!({
+    &quot;metrics&quot;: *metrics_guard,
+    &quot;recent_events&quot;: *events_guard,
+    });
+    serde_json::to_string_pretty(&amp;json_out).unwrap_or_else(|_| &quot;{}&quot;.to_string())</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: get_metrics_json"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> compute_avg_qty</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>levels: &amp;[Value]</code> | <strong>Dönüş Tipi:</strong> <code>f64</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>levels: &amp;[Value]</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>f64</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Listeyi veya veri kümesini sırayla döngüye alarak tarar.<br>4. İşlemi tamamlayarak <code>f64</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON compute_avg_qty(levels: &amp;[Value]) -&gt; f64:
+    EĞER levels.is_empty() İSE:
+        DÖNDÜR 0.0
+    let mut total = 0.0;
+    let mut count = 0;
+    HER item in levels İÇİN DÖNGÜ:
+        EĞER let Some((_, q)) = parse_price_qty(item) İSE:
+            total += q;
+            count += 1;
+    EĞER count &gt; 0 İSE:</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: compute_avg_qty"])
+    Start --> Cond1{"levels.is_empty()?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"let Some((_, q)) = parse_price_qty(item)?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"count &gt; 0?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> Loop4["Döngü: item in levels"]
+    Loop4 --> EndNode(["Döndür: 0.0"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> parse_price_qty</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>item: &amp;Value</code> | <strong>Dönüş Tipi:</strong> <code>Option&lt;(f64, f64)&gt;</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>item: &amp;Value</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>Option&lt;(f64, f64)&gt;</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. İşlemi tamamlayarak <code>Option&lt;(f64, f64)&gt;</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON parse_price_qty(item: &amp;Value) -&gt; Option&lt;(f64, f64)&gt;:
+    EĞER let Some(arr) = item.as_array() İSE:
+        EĞER arr.len() &gt;= 2 İSE:
+            let p = parse_f64(&amp;arr[0]);
+            let q = parse_f64(&amp;arr[1]);
+            EĞER p &gt; 0.0 &amp;&amp; q &gt; 0.0 İSE:
+                DÖNDÜR Some((p, q))
+    None</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: parse_price_qty"])
+    Start --> Cond1{"let Some(arr) = item.as_array()?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"arr.len() &gt;= 2?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"p &gt; 0.0 && q &gt; 0.0?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> EndNode(["Döndür: Some((p, q))"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> calculate_executed_qty_at_price</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>trades: Option&lt;&amp;VecDeque&lt;TradeRecord&gt;&gt;,
+    price: f64,
+    start_ms: u64,
+    end_ms: u64,</code> | <strong>Dönüş Tipi:</strong> <code>f64</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>trades: Option&lt;&amp;VecDeque&lt;TradeRecord&gt;&gt;,
+    price: f64,
+    start_ms: u64,
+    end_ms: u64,</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>f64</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Listeyi veya veri kümesini sırayla döngüye alarak tarar.<br>4. İşlemi tamamlayarak <code>f64</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON calculate_executed_qty_at_price(trades: Option&lt;&amp;VecDeque&lt;TradeRecord&gt;&gt;,
+    price: f64,
+    start_ms: u64,
+    end_ms: u64,) -&gt; f64:
+    let mut total_qty = 0.0;
+    EĞER let Some(deque) = trades İSE:
+        let tolerance = price * 0.0005; // 0.05% price band tolerance for market order match
+        HER t in deque.iter().rev() İÇİN DÖNGÜ:
+            EĞER t.timestamp_ms &lt; start_ms İSE:
+                break;
+            EĞER t.timestamp_ms &lt;= end_ms &amp;&amp; (t.price - price).abs() &lt;= tolerance İSE:
+                total_qty += t.quantity;
+    total_qty</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: calculate_executed_qty_at_price"])
+    Start --> Cond1{"let Some(deque) = trades?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"t.timestamp_ms &lt; start_ms?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"t.timestamp_ms &lt;= end_ms && (t.price - price).abs() &lt;= tolerance?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> Loop4["Döngü: market order match"]
+    Loop4 --> Loop5["Döngü: t in deque.iter().rev()"]
+    Loop5 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> calculate_spoof_score</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>initial_usdt: f64, lifespan_ms: u64, cancel_ratio: f64</code> | <strong>Dönüş Tipi:</strong> <code>f64</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>initial_usdt: f64, lifespan_ms: u64, cancel_ratio: f64</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>f64</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. İşlemi tamamlayarak <code>f64</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON calculate_spoof_score(initial_usdt: f64, lifespan_ms: u64, cancel_ratio: f64) -&gt; f64:
+    // Size score: $50k = 0.5, $500k+ = 1.0
+    let size_factor = (initial_usdt / 250_000.0).clamp(0.2, 1.0);
+    // Speed score: &lt; 1000 ms = 1.0, 15000 ms = 0.2
+    let speed_factor = (1.0 - (lifespan_ms as f64 / 15_000.0)).clamp(0.2, 1.0);
+    // Cancel score: cancel_ratio
+    let cancel_factor = cancel_ratio.clamp(0.0, 1.0);
+    (size_factor * 0.4 + speed_factor * 0.3 + cancel_factor * 0.3).clamp(0.0, 1.0)</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: calculate_spoof_score"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> classify_alert_level</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>score: f64, initial_usdt: f64, lifespan_ms: u64</code> | <strong>Dönüş Tipi:</strong> <code>String</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>score: f64, initial_usdt: f64, lifespan_ms: u64</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>String</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. İşlemi tamamlayarak <code>String</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON classify_alert_level(score: f64, initial_usdt: f64, lifespan_ms: u64) -&gt; String:
+    EĞER score &gt;= 0.85 || (initial_usdt &gt;= 500_000.0 &amp;&amp; lifespan_ms &lt;= 2000) İSE:
+        &quot;CRITICAL&quot;.to_string()
+        } else if score &gt;= 0.65 || (initial_usdt &gt;= 200_000.0 &amp;&amp; lifespan_ms &lt;= 5000) {
+        &quot;HIGH&quot;.to_string()
+        } else if score &gt;= 0.45 {
+        &quot;MEDIUM&quot;.to_string()
+        } else {
+        &quot;INFO&quot;.to_string()</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: classify_alert_level"])
+    Start --> Cond1{"score &gt;= 0.85 || (initial_usdt &gt;= 500_000.0 && lifespan_ms &lt;= 2000)?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"score &gt;= 0.65 || (initial_usdt &gt;= 200_000.0 && lifespan_ms &lt;= 5000)?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"score &gt;= 0.45?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> parse_f64</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>val: &amp;Value</code> | <strong>Dönüş Tipi:</strong> <code>f64</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>val: &amp;Value</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>f64</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Farklı durum senaryolarına göre akışı uygun kola yönlendirir.<br>3. İşlemi tamamlayarak <code>f64</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON parse_f64(val: &amp;Value) -&gt; f64:
+    DURUM KONTROLÜ (val):
+        Value::Number(n) =&gt; n.as_f64().unwrap_or(0.0),
+        Value::String(s) =&gt; s.parse::&lt;f64&gt;().unwrap_or(0.0),
+        _ =&gt; 0.0,</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: parse_f64"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> parse_i64</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>val: &amp;Value</code> | <strong>Dönüş Tipi:</strong> <code>i64</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>val: &amp;Value</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>i64</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Farklı durum senaryolarına göre akışı uygun kola yönlendirir.<br>3. İşlemi tamamlayarak <code>i64</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON parse_i64(val: &amp;Value) -&gt; i64:
+    DURUM KONTROLÜ (val):
+        Value::Number(n) =&gt; n.as_i64().unwrap_or(0),
+        Value::String(s) =&gt; s.parse::&lt;i64&gt;().unwrap_or(0),
+        _ =&gt; 0,</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: parse_i64"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> parse_u64</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>val: &amp;Value</code> | <strong>Dönüş Tipi:</strong> <code>Option&lt;u64&gt;</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>val: &amp;Value</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>Option&lt;u64&gt;</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Farklı durum senaryolarına göre akışı uygun kola yönlendirir.<br>3. İşlemi tamamlayarak <code>Option&lt;u64&gt;</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON parse_u64(val: &amp;Value) -&gt; Option&lt;u64&gt;:
+    DURUM KONTROLÜ (val):
+        Value::Number(n) =&gt; n.as_u64(),
+        Value::String(s) =&gt; s.parse::&lt;u64&gt;().ok(),
+        _ =&gt; None,</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: parse_u64"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> init_plugin</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>state_out: *mut *mut c_void,</code> | <strong>Dönüş Tipi:</strong> <code>unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>state_out: *mut *mut c_void,</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. İşlemi tamamlayarak <code>unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON init_plugin(state_out: *mut *mut c_void,) -&gt; unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize:
+    let engine = Arc::new(SpoofDetectorEngine::new());
+    let initial_report = engine.get_formatted_report();
+    let state = Box::new(PluginState {
+    is_running: Arc::new(AtomicBool::new(false)),
+    engine,
+    data: Arc::new(Mutex::new(initial_report.into_bytes())),
+    });
+    *state_out = Box::into_raw(state) as *mut c_void;
+    handle_endpoint</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: init_plugin"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> handle_endpoint</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>plugin_state: *mut c_void,
+    endpoint_id: u32,
+    payload: *const u8,
+    payload_len: usize,
+    out_buf: *mut u8,
+    out_max_len: usize,</code> | <strong>Dönüş Tipi:</strong> <code>usize</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan <code>plugin_state: *mut c_void,
+    endpoint_id: u32,
+    payload: *const u8,
+    payload_len: usize,
+    out_buf: *mut u8,
+    out_max_len: usize,</code> verisini alır, kendi kurallarına göre işler ve sonucunda <code>usize</code> bilgisini üreten adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. Belirli şartların sağlanıp sağlanmadığını (Eğer/Değilse) test eder.<br>3. Farklı durum senaryolarına göre akışı uygun kola yönlendirir.<br>4. İşlemi tamamlayarak <code>usize</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON handle_endpoint(plugin_state: *mut c_void,
+    endpoint_id: u32,
+    payload: *const u8,
+    payload_len: usize,
+    out_buf: *mut u8,
+    out_max_len: usize,) -&gt; usize:
+    EĞER plugin_state.is_null() İSE:
+        DÖNDÜR 0
+    let state = &amp;*(plugin_state as *const PluginState);
+    DURUM KONTROLÜ (endpoint_id):
+        0 =&gt; { // Start
+        state.is_running.store(true, Ordering::Relaxed);
+        EĞER payload_len &gt; 0 &amp;&amp; !payload.is_null() İSE:
+            let slice = std::slice::from_raw_parts(payload, payload_len);
+            EĞER let Ok(config) = serde_json::from_slice::&lt;Value&gt;(slice) İSE:
+                let params = config.get(&quot;plugin_params&quot;).unwrap_or(&amp;config);
+                let min_usdt = params.get(&quot;min_wall_usdt&quot;).and_then(|v| v.as_u64());
+                let max_lifespan = params.get(&quot;max_lifespan_ms&quot;).and_then(|v| v.as_u64());
+                let min_cancel = params.get(&quot;min_cancel_ratio_pct&quot;).and_then(|v| v.as_u64());
+                state.engine.configure(min_usdt, max_lifespan, min_cancel);
+        0
+    1 =&gt; { // Stop
+    state.is_running.store(false, Ordering::Relaxed);
+    0
+    2 =&gt; { // IsWorking
+    let running = state.is_running.load(Ordering::Relaxed);
+    EĞER out_max_len &gt;= 1 &amp;&amp; !out_buf.is_null() İSE:
+        *out_buf = if running { 1 } else { 0 };
+        1
+        } else {
+        EĞER running İSE:
+    3 =&gt; { // DataValid
+    1
+    4 | 5 =&gt; { // DataMonitor (4) / RawData (5)
+    let guard = state.data.lock().unwrap();
+    let len = guard.len().min(out_max_len);
+    EĞER len &gt; 0 &amp;&amp; !out_buf.is_null() İSE:
+        std::ptr::copy_nonoverlapping(guard.as_ptr(), out_buf, len);
+    len
+    6 =&gt; { // Inbox (Data routed from FlowEngine)
+    EĞER !state.is_running.load(Ordering::Relaxed) İSE:
+        DÖNDÜR 0
+    EĞER payload_len &gt; 32 &amp;&amp; !payload.is_null() İSE:
+        let slice = std::slice::from_raw_parts(payload, payload_len);
+        let header = &amp;slice[0..32];
+        let stream_id = std::str::from_utf8(header)
+        .unwrap_or(&quot;&quot;)
+        .trim_matches(char::from(0))
+        .trim()
+        .to_string();
+        let now_ms = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap_or_default()
+        .as_millis() as u64;
+        EĞER stream_id.contains(&quot;trades&quot;) || stream_id.contains(&quot;aggtrades&quot;) İSE:
+            EĞER let Ok(json_data) = serde_json::from_slice::&lt;Value&gt;(&amp;slice[32..]) İSE:
+                state.engine.process_trade_payload(&amp;json_data, now_ms);
+            } else if stream_id.contains(&quot;depth&quot;) {
+            EĞER let Ok(json_data) = serde_json::from_slice::&lt;Value&gt;(&amp;slice[32..]) İSE:
+                let report = state.engine.process_depth_payload(&amp;json_data, now_ms);
+                let mut data_guard = state.data.lock().unwrap();
+                *data_guard = report.into_bytes();
+    0
+    _ =&gt; 0,</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: handle_endpoint"])
+    Start --> Cond1{"plugin_state.is_null()?"}
+    Cond1 -- "Evet" --> Yes1["İşlemi Çalıştır"]
+    Cond1 -- "Hayır" --> No1["Devam Et / Alternatif"]
+    Yes1 --> Cond2{"payload_len &gt; 0 && !payload.is_null()?"}
+    Cond2 -- "Evet" --> Yes2["İşlemi Çalıştır"]
+    Cond2 -- "Hayır" --> No2["Devam Et / Alternatif"]
+    Yes2 --> Cond3{"let Ok(config) = serde_json::from_slice::&lt;Value&gt;(slice)?"}
+    Cond3 -- "Evet" --> Yes3["İşlemi Çalıştır"]
+    Cond3 -- "Hayır" --> No3["Devam Et / Alternatif"]
+    Yes3 --> EndNode(["Döndür: 0"])
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><span class="badge">fn</span> test_spoofing_detection_simulation</h3>
+            <p style="margin-bottom: 1rem;"><strong>Parametreler:</strong> <code>Yok</code> | <strong>Dönüş Tipi:</strong> <code>()</code></p>
+            
+            <div class="easy-analogy">
+                💡 <b>Gündelik Hayat Benzetmesi:</b> Mutfaktaki özel bir mutfak robotu gibi düşünebilirsiniz. Dışarıdan hiçbir girdi almadan verisini alır, kendi kurallarına göre işler ve sonucunda gerekli işlemi tamamlayan adımı gerçekleştirir.
+            </div>
+
+            <h4>📖 Teknik İşlem Adımları</h4>
+            <div class="verbal-explanation">
+                <b>İşlem Adımları:</b><br>1. Girdi parametrelerini ve nesne durumunu kontrol eder.<br>2. İşlemi tamamlayarak <code>()</code> sonucunu geri döndürür.
+            </div>
+
+            <h4>📝 Sözde Kod (Pseudocode)</h4>
+            <pre class="pseudocode"><code>FONKSİYON test_spoofing_detection_simulation() -&gt; ():
+    let engine = SpoofDetectorEngine::new();
+    engine.configure(Some(50000), Some(10000), Some(70));
+    let t0 = 1000000u64;
+    let t1 = 1001500u64; // 1500 ms later
+    // Step 1: Ingest depth snapshot with a massive BID wall ($200,000 at price 100.0)
+    let depth_snap1 = serde_json::json!({
+    &quot;BTCUSDT&quot;: {
+    &quot;bids&quot;: [
+    [&quot;100.0&quot;, &quot;2000.0&quot;], // $200,000 USDT wall
+    [&quot;99.5&quot;, &quot;10.0&quot;]
+    ],
+    &quot;asks&quot;: [
+    [&quot;100.5&quot;, &quot;10.0&quot;]
+    ],
+    &quot;event_time&quot;: t0
+    });
+    engine.process_depth_payload(&amp;depth_snap1, t0);
+    // Verify active wall was registered
+    {
+    let walls = engine.active_walls.lock().unwrap();
+    let btc_walls = walls.get(&quot;BTCUSDT&quot;).unwrap();
+    assert_eq!(btc_walls.len(), 1);
+    assert!(btc_walls.contains_key(&quot;BID_100.000000&quot;));
+    // Step 2: Ingest a small trade at 100.0 ($5,000 filled)
+    let trade_data = serde_json::json!({
+    &quot;BTCUSDT&quot;: {
+    &quot;trade_id&quot;: 101,
+    &quot;price&quot;: &quot;100.0&quot;,
+    &quot;quantity&quot;: &quot;50.0&quot;, // $5,000 executed
+    &quot;buyer_is_maker&quot;: true,
+    &quot;event_time&quot;: t0 + 500
+    });
+    engine.process_trade_payload(&amp;trade_data, t0 + 500);
+    // Step 3: Ingest depth snapshot where the $200,000 BID wall completely disappears (canceled without fill)
+    let depth_snap2 = serde_json::json!({
+    &quot;BTCUSDT&quot;: {
+    &quot;bids&quot;: [
+    [&quot;99.5&quot;, &quot;10.0&quot;]
+    ],
+    &quot;asks&quot;: [
+    [&quot;100.5&quot;, &quot;10.0&quot;]
+    ],
+    &quot;event_time&quot;: t1
+    });
+    let report = engine.process_depth_payload(&amp;depth_snap2, t1);
+    assert!(report.contains(&quot;BINANCE FUTURES SPOOFING (FAKE ORDER) DETECTION PANEL&quot;));
+    assert!(report.contains(&quot;BTCUSDT&quot;));
+    // Check metrics &amp; events
+    let events = engine.spoof_events.lock().unwrap();
+    assert_eq!(events.len(), 1);
+    let event = &amp;events[0];
+    assert_eq!(event.symbol, &quot;BTCUSDT&quot;);
+    assert_eq!(event.side, &quot;BID&quot;);
+    assert_eq!(event.price, 100.0);
+    assert_eq!(event.initial_usdt, 200000.0);
+    assert_eq!(event.executed_qty, 50.0);
+    assert_eq!(event.canceled_qty, 1950.0);
+    assert!((event.cancel_ratio - 0.975).abs() &lt; 1e-5);
+    assert_eq!(event.lifespan_ms, 1500);
+    assert!(event.spoof_score &gt; 0.6);
+    assert!(event.alert_level == &quot;HIGH&quot; || event.alert_level == &quot;CRITICAL&quot;);</code></pre>
+            
+            <h4>📊 Algoritmik Akış Şeması</h4>
+            <div class="mermaid">
+flowchart TD
+    Start(["Başla: test_spoofing_detection_simulation"])
+    Start --> EndNode(["Bitir"])
+            </div>
+        </div>
+        
+        </section>
+
+        <details>
+            <summary>Orijinal Rust Kaynak Kodunu Göster</summary>
+            <pre><code>use std::collections::{HashMap, VecDeque};
+use std::ffi::c_void;
+use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
+use std::sync::{Arc, Mutex};
+use std::time::{SystemTime, UNIX_EPOCH};
+use serde::{Deserialize, Serialize};
+use serde_json::Value;
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct TradeRecord {
+    pub trade_id: i64,
+    pub price: f64,
+    pub quantity: f64,
+    pub usdt_value: f64,
+    pub is_buyer_maker: bool,
+    pub timestamp_ms: u64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ActiveWall {
+    pub symbol: String,
+    pub side: String, // &quot;BID&quot; or &quot;ASK&quot;
+    pub price: f64,
+    pub initial_qty: f64,
+    pub initial_usdt: f64,
+    pub current_qty: f64,
+    pub current_usdt: f64,
+    pub appear_time_ms: u64,
+    pub last_seen_time_ms: u64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SpoofEvent {
+    pub id: u64,
+    pub symbol: String,
+    pub side: String, // &quot;BID&quot; (Bullish/Long Bait) or &quot;ASK&quot; (Bearish/Short Bait)
+    pub price: f64,
+    pub initial_usdt: f64,
+    pub canceled_qty: f64,
+    pub canceled_usdt: f64,
+    pub executed_qty: f64,
+    pub executed_usdt: f64,
+    pub lifespan_ms: u64,
+    pub cancel_ratio: f64,
+    pub spoof_score: f64,
+    pub alert_level: String, // &quot;INFO&quot;, &quot;MEDIUM&quot;, &quot;HIGH&quot;, &quot;CRITICAL&quot;
+    pub event_time_ms: u64,
+    pub description: String,
+}
+
+#[derive(Debug, Default, Clone, Serialize, Deserialize)]
+pub struct SymbolSpoofMetrics {
+    pub symbol: String,
+    pub active_walls_count: usize,
+    pub total_spoof_events: usize,
+    pub total_bid_spoofs: usize,
+    pub total_ask_spoofs: usize,
+    pub total_phantom_usdt: f64,
+    pub last_spoof_time_ms: u64,
+}
+
+pub struct SpoofDetectorEngine {
+    pub min_wall_usdt: AtomicU64,        // Min USDT value for a wall (e.g. 50,000)
+    pub max_lifespan_ms: AtomicU64,      // Max wall lifespan to count as spoofing (e.g. 15,000 ms)
+    pub min_cancel_ratio_pct: AtomicU64, // Min canceled % without fill (e.g. 70%)
+
+    // active_walls: symbol -&gt; price_key -&gt; ActiveWall
+    pub active_walls: Mutex&lt;HashMap&lt;String, HashMap&lt;String, ActiveWall&gt;&gt;&gt;,
+    pub trade_history: Mutex&lt;HashMap&lt;String, VecDeque&lt;TradeRecord&gt;&gt;&gt;,
+    pub spoof_events: Mutex&lt;VecDeque&lt;SpoofEvent&gt;&gt;,
+    pub symbol_metrics: Mutex&lt;HashMap&lt;String, SymbolSpoofMetrics&gt;&gt;,
+    pub event_counter: AtomicU64,
+}
+
+impl SpoofDetectorEngine {
+    pub fn new() -&gt; Self {
+        Self {
+            min_wall_usdt: AtomicU64::new(50000),      // $50,000 default threshold
+            max_lifespan_ms: AtomicU64::new(15000),    // 15 seconds
+            min_cancel_ratio_pct: AtomicU64::new(70),  // 70% canceled
+            active_walls: Mutex::new(HashMap::new()),
+            trade_history: Mutex::new(HashMap::new()),
+            spoof_events: Mutex::new(VecDeque::new()),
+            symbol_metrics: Mutex::new(HashMap::new()),
+            event_counter: AtomicU64::new(1),
+        }
+    }
+
+    pub fn configure(&amp;self, min_usdt: Option&lt;u64&gt;, max_lifespan: Option&lt;u64&gt;, min_cancel_pct: Option&lt;u64&gt;) {
+        if let Some(u) = min_usdt {
+            if u &gt; 0 {
+                self.min_wall_usdt.store(u, Ordering::Relaxed);
+            }
+        }
+        if let Some(l) = max_lifespan {
+            if l &gt;= 500 {
+                self.max_lifespan_ms.store(l, Ordering::Relaxed);
+            }
+        }
+        if let Some(c) = min_cancel_pct {
+            if c &lt;= 100 {
+                self.min_cancel_ratio_pct.store(c, Ordering::Relaxed);
+            }
+        }
+    }
+
+    pub fn process_trade_payload(&amp;self, json_data: &amp;Value, now_ms: u64) {
+        let mut trades_guard = self.trade_history.lock().unwrap();
+
+        if let Some(obj) = json_data.as_object() {
+            for (symbol, item) in obj.iter() {
+                let trade_id = parse_i64(&amp;item[&quot;trade_id&quot;]);
+                let price = parse_f64(&amp;item[&quot;price&quot;]);
+                let quantity = parse_f64(&amp;item[&quot;quantity&quot;]);
+                let is_buyer_maker = item[&quot;buyer_is_maker&quot;].as_bool().unwrap_or(false);
+                let event_time = parse_u64(&amp;item[&quot;event_time&quot;])
+                    .or_else(|| parse_u64(&amp;item[&quot;local_recv_time_ms&quot;]))
+                    .unwrap_or(now_ms);
+
+                if price &gt; 0.0 &amp;&amp; quantity &gt; 0.0 {
+                    let usdt_val = price * quantity;
+                    let deque = trades_guard.entry(symbol.clone()).or_insert_with(VecDeque::new);
+
+                    // Prevent duplicates
+                    if deque.back().map_or(true, |last| last.trade_id != trade_id || trade_id == 0) {
+                        deque.push_back(TradeRecord {
+                            trade_id,
+                            price,
+                            quantity,
+                            usdt_value: usdt_val,
+                            is_buyer_maker,
+                            timestamp_ms: event_time,
+                        });
+
+                        // Keep up to 1,000 trades per symbol
+                        if deque.len() &gt; 1000 {
+                            deque.pop_front();
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    pub fn process_depth_payload(&amp;self, json_data: &amp;Value, now_ms: u64) -&gt; String {
+        let min_usdt = self.min_wall_usdt.load(Ordering::Relaxed) as f64;
+        let max_lifespan = self.max_lifespan_ms.load(Ordering::Relaxed);
+        let min_cancel_pct = self.min_cancel_ratio_pct.load(Ordering::Relaxed) as f64 / 100.0;
+
+        let mut walls_guard = self.active_walls.lock().unwrap();
+        let trades_guard = self.trade_history.lock().unwrap();
+        let mut events_guard = self.spoof_events.lock().unwrap();
+        let mut metrics_guard = self.symbol_metrics.lock().unwrap();
+
+        if let Some(obj) = json_data.as_object() {
+            for (symbol, depth_item) in obj.iter() {
+                let event_time = parse_u64(&amp;depth_item[&quot;event_time&quot;])
+                    .or_else(|| parse_u64(&amp;depth_item[&quot;local_recv_time_ms&quot;]))
+                    .unwrap_or(now_ms);
+
+                let bids_arr = depth_item[&quot;bids&quot;].as_array();
+                let asks_arr = depth_item[&quot;asks&quot;].as_array();
+
+                let mut current_snapshot_keys = std::collections::HashSet::new();
+
+                // Process Bids (Alım Duvarları)
+                if let Some(bids) = bids_arr {
+                    let avg_qty = compute_avg_qty(bids);
+                    for item in bids {
+                        if let Some((p, q)) = parse_price_qty(item) {
+                            let usdt_val = p * q;
+                            let price_key = format!(&quot;BID_{:.6}&quot;, p);
+                            // Wall condition: exceeds min_usdt and is at least 2.5x avg quantity
+                            if usdt_val &gt;= min_usdt || (avg_qty &gt; 0.0 &amp;&amp; q &gt;= avg_qty * 2.5) {
+                                current_snapshot_keys.insert(price_key.clone());
+                                let symbol_walls = walls_guard.entry(symbol.clone()).or_insert_with(HashMap::new);
+
+                                symbol_walls.entry(price_key).and_modify(|w| {
+                                    w.current_qty = q;
+                                    w.current_usdt = usdt_val;
+                                    w.last_seen_time_ms = event_time;
+                                }).or_insert(ActiveWall {
+                                    symbol: symbol.clone(),
+                                    side: &quot;BID&quot;.to_string(),
+                                    price: p,
+                                    initial_qty: q,
+                                    initial_usdt: usdt_val,
+                                    current_qty: q,
+                                    current_usdt: usdt_val,
+                                    appear_time_ms: event_time,
+                                    last_seen_time_ms: event_time,
+                                });
+                            }
+                        }
+                    }
+                }
+
+                // Process Asks (Satış Duvarları)
+                if let Some(asks) = asks_arr {
+                    let avg_qty = compute_avg_qty(asks);
+                    for item in asks {
+                        if let Some((p, q)) = parse_price_qty(item) {
+                            let usdt_val = p * q;
+                            let price_key = format!(&quot;ASK_{:.6}&quot;, p);
+                            if usdt_val &gt;= min_usdt || (avg_qty &gt; 0.0 &amp;&amp; q &gt;= avg_qty * 2.5) {
+                                current_snapshot_keys.insert(price_key.clone());
+                                let symbol_walls = walls_guard.entry(symbol.clone()).or_insert_with(HashMap::new);
+
+                                symbol_walls.entry(price_key).and_modify(|w| {
+                                    w.current_qty = q;
+                                    w.current_usdt = usdt_val;
+                                    w.last_seen_time_ms = event_time;
+                                }).or_insert(ActiveWall {
+                                    symbol: symbol.clone(),
+                                    side: &quot;ASK&quot;.to_string(),
+                                    price: p,
+                                    initial_qty: q,
+                                    initial_usdt: usdt_val,
+                                    current_qty: q,
+                                    current_usdt: usdt_val,
+                                    appear_time_ms: event_time,
+                                    last_seen_time_ms: event_time,
+                                });
+                            }
+                        }
+                    }
+                }
+
+                // Inspect missing or significantly reduced walls for Spoofing Detection
+                if let Some(symbol_walls) = walls_guard.get_mut(symbol) {
+                    let mut evaluated_keys = Vec::new();
+
+                    for (key, wall) in symbol_walls.iter() {
+                        let is_missing = !current_snapshot_keys.contains(key);
+                        let qty_dropped = wall.current_qty &lt;= wall.initial_qty * 0.30; // Dropped by 70%+
+
+                        if is_missing || qty_dropped {
+                            evaluated_keys.push(key.clone());
+
+                            let effective_current_qty = if is_missing { 0.0 } else { wall.current_qty };
+                            let lifespan = event_time.saturating_sub(wall.appear_time_ms);
+                            if lifespan &lt;= max_lifespan &amp;&amp; lifespan &gt;= 100 {
+                                // Calculate executed volume around this price level during wall lifespan
+                                let executed_qty = calculate_executed_qty_at_price(
+                                    trades_guard.get(symbol),
+                                    wall.price,
+                                    wall.appear_time_ms,
+                                    event_time,
+                                );
+
+                                let raw_canceled = (wall.initial_qty - effective_current_qty) - executed_qty;
+                                let canceled_qty = raw_canceled.max(0.0);
+                                let cancel_ratio = if wall.initial_qty &gt; 0.0 {
+                                    canceled_qty / wall.initial_qty
+                                } else {
+                                    0.0
+                                };
+
+                                if cancel_ratio &gt;= min_cancel_pct {
+                                    let canceled_usdt = canceled_qty * wall.price;
+                                    let executed_usdt = executed_qty * wall.price;
+
+                                    let spoof_score = calculate_spoof_score(
+                                        wall.initial_usdt,
+                                        lifespan,
+                                        cancel_ratio,
+                                    );
+                                    let alert_level = classify_alert_level(spoof_score, wall.initial_usdt, lifespan);
+
+                                    let event_id = self.event_counter.fetch_add(1, Ordering::Relaxed);
+                                    let desc = format!(
+                                        &quot;SPOOF ORDER (Fake Wall): {} wall at price {:.4} with ${:.0} size was CANCELED within {} ms before {:.1}% was filled!&quot;,
+                                        wall.side,
+                                        wall.price,
+                                        wall.initial_usdt,
+                                        lifespan,
+                                        cancel_ratio * 100.0
+                                    );
+
+                                    let spoof_event = SpoofEvent {
+                                        id: event_id,
+                                        symbol: symbol.clone(),
+                                        side: wall.side.clone(),
+                                        price: wall.price,
+                                        initial_usdt: wall.initial_usdt,
+                                        canceled_qty,
+                                        canceled_usdt,
+                                        executed_qty,
+                                        executed_usdt,
+                                        lifespan_ms: lifespan,
+                                        cancel_ratio,
+                                        spoof_score,
+                                        alert_level,
+                                        event_time_ms: event_time,
+                                        description: desc,
+                                    };
+
+                                    events_guard.push_back(spoof_event);
+                                    if events_guard.len() &gt; 50 {
+                                        events_guard.pop_front();
+                                    }
+
+                                    // Update metrics
+                                    let m = metrics_guard.entry(symbol.clone()).or_insert_with(|| SymbolSpoofMetrics {
+                                        symbol: symbol.clone(),
+                                        ..Default::default()
+                                    });
+                                    m.total_spoof_events += 1;
+                                    if wall.side == &quot;BID&quot; {
+                                        m.total_bid_spoofs += 1;
+                                    } else {
+                                        m.total_ask_spoofs += 1;
+                                    }
+                                    m.total_phantom_usdt += canceled_usdt;
+                                    m.last_spoof_time_ms = event_time;
+                                }
+                            }
+                        }
+                    }
+
+                    // Remove processed walls
+                    for k in evaluated_keys {
+                        symbol_walls.remove(&amp;k);
+                    }
+                }
+            }
+        }
+
+        // Update active walls count in metrics
+        for (symbol, symbol_walls) in walls_guard.iter() {
+            let m = metrics_guard.entry(symbol.clone()).or_insert_with(|| SymbolSpoofMetrics {
+                symbol: symbol.clone(),
+                ..Default::default()
+            });
+            m.active_walls_count = symbol_walls.len();
+        }
+
+        drop(metrics_guard);
+        drop(events_guard);
+        drop(trades_guard);
+        drop(walls_guard);
+
+        self.get_formatted_report()
+    }
+
+    pub fn get_formatted_report(&amp;self) -&gt; String {
+        let metrics_guard = self.symbol_metrics.lock().unwrap();
+        let events_guard = self.spoof_events.lock().unwrap();
+        let walls_guard = self.active_walls.lock().unwrap();
+
+        let min_usdt = self.min_wall_usdt.load(Ordering::Relaxed);
+        let max_lifespan = self.max_lifespan_ms.load(Ordering::Relaxed);
+
+        let mut sorted_symbols: Vec&lt;String&gt; = metrics_guard.keys().cloned().collect();
+        sorted_symbols.sort();
+
+        let mut report = String::new();
+        report.push_str(&quot;============================================================\n&quot;);
+        report.push_str(&amp;format!(
+            &quot;🕵️ BINANCE FUTURES SPOOFING (FAKE ORDER) DETECTION PANEL\n\
+             ├─ Wall Threshold: ${} USDT | Max Lifespan: {} ms\n&quot;,
+            min_usdt, max_lifespan
+        ));
+        report.push_str(&quot;============================================================\n&quot;);
+
+        if sorted_symbols.is_empty() {
+            report.push_str(&quot;No spoofing (fake orders) or active walls detected yet.\n&quot;);
+        } else {
+            for symbol in &amp;sorted_symbols {
+                if let Some(m) = metrics_guard.get(symbol) {
+                    let wall_count = walls_guard.get(symbol).map(|w| w.len()).unwrap_or(0);
+                    report.push_str(&amp;format!(
+                        &quot;[{}]  Active Walls: {} | Total Spoof Events: {} (Buy/Long Bait: {} | Sell/Short Bait: {})\n\
+                         ├─ Total Phantom/Pulled Liquidity: ${:.2}\n\n&quot;,
+                        symbol,
+                        wall_count,
+                        m.total_spoof_events,
+                        m.total_bid_spoofs,
+                        m.total_ask_spoofs,
+                        m.total_phantom_usdt
+                    ));
+                }
+            }
+        }
+
+        report.push_str(&quot;------------------------------------------------------------\n&quot;);
+        report.push_str(&quot;🚨 RECENT SPOOFING ALERTS (Last 5 Events):\n&quot;);
+        report.push_str(&quot;------------------------------------------------------------\n&quot;);
+
+        if events_guard.is_empty() {
+            report.push_str(&quot;No suspicious spoof order cancellations detected yet.\n&quot;);
+        } else {
+            for ev in events_guard.iter().rev().take(5) {
+                let badge = match ev.alert_level.as_str() {
+                    &quot;CRITICAL&quot; =&gt; &quot;🛑 [CRITICAL]&quot;,
+                    &quot;HIGH&quot; =&gt; &quot;🔴 [HIGH]&quot;,
+                    &quot;MEDIUM&quot; =&gt; &quot;🟠 [MEDIUM]&quot;,
+                    _ =&gt; &quot;🟡 [INFO]&quot;,
+                };
+
+                report.push_str(&amp;format!(
+                    &quot;{} #{} [{}] {} Price: {:.4} | Fake Vol: ${:.0} (Canceled: {:.1}%)\n\
+                     │   ├─ Lifespan: {} ms | Executed: ${:.0} | Score: {:.2}\n\
+                     │   └─ Description: {}\n&quot;,
+                    badge,
+                    ev.id,
+                    ev.symbol,
+                    ev.side,
+                    ev.price,
+                    ev.initial_usdt,
+                    ev.cancel_ratio * 100.0,
+                    ev.lifespan_ms,
+                    ev.executed_usdt,
+                    ev.spoof_score,
+                    ev.description
+                ));
+            }
+        }
+
+        report.push_str(&quot;============================================================\n&quot;);
+        report
+    }
+
+    pub fn get_metrics_json(&amp;self) -&gt; String {
+        let metrics_guard = self.symbol_metrics.lock().unwrap();
+        let events_guard = self.spoof_events.lock().unwrap();
+
+        let json_out = serde_json::json!({
+            &quot;metrics&quot;: *metrics_guard,
+            &quot;recent_events&quot;: *events_guard,
+        });
+
+        serde_json::to_string_pretty(&amp;json_out).unwrap_or_else(|_| &quot;{}&quot;.to_string())
+    }
+}
+
+fn compute_avg_qty(levels: &amp;[Value]) -&gt; f64 {
+    if levels.is_empty() {
+        return 0.0;
+    }
+    let mut total = 0.0;
+    let mut count = 0;
+    for item in levels {
+        if let Some((_, q)) = parse_price_qty(item) {
+            total += q;
+            count += 1;
+        }
+    }
+    if count &gt; 0 { total / count as f64 } else { 0.0 }
+}
+
+fn parse_price_qty(item: &amp;Value) -&gt; Option&lt;(f64, f64)&gt; {
+    if let Some(arr) = item.as_array() {
+        if arr.len() &gt;= 2 {
+            let p = parse_f64(&amp;arr[0]);
+            let q = parse_f64(&amp;arr[1]);
+            if p &gt; 0.0 &amp;&amp; q &gt; 0.0 {
+                return Some((p, q));
+            }
+        }
+    }
+    None
+}
+
+fn calculate_executed_qty_at_price(
+    trades: Option&lt;&amp;VecDeque&lt;TradeRecord&gt;&gt;,
+    price: f64,
+    start_ms: u64,
+    end_ms: u64,
+) -&gt; f64 {
+    let mut total_qty = 0.0;
+    if let Some(deque) = trades {
+        let tolerance = price * 0.0005; // 0.05% price band tolerance for market order match
+        for t in deque.iter().rev() {
+            if t.timestamp_ms &lt; start_ms {
+                break;
+            }
+            if t.timestamp_ms &lt;= end_ms &amp;&amp; (t.price - price).abs() &lt;= tolerance {
+                total_qty += t.quantity;
+            }
+        }
+    }
+    total_qty
+}
+
+fn calculate_spoof_score(initial_usdt: f64, lifespan_ms: u64, cancel_ratio: f64) -&gt; f64 {
+    // Size score: $50k = 0.5, $500k+ = 1.0
+    let size_factor = (initial_usdt / 250_000.0).clamp(0.2, 1.0);
+    // Speed score: &lt; 1000 ms = 1.0, 15000 ms = 0.2
+    let speed_factor = (1.0 - (lifespan_ms as f64 / 15_000.0)).clamp(0.2, 1.0);
+    // Cancel score: cancel_ratio
+    let cancel_factor = cancel_ratio.clamp(0.0, 1.0);
+
+    (size_factor * 0.4 + speed_factor * 0.3 + cancel_factor * 0.3).clamp(0.0, 1.0)
+}
+
+fn classify_alert_level(score: f64, initial_usdt: f64, lifespan_ms: u64) -&gt; String {
+    if score &gt;= 0.85 || (initial_usdt &gt;= 500_000.0 &amp;&amp; lifespan_ms &lt;= 2000) {
+        &quot;CRITICAL&quot;.to_string()
+    } else if score &gt;= 0.65 || (initial_usdt &gt;= 200_000.0 &amp;&amp; lifespan_ms &lt;= 5000) {
+        &quot;HIGH&quot;.to_string()
+    } else if score &gt;= 0.45 {
+        &quot;MEDIUM&quot;.to_string()
+    } else {
+        &quot;INFO&quot;.to_string()
+    }
+}
+
+fn parse_f64(val: &amp;Value) -&gt; f64 {
+    match val {
+        Value::Number(n) =&gt; n.as_f64().unwrap_or(0.0),
+        Value::String(s) =&gt; s.parse::&lt;f64&gt;().unwrap_or(0.0),
+        _ =&gt; 0.0,
+    }
+}
+
+fn parse_i64(val: &amp;Value) -&gt; i64 {
+    match val {
+        Value::Number(n) =&gt; n.as_i64().unwrap_or(0),
+        Value::String(s) =&gt; s.parse::&lt;i64&gt;().unwrap_or(0),
+        _ =&gt; 0,
+    }
+}
+
+fn parse_u64(val: &amp;Value) -&gt; Option&lt;u64&gt; {
+    match val {
+        Value::Number(n) =&gt; n.as_u64(),
+        Value::String(s) =&gt; s.parse::&lt;u64&gt;().ok(),
+        _ =&gt; None,
+    }
+}
+
+// C ABI Plugin Integration
+struct PluginState {
+    is_running: Arc&lt;AtomicBool&gt;,
+    engine: Arc&lt;SpoofDetectorEngine&gt;,
+    data: Arc&lt;Mutex&lt;Vec&lt;u8&gt;&gt;&gt;,
+}
+
+#[no_mangle]
+pub unsafe extern &quot;C&quot; fn init_plugin(
+    state_out: *mut *mut c_void,
+) -&gt; unsafe extern &quot;C&quot; fn(*mut c_void, u32, *const u8, usize, *mut u8, usize) -&gt; usize {
+    let engine = Arc::new(SpoofDetectorEngine::new());
+    let initial_report = engine.get_formatted_report();
+
+    let state = Box::new(PluginState {
+        is_running: Arc::new(AtomicBool::new(false)),
+        engine,
+        data: Arc::new(Mutex::new(initial_report.into_bytes())),
+    });
+
+    *state_out = Box::into_raw(state) as *mut c_void;
+    handle_endpoint
+}
+
+unsafe extern &quot;C&quot; fn handle_endpoint(
+    plugin_state: *mut c_void,
+    endpoint_id: u32,
+    payload: *const u8,
+    payload_len: usize,
+    out_buf: *mut u8,
+    out_max_len: usize,
+) -&gt; usize {
+    if plugin_state.is_null() {
+        return 0;
+    }
+    let state = &amp;*(plugin_state as *const PluginState);
+
+    match endpoint_id {
+        0 =&gt; { // Start
+            state.is_running.store(true, Ordering::Relaxed);
+
+            if payload_len &gt; 0 &amp;&amp; !payload.is_null() {
+                let slice = std::slice::from_raw_parts(payload, payload_len);
+                if let Ok(config) = serde_json::from_slice::&lt;Value&gt;(slice) {
+                    let params = config.get(&quot;plugin_params&quot;).unwrap_or(&amp;config);
+                    let min_usdt = params.get(&quot;min_wall_usdt&quot;).and_then(|v| v.as_u64());
+                    let max_lifespan = params.get(&quot;max_lifespan_ms&quot;).and_then(|v| v.as_u64());
+                    let min_cancel = params.get(&quot;min_cancel_ratio_pct&quot;).and_then(|v| v.as_u64());
+
+                    state.engine.configure(min_usdt, max_lifespan, min_cancel);
+                }
+            }
+            0
+        }
+        1 =&gt; { // Stop
+            state.is_running.store(false, Ordering::Relaxed);
+            0
+        }
+        2 =&gt; { // IsWorking
+            let running = state.is_running.load(Ordering::Relaxed);
+            if out_max_len &gt;= 1 &amp;&amp; !out_buf.is_null() {
+                *out_buf = if running { 1 } else { 0 };
+                1
+            } else {
+                if running { 1 } else { 0 }
+            }
+        }
+        3 =&gt; { // DataValid
+            1
+        }
+        4 | 5 =&gt; { // DataMonitor (4) / RawData (5)
+            let guard = state.data.lock().unwrap();
+            let len = guard.len().min(out_max_len);
+            if len &gt; 0 &amp;&amp; !out_buf.is_null() {
+                std::ptr::copy_nonoverlapping(guard.as_ptr(), out_buf, len);
+            }
+            len
+        }
+        6 =&gt; { // Inbox (Data routed from FlowEngine)
+            if !state.is_running.load(Ordering::Relaxed) {
+                return 0;
+            }
+
+            if payload_len &gt; 32 &amp;&amp; !payload.is_null() {
+                let slice = std::slice::from_raw_parts(payload, payload_len);
+                let header = &amp;slice[0..32];
+                let stream_id = std::str::from_utf8(header)
+                    .unwrap_or(&quot;&quot;)
+                    .trim_matches(char::from(0))
+                    .trim()
+                    .to_string();
+
+                let now_ms = SystemTime::now()
+                    .duration_since(UNIX_EPOCH)
+                    .unwrap_or_default()
+                    .as_millis() as u64;
+
+                if stream_id.contains(&quot;trades&quot;) || stream_id.contains(&quot;aggtrades&quot;) {
+                    if let Ok(json_data) = serde_json::from_slice::&lt;Value&gt;(&amp;slice[32..]) {
+                        state.engine.process_trade_payload(&amp;json_data, now_ms);
+                    }
+                } else if stream_id.contains(&quot;depth&quot;) {
+                    if let Ok(json_data) = serde_json::from_slice::&lt;Value&gt;(&amp;slice[32..]) {
+                        let report = state.engine.process_depth_payload(&amp;json_data, now_ms);
+
+                        let mut data_guard = state.data.lock().unwrap();
+                        *data_guard = report.into_bytes();
+                    }
+                }
+            }
+            0
+        }
+        _ =&gt; 0,
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_spoofing_detection_simulation() {
+        let engine = SpoofDetectorEngine::new();
+        engine.configure(Some(50000), Some(10000), Some(70));
+
+        let t0 = 1000000u64;
+        let t1 = 1001500u64; // 1500 ms later
+
+        // Step 1: Ingest depth snapshot with a massive BID wall ($200,000 at price 100.0)
+        let depth_snap1 = serde_json::json!({
+            &quot;BTCUSDT&quot;: {
+                &quot;bids&quot;: [
+                    [&quot;100.0&quot;, &quot;2000.0&quot;], // $200,000 USDT wall
+                    [&quot;99.5&quot;, &quot;10.0&quot;]
+                ],
+                &quot;asks&quot;: [
+                    [&quot;100.5&quot;, &quot;10.0&quot;]
+                ],
+                &quot;event_time&quot;: t0
+            }
+        });
+
+        engine.process_depth_payload(&amp;depth_snap1, t0);
+
+        // Verify active wall was registered
+        {
+            let walls = engine.active_walls.lock().unwrap();
+            let btc_walls = walls.get(&quot;BTCUSDT&quot;).unwrap();
+            assert_eq!(btc_walls.len(), 1);
+            assert!(btc_walls.contains_key(&quot;BID_100.000000&quot;));
+        }
+
+        // Step 2: Ingest a small trade at 100.0 ($5,000 filled)
+        let trade_data = serde_json::json!({
+            &quot;BTCUSDT&quot;: {
+                &quot;trade_id&quot;: 101,
+                &quot;price&quot;: &quot;100.0&quot;,
+                &quot;quantity&quot;: &quot;50.0&quot;, // $5,000 executed
+                &quot;buyer_is_maker&quot;: true,
+                &quot;event_time&quot;: t0 + 500
+            }
+        });
+        engine.process_trade_payload(&amp;trade_data, t0 + 500);
+
+        // Step 3: Ingest depth snapshot where the $200,000 BID wall completely disappears (canceled without fill)
+        let depth_snap2 = serde_json::json!({
+            &quot;BTCUSDT&quot;: {
+                &quot;bids&quot;: [
+                    [&quot;99.5&quot;, &quot;10.0&quot;]
+                ],
+                &quot;asks&quot;: [
+                    [&quot;100.5&quot;, &quot;10.0&quot;]
+                ],
+                &quot;event_time&quot;: t1
+            }
+        });
+
+        let report = engine.process_depth_payload(&amp;depth_snap2, t1);
+
+        assert!(report.contains(&quot;BINANCE FUTURES SPOOFING (FAKE ORDER) DETECTION PANEL&quot;));
+        assert!(report.contains(&quot;BTCUSDT&quot;));
+
+        // Check metrics &amp; events
+        let events = engine.spoof_events.lock().unwrap();
+        assert_eq!(events.len(), 1);
+
+        let event = &amp;events[0];
+        assert_eq!(event.symbol, &quot;BTCUSDT&quot;);
+        assert_eq!(event.side, &quot;BID&quot;);
+        assert_eq!(event.price, 100.0);
+        assert_eq!(event.initial_usdt, 200000.0);
+        assert_eq!(event.executed_qty, 50.0);
+        assert_eq!(event.canceled_qty, 1950.0);
+        assert!((event.cancel_ratio - 0.975).abs() &lt; 1e-5);
+        assert_eq!(event.lifespan_ms, 1500);
+        assert!(event.spoof_score &gt; 0.6);
+        assert!(event.alert_level == &quot;HIGH&quot; || event.alert_level == &quot;CRITICAL&quot;);
+    }
+}
+</code></pre>
+        </details>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            flowchart: { curve: 'basis' }
+        });
+    </script>
+</body>
+</html>
