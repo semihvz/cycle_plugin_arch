@@ -219,8 +219,10 @@ unsafe extern "C" fn handle_endpoint(
                             for out_stream in outs.iter() {
                                 if (stream_id.contains("btc") && out_stream.contains("btc"))
                                     || (stream_id.contains("eth") && out_stream.contains("eth"))
+                                    || (stream_id.contains("tac") && out_stream.contains("tac"))
                                     || (symbol.to_lowercase().contains("btc") && out_stream.contains("btc"))
-                                    || (symbol.to_lowercase().contains("eth") && out_stream.contains("eth")) {
+                                    || (symbol.to_lowercase().contains("eth") && out_stream.contains("eth"))
+                                    || (symbol.to_lowercase().contains("tac") && out_stream.contains("tac")) {
                                     guard.insert(out_stream.clone(), report_json.clone());
                                 }
                             }

@@ -165,9 +165,9 @@ impl AggTradeStatsEngine {
                     );
 
                     report.push_str(&format!(
-                        "[{}]  Hacim: {:.2} USDT/sn | İşlem: {}/sn (Son: {:.2}, ID: {})\n\
-                         └─► Maker/Taker Hacim: %{:.1} Maker / %{:.1} Taker\n\
-                         └─► Maker/Taker Adet : %{:.1} Maker / %{:.1} Taker\n",
+                        "[{}]  Hacim: {:.8} USDT/sn | İşlem: {}/sn (Son: {:.8}, ID: {})\n\
+                         └─► Maker/Taker Hacim: %{:.2} Maker / %{:.2} Taker\n\
+                         └─► Maker/Taker Adet : %{:.2} Maker / %{:.2} Taker\n",
                         symbol, usdt_volume_per_sec, trades_per_sec, last_price, last_trade_id,
                         maker_volume_pct, taker_volume_pct, maker_trades_pct, taker_trades_pct
                     ));
@@ -197,9 +197,9 @@ impl AggTradeStatsEngine {
             for symbol in &sorted_symbols {
                 if let Some(m) = metrics_guard.get(symbol) {
                     report.push_str(&format!(
-                        "[{}]  Hacim: {:.2} USDT/sn | İşlem: {}/sn (Son: {:.2}, ID: {})\n\
-                         └─► Maker/Taker Hacim: %{:.1} Maker / %{:.1} Taker\n\
-                         └─► Maker/Taker Adet : %{:.1} Maker / %{:.1} Taker\n",
+                        "[{}]  Hacim: {:.8} USDT/sn | İşlem: {}/sn (Son: {:.8}, ID: {})\n\
+                         └─► Maker/Taker Hacim: %{:.2} Maker / %{:.2} Taker\n\
+                         └─► Maker/Taker Adet : %{:.2} Maker / %{:.2} Taker\n",
                         symbol, m.usdt_volume_per_sec, m.trades_per_sec, m.last_price, m.last_trade_id,
                         m.maker_volume_pct, m.taker_volume_pct, m.maker_trades_pct, m.taker_trades_pct
                     ));
@@ -378,6 +378,6 @@ mod tests {
         let report = engine.process_aggtrade_payload(&payload, now_ms);
         assert!(report.contains("ÖLÇÜM PENCERESİ: 5000 ms / 5.0 sn"));
         // 50000 USDT total in 5s window => 10000 USDT/sec
-        assert!(report.contains("10000.00 USDT/sn"));
+        assert!(report.contains("10000.00000000 USDT/sn"));
     }
 }

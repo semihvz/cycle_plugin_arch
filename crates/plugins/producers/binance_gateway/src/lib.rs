@@ -53,7 +53,7 @@ unsafe extern "C" fn handle_endpoint(
                 return 0;
             }
             
-            let mut symbols = vec!["BTCUSDT".to_string(), "ETHUSDT".to_string()];
+            let mut symbols = vec!["BTCUSDT".to_string(), "ETHUSDT".to_string(), "TACUSDT".to_string()];
             
             if payload_len > 0 {
                 let slice = std::slice::from_raw_parts(payload, payload_len);
@@ -196,6 +196,12 @@ async fn run_websocket_loop(
                                                 if !obj.contains_key("stream_depth") { obj.insert("stream_depth".to_string(), serde_json::json!({})); }
                                             }
 
+                                            let ev_time = json.get("E")
+                                                .and_then(|v| v.as_i64())
+                                                .or_else(|| json.get("T").and_then(|v| v.as_i64()))
+                                                .filter(|&t| t > 0)
+                                                .unwrap_or(recv_ms);
+
                                             if e_type == "forceOrder" {
                                                 if let Some(o) = json.get("o") {
                                                     let symbol = o["s"].as_str().unwrap_or("").to_string();
@@ -207,7 +213,7 @@ async fn run_websocket_loop(
                                                         "average_price": o["ap"].as_str().unwrap_or("0"),
                                                         "original_qty": o["q"].as_str().unwrap_or("0"),
                                                         "filled_qty": o["z"].as_str().unwrap_or("0"),
-                                                        "event_time": json["E"].as_i64().unwrap_or(0),
+                                                        "event_time": ev_time,
                                                         "local_recv_time_ms": recv_ms
                                                     });
                                                     if let Some(arr) = combined["stream_liquidations"].as_array_mut() {
@@ -223,7 +229,7 @@ async fn run_websocket_loop(
                                                     "estimated_settle_price": json["P"].as_str().unwrap_or("0"),
                                                     "funding_rate": json["r"].as_str().unwrap_or("0"),
                                                     "next_funding_time": json["T"].as_i64().unwrap_or(0),
-                                                    "event_time": json["E"].as_i64().unwrap_or(0),
+                                                    "event_time": ev_time,
                                                     "local_recv_time_ms": recv_ms
                                                 });
                                                 combined["stream_markprice"][symbol] = output;
@@ -234,7 +240,7 @@ async fn run_websocket_loop(
                                                     "best_bid_qty": json["B"].as_str().unwrap_or("0"),
                                                     "best_ask": json["a"].as_str().unwrap_or("0"),
                                                     "best_ask_qty": json["A"].as_str().unwrap_or("0"),
-                                                    "event_time": json["E"].as_i64().unwrap_or(0),
+                                                    "event_time": ev_time,
                                                     "local_recv_time_ms": recv_ms
                                                 });
                                                 combined["stream_bestprice"][symbol] = output;
@@ -245,7 +251,7 @@ async fn run_websocket_loop(
                                                     "price": json["p"].as_str().unwrap_or("0"),
                                                     "quantity": json["q"].as_str().unwrap_or("0"),
                                                     "buyer_is_maker": json["m"].as_bool().unwrap_or(false),
-                                                    "event_time": json["E"].as_i64().unwrap_or(0),
+                                                    "event_time": ev_time,
                                                     "local_recv_time_ms": recv_ms
                                                 });
                                                 combined["stream_aggtrades"][symbol.clone()] = output.clone();
@@ -256,13 +262,13 @@ async fn run_websocket_loop(
                                                     "bids": json["b"],
                                                     "asks": json["a"],
                                                     "last_update_id": json["lastUpdateId"].as_i64().unwrap_or(0),
-                                                    "event_time": json["E"].as_i64().unwrap_or(0),
+                                                    "event_time": ev_time,
                                                     "local_recv_time_ms": recv_ms
                                                 });
                                                 combined["stream_depth"][symbol] = output;
                                             }
 
-                                            *guard = serde_json::to_vec_pretty(&combined).unwrap_or_default();
+                                            *guard = serde_json::to_vec(&combined).unwrap_or_default();
                                         }
                                     }
                                 }

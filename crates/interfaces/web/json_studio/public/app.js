@@ -97,7 +97,7 @@
       {
         plugin_name: "plugin_binance_gateway",
         plugin_inputs: [],
-        plugin_params: { symbols: ["BTCUSDT", "ETHUSDT"] },
+        plugin_params: { symbols: ["BTCUSDT", "ETHUSDT", "TACUSDT"] },
         plugin_outputs: ["stream_markprice", "stream_trades", "stream_aggtrades", "stream_depth", "stream_bestprice", "stream_liquidations"]
       },
       {

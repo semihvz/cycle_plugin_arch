@@ -89,7 +89,7 @@ fn test_cabi_plugin_lifecycle_and_inbox() {
         assert!(read_bytes > 0);
 
         let output_str = String::from_utf8_lossy(&out_buf[..read_bytes]);
-        assert!(output_str.contains("EMİLİM (ABSORPTION) VE DUVAR TEYİT PANELİ"));
+        assert!(output_str.contains("BINANCE FUTURES ABSORPTION & WALL CONFIRMATION PANEL"));
         assert!(output_str.contains("ACEUSDT"));
         assert!(output_str.contains("ASK_ABSORPTION"));
 

@@ -382,9 +382,9 @@ impl IcebergEngine {
                 };
 
                 report.push_str(&format!(
-                    "{} #{} [{}] {} Price: {:.4} | Refills: {} Times\n\
-                     │   ├─ Visible Vol: ${:.0} -> Executed: ${:.0} (Ratio: {:.1}x)\n\
-                     │   ├─ Estimated Total Hidden Vol: ${:.0} | Score: {:.2}\n\
+                    "{} #{} [{}] {} Price: {:.8} | Refills: {} Times\n\
+                     │   ├─ Visible Vol: ${:.8} -> Executed: ${:.8} (Ratio: {:.1}x)\n\
+                     │   ├─ Estimated Total Hidden Vol: ${:.8} | Score: {:.8}\n\
                      │   └─ Description: {}\n",
                     badge,
                     ev.id,
@@ -707,7 +707,7 @@ mod tests {
 
         let report = engine.process_depth_payload(&depth_snap3, t0 + 400);
 
-        assert!(report.contains("ICEBERG (BUZDAĞI EMİR) TESPİT PANELİ"));
+        assert!(report.contains("BINANCE FUTURES ICEBERG ORDER DETECTION PANEL"));
         assert!(report.contains("BTCUSDT"));
 
         // Check metrics & events

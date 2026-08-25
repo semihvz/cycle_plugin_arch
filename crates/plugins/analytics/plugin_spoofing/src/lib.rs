@@ -709,7 +709,7 @@ mod tests {
 
         let report = engine.process_depth_payload(&depth_snap2, t1);
 
-        assert!(report.contains("SPOOFING (SAHTE EMİR) TESPİT PANELİ"));
+        assert!(report.contains("BINANCE FUTURES SPOOFING (FAKE ORDER) DETECTION PANEL"));
         assert!(report.contains("BTCUSDT"));
 
         // Check metrics & events

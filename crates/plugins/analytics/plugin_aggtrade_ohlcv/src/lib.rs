@@ -188,19 +188,19 @@ impl OhlcvEngine {
                     };
 
                     report.push_str(&format!(
-                        "[{}] Zz: {} s | {} {} ({:+.4}%)\n",
+                        "[{}] Zz: {} s | {} {} ({:+.8}%)\n",
                         symbol, candle.timestamp_sec, dir_icon, dir_text, change_pct
                     ));
                     report.push_str(&format!(
-                        "  ├─► Açılış: {:.4} | Yüksek: {:.4} | Düşük: {:.4} | Kapanış: {:.4}\n",
+                        "  ├─► Açılış: {:.8} | Yüksek: {:.8} | Düşük: {:.8} | Kapanış: {:.8}\n",
                         candle.open, candle.high, candle.low, candle.close
                     ));
                     report.push_str(&format!(
-                        "  ├─► Hacim : {:.4} (Quote: {:.4} USDT) | İşlem Adedi: {}\n",
+                        "  ├─► Hacim : {:.8} (Quote: {:.8} USDT) | İşlem Adedi: {}\n",
                         candle.volume, candle.quote_volume, candle.trades_count
                     ));
                     report.push_str(&format!(
-                        "  └─► Taker Dağılımı: Alım {:.4} / Satım {:.4}\n",
+                        "  └─► Taker Dağılımı: Alım {:.8} / Satım {:.8}\n",
                         candle.buy_volume, candle.sell_volume
                     ));
 
@@ -209,8 +209,8 @@ impl OhlcvEngine {
                         report.push_str(&format!("  └─► Geçmiş Tamamlanan Mumlar (Son {}/{}): ", len, self.history_limit.load(Ordering::Relaxed)));
                         let tail_slice: Vec<_> = history.iter().rev().take(5).collect();
                         for (idx, h_candle) in tail_slice.iter().rev().enumerate() {
-                            let icon = if h_candle.close >= h_candle.open { "🟢" } else { "🔴" };
-                            report.push_str(&format!("{} [{:.4}]", icon, h_candle.close));
+                            let icon = if h_candle.close >= h_candle.open { "🟩" } else { "🟥" };
+                            report.push_str(&format!("{} [{:.8}]", icon, h_candle.close));
                             if idx + 1 < tail_slice.len() {
                                 report.push_str(" -> ");
                             }

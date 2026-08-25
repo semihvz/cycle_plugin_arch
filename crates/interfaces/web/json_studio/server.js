@@ -25,7 +25,7 @@ const KNOWN_PLUGINS = [
     category: 'Producer / Gateway',
     description: 'Binance Futures WebSocket canlı veri akışı (MarkPrice, Trades, AggTrades, Depth, Liquidations)',
     default_outputs: ['stream_markprice', 'stream_trades', 'stream_aggtrades', 'stream_depth', 'stream_bestprice', 'stream_liquidations'],
-    default_params: { symbols: ['BTCUSDT', 'ETHUSDT'] }
+    default_params: { symbols: ['BTCUSDT', 'ETHUSDT', 'TACUSDT'] }
   },
   {
     name: 'plugin_ohlcv_fetcher',

@@ -74,9 +74,9 @@ fn test_cabi_plugin_lifecycle_and_inbox() {
         assert!(read_bytes > 0);
 
         let output_str = String::from_utf8_lossy(&out_buf[..read_bytes]);
-        assert!(output_str.contains("SPOOFING (SAHTE EMİR) TESPİT PANELİ"));
+        assert!(output_str.contains("BINANCE FUTURES SPOOFING (FAKE ORDER) DETECTION PANEL"));
         assert!(output_str.contains("BTCUSDT"));
-        assert!(output_str.contains("SAHTE BID EMRI"));
+        assert!(output_str.contains("BID"));
 
         // 6. Stop plugin (Endpoint 1)
         let res = handle_fn(state_ptr, 1, std::ptr::null(), 0, std::ptr::null_mut(), 0);

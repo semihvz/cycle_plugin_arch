@@ -355,6 +355,7 @@ pub async fn run_interactive_shell_loop(
                                 "oi" => "plugin_oi_fetcher",
                                 "ohlcv" => "plugin_ohlcv_fetcher",
                                 "amihud" => "plugin_amihud",
+                                "price_impact" | "impact" => "plugin_price_impact",
                                 _ => "plugin_binance_gateway",
                                                             };
                             match orchestrator.monitor_data(target_plugin) {

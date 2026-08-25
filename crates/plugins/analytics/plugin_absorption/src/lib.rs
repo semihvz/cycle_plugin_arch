@@ -397,9 +397,9 @@ impl AbsorptionEngine {
                 };
 
                 report.push_str(&format!(
-                    "{} #{} [{}] {} Price: {:.4}\n\
-                     │   ├─ Absorbed Aggressive Vol: ${:.0} | Status: {}\n\
-                     │   ├─ Absorption Score: {:.2}\n\
+                    "{} #{} [{}] {} Price: {:.8}\n\
+                     │   ├─ Absorbed Aggressive Vol: ${:.8} | Status: {}\n\
+                     │   ├─ Absorption Score: {:.8}\n\
                      │   └─ Description: {}\n",
                     badge,
                     ev.id,
@@ -696,7 +696,7 @@ mod tests {
 
         let report = engine.process_depth_payload(&depth_snap2, t0 + 200);
 
-        assert!(report.contains("EMİLİM (ABSORPTION) VE DUVAR TEYİT PANELİ"));
+        assert!(report.contains("BINANCE FUTURES ABSORPTION & WALL CONFIRMATION PANEL"));
         assert!(report.contains("BTCUSDT"));
 
         // Check absorption event and confirmed status

@@ -86,9 +86,9 @@ fn test_cabi_plugin_lifecycle_and_inbox() {
         assert!(monitor_str.contains("BTCUSDT"));
         assert!(monitor_str.contains("ETHUSDT"));
         assert!(monitor_str.contains("ACEUSDT"));
-        assert!(monitor_str.contains("100000.00 USDT/sn")); // 50000 * 2 = 100000
-        assert!(monitor_str.contains("15000.00 USDT/sn"));  // 3000 * 5 = 15000
-        assert!(monitor_str.contains("5000.00 USDT/sn"));   // 10 * 500 = 5000
+        assert!(monitor_str.contains("100000.00000000 USDT/sn")); // 50000 * 2 = 100000
+        assert!(monitor_str.contains("15000.00000000 USDT/sn"));  // 3000 * 5 = 15000
+        assert!(monitor_str.contains("5000.00000000 USDT/sn"));   // 10 * 500 = 5000
         assert!(monitor_str.contains("Maker/Taker Hacim"));
         assert!(monitor_str.contains("Maker/Taker Adet"));
 

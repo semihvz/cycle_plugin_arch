@@ -172,9 +172,9 @@ impl AmihudEngine {
                     metrics_guard.insert(symbol.clone(), metrics_item);
 
                     report.push_str(&format!(
-                        "[{}]  İlk Fiyat: {:.4} -> Son Fiyat: {:.4} (Değişim: {:+.2}%)\n\
-                         ├─ Toplam Hacim: ${:.2} (İşlem Sayısı: {})\n\
-                         ├─ Amihud İllikidite Oranı (1M $ başına): {:.6}%\n\
+                        "[{}]  İlk Fiyat: {:.8} -> Son Fiyat: {:.8} (Değişim: {:+.8}%)\n\
+                         ├─ Toplam Hacim: ${:.8} (İşlem Sayısı: {})\n\
+                         ├─ Amihud İllikidite Oranı (1M $ başına): {:.8}%\n\
                          ├─ Ham Amihud Skoru (Raw): {:.12}\n\
                          └─ Likidite Seviyesi: {}\n\n",
                         symbol,

@@ -135,15 +135,15 @@ impl BookTickerDerivativesEngine {
                     );
 
                     report.push_str(&format!(
-                        "[{}]  Bid: {:.4} | Ask: {:.4} (Örnek: {})\n\
+                        "[{}]  Bid: {:.8} | Ask: {:.8} (Örnek: {})\n\
                          ├─► ALİŞ (BID) TÜREVLERİ (Anlık / 30s Ort):\n\
-                         │   ├─ 1. Türev (Hız/Vel) : {:+10.4} USDT/s | Ort: {:+10.4} USDT/s\n\
-                         │   ├─ 2. Türev (İvme/Acc): {:+10.4} USDT/s²| Ort: {:+10.4} USDT/s²\n\
-                         │   └─ 3. Türev (Sars/Jrk): {:+10.4} USDT/s³| Ort: {:+10.4} USDT/s³\n\
+                         │   ├─ 1. Türev (Hız/Vel) : {:+14.8} USDT/s | Ort: {:+14.8} USDT/s\n\
+                         │   ├─ 2. Türev (İvme/Acc): {:+14.8} USDT/s²| Ort: {:+14.8} USDT/s²\n\
+                         │   └─ 3. Türev (Sars/Jrk): {:+14.8} USDT/s³| Ort: {:+14.8} USDT/s³\n\
                          └─► SATIŞ (ASK) TÜREVLERİ (Anlık / 30s Ort):\n\
-                             ├─ 1. Türev (Hız/Vel) : {:+10.4} USDT/s | Ort: {:+10.4} USDT/s\n\
-                             ├─ 2. Türev (İvme/Acc): {:+10.4} USDT/s²| Ort: {:+10.4} USDT/s²\n\
-                             └─ 3. Türev (Sars/Jrk): {:+10.4} USDT/s³| Ort: {:+10.4} USDT/s³\n\n",
+                             ├─ 1. Türev (Hız/Vel) : {:+14.8} USDT/s | Ort: {:+14.8} USDT/s\n\
+                             ├─ 2. Türev (İvme/Acc): {:+14.8} USDT/s²| Ort: {:+14.8} USDT/s²\n\
+                             └─ 3. Türev (Sars/Jrk): {:+14.8} USDT/s³| Ort: {:+14.8} USDT/s³\n\n",
                         symbol,
                         latest_bid,
                         latest_ask,
@@ -189,15 +189,15 @@ impl BookTickerDerivativesEngine {
             for symbol in &sorted_symbols {
                 if let Some(m) = metrics_guard.get(symbol) {
                     report.push_str(&format!(
-                        "[{}]  Bid: {:.4} | Ask: {:.4} (Örnek: {})\n\
+                        "[{}]  Bid: {:.8} | Ask: {:.8} (Örnek: {})\n\
                          ├─► ALİŞ (BID) TÜREVLERİ (Anlık / 30s Ort):\n\
-                         │   ├─ 1. Türev (Hız/Vel) : {:+10.4} USDT/s | Ort: {:+10.4} USDT/s\n\
-                         │   ├─ 2. Türev (İvme/Acc): {:+10.4} USDT/s²| Ort: {:+10.4} USDT/s²\n\
-                         │   └─ 3. Türev (Sars/Jrk): {:+10.4} USDT/s³| Ort: {:+10.4} USDT/s³\n\
+                         │   ├─ 1. Türev (Hız/Vel) : {:+14.8} USDT/s | Ort: {:+14.8} USDT/s\n\
+                         │   ├─ 2. Türev (İvme/Acc): {:+14.8} USDT/s²| Ort: {:+14.8} USDT/s²\n\
+                         │   └─ 3. Türev (Sars/Jrk): {:+14.8} USDT/s³| Ort: {:+14.8} USDT/s³\n\
                          └─► SATIŞ (ASK) TÜREVLERİ (Anlık / 30s Ort):\n\
-                             ├─ 1. Türev (Hız/Vel) : {:+10.4} USDT/s | Ort: {:+10.4} USDT/s\n\
-                             ├─ 2. Türev (İvme/Acc): {:+10.4} USDT/s²| Ort: {:+10.4} USDT/s²\n\
-                             └─ 3. Türev (Sars/Jrk): {:+10.4} USDT/s³| Ort: {:+10.4} USDT/s³\n\n",
+                             ├─ 1. Türev (Hız/Vel) : {:+14.8} USDT/s | Ort: {:+14.8} USDT/s\n\
+                             ├─ 2. Türev (İvme/Acc): {:+14.8} USDT/s²| Ort: {:+14.8} USDT/s²\n\
+                             └─ 3. Türev (Sars/Jrk): {:+14.8} USDT/s³| Ort: {:+14.8} USDT/s³\n\n",
                         symbol,
                         m.latest_best_bid,
                         m.latest_best_ask,

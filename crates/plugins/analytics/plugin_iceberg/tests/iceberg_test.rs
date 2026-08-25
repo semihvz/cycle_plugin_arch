@@ -91,7 +91,7 @@ fn test_cabi_plugin_lifecycle_and_inbox() {
         assert!(read_bytes > 0);
 
         let output_str = String::from_utf8_lossy(&out_buf[..read_bytes]);
-        assert!(output_str.contains("ICEBERG (BUZDAĞI EMİR) TESPİT PANELİ"));
+        assert!(output_str.contains("BINANCE FUTURES ICEBERG ORDER DETECTION PANEL"));
         assert!(output_str.contains("ETHUSDT"));
         assert!(output_str.contains("BUY_ICEBERG"));
 

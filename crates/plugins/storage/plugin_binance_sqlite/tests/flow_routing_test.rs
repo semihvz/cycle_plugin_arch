@@ -120,12 +120,12 @@ fn test_cabi_and_flow_routing_to_sqlite() {
         assert!(report_len > 0);
         let report_str = std::str::from_utf8(&monitor_buf[..report_len]).unwrap();
         println!("DataMonitor output:\n{}", report_str);
-        assert!(report_str.contains("BINANCE SQLITE RECORDER DURUMU"));
-        assert!(report_str.contains("Mark Price Kayıtları: 1"));
-        assert!(report_str.contains("Best Price Kayıtları: 1"));
-        assert!(report_str.contains("Trade Kayıtları: 2"));
-        assert!(report_str.contains("Likidasyon Kayıtları: 1"));
-        assert!(report_str.contains("Depth (Derinlik) Kayıtları: 1"));
+        assert!(report_str.contains("BINANCE SQLITE RECORDER STATUS"));
+        assert!(report_str.contains("Mark Price Records: 1"));
+        assert!(report_str.contains("Best Price Records: 1"));
+        assert!(report_str.contains("Trade Records: 2"));
+        assert!(report_str.contains("Liquidation Records: 1"));
+        assert!(report_str.contains("Depth Records: 1"));
 
         // 8. Stop plugin (Endpoint 1)
         handle_endpoint(state_ptr, 1, std::ptr::null(), 0, out_buf.as_mut_ptr(), out_buf.len());

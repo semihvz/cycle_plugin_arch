@@ -277,6 +277,7 @@ unsafe extern "C" fn handle_endpoint(
                         .unwrap_or_else(|| (
                             if stream_id.contains("btc") { "BTCUSDT".to_string() }
                             else if stream_id.contains("eth") { "ETHUSDT".to_string() }
+                            else if stream_id.contains("tac") { "TACUSDT".to_string() }
                             else { "BTCUSDT".to_string() },
                             "1m".to_string()
                         ))
