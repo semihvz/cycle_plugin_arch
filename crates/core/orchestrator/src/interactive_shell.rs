@@ -84,10 +84,18 @@ pub async fn run_interactive_shell_loop(
                         print!("\x1b[2J\x1b[1;1H");
                         let _ = std::io::Write::flush(&mut std::io::stdout());
                     }
-                    "list" => {
+                    "list" | "ls" | "plugins" | "ps" => {
                         let systems = orchestrator.list_systems();
                         if systems.is_empty() {
-                            println!("{}{}No loaded plugins found.{}\n", YELLOW, BOLD, RESET);
+                            println!("{}{}No active plugins currently loaded in RAM.{}\n", YELLOW, BOLD, RESET);
+                            let available = scan_available_plugins();
+                            if !available.is_empty() {
+                                println!("{}{}=== COMPILED PLUGINS ON DISK READY TO LOAD ==={}", BRIGHT_CYAN, BOLD, RESET);
+                                for p in available {
+                                    println!("  • {}{}{}", BRIGHT_GREEN, p, RESET);
+                                }
+                                println!("{}Type 'load <plugin_name>' or 'start all' to load plugins into RAM.{}\n", GRAY, RESET);
+                            }
                         } else {
                             println!("{}{}=== LOADED PLUGINS AND LIVE METRICS ==={}", BRIGHT_CYAN, BOLD, RESET);
                             for (i, (id, name, is_running)) in systems.iter().enumerate() {

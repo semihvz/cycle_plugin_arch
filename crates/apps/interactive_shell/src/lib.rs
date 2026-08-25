@@ -28,20 +28,42 @@ pub fn get_plugin_dir() -> PathBuf {
     if dir.ends_with("deps") {
         dir.pop();
     }
+    if dir.join("target/debug").exists() {
+        return dir.join("target/debug");
+    }
+    if std::path::Path::new("target/debug").exists() {
+        return PathBuf::from("target/debug");
+    }
     dir
 }
 
 pub fn scan_available_plugins() -> Vec<String> {
     let mut plugins = Vec::new();
-    let lib_dir = get_plugin_dir();
+    let search_dirs = vec![
+        get_plugin_dir(),
+        PathBuf::from("target/debug"),
+        PathBuf::from("../target/debug"),
+        PathBuf::from("."),
+    ];
+
     let prefix = if cfg!(target_os = "windows") { "" } else { "lib" };
-    if let Ok(entries) = std::fs::read_dir(&lib_dir) {
-        for entry in entries.flatten() {
-            let name = entry.file_name().to_string_lossy().into_owned();
-            if name.starts_with(&format!("{}plugin_", prefix)) && (name.ends_with(".so") || name.ends_with(".dll") || name.ends_with(".dylib")) {
-                let ext_len = if name.ends_with(".so") { 3 } else if name.ends_with(".dll") { 4 } else { 6 };
-                let plugin_name = &name[prefix.len()..name.len()-ext_len];
-                plugins.push(plugin_name.to_string());
+
+    for lib_dir in search_dirs {
+        if let Ok(entries) = std::fs::read_dir(&lib_dir) {
+            for entry in entries.flatten() {
+                let name = entry.file_name().to_string_lossy().into_owned();
+                let is_lib = name.ends_with(".so") || name.ends_with(".dll") || name.ends_with(".dylib");
+                if is_lib && !name.contains(".d") {
+                    let ext_len = if name.ends_with(".so") { 3 } else if name.ends_with(".dll") { 4 } else { 6 };
+                    let clean_name = if name.starts_with(prefix) {
+                        &name[prefix.len()..name.len()-ext_len]
+                    } else {
+                        &name[..name.len()-ext_len]
+                    };
+                    if !clean_name.is_empty() {
+                        plugins.push(clean_name.to_string());
+                    }
+                }
             }
         }
     }

@@ -506,9 +506,9 @@ pub unsafe extern "C" fn init_plugin(state_out: *mut *mut c_void) -> unsafe exte
     let data = Arc::new(Mutex::new(HashMap::new()));
     let is_running = Arc::new(AtomicBool::new(false));
 
-    // Synchronously pre-populate data on initialization so it is immediately ready
+    // Asynchronously pre-populate data on initialization so it is immediately ready
     let data_sync = data.clone();
-    runtime.block_on(async move {
+    runtime.spawn(async move {
         fetch_and_compute_backtest(data_sync).await;
     });
 
@@ -566,11 +566,11 @@ unsafe extern "C" fn handle_endpoint(
         4 | 5 => { // DataMonitor & RawData
             let guard = state.data.lock().unwrap();
 
-            // Fallback sync fetch if data is still empty
+            // Fallback async fetch if data is still empty
             if guard.is_empty() {
                 drop(guard);
                 let data_arc = state.data.clone();
-                state.runtime.block_on(async move {
+                state.runtime.spawn(async move {
                     fetch_and_compute_backtest(data_arc).await;
                 });
             }

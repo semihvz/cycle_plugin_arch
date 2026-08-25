@@ -443,7 +443,7 @@ pub unsafe extern "C" fn init_plugin(state_out: *mut *mut c_void) -> unsafe exte
     let is_running = Arc::new(AtomicBool::new(false));
 
     let data_sync = data.clone();
-    runtime.block_on(async move {
+    runtime.spawn(async move {
         fetch_and_compute_all_bars_backtest(data_sync).await;
     });
 
@@ -504,7 +504,7 @@ unsafe extern "C" fn handle_endpoint(
             if guard.is_empty() {
                 drop(guard);
                 let data_arc = state.data.clone();
-                state.runtime.block_on(async move {
+                state.runtime.spawn(async move {
                     fetch_and_compute_all_bars_backtest(data_arc).await;
                 });
             }

@@ -295,7 +295,7 @@ pub unsafe extern "C" fn init_plugin(state_out: *mut *mut c_void) -> unsafe exte
 
     let data_sync = data.clone();
     let outbox_sync = outbox.clone();
-    runtime.block_on(async move {
+    runtime.spawn(async move {
         fetch_and_scan_ai(data_sync, outbox_sync).await;
     });
 
@@ -358,7 +358,7 @@ unsafe extern "C" fn handle_endpoint(
                 drop(guard);
                 let data_arc = state.data.clone();
                 let outbox_arc = state.outbox.clone();
-                state.runtime.block_on(async move {
+                state.runtime.spawn(async move {
                     fetch_and_scan_ai(data_arc, outbox_arc).await;
                 });
             }

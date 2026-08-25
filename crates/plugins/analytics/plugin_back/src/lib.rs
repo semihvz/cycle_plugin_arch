@@ -386,7 +386,7 @@ pub unsafe extern "C" fn init_plugin(state_out: *mut *mut c_void) -> unsafe exte
 
     let data_sync = data.clone();
     let db_path_sync = db_path.clone();
-    runtime.block_on(async move {
+    runtime.spawn(async move {
         fetch_and_run_collector(data_sync, db_path_sync).await;
     });
 
@@ -450,7 +450,7 @@ unsafe extern "C" fn handle_endpoint(
                 drop(guard);
                 let data_arc = state.data.clone();
                 let db_path_clone = state.db_path.clone();
-                state.runtime.block_on(async move {
+                state.runtime.spawn(async move {
                     fetch_and_run_collector(data_arc, db_path_clone).await;
                 });
             }
