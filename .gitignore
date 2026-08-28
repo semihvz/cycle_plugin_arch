@@ -34,3 +34,8 @@ data/*
 # Node
 node_modules/
 
+# Logs & Temp files
+*.log
+.~lock*
+
+

@@ -454,17 +454,6 @@ unsafe extern "C" fn handle_endpoint(
         }
         4 | 5 => { // DataMonitor & RawData
             let guard = state.data.lock().unwrap();
-
-            if guard.is_empty() {
-                drop(guard);
-                let data_arc = state.data.clone();
-                let db_path_clone = state.db_path.clone();
-                state.runtime.spawn(async move {
-                    fetch_and_run_tacusdt_1h(data_arc, db_path_clone).await;
-                });
-            }
-
-            let guard = state.data.lock().unwrap();
             let mut report_str = String::new();
             report_str.push_str("========================================================================================--\n");
             report_str.push_str("🔥 TACUSDT 1h TÜM ZAMANLAR İŞLEM VE 100-BAR KAYIT EKLENTİSİ (PLUGIN_TACUSDT_1H)\n");

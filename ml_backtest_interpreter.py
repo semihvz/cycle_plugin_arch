@@ -6,17 +6,20 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import DecisionTreeClassifier, export_text
 from sklearn.model_selection import StratifiedKFold, cross_val_predict
 
-def load_data_and_features(db_path="/home/smhvz/Desktop/cycle-orc/tacusdt_backtest.db"):
+def load_data_and_features(db_path="/home/smhvz/Desktop/cycle-orc/all_bars_system/output/all_usdt_futures_1h_backtest.db"):
     conn = sqlite3.connect(db_path)
-    trades_df = pd.read_sql_query("SELECT * FROM closed_trades ORDER BY trade_id ASC;", conn)
-    lookback_df = pd.read_sql_query("SELECT * FROM trade_lookback_bars ORDER BY trade_id ASC, bar_offset ASC;", conn)
+    lookback_cols = [r[1] for r in conn.execute("PRAGMA table_info(trade_lookback_bars);").fetchall()]
+    id_col = "global_trade_id" if "global_trade_id" in lookback_cols else "trade_id"
+
+    trades_df = pd.read_sql_query(f"SELECT * FROM closed_trades ORDER BY {id_col} ASC;", conn)
+    lookback_df = pd.read_sql_query(f"SELECT * FROM trade_lookback_bars ORDER BY {id_col} ASC, bar_offset ASC;", conn)
     conn.close()
 
     features_list = []
 
     for trade_id, trade in trades_df.iterrows():
-        tid = trade['trade_id']
-        t_bars = lookback_df[lookback_df['trade_id'] == tid].sort_values('bar_offset')
+        tid = trade[id_col]
+        t_bars = lookback_df[lookback_df[id_col] == tid].sort_values('bar_offset')
         
         if len(t_bars) < 100:
             continue

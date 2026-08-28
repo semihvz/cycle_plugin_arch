@@ -5,7 +5,7 @@ import numpy as np
 import os
 import json
 
-def export_dataset(db_path="/home/smhvz/Desktop/cycle-orc/tacusdt_backtest.db", output_dir="/home/smhvz/Desktop/cycle-orc/ml_model_suite/data"):
+def export_dataset(db_path="/home/smhvz/Desktop/cycle-orc/all_bars_system/output/all_usdt_futures_1h_backtest.db", output_dir="/home/smhvz/Desktop/cycle-orc/ml_model_suite/data"):
     os.makedirs(output_dir, exist_ok=True)
     
     if not os.path.exists(db_path):
@@ -13,16 +13,31 @@ def export_dataset(db_path="/home/smhvz/Desktop/cycle-orc/tacusdt_backtest.db", 
 
     print(f"Loading database from {db_path}...")
     conn = sqlite3.connect(db_path)
-    trades_df = pd.read_sql_query("SELECT * FROM closed_trades ORDER BY trade_id ASC;", conn)
-    lookback_df = pd.read_sql_query("SELECT * FROM trade_lookback_bars ORDER BY trade_id ASC, bar_offset ASC;", conn)
+    
+    lookback_cols = [r[1] for r in conn.execute("PRAGMA table_info(trade_lookback_bars);").fetchall()]
+    id_col = "global_trade_id" if "global_trade_id" in lookback_cols else "trade_id"
+
+    trades_df = pd.read_sql_query(f"SELECT * FROM closed_trades ORDER BY {id_col} ASC;", conn)
+    print(f"Loaded {len(trades_df)} closed trades. Fetching lookback bars...")
+    
+    lookback_df = pd.read_sql_query(
+        f"SELECT {id_col}, bar_offset, open, high, low, close, volume FROM trade_lookback_bars ORDER BY {id_col} ASC, bar_offset ASC;",
+        conn
+    )
     conn.close()
 
-    print(f"Processing {len(trades_df)} closed trades and {len(lookback_df)} lookback bars...")
+    print(f"Processing {len(trades_df)} closed trades and {len(lookback_df)} lookback bars (using key '{id_col}')...")
+    print("Grouping lookback bars for fast O(1) indexing...")
+    grouped_lookback = dict(list(lookback_df.groupby(id_col)))
+    
     features_list = []
 
     for idx, trade in trades_df.iterrows():
-        tid = trade['trade_id']
-        t_bars = lookback_df[lookback_df['trade_id'] == tid].sort_values('bar_offset')
+        tid = trade[id_col]
+        if tid not in grouped_lookback:
+            continue
+            
+        t_bars = grouped_lookback[tid]
         
         if len(t_bars) < 100:
             continue
@@ -47,7 +62,8 @@ def export_dataset(db_path="/home/smhvz/Desktop/cycle-orc/tacusdt_backtest.db", 
         vol_100_mean = volumes.mean()
         volume_ratio = vol_10_mean / max(vol_100_mean, 1e-8)
         
-        entry_hour = int(trade['entry_time_utc'].split()[1].split(':')[0])
+        entry_time_str = trade['entry_time_utc']
+        entry_hour = int(entry_time_str.split()[1].split(':')[0]) if ' ' in entry_time_str else 0
         dist_to_100low_pct = ((entry_price - lowest_100) / entry_price) * 100.0
         
         last_body = abs(closes[-1] - opens[-1])
@@ -60,7 +76,7 @@ def export_dataset(db_path="/home/smhvz/Desktop/cycle-orc/tacusdt_backtest.db", 
         features_list.append({
             'trade_id': tid,
             'symbol': trade['symbol'],
-            'side': trade['side'],
+            'side': trade.get('side', 'LONG'),
             'entry_time_utc': trade['entry_time_utc'],
             'entry_price': entry_price,
             'lowest_100_price': lowest_100,
@@ -93,12 +109,14 @@ def export_dataset(db_path="/home/smhvz/Desktop/cycle-orc/tacusdt_backtest.db", 
     json_file = os.path.join(output_dir, "dataset.json")
 
     df.to_csv(csv_file, index=False)
-    with open(json_file, "w") as f:
-        json.dump(features_list, f, indent=2)
+    if len(df) <= 50000:
+        with open(json_file, "w") as f:
+            json.dump(features_list, f, indent=2)
 
     print(f"✅ Successfully exported dataset with {len(df)} samples:")
     print(f"   • CSV File : {csv_file}")
-    print(f"   • JSON File: {json_file}")
+    if len(df) <= 50000:
+        print(f"   • JSON File: {json_file}")
     return df
 
 if __name__ == "__main__":

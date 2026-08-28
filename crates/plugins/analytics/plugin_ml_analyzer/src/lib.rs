@@ -217,7 +217,7 @@ async fn fetch_and_scan_ai(data_arc: Arc<Mutex<HashMap<String, Value>>>, outbox_
         .build()
         .unwrap_or_default();
 
-    let symbols = vec!["TACUSDT", "VELVETUSDT", "BTCUSDT"];
+    let symbols = vec!["BTRUSDT", "TACUSDT", "VELVETUSDT", "BTCUSDT"];
     let mut predictions = Vec::new();
 
     for sym in &symbols {
@@ -352,17 +352,6 @@ unsafe extern "C" fn handle_endpoint(
             1
         }
         4 | 5 => { // DataMonitor & RawData
-            let guard = state.data.lock().unwrap();
-
-            if guard.is_empty() {
-                drop(guard);
-                let data_arc = state.data.clone();
-                let outbox_arc = state.outbox.clone();
-                state.runtime.spawn(async move {
-                    fetch_and_scan_ai(data_arc, outbox_arc).await;
-                });
-            }
-
             let guard = state.data.lock().unwrap();
             let mut report_str = String::new();
             report_str.push_str("========================================================================================--\n");

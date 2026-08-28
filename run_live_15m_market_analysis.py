@@ -30,7 +30,7 @@ def fetch_live_klines(symbol, interval="15m", limit=120):
         return []
 
 def main():
-    symbols = ["TACUSDT", "VELVETUSDT", "BTCUSDT", "ETHUSDT", "SOLUSDT", "AVAXUSDT", "DOGEUSDT"]
+    symbols = ["BTRUSDT", "TACUSDT", "VELVETUSDT", "BTCUSDT", "ETHUSDT", "SOLUSDT", "AVAXUSDT", "DOGEUSDT"]
     interval = "15m"
     
     models_dir = "/home/smhvz/Desktop/cycle-orc/ml_model_suite/models"

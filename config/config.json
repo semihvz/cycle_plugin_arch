@@ -531,33 +531,6 @@
     ]
   },
   {
-    "plugin_name": "plugin_all_bars_backtest",
-    "enabled": true,
-    "plugin_inputs": [
-      {
-        "source": "plugin_ohlcv_fetcher",
-        "stream_id": "tacusdt_all_bars",
-        "params": {
-          "symbol": "TACUSDT",
-          "interval": "1h",
-          "limit": 1500,
-          "mode": "sub",
-          "sub_interval_secs": 60
-        }
-      }
-    ],
-    "plugin_params": {
-      "lookback_lowest": 100,
-      "atr_multiplier": 2.0,
-      "position_size_usdt": 50.0,
-      "symbol": "TACUSDT",
-      "interval": "1h"
-    },
-    "plugin_outputs": [
-      "stream_all_bars_backtest"
-    ]
-  },
-  {
     "plugin_name": "plugin_back",
     "enabled": true,
     "plugin_inputs": [
@@ -600,7 +573,7 @@
       }
     ],
     "plugin_params": {
-      "symbols": ["TACUSDT", "VELVETUSDT", "BTCUSDT"],
+      "symbols": ["BTRUSDT", "TACUSDT", "VELVETUSDT", "BTCUSDT"],
       "interval": "15m",
       "min_win_probability": 0.50
     },

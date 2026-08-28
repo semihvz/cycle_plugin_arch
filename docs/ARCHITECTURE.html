@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cycle Orchestrator (cycle-orc) - Sistem Mimarisi & Piyasa Dinamikleri Dokümantasyonu</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Mermaid.js for interactive diagrams -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            mermaid.initialize({
+                startOnLoad: true,
+                theme: 'dark',
+                securityLevel: 'loose',
+                themeVariables: {
+                    fontFamily: 'Inter, sans-serif',
+                    primaryColor: '#00d2ff',
+                    primaryTextColor: '#ffffff',
+                    primaryBorderColor: '#00d2ff',
+                    lineColor: '#00e5ff',
+                    secondaryColor: '#1e293b',
+                    tertiaryColor: '#0f172a'
+                }
+            });
+        });
+    </script>
+
+    <!-- MathJax for rendering LaTeX math formulas -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-primary: #0b0f19;
+            --bg-secondary: #111827;
+            --bg-card: #1f2937;
+            --border-color: #374151;
+            --accent-color: #00d2ff;
+            --accent-gradient: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);
+            --text-primary: #f9fafb;
+            --text-secondary: #9ca3af;
+            --text-muted: #6b7280;
+            --code-bg: #111827;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            padding: 0;
+            margin: 0;
+            font-size: 16px;
+        }
+
+        .top-navbar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(11, 15, 25, 0.92);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            font-size: 1.15rem;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .brand-badge {
+            background: var(--accent-gradient);
+            color: #000;
+            font-size: 0.75rem;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 0.8rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            padding: 6px 12px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-links a:hover {
+            color: #ffffff;
+            background-color: rgba(0, 210, 255, 0.2);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem 5rem 2rem;
+        }
+
+        h1, h2, h3, h4 {
+            scroll-margin-top: 100px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-top: 3.5rem;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        h3 {
+            font-size: 1.35rem;
+            font-weight: 600;
+            color: var(--accent-color);
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        p {
+            margin-bottom: 1.25rem;
+            color: #d1d5db;
+        }
+
+        blockquote {
+            background: rgba(0, 210, 255, 0.05);
+            border-left: 4px solid var(--accent-color);
+            padding: 1.25rem 1.5rem;
+            border-radius: 0 12px 12px 0;
+            margin: 1.5rem 0;
+            color: #e5e7eb;
+        }
+
+        ul, ol {
+            margin-bottom: 1.5rem;
+            padding-left: 1.75rem;
+            color: #d1d5db;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            background-color: var(--code-bg);
+            color: #38bdf8;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 0.9em;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        pre {
+            background-color: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.25rem;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+        }
+
+        pre code {
+            background-color: transparent;
+            padding: 0;
+            border: none;
+            color: #f3f4f6;
+            font-size: 0.92em;
+            line-height: 1.6;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 2rem 0;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+
+        th {
+            background-color: var(--bg-card);
+            color: var(--accent-color);
+            font-weight: 700;
+            text-align: left;
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            background-color: var(--bg-secondary);
+            color: #e5e7eb;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background-color: rgba(255, 255, 255, 0.03);
+        }
+
+        .mermaid-container {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2rem 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            width: 100%;
+            text-align: center;
+        }
+
+        a {
+            color: var(--accent-color);
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid var(--border-color);
+            margin: 3rem 0;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--border-color);
+            background-color: var(--bg-secondary);
+        }
+    </style>
+</head>
+<body>
+    <header class="top-navbar">
+        <a href="#" class="brand">
+            ⚡ Cycle Orchestrator
+            <span class="brand-badge">ARCHITECTURE & DYNAMICS</span>
+        </a>
+        <ul class="nav-links">
+            <li><a href="#genel-bakis">Genel Bakış</a></li>
+            <li><a href="#katmanlar">Katmanlar</a></li>
+            <li><a href="#veri-akisi">Veri Akışı</a></li>
+            <li><a href="#optimizasyon">Optimizasyon</a></li>
+            <li><a href="#topoloji">Topoloji</a></li>
+            <li><a href="#derleme">Derleme</a></li>
+            <li><a href="#kirilim-modeli">Kırılım Modeli</a></li>
+        </ul>
+    </header>
+
+    <main class="container">
+        <h1 id="cycle-orchestrator-cycle-orc-modern-sistem-mimarisi-dokumantasyonu">Cycle Orchestrator (<code>cycle-orc</code>) - Modern Sistem Mimarisi Dokümantasyonu</h1>
+<blockquote>
+<p><strong>Sürüm:</strong> 2.0<br />
+<strong>Lisans:</strong> Özel / Proprietary<br />
+<strong>Hedef:</strong> Yüksek frekanslı piyasa verisi işleme, mikroyapı analizi, makine öğrenimi sinyal üretimi, kâğıt/canlı borsa yürütmesi ve zero-copy RAM tabanlı eklenti orkestrasyonu.</p>
+</blockquote>
+<hr />
+<h2 id="genel-bakis">1. Genel Bakış ve Mimari Felsefe</h2>
+<p><strong>Cycle Orchestrator (<code>cycle-orc</code>)</strong>, kripto para piyasalarında yüksek frekanslı (HFT) ve kantitatif alım-satım stratejilerini çalıştırmak için tasarlanmış, <strong>Rust tabanlı sıfır-kopyalama (zero-copy) bellek veri aktarım sistemidir</strong>.</p>
+<p>Sistemin temel felsefesi <strong>bütünleşik yekpare bir monolit yerine, sıfır bağımlılıklı çekirdek kabuk (kernel shell) ve dinamik yüklenebilir eklenti (plugin) mimarisi</strong> üzerine kuruludur.</p>
+<div class="codehilite"><pre><span></span><code>┌─────────────────────────────────────────────────────────────────────────────────────────┐
+│                                 KULLANICI ARAYÜZLERİ                                    │
+│   ┌────────────────────────┐  ┌────────────────────────┐  ┌──────────────────────────┐   │
+│   │ Interactive Shell CLI  │  │ Terminal UI (Ratatui)  │  │ Axum Web Server / WebSock│   │
+│   └───────────┬────────────┘  └───────────┬────────────┘  └────────────┬─────────────┘   │
+└───────────────┼───────────────────────────┼────────────────────────────┼────────────────┘
+                │                           │                            │
+┌───────────────▼───────────────────────────▼────────────────────────────▼────────────────┐
+│                              ORCHESTRATOR CORE (`crates/core`)                           │
+│   ┌─────────────────────────────────────────────────────────────────────────────────┐   │
+│   │ Orchestrator Manager (C-ABI Dynamic .so / .dll Shared Library Loader)           │   │
+│   └────────────────────────────────────────┬────────────────────────────────────────┘   │
+│   ┌────────────────────────────────────────▼────────────────────────────────────────┐   │
+│   │ Flow Engine (DAG Tabanlı Sıfır-Kopyalama RAM Veri Yönlendirici &amp; Stream Router) │   │
+│   └────────────────────────────────────────┬────────────────────────────────────────┘   │
+└────────────────────────────────────────────┼────────────────────────────────────────────┘
+                                             │ C-ABI RawEndpointFn
+┌────────────────────────────────────────────▼────────────────────────────────────────────┐
+│                              EKLENTİ (PLUGIN) EKOSİSTEMİ                                │
+│   ┌───────────────────────┐  ┌───────────────────────┐  ┌───────────────────────────┐   │
+│   │ PRODUCERS             │  │ ANALYTICS &amp; ML        │  │ EXECUTION &amp; STORAGE       │   │
+│   │ • binance_gateway     │  │ • plugin_spoofing     │  │ • binance_trader          │   │
+│   │ • ohlcv_fetcher       │  │ • plugin_iceberg      │  │ • plugin_paper_exchange   │   │
+│   │ • oi_fetcher          │  │ • plugin_ml_analyzer  │  │ • plugin_binance_sqlite   │   │
+│   └───────────────────────┘  └───────────────────────┘  └───────────────────────────┘   │
+└────────────────────────────────────────────┬────────────────────────────────────────────┘
+                                             │
+┌────────────────────────────────────────────▼────────────────────────────────────────────┐
+│                    PYTHON ML SÜİTİ &amp; VERİTABANI PERSİSTENCE TABAKASI                     │
+│   ┌─────────────────────────────────────────────────────────────────────────────────┐   │
+│   │ Python ML Suite (LightGBM, XGBoost, Model Training, Rust Code Generator)        │   │
+│   │ Persistence: SQLite (binance_market_data.db, paper_exchange.db, tacusdt_backtest) │   │
+│   └─────────────────────────────────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────────────────────────────────┘
+</code></pre></div>
+
+<h3 id="temel-mimari-ilke-ve-hedefler">Temel Mimarî İlke ve Hedefler</h3>
+<ol>
+<li><strong>Sıfır-Kopyalama &amp; Sıfır-Gecikme (Zero-Copy Shared Memory):</strong> Piyasa verileri (Orderbook diffs, AggTrade, Ticker) heap üzerinde gereksiz kopyalanmaz. Eklentiler arası iletişim doğrudan RAM işaretçileri (pointers) ve atomic değişkenler üzerinden gerçekleşir.</li>
+<li><strong>Strict C-ABI Kontratı:</strong> Orkestratör çekirdeği hiçbir eklentiye derleme zamanı (compile-time) bağımlılığı taşımaz. Eklentiler <code>.so</code> (Linux) veya <code>.dll</code> (Windows) olarak derlenir ve çalışma zamanında (<code>libloading</code>) yüklenir.</li>
+<li><strong>DAG (Yönlü Devretsiz Graf) Veri Akışı:</strong> <code>flow_engine</code>, veri üreticileri (Producers), veri işleyicileri (Analytics) ve yürütücüler (Execution) arasındaki bağımlılıkları JSON yapılandırması üzerinden dinamik bağlar.</li>
+<li><strong>Hibrit Rust + Python ML Mimarisi:</strong> Model eğitimi Python (LightGBM/XGBoost/CatBoost) tarafında yapılır; karar ağaçları C/Rust sarmal koduna (<code>rust_filter_generator.py</code>) dönüştürülerek mikro-saniyeler seviyesinde Rust eklentisi içinde çalıştırılır.</li>
+</ol>
+<hr />
+<h2 id="katmanlar">2. Sistem Katmanları Mimarisi</h2>
+<h3 id="21-orkestrasyon-ve-cekirdek-katman-cratescoreorchestrator">2.1. Orkestrasyon ve Çekirdek Katmanı (<code>crates/core/orchestrator</code>)</h3>
+<p>Orkestratör çekirdeği iş mantığı, ağ istekleri veya veritabanı kodları içermez. Sadece eklenti yaşam döngüsünü (Lifecycle) yönetir ve C-ABI fonksiyon çağrılarını yönlendirir.</p>
+<h4 id="c-abi-standard-endpoint-kontrat-systemrs-endpointrs">C-ABI Standard Endpoint Kontratı (<code>system.rs</code> &amp; <code>endpoint.rs</code>)</h4>
+<p>Eklenti iletişim arayüzü sanal tablo (V-Table) maliyetini ortadan kaldırmak için C-ABI fonksiyon imzasına dayanır:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">// RawEndpointFn: Sıfır-kopyalama C-ABI çağrı imzası</span>
+<span class="k">pub</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nc">RawEndpointFn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">unsafe</span><span class="w"> </span><span class="k">extern</span><span class="w"> </span><span class="s">&quot;C&quot;</span><span class="w"> </span><span class="k">fn</span><span class="p">(</span>
+<span class="w">    </span><span class="n">plugin_state</span><span class="p">:</span><span class="w"> </span><span class="o">*</span><span class="k">mut</span><span class="w"> </span><span class="n">c_void</span><span class="p">,</span><span class="w"> </span>
+<span class="w">    </span><span class="n">endpoint_id</span><span class="p">:</span><span class="w"> </span><span class="kt">u32</span><span class="p">,</span><span class="w"> </span>
+<span class="w">    </span><span class="n">payload</span><span class="p">:</span><span class="w"> </span><span class="o">*</span><span class="k">const</span><span class="w"> </span><span class="kt">u8</span><span class="p">,</span><span class="w"> </span>
+<span class="w">    </span><span class="n">payload_len</span><span class="p">:</span><span class="w"> </span><span class="kt">usize</span><span class="p">,</span><span class="w"> </span>
+<span class="w">    </span><span class="n">out_buf</span><span class="p">:</span><span class="w"> </span><span class="o">*</span><span class="k">mut</span><span class="w"> </span><span class="kt">u8</span><span class="p">,</span><span class="w"> </span>
+<span class="w">    </span><span class="n">out_max_len</span><span class="p">:</span><span class="w"> </span><span class="kt">usize</span>
+<span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="kt">usize</span><span class="p">;</span>
+</code></pre></div>
+
+<h4 id="standart-endpoint-turleri-standardendpoint">Standart Endpoint Türleri (<code>StandardEndpoint</code>)</h4>
+<table>
+<thead>
+<tr>
+<th>Endpoint ID</th>
+<th>İsim</th>
+<th>Açıklama</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>0</code></td>
+<td><code>Start</code></td>
+<td>Eklenti iş parçacığını ve veri akışını başlatır.</td>
+</tr>
+<tr>
+<td><code>1</code></td>
+<td><code>Stop</code></td>
+<td>Eklentiyi güvenli bir şekilde durdurur.</td>
+</tr>
+<tr>
+<td><code>2</code></td>
+<td><code>IsWorking</code></td>
+<td>Eklentinin çalışır durumda olup olmadığını kontrol eder.</td>
+</tr>
+<tr>
+<td><code>3</code></td>
+<td><code>DataValid</code></td>
+<td>Verinin güncel ve geçerli olup olmadığını doğrular.</td>
+</tr>
+<tr>
+<td><code>4</code></td>
+<td><code>DataMonitor</code></td>
+<td>TUI / Web Arayüzü için canlı durum ve ham bellek izleme verisi sunar.</td>
+</tr>
+<tr>
+<td><code>5</code></td>
+<td><code>RawData</code></td>
+<td>Üretici eklentilerden ham stream verisi çeker.</td>
+</tr>
+<tr>
+<td><code>6</code></td>
+<td><code>Inbox</code></td>
+<td>Eklentiye mesaj/stream verisi iletir.</td>
+</tr>
+<tr>
+<td><code>7</code></td>
+<td><code>Outbox</code></td>
+<td>Eklentiden dışarı giden mesaj/sinyal verilerini okur.</td>
+</tr>
+<tr>
+<td><code>8</code></td>
+<td><code>GetSubscriptions</code></td>
+<td>Eklentinin abone olduğu stream listesini döndürür.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="22-aks-ve-yonlendirme-motoru-cratescoreflow_engine">2.2. Akış ve Yönlendirme Motoru (<code>crates/core/flow_engine</code>)</h3>
+<p><code>flow_engine</code>, eklentiler arasında Pub/Sub veri akışını ve RPC tipi mesajlaşmayı yöneten DAG motorudur.</p>
+<div class="codehilite"><pre><span></span><code><span class="k">pub</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">FlowEngine</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="n">plugins</span><span class="p">:</span><span class="w"> </span><span class="nc">std</span><span class="p">::</span><span class="n">sync</span><span class="p">::</span><span class="n">RwLock</span><span class="o">&lt;</span><span class="nb">Vec</span><span class="o">&lt;</span><span class="n">PluginConfig</span><span class="o">&gt;&gt;</span><span class="p">,</span>
+<span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="n">router</span><span class="p">:</span><span class="w"> </span><span class="nc">Arc</span><span class="o">&lt;</span><span class="n">MemoryRouter</span><span class="o">&gt;</span><span class="p">,</span>
+<span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="n">last_pushed</span><span class="p">:</span><span class="w"> </span><span class="nc">std</span><span class="p">::</span><span class="n">sync</span><span class="p">::</span><span class="n">Mutex</span><span class="o">&lt;</span><span class="n">std</span><span class="p">::</span><span class="n">collections</span><span class="p">::</span><span class="n">HashMap</span><span class="o">&lt;</span><span class="p">(</span><span class="nb">String</span><span class="p">,</span><span class="w"> </span><span class="nb">String</span><span class="p">),</span><span class="w"> </span><span class="kt">u64</span><span class="o">&gt;&gt;</span><span class="p">,</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<hr />
+<h3 id="23-eklenti-ekosistemi-cratesplugins">2.3. Eklenti Ekosistemi (<code>crates/plugins</code>)</h3>
+<p>Eklentiler 5 ana kategoride modüler olarak organize edilmiştir:</p>
+<h4 id="1-veri-ureticileri-producers">1. Veri Üreticileri (Producers)</h4>
+<ul>
+<li><strong><code>binance_gateway</code></strong>: Binance Futures WebSocket bağlantılarını yönetir. <code>stream_markprice</code>, <code>stream_trades</code>, <code>stream_aggtrades</code>, <code>stream_depth</code>, <code>stream_bestprice</code>, <code>stream_liquidations</code> akışlarını yayınlar.</li>
+<li><strong><code>ohlcv_fetcher</code></strong>: Binance REST API üzerinden istenen sembol ve zaman aralıklarında (1m, 5m, 15m, 1h) mum (OHLCV) verilerini toplar.</li>
+<li><strong><code>oi_fetcher</code></strong>: Binance Open Interest (Açık Pozisyon) verilerini periyodik çeker.</li>
+</ul>
+<h4 id="2-analiz-gosterge-eklentileri-analytics">2. Analiz &amp; Gösterge Eklentileri (Analytics)</h4>
+<ul>
+<li><strong>Emir Defteri Mikroyapı Analizörleri:</strong></li>
+<li><code>plugin_spoofing</code>: Emir defterinde aldatıcı büyük duvar (spoofing) tespit eder.</li>
+<li><code>plugin_iceberg</code>: Gizli buzdağı (iceberg) emirlerini ve yenileme sıklıklarını algılar.</li>
+<li><code>plugin_absorption</code>: Belirli seviyelerdeki emir emilimini (absorption) analiz eder.</li>
+<li><code>plugin_bookticker_derivatives</code>: En iyi alış/satış fiyat ve miktar değişim türevlerini hesaplar.</li>
+<li><code>ms_analyzer</code>: Mum yapısı ve mikroyapı formasyonlarını derinlemesine inceleyerek sinyal üretir.</li>
+<li><strong>Likidite ve Oynaklık Göstergeleri:</strong></li>
+<li><code>plugin_amihud</code>: Amihud iliquidity (likiditesizlik) oranını hesaplar.</li>
+<li><code>plugin_price_impact</code>: Alış/satış emirlerinin piyasa fiyatına etkisini ölçer.</li>
+<li><code>plugin_atr</code>: ATR (Average True Range) oynaklık göstergesi.</li>
+<li><code>plugin_rsi</code>: RSI (Relative Strength Index) osilatör analizi.</li>
+<li><code>plugin_level_proximity</code>: Fiyatın kritik destek/direnç seviyelerine yakınlığını izler.</li>
+<li><strong>Strateji ve Backtest Eklentileri:</strong></li>
+<li><code>plugin_breakout</code>: Kırılım stratejisi sinyal oluşturucu.</li>
+<li><code>plugin_scout</code>: Piyasa durum tarayıcısı.</li>
+<li><code>plugin_bollinger_backtest</code>: Bollinger bantları strateji backtest eklentisi.</li>
+<li><code>plugin_all_bars_backtest</code>: Tüm mum formasyonları backtest çalıştırıcısı.</li>
+<li><code>plugin_back</code>: ML modellerine dayalı geriye dönük test motoru.</li>
+<li><code>plugin_ml_analyzer</code>: Yapay zeka/ML tabanlı canlı ticaret sinyal çıkarım eklentisi.</li>
+<li><code>plugin_tacusdt_1h</code>: TACUSDT 1 saatlik özel strateji eklentisi.</li>
+</ul>
+<h4 id="3-yurutme-motoru-execution">3. Yürütme Motoru (Execution)</h4>
+<ul>
+<li><strong><code>binance_trader</code></strong>: Gerçek Binance Futures hesabı üzerinde HMAC SHA256 imzalı emri borsaya iletir, stop-loss / take-profit takibini yapar.</li>
+<li><strong><code>plugin_paper_exchange</code></strong>: SQLite tabanlı (<code>data/paper_exchange.db</code>) simüle borsa motorudur. Kayma (slippage), komisyon, gerçekleşme (fill) ve PnL hesabını sıfır riskle canlı veri üzerinde simüle eder.</li>
+</ul>
+<h4 id="4-veri-depolama-storage">4. Veri Depolama (Storage)</h4>
+<ul>
+<li><strong><code>plugin_binance_sqlite</code></strong>: Canlı akış verilerini <code>data/binance_market_data.db</code> SQLite veritabanına performanslı şekilde kaydeder.</li>
+<li><strong><code>plugin_sqlite_query</code></strong>: Diğer eklentiler için veritabanı sorgulama arayüzü sağlar.</li>
+</ul>
+<h4 id="5-bildirim-sistemleri-notifications">5. Bildirim Sistemleri (Notifications)</h4>
+<ul>
+<li><strong><code>plugin_telegram_bot</code></strong>: Oluşan sinyalleri, emir gerçekleşmelerini, kâr/zarar durumlarını ve sistem sağlık uyarılarını anlık olarak Telegram kanallarına bildirir.</li>
+</ul>
+<hr />
+<h3 id="24-makine-ogrenimi-ml-ve-sinyal-hatt-ml_model_suite-python-scripts">2.4. Makine Öğrenimi (ML) ve Sinyal Hattı (<code>ml_model_suite</code> &amp; Python Scripts)</h3>
+<ul>
+<li><strong><code>ml_model_suite/dataset_exporter.py</code></strong>: SQLite veritabanından teknik göstergeleri öznitelik matrisine dönüştürür.</li>
+<li><strong><code>ml_model_suite/model_trainer.py</code></strong>: LightGBM, XGBoost ve CatBoost modellerini eğitir.</li>
+<li><strong><code>ml_model_suite/rust_filter_generator.py</code></strong>: Eğitilen karar ağaçlarını statik C/Rust koduna dönüştürür.</li>
+</ul>
+<hr />
+<h3 id="25-arayuz-ve-uygulama-katman">2.5. Arayüz ve Uygulama Katmanı</h3>
+<ol>
+<li><strong>Interactive Shell (CLI - <code>crates/apps/interactive_shell</code>):</strong> Rustyline tabanlı komut satırı arayüzü.</li>
+<li><strong>Terminal UI (TUI - <code>tui_interface</code>):</strong> Ratatui &amp; Crossterm canlı görselleştirme.</li>
+<li><strong>Web Server &amp; Dashboard (<code>web_server.rs</code>):</strong> Axum REST API &amp; WebSocket yayını.</li>
+</ol>
+<hr />
+<h2 id="veri-akisi">3. Veri Akışı ve Mimari Şemalar</h2>
+<h3 id="31-uctan-uca-veri-isleme-hatt-sequence-diagram">3.1. Uçtan Uca Veri İşleme Hattı (Sequence Diagram)</h3>
+<div class="mermaid-container"><pre class="mermaid">
+sequenceDiagram
+    autonumber
+    participant Gateway as binance_gateway
+    participant Flow as FlowEngine Router
+    participant ML as plugin_ml_analyzer
+    participant Paper as plugin_paper_exchange
+    participant Telegram as plugin_telegram_bot
+    participant DB as plugin_binance_sqlite
+
+    Gateway->>Flow: RawData Push (AggTrade / MarkPrice / Depth)
+    Flow->>DB: Stream Data -> Write to SQLite (binance_market_data.db)
+    Flow->>ML: Stream Data (Inbox Endpoint 6)
+    Note over ML: Sub-microsecond Rust decision trees evaluate features
+    ML-->>Flow: Signal Output (Outbox Endpoint 7: BUY/SELL)
+    Flow->>Paper: Route Signal -> Execute Simulated Order
+    Paper-->>Flow: Execution Update (Fill Price, Slippage, Balance)
+    Flow->>Telegram: Send Telegram Notification
+
+</pre></div>
+
+<hr />
+<h3 id="32-c-abi-eklenti-cagr-dongusu">3.2. C-ABI Eklenti Çağrı Döngüsü</h3>
+<div class="mermaid-container"><pre class="mermaid">
+flowchart TD
+    A[Orchestrator Main Loop] --> B{Plugin Enabled?}
+    B -- Evet --> C[Call RawEndpointFn with Endpoint::RawData 5]
+    C --> D[Write Output to Shared Memory Stream]
+    D --> E[Check Subscribed Consumer Plugins]
+    E --> F[Call RawEndpointFn with Endpoint::Inbox 6]
+    F --> G[Call RawEndpointFn with Endpoint::Outbox 7]
+    G --> H{Any Target Messages?}
+    H -- Evet --> I[Deliver Message to Target Inbox]
+    H -- Hayır --> J[Next Cycle]
+    B -- Hayır --> J
+
+</pre></div>
+
+<hr />
+<h2 id="optimizasyon">4. Donanım, İşletim Sistemi ve Performans Optimizasyonu</h2>
+<ul>
+<li><strong>Core Pinning &amp; İşlemci İzolasyonu (<code>online_cpus.sh</code> &amp; <code>offline_cpus.sh</code>)</strong></li>
+<li><strong>GPU Yönetimi (<code>enable_gpu2.sh</code> &amp; <code>disable_gpu2.sh</code>)</strong></li>
+<li><strong>Lock-Free Atomic State &amp; Pre-allocated Memory Buffers</strong></li>
+</ul>
+<hr />
+<h2 id="topoloji">5. Yapılandırma ve Topoloji Yapısı (<code>config/config.json</code>)</h2>
+<div class="codehilite"><pre><span></span><code><span class="p">[</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;plugin_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;plugin_binance_gateway&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;enabled&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;plugin_inputs&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">    </span><span class="nt">&quot;plugin_params&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;symbols&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;BTCUSDT&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;ETHUSDT&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;TACUSDT&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;plugin_outputs&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;stream_markprice&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;stream_trades&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;stream_aggtrades&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;stream_depth&quot;</span><span class="p">]</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;plugin_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;plugin_ml_analyzer&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;enabled&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;plugin_inputs&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;source&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;plugin_ohlcv_fetcher&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;stream_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ai_scanner_stream&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;params&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;symbol&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;TACUSDT&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;interval&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;15m&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;limit&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">150</span><span class="w"> </span><span class="p">}</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;plugin_params&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;symbols&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;TACUSDT&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;VELVETUSDT&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;BTCUSDT&quot;</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;min_win_probability&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.50</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;plugin_outputs&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;stream_ai_trade_signals&quot;</span><span class="p">]</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">]</span>
+</code></pre></div>
+
+<hr />
+<h2 id="derleme">6. Derleme ve Çalıştırma Yönergeleri</h2>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Release modunda derleme</span>
+cargo<span class="w"> </span>build<span class="w"> </span>--release
+
+<span class="c1"># Interactive Shell ile başlatma</span>
+cargo<span class="w"> </span>run<span class="w"> </span>--release<span class="w"> </span>-p<span class="w"> </span>interactive_shell
+</code></pre></div>
+
+<hr />
+<h2 id="kirilim-modeli">7. Market Structure Kırılımlarının Gerçek Zamanlı Piyasa Dinamikleriyle Modellenmesi (Teorik &amp; Kantitatif Model)</h2>
+<h3 id="71-ozet-ve-giris">7.1. Özet ve Giriş</h3>
+<p>Finansal piyasalarda destek ve direnç seviyelerinin kırılımını yalnızca fiyat hareketi üzerinden değerlendirmek yerine, seviyeye yaklaşma sürecindeki gerçek zamanlı piyasa dinamikleriyle açıklayan olasılıksal bir modeldir.</p>
+<p>Market structure, fiyatın gelecekte hareket edebileceği <strong>potansiyel alanı</strong> tanımlarken; trade akışı (trade flow), order book, likidite ve likidasyon (liquidation) verileri bu potansiyelin piyasada gerçekten gerçekleşip gerçekleşmediğini ölçer.</p>
+<p>$$
+Potential \rightarrow Realization \rightarrow Sustainability
+$$</p>
+<hr />
+<h3 id="72-yasam-dongusu-ve-durum-gecis-aks">7.2. Yaşam Döngüsü ve Durum Geçiş Akışı</h3>
+<div class="codehilite"><pre><span></span><code>Market Structure
+       ↓
+     Level
+       ↓
+   Potential
+       ↓
+ Level Activation
+       ↓
+Pre-Breakout State
+       ↓
+   Breakout?
+     ↙   ↘
+   No     Yes
+   ↓       ↓
+ Wait   Realization
+           ↓
+     Sustainability
+           ↓
+    Position Decision
+           ↓
+         Outcome
+           ↓
+       New State
+</code></pre></div>
+
+<hr />
+<h3 id="73-matematiksel-formulasyon-ve-seviye-aktivasyonu-level-activation">7.3. Matematiksel Formülasyon ve Seviye Aktivasyonu (Level Activation)</h3>
+<p>Bir $L = 100$ direnç seviyesi için activation zone $1m$ ATR ile tanımlanır:</p>
+<p>$$
+D = \frac{|P - L|}{ATR_{1m}}
+$$</p>
+<p>Eğer $D &lt; k$ (örneğin $k=0.5$, $ATR_{1m}=0.80 \Rightarrow ActivationDistance=0.40$) ise seviye aktifleşir ($P_{activation} = 99.60$). Fiyat bu seviyeye ulaştığında <strong>Level Event</strong> başlar.</p>
+<hr />
+<h3 id="74-olaya-gore-degisen-pre-breakout-penceresi-event-relative-window">7.4. Olaya Göre Değişen Pre-Breakout Penceresi (Event-Relative Window)</h3>
+<p>Sabit zaman pencereleri yerine, kırılım gerçekleşene kadar geçen doğal piyasa süresi kullanılır:</p>
+<p>$$
+W_{pre} = t_{breakout} - t_{activation}
+$$</p>
+<p>Örneğin hareket 18 saniye sürdüyse $W_{pre} = 18s$ olur. Pencerenin uzunluğunu zamansal kısıtlar değil, piyasa olayının kendisi belirler.</p>
+<hr />
+<h3 id="75-on-krlm-piyasa-dinamikleri-pre-breakout-dynamics">7.5. Ön-Kırılım Piyasa Dinamikleri (Pre-Breakout Dynamics)</h3>
+<ol>
+<li>
+<p><strong>Trade Flow &amp; Delta Ratio:</strong>
+   $$
+   Delta = BuyVolume - SellVolume
+   $$
+   $$
+   DeltaRatio = \frac{BuyVolume - SellVolume}{BuyVolume + SellVolume}
+   $$</p>
+</li>
+<li>
+<p><strong>Order Book Likidite Tüketimi (Liquidity Depletion):</strong>
+   $$
+   LiquidityDepletion = \frac{InitialLiquidity - FinalLiquidity}{InitialLiquidity}
+   $$</p>
+</li>
+<li>
+<p><strong>Fiyat Etkisi (Price Impact) vs. Emilim (Absorption):</strong>
+   $$
+   Impact = \frac{\Delta P / P}{NormalizedVolume}
+   $$</p>
+</li>
+<li><strong>Large Buy Flow + Large Price Impact:</strong> Alışlar fiyatı itiyor (Yüksek Kırılım Kalitesi).</li>
+<li>
+<p><strong>Large Buy Flow + Small Price Impact:</strong> Alışlar emiliyor (Absorption / Sahte Kırılım Riski).</p>
+</li>
+<li>
+<p><strong>Likidasyon Dinamikleri (Liquidation Dynamics):</strong>
+   $$
+   Price \uparrow \;\rightarrow\; ShortLiquidation \uparrow \;\rightarrow\; ForcedBuy \uparrow \;\rightarrow\; Price \uparrow
+   $$</p>
+</li>
+</ol>
+<hr />
+<h3 id="76-olaslksal-durum-modeli-state-based-probability-ve-pozisyon-yonetimi">7.6. Olasılıksal Durum Modeli (State-Based Probability) ve Pozisyon Yönetimi</h3>
+<p>Model deterministik Al/Sat sinyali yerine koşullu olasılık hesaplar:</p>
+<p>$$
+P(Breakout \mid S_t) \quad \text{ve} \quad P(SustainedBreakout \mid S_t)
+$$</p>
+<p>Burada durum vektörü $S_t$:</p>
+<p>$$
+S_t = { Structure, Level, Flow, OrderBook, Liquidity, Liquidation, Volatility }
+$$</p>
+<p>Risk tabanlı dinamik pozisyon büyüklüğü:</p>
+<p>$$
+Q = \frac{RiskCapital}{InvalidationDistance}
+$$</p>
+<p>$$
+\boxed{
+Structure \rightarrow Potential \rightarrow Activation \rightarrow Dynamics \rightarrow Realization \rightarrow Sustainability \rightarrow Decision \rightarrow Outcome \rightarrow NewState
+}
+$$</p>
+<hr />
+<h3 id="77-arastrma-hipotezleri-h1-h6">7.7. Araştırma Hipotezleri (H1 - H6)</h3>
+<ul>
+<li><strong>H1:</strong> Seviyeye yaklaşırken oluşan order-flow imbalance, breakout olasılığı hakkında anlamlı bilgi taşır.</li>
+<li><strong>H2:</strong> Trade flow ile price impact arasındaki ilişki breakout kalitesini belirler.</li>
+<li><strong>H3:</strong> Level etrafındaki liquidity depletion, breakout realization ile doğrudan ilişkilidir.</li>
+<li><strong>H4:</strong> Pre-breakout likidasyon aktivitesi, kırılımın yönünü ve sürdürülebilirliğini tahmin eder.</li>
+<li><strong>H5:</strong> Event-relative window, sabit zaman pencerelerine kıyasla daha yüksek bilgi kazancı sağlar.</li>
+<li><strong>H6:</strong> Breakout realization ile breakout sustainability istatistiksel olarak birbirinden ayrılabilir.</li>
+</ul>
+<hr />
+<h3 id="78-deney-tasarm-ve-basar-olcutleri">7.8. Deney Tasarımı ve Başarı Ölçütleri</h3>
+<p>Modellerin tahmin gücü aşamalı olarak karşılaştırılır:
+* <strong>Model A:</strong> Market Structure
+* <strong>Model B:</strong> Market Structure + OHLCV
+* <strong>Model C:</strong> Market Structure + Trade Flow
+* <strong>Model D:</strong> Market Structure + Trade Flow + Order Book
+* <strong>Model E:</strong> Market Structure + Trade Flow + Order Book + Liquidation
+* <strong>Model F:</strong> Model E + Event-Relative Window</p>
+<p><strong>Ana Araştırma Sorusu:</strong> $Does \;\; F &gt; A ?$</p>
+<p><strong>Değerlendirme Metrikleri:</strong> Precision, Recall, F1, ROC-AUC, PR-AUC, Brier Score, Kalibrasyon (Probability Calibration), Expected Value, Max Drawdown, Sharpe Ratio, Profit Factor.</p>
+<hr />
+<h2 id="ozet">8. Özet ve Sonuç</h2>
+<p><strong>Cycle Orchestrator (<code>cycle-orc</code>)</strong>, C-ABI tabanlı sıfır-kopyalama mimarisi, DAG veri akış motoru, zengin mikroyapı analiz eklentileri, C/Rust seviyesinde çalışan makine öğrenimi karar ağaçları ve <strong>Market Structure Event-Driven Kırılım Modeli</strong> ile endüstriyel standartlarda kantitatif işlem altyapısı sunmaktadır.</p>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2026 Cycle Orchestrator (cycle-orc) - Tüm Hakları Saklıdır.</p>
+        <p>Yüksek Frekanslı Kantitatif İşlem & Zero-Copy Plugin Orkestrasyon Altyapısı</p>
+    </footer>
+</body>
+</html>

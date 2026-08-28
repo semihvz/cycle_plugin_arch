@@ -30,7 +30,8 @@ async fn test_live_collector_pipeline() {
         close_time: parse_u(&row[6]),
     }).collect();
 
-    let test_db_path = "/home/smhvz/Desktop/cycle-orc/data/tacusdt_collector.db";
+    let temp_db_file = std::env::temp_dir().join(format!("test_tacusdt_collector_{}.db", std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_nanos()));
+    let test_db_path = temp_db_file.to_str().unwrap();
     let status = process_and_persist_tacusdt_data("TACUSDT", "15m", &bars, test_db_path);
 
     println!("\n==========================================================================================");
@@ -59,4 +60,5 @@ async fn test_live_collector_pipeline() {
 
     assert_eq!(trades_count as usize, status.total_trades_detected);
     assert_eq!(lookback_count as usize, status.total_lookback_bars_persisted);
+    let _ = std::fs::remove_file(temp_db_file);
 }

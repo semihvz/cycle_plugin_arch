@@ -566,17 +566,6 @@ unsafe extern "C" fn handle_endpoint(
         4 | 5 => { // DataMonitor & RawData
             let guard = state.data.lock().unwrap();
 
-            // Fallback async fetch if data is still empty
-            if guard.is_empty() {
-                drop(guard);
-                let data_arc = state.data.clone();
-                state.runtime.spawn(async move {
-                    fetch_and_compute_backtest(data_arc).await;
-                });
-            }
-
-            let guard = state.data.lock().unwrap();
-
             let mut report = String::new();
             report.push_str("============================================================\n");
             report.push_str("📈 EMA (3, 6, 9) ÇOKLU ZAMAN DİLİMİ (1h + 15m) BACKTEST RAPORU\n");
